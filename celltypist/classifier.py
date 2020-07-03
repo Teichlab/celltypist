@@ -21,7 +21,7 @@ class AnnotationResult():
         self.summary = self.summarize_labels(labels)
 
     def summarize_labels(self, labels: np.ndarray) -> pd.DataFrame:
-        """Get a summary of the labels used in the annotation.""" 
+        """Get a summary of the cells per label obtained in the annotation process."""
         unique, counts = np.unique(labels, return_counts=True)
         df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
         df.sort_values(['counts'], ascending=False, inplace=True)

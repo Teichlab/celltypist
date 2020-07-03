@@ -3,6 +3,7 @@ from celltypist import models
 from celltypist import defaults
 from celltypist import samples
 
+
 def annotate(filename: str,
              model: str = defaults.model,
              chunk_size: int = defaults.chunk_size,

@@ -1,8 +1,8 @@
-def prepaer():
+def prepare():
     """Prepare dataset to be annotated."""
     pass
 
 
 def validate():
-    """Validte dataset has the correct naming convetion for genes."""
+    """Validte dataset can be processed."""
     pass
