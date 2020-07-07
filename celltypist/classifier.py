@@ -31,19 +31,21 @@ class AnnotationResult():
         """Write excel file with both the predicted labels and the probability matrix."""
         filename, _ = os.path.splitext(filename)
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
-            self.predicted_labels.to_excel(writer, sheet_name='Predicted Labels')
-            self.probability_matrix.to_excel(writer, sheet_name='Probability Matrix')
+            self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
+            self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
 
 
 class Classifier():
     """Class that wraps the cell typing process."""
-    def __init__(self, filename: str, model, chunk_size: int, cpus: int):
+    def __init__(self, filename: str, model, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         self.chunk_size = chunk_size
         self.cpus = cpus
         self.model = model
-        self.cell_count = sum(1 for line in open(self.filename))
+        with open(self.filename) as fh:
+            self.cell_count = sum(1 for line in fh)
         self.chunk_iterator = range(math.ceil(self.cell_count/self.chunk_size))
+        self.quiet = quiet
 
     def process_chunk(self, start_at: int) -> Tuple[np.ndarray, np.ndarray]:
         """Process a chunk of the input file starting at the offset position."""
@@ -52,7 +54,7 @@ class Classifier():
 
     def celltype(self) -> AnnotationResult:
         """Run celltyping jobs to get results."""
-        result = Parallel(n_jobs=self.cpus, verbose=10)(
+        result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
             delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
         lab_mat = np.hstack([result[i][0] for i in range(len(result))])
         prob_mat = np.vstack([result[i][1] for i in range(len(result))])

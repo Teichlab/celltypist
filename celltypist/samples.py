@@ -8,6 +8,6 @@ def get_sample_data(filename: str) -> str:
     return os.path.join(samples_path, filename)
 
 
-def csv() -> str:
+def get_sample_csv() -> str:
     """Get path for the sample CSV file included in the package."""
     return get_sample_data("sample_cell_by_gene.csv")

@@ -13,13 +13,13 @@ def get_path_in_package(model: str) -> str:
 
 def load(model: str = "default") -> str:
     """Load model from package models, use model as named_model and fallback to using it as a path."""
-    if model in get_all():
+    if model in get_all_models():
         model = get_path_in_package(model)
     with open(model, "rb") as fh:
         return pickle.load(fh)
 
 
-def get_all() -> List[str]:
+def get_all_models() -> List[str]:
     """Get a List of all the avaiable models included in the package."""
     avaiable_models = []
     for model_filename in os.listdir(models_path):

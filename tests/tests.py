@@ -2,6 +2,7 @@ import os
 import sklearn
 import celltypist
 import unittest
+import tempfile
 
 # hide warnings
 import warnings
@@ -16,7 +17,7 @@ INCLUDED_MODELS = ["brain", "default", "immune"]
 
 class TestModels(unittest.TestCase):
     def test_list_models(self):
-        self.assertTrue(INCLUDED_MODELS, celltypist.models.get_all())
+        self.assertTrue(INCLUDED_MODELS, celltypist.models.get_all_models())
 
     def test_load_defult_model(self):
         default_model = celltypist.models.load()
@@ -38,11 +39,33 @@ class TestModels(unittest.TestCase):
 
 class TestSamples(unittest.TestCase):
     def test_csv_filename(self):
-        self.assertEqual(os.path.basename(celltypist.samples.csv()), "sample_cell_by_gene.csv")
+        self.assertEqual(os.path.basename(celltypist.samples.get_sample_csv()), "sample_cell_by_gene.csv")
 
     def test_csv_sample_content(self):
         with open(os.path.join(SAMPLES_PATH, "sample_cell_by_gene.csv")) as sample_file:
             test_sample = sample_file.read()
-        with open(celltypist.samples.csv()) as package_file:
+        with open(celltypist.samples.get_sample_csv()) as package_file:
             package_sample = package_file.read()
         self.assertMultiLineEqual(test_sample, package_sample)
+
+    def test_label_prediction_result(self):
+        with open(os.path.join(SAMPLES_PATH, "expected_predicted_labels.csv")) as expected_file:
+            expected_content = expected_file.read()
+        result = celltypist.annotate(celltypist.samples.get_sample_csv())
+        tf = tempfile.NamedTemporaryFile()
+        result.predicted_labels.to_csv(tf.name)
+        with open(tf.name, 'rt') as tmp:
+            result_content = tmp.read()
+        tf.close()
+        self.assertMultiLineEqual(expected_content, result_content)
+
+    def test_probability_matrix_result(self):
+        with open(os.path.join(SAMPLES_PATH, "expected_probability_matrix.csv")) as expected_file:
+            expected_content = expected_file.read()
+        result = celltypist.annotate(celltypist.samples.get_sample_csv())
+        tf = tempfile.NamedTemporaryFile()
+        result.probability_matrix.to_csv(tf.name)
+        with open(tf.name, 'rt') as tmp:
+            result_content = tmp.read()
+        tf.close()
+        self.assertMultiLineEqual(expected_content, result_content)

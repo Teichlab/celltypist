@@ -18,6 +18,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=install_requirements,
     include_package_data=True,
+    entry_points={
+        'console_scripts': ['celltypist=celltypist.command_line:main'],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
