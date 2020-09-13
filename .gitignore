@@ -8,3 +8,7 @@
 /*.egg
 
 env
+.eggs/
+build/
+
+.DS_Store
