@@ -59,13 +59,17 @@ def write_all_csv_files(result, outpref, outdir):
 @click.command()
 @click.option("--indata", help="Input csv matrix (cells by genes). Gene IDs should be Gene Names.", type=str)
 @click.option("--model", default=defaults.model, help="Model used to make the predictions.", type=str)
+@click.option("--update-models", is_flag=True, default=False, help="Downloads default models from the server.")
 @click.option("--outpref", default="", help="Output prefix for all output files.", type=str)
 @click.option("--outdir", default="", help="Output directory for all output files.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single XLSX.")
 @click.option("--chunk", default=defaults.chunk_size, help="Chunk sizes to read (adjust for memory performance).", type=int)
 @click.option("--cpus", default=defaults.max_cpus, help="Limit the numbre of CPUs (default uses all avaiable).", type=int)
 @click.option("--quiet", is_flag=True, default=False, help="Hide all console output.")
-def main(indata: str, model: str, outpref: str, outdir: str, xlsx: bool, chunk: int, cpus: int, quiet: bool):
+def main(indata: str, model: str, update_models:bool, outpref: str, outdir: str, xlsx: bool, chunk: int, cpus: int, quiet: bool):
+    if update_models:
+        models.download_models()
+        exit(0)
 
     # validate input file
     if not indata or not os.path.exists(indata):
