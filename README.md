@@ -19,7 +19,7 @@ import celltypist
 
 sample_input = celltypist.samples.get_sample_csv()
 result = celltypist.annotate(sample_input)
-result.predicted_labels.to_csv("labels.csv")
+result.predicted_labels_as_df().to_csv("labels.csv")
 ```
 
 ### Using your own data
@@ -73,12 +73,12 @@ import celltypist
 indata = "/path/to/cell_by_gene_matrix.csv"
 custom_model = "/path/to/custom_model.pkl"
 
-result = celltypist.annotate(input_data, model=custom_model, chunk_size=1000, cpus=8)
+result = celltypist.annotate(input_data, model=custom_model)
 result.write_excel("annotation_result.xlsx")
 
-print(result.summary)
-result.predicted_labels.to_csv("labels.csv")
-result.probability_matrix.to_csv("prob_matrix.csv")
+print(result.summary_as_df())
+result.predicted_labels_as_df().to_csv("labels.csv")
+result.probability_matrix_as_df().to_csv("prob_matrix.csv")
 ```
 
 ## Command Line
@@ -95,8 +95,6 @@ celltypist --indata=/path/to/dataset.csv --model default
 celltypist
     --indata /path/to/dataset.csv \ # input dataset
     --model /path/to/model.pkl    \ # path to model
-    --cpus 5                      \ # limit CPU usage
-    --chnk 1000                   \ # change chunk size
     --outpref Dataset1_           \ # add a prefix to the output files
     --outdir /path/to/output      \ # set an output directory for the files
 ```
