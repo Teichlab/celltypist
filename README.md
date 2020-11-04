@@ -36,21 +36,34 @@ result.write_excel("annotation_result.xlsx")
 
 Included models are downloaded automatically inside a inscript when the defualt model tries to be loaded or by using `celltypist --update-models` from the command line.
 
-```python
-import celltypist
-
-input_data = "/path/to/cell_by_gene_matrix.csv"
-result = celltypist.annotate(input_data, model="default")
-result.write_excel("annotation_result.xlsx")
-```
-
 #### List models included in with the package
 
 ```python
 import celltypist
 
-available_models = celltypist.models.get_all_models()
-available_models
+for m in celltypist.models.get_all_models():
+    print(f"model = '{m}'")
+```
+
+#### Use the default model by name
+
+```python
+import celltypist
+
+input_data = "/path/to/cell_by_gene_matrix.csv"
+default_model = celltypist.models.get_default_model()
+result = celltypist.annotate(input_data, model=default_model)
+result.write_excel("annotation_result.xlsx")
+```
+
+####  Use a custom model name from the model list
+
+```python
+import celltypist
+
+input_data = "/path/to/cell_by_gene_matrix.csv"
+result = celltypist.annotate(input_data, model="Immune_v5_allData_lowest_all.pkl")
+result.write_excel("annotation_result.xlsx")
 ```
 
 ### Use custom models
@@ -86,7 +99,7 @@ result.probability_matrix_as_df().to_csv("prob_matrix.csv")
 ### Basic usage
 
 ```bash
-celltypist --indata=/path/to/dataset.csv --model default
+celltypist --indata=/path/to/dataset.csv
 ```
 
 ### Advance usage

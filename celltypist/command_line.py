@@ -18,11 +18,11 @@ d88' `"Y8 d88' `88b  888   888    888    `88.  .8'   888' `88b `888  d88(  "8   
 
 
 def show_config(config: dict):
-    logger.info(f"Configuration:")
-    logger.info(f"\t-Input: {config['indata']}")
-    logger.info(f"\t-Model: {config['model']}")
-    logger.info(f"\t-Output prefix: {config['prefix'] if config['prefix'] else '(none)'}")
-    logger.info(f"\t-Output path: {config['outdir']}")
+    logger.info(f"🛠️ Configuration:")
+    logger.info(f"\t📥 Input: {config['indata']}")
+    logger.info(f"\t🔖 Model: {config['model']}")
+    logger.info(f"\t📝 Output prefix: {config['prefix'] if config['prefix'] else '(none)'}")
+    logger.info(f"\t📂 Output path: {config['outdir']}")
     # logger.info(f"\t-Cell count: {config['cell_count']}")
     # logger.info(f"\t-Chunk count: {config['chunk_count']} (each one of {config['chunk_size']} cells)")
     # logger.info(f"\t-CPUs: {config['cpus']}")
@@ -64,13 +64,13 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single XLSX.")
 # @click.option("--chunk", default=defaults.chunk_size, help="Chunk sizes to read (adjust for memory performance).", type=int)
 # @click.option("--cpus", default=defaults.max_cpus, help="Limit the numbre of CPUs (default uses all avaiable).", type=int)
-@click.option("--update-models", is_flag=True, default=False, help="Downloads default models from the server.")
+@click.option("--update-models", is_flag=True, default=False, help="Downloads base models from the server.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide all console output.")
 def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_models: bool, quiet: bool):
     #chunk: int, cpus: int, 
 
     if update_models:
-        models.download_models()
+        models.update_models()
         exit(0)
 
     # validate input file
@@ -78,6 +78,10 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
         show_help_and_exit(f"🛑 Missing or invalid input file: '{indata}'")
 
     # validate model name/file
+    if not model:
+        model = models.get_default_model()
+        logger.info(f"🔖 No model provided. Using deault: {model}")
+
     if model not in models.get_all_models() and not os.path.exists(model):
         show_help_and_exit(f"🛑 Missing or invalid model: '{model}'. Avaiable models are: {','.join(models.get_all_models())}")
 
@@ -102,7 +106,6 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
 
     if not quiet:
         show_banner()
-    if not quiet:
         show_config(config)
 
     result = annotate(

@@ -5,7 +5,7 @@ from celltypist import samples
 from celltypist import logger
 from celltypist import helpers
 
-__version__ = "0.1.7"
+__version__ = "0.1.9"
 
 def annotate(filename: str,
              model: str = ""):
