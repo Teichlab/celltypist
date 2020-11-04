@@ -8,7 +8,7 @@ with open("requirements.txt", "rt", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="celltypist-dev",
-    version="0.1.6",
+    version="0.1.7",
     author="Tomas Pires de Carvalho Gomes",
     author_email="tpcg@sanger.ac.uk",
     description="A tool for semi-automatic cell type annotation",

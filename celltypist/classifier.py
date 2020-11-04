@@ -43,6 +43,8 @@ class AnnotationResult():
             self.predicted_labels_as_df().to_excel(writer, sheet_name="Predicted Labels")
             self.probability_matrix_as_df().to_excel(writer, sheet_name="Probability Matrix")
  
+    def __str__(self):
+        return f"cell count: {self.cell_count}\npredicted labels: {self.predicted_labels}\nmodel celltypist{self.model_celltypes}"
 
 class Classifier():
     """Class that wraps the cell typing process."""
@@ -60,10 +62,10 @@ class Classifier():
             self.indata = anndata.read_h5ad(self.filename, backed="r").X
             self.indata_genes = self.indata.var_names
         else:
-            raise Exception("Invlaid input file type. Supported types: .csv and .h5ad")
+            raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
         
-        logger.info(f"input file is {self.file_type}")
-        logger.info(f"input data has {len(self.indata)} cells and {len(self.indata_genes)} genes")
+        logger.info(f"📁 Input file is '{self.file_type}'")
+        logger.info(f"🔬 Input data has {len(self.indata)} cells and {len(self.indata_genes)} genes")
         # self.chunk_size = chunk_size
         # self.cpus = cpus
         self.model = model
@@ -85,13 +87,13 @@ class Classifier():
         #lab_mat = np.hstack([result[i][0] for i in range(len(result))])
         #prob_mat = np.vstack([result[i][1] for i in range(len(result))])
         
-        logger.info("gene reference matching")
+        logger.info(f"🧙 Gene reference matching")
         ############################################################
         #def gene_reference_matching(self, input_data, input_genes):
         ############################################################    
         # features is the gene names of the dataset to be annotated
         k_x = np.isin(self.indata_genes, list(self.model.classifier.features))
-        logger.info(f"{k_x.sum()} features used for prediction")
+        logger.info(f"🧩 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x]
@@ -104,11 +106,12 @@ class Classifier():
         self.model.classifier.features = self.model.classifier.features[lr_idx]
         self.model.classifier.coef_ = self.model.classifier.coef_[:, lr_idx]
 
-        logger.info("Predicting labels")
+        logger.info("🖋️ Predicting labels")
         lab_mat, prob_mat = self.model.predict_labels_and_prob(self.indata)
         # print(results)
         # # lab_mat = np.hstack(results)
         # # prob_mat = np.vstack(results)
+        logger.info("✅ Done!")
 
         return AnnotationResult(lab_mat, prob_mat, self.model, self.indata)
 

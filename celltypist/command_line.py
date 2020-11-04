@@ -58,7 +58,7 @@ def write_all_csv_files(result, prefix, outdir):
 
 @click.command()
 @click.option("-i","--indata", help="Input csv matrix (cells by genes). Gene IDs should be Gene Names.", type=str)
-@click.option("-m","--model", default=defaults.model, help="Model used to make the predictions.", type=str)
+@click.option("-m","--model", default="", help="Model used to make the predictions. Empty will use the default model retrieved.", type=str)
 @click.option("-o", "--outdir", default="", help="Output directory for all output files.", type=str)
 @click.option("-p","--prefix", default="", help="Output prefix for all output files.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single XLSX.")
@@ -75,15 +75,15 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
 
     # validate input file
     if not indata or not os.path.exists(indata):
-        show_help_and_exit(f"Missing or invalid input file: '{indata}'")
+        show_help_and_exit(f"🛑 Missing or invalid input file: '{indata}'")
 
     # validate model name/file
     if model not in models.get_all_models() and not os.path.exists(model):
-        show_help_and_exit(f"Missing or invalid model: '{model}'. Avaiable models are: {','.join(models.get_all_models())}")
+        show_help_and_exit(f"🛑 Missing or invalid model: '{model}'. Avaiable models are: {','.join(models.get_all_models())}")
 
     if not outdir:
         outdir = os.getcwd()
-        logger.debug(f"No output directory provided. Using current directory: {os.getcwd()}")
+        logger.warn(f"👀 No output directory provided. Using current directory: {os.getcwd()}")
 
     # with open(indata) as fh:
     #     total_size = sum(1 for line in fh)

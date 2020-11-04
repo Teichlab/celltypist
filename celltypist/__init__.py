@@ -5,8 +5,10 @@ from celltypist import samples
 from celltypist import logger
 from celltypist import helpers
 
+__version__ = "0.1.7"
+
 def annotate(filename: str,
-             model: str = defaults.model):
+             model: str = ""):
              #,
              #chunk_size: int = defaults.chunk_size,
              #cpus: int = defaults.max_cpus,
