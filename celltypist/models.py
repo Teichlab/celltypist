@@ -58,6 +58,7 @@ def load(model: str = "") -> Model: #sklearn.linear_model.SGDClassifier:
     """Load model from package models, use model as named_model and fallback to using it as a path."""
     if not model:
         model = get_default_model()
+        download_models()
     if model in get_all_models():
         model = get_path_in_package(model)
     return Model.load(model)
@@ -103,7 +104,7 @@ def get_models_index(force_update: bool=False) -> dict:
         return json.load(f)
 
 
-def download_model_index(only_model: bool = False) -> None:
+def download_model_index(only_model: bool = True) -> None:
     """Pull the model list from the server"""
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
