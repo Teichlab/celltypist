@@ -103,9 +103,7 @@ class Classifier():
         self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x]
 
-        ad_ft = pd.DataFrame(self.indata_genes, columns=['ad_features']).reset_index().rename(columns={'index': 'ad_idx'})
-        lr_ft = pd.DataFrame(self.model.classifier.features, columns=['lr_features']).reset_index().rename(columns={'index': 'lr_idx'})
-        lr_idx = lr_ft.merge(ad_ft, left_on='lr_features', right_on='ad_features').sort_values(by='ad_idx').lr_idx.values
+        lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
         means_ = self.model.scaler.mean_[lr_idx]
         sds_ = self.model.scaler.scale_[lr_idx]
