@@ -66,6 +66,8 @@ class Classifier():
         elif helpers.is_h5ad(self.filename):
             self.file_type = "h5ad"
             self.adata = sc.read(self.filename)
+            if self.adata.X.min() < 0:
+                raise Exception("🛑 detect scaled expression while expect log1p normalized expression (sc.pp.normalize_total followed by sc.pp.log1p)")
         else:
             raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
         self.indata = self.adata.X.copy()
