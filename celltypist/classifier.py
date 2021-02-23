@@ -12,6 +12,7 @@ from joblib import Parallel, delayed
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
+import scanpy as sc
 
 
 class AnnotationResult():
@@ -55,18 +56,19 @@ class Classifier():
         self.file_type = ""
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
-        if helpers.is_csv(self.filename):
+        if self.filename.endswith('.csv'):
             self.file_type = "csv"
             self.indata = np.log1p(pd.read_csv(self.filename, skiprows=1, header=None, index_col=0).values)
             self.indata_genes = pd.read_csv(self.filename, header=None, index_col=0, nrows=1).to_numpy()[0]
         elif helpers.is_h5ad(self.filename):
             self.file_type = "h5ad"
-            self.indata = anndata.read_h5ad(self.filename, backed="r").X
-            self.indata_genes = self.indata.var_names
+            self.adata = sc.read(self.filename)
+            self.indata = self.adata.X.copy()
+            self.indata_genes = self.adata.var_names
         else:
             raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
         
-        logger.info(f"🔬 Input data has {len(self.indata)} cells and {len(self.indata_genes)} genes")
+        logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
         # self.chunk_size = chunk_size
         # self.cpus = cpus
         self.model = model
@@ -107,7 +109,7 @@ class Classifier():
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
         self.indata = self.indata / sds_
-        self.indata[:, self.indata.std(axis=0) == 0] = self.indata.min()
+        self.indata[:, self.indata.std(axis=0).A1 == 0] = self.indata.min()
 
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
