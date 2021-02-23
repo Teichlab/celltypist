@@ -35,10 +35,10 @@ class Model():
                 raise Exception(f"🛑 Invalid model: {model_file_path}. {exception}")
 
     @property
-    def cells(self) -> List:
-        """Get cells included in the model."""
+    def cell_types(self) -> List:
+        """Get cell types included in the model."""
         return list(self.classifier.classes_)
-    
+
     # @property
     # def features(self) -> List:
     #     """Get genes included in the model."""
@@ -84,7 +84,7 @@ def get_all_models() -> List[str]:
     for model_filename in os.listdir(models_path):
         if model_filename.endswith(".pkl"):
             model_name = os.path.basename(model_filename)
-            avaiable_models.append(model_name)        
+            avaiable_models.append(model_name)
     return avaiable_models
 
 
@@ -133,4 +133,3 @@ def download_models(force_update: bool=False) -> None:
 def update_models() -> None:
     """Update models by re-downloadig them."""
     download_models(force_update=True)
-
