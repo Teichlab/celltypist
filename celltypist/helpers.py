@@ -21,7 +21,7 @@ def validate():
 
 def is_h5ad(input_file: str) -> bool:
     with open(input_file, "rb") as f:
-        return f.read(5)[1:4] == "HDF"
+        return str(f.read(5)[1:4]) == "b'HDF'"
 
 def is_csv(input_file: str) -> bool:
     try:
