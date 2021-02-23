@@ -59,7 +59,6 @@ def load(model: str = "") -> Model: #sklearn.linear_model.SGDClassifier:
     """Load model from package models, use model as named_model and fallback to using it as a path."""
     if not model:
         model = get_default_model()
-        download_models()
     if model in get_all_models():
         model = get_path_in_package(model)
     return Model.load(model)
