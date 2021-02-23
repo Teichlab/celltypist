@@ -51,9 +51,6 @@ class Classifier():
     """Class that wraps the cell typing process."""
     def __init__(self, filename: str, model: Model, transpose = False): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
-        self.indata = pd.DataFrame()
-        self.indata_genes = list()
-        self.file_type = ""
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
         if self.filename.endswith('.csv'):
@@ -67,11 +64,11 @@ class Classifier():
             self.file_type = "h5ad"
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
-                raise Exception("🛑 detect scaled expression while expect log1p normalized expression (sc.pp.normalize_total followed by sc.pp.log1p)")
+                raise Exception("🛑 Detect scaled expression while expect log1p normalized expression (sc.pp.normalize_total followed by sc.pp.log1p)")
         else:
             raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
         self.indata = self.adata.X.copy()
-        self.indata_genes = self.adata.var_names
+        self.indata_genes = self.adata.var_names.copy()
         
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
         # self.chunk_size = chunk_size
