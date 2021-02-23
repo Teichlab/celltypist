@@ -8,7 +8,7 @@ from celltypist import helpers
 __version__ = "0.1.9"
 
 def annotate(filename: str,
-             model: str = ""):
+             model: str = "", transpose = False):
              #,
              #chunk_size: int = defaults.chunk_size,
              #cpus: int = defaults.max_cpus,
