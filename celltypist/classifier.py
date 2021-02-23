@@ -51,7 +51,7 @@ class Classifier():
     def __init__(self, filename: str, model: Model): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         self.indata = pd.DataFrame()
-        self.indsta_genes = list()
+        self.indata_genes = list()
         self.file_type = ""
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
@@ -102,6 +102,12 @@ class Classifier():
         ad_ft = pd.DataFrame(self.indata_genes, columns=['ad_features']).reset_index().rename(columns={'index': 'ad_idx'})
         lr_ft = pd.DataFrame(self.model.classifier.features, columns=['lr_features']).reset_index().rename(columns={'index': 'lr_idx'})
         lr_idx = lr_ft.merge(ad_ft, left_on='lr_features', right_on='ad_features').sort_values(by='ad_idx').lr_idx.values
+
+        means_ = self.model.scaler.mean_[lr_idx]
+        sds_ = self.model.scaler.scale_[lr_idx]
+        self.indata = self.indata - means_
+        self.indata = self.indata / sds_
+        self.indata[:, self.indata.std(axis=0) == 0] = self.indata.min()
 
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
