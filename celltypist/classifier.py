@@ -49,7 +49,7 @@ class AnnotationResult():
 
 class Classifier():
     """Class that wraps the cell typing process."""
-    def __init__(self, filename: str, model: Model): #, chunk_size: int, cpus: int, quiet: bool):
+    def __init__(self, filename: str, model: Model, transpose = False): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         self.indata = pd.DataFrame()
         self.indata_genes = list()
@@ -58,15 +58,18 @@ class Classifier():
         logger.info(f"⏳ Loading data...")
         if self.filename.endswith('.csv'):
             self.file_type = "csv"
-            self.indata = np.log1p(pd.read_csv(self.filename, skiprows=1, header=None, index_col=0).values)
-            self.indata_genes = pd.read_csv(self.filename, header=None, index_col=0, nrows=1).to_numpy()[0]
+            self.adata = sc.read(self.filename)
+            if transpose:
+                self.adata = self.adata.transpose()
+            sc.pp.normalize_total(self.adata)
+            sc.pp.log1p(self.adata)
         elif helpers.is_h5ad(self.filename):
             self.file_type = "h5ad"
             self.adata = sc.read(self.filename)
-            self.indata = self.adata.X.copy()
-            self.indata_genes = self.adata.var_names
         else:
             raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
+        self.indata = self.adata.X.copy()
+        self.indata_genes = self.adata.var_names
         
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
         # self.chunk_size = chunk_size
@@ -109,7 +112,7 @@ class Classifier():
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
         self.indata = self.indata / sds_
-        self.indata[:, self.indata.std(axis=0).A1 == 0] = self.indata.min()
+        #self.indata[:, self.indata.std(axis=0).A1 == 0] = self.indata.min()
 
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
