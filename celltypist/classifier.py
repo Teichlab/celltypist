@@ -25,7 +25,7 @@ class AnnotationResult():
         self.indata = indata
 
     def predicted_labels_as_df(self) -> pd.DataFrame:
-        return pd.DataFrame(self.predicted_labels)
+        return pd.DataFrame(self.predicted_labels, columns=['predicted labels'])
 
     def probability_matrix_as_df(self) -> pd.DataFrame:
         return pd.DataFrame(self.probability_matrix, columns=self.model_celltypes)
