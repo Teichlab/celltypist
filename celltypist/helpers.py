@@ -23,9 +23,9 @@ def is_h5ad(input_file: str) -> bool:
     with open(input_file, "rb") as f:
         return str(f.read(5)[1:4]) == "b'HDF'"
 
-def is_csv(input_file: str) -> bool:
-    try:
-        df = pd.read_csv(input_file, header=None, index_col=0, nrows=1)
-        return True
-    except:
-        return False
+#def is_csv(input_file: str) -> bool:
+#    try:
+#        df = pd.read_csv(input_file, header=None, index_col=0, nrows=1)
+#        return True
+#    except:
+#        return False
