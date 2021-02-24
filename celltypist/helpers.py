@@ -1,7 +1,6 @@
 import csv
 import numpy as np
 import pandas as pd
-from celltypist import logger
 
 def prepare():
     """Prepare dataset to be annotated."""
