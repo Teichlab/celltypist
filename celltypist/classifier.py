@@ -43,9 +43,9 @@ class AnnotationResult():
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
             self.predicted_labels_as_df().to_excel(writer, sheet_name="Predicted Labels")
             self.probability_matrix_as_df().to_excel(writer, sheet_name="Probability Matrix")
- 
+
     def __str__(self):
-        return f"cell count: {self.cell_count}\npredicted labels: {self.predicted_labels}\nmodel celltypist{self.model_celltypes}"
+        return f"{self.cell_count[0]} cells predicted into {len(np.unique(self.predicted_labels))} cell types"
 
 class Classifier():
     """Class that wraps the cell typing process."""
