@@ -7,7 +7,7 @@ import pandas as pd
 from celltypist.models import Model
 from celltypist import models, helpers, logger
 # parallelisation
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 # hide warnings
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
