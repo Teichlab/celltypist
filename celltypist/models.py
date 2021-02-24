@@ -129,5 +129,5 @@ def download_models(force_update: bool=False) -> None:
 
 
 def update_models() -> None:
-    """Update models by re-downloadig them."""
+    """Update models by re-downloading them."""
     download_models(force_update=True)
