@@ -76,7 +76,7 @@ def get_default_model() -> str:
 
 
 def get_all_models() -> List[str]:
-    """Get a list of all the avaiable models included in the package."""
+    """Get a list of all the available models included in the package."""
     download_if_required()
     avaiable_models = []
     for model_filename in os.listdir(models_path):
@@ -87,7 +87,7 @@ def get_all_models() -> List[str]:
 
 
 def download_if_required() -> None:
-    """Download models if there are non present in the models' directory"""
+    """Download models if there are none present in the models directory"""
     if len([m for m in os.listdir(models_path) if m.endswith(".pkl")]) == 0:
         logger.info(f"🔎 No available models. Downloading...")
         download_models()
