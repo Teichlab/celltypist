@@ -39,12 +39,10 @@ class Model():
         """Get cell types included in the model."""
         return list(self.classifier.classes_)
 
-    # @property
-    # def features(self) -> List:
-    #     """Get genes included in the model."""
-    #     with open(data_path, "rt") as f:
-    #         return [gene.strip() for gene in f.readlines()]
-    #     #return list(self.classifier.features)
+    @property
+    def features(self) -> List:
+        """Get genes included in the model."""
+        return list(self.classifier.features)
 
     def predict_labels_and_prob(self, indata: np.ndarray) -> Tuple[List, List]:
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
