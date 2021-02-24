@@ -4,7 +4,7 @@ samples_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", 
 
 
 def get_sample_data(filename: str) -> str:
-    """Get path to sample input data included in the pacakge."""
+    """Get path to sample input data included in the package."""
     return os.path.join(samples_path, filename)
 
 
