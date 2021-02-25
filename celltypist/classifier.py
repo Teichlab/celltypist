@@ -99,7 +99,7 @@ class Classifier():
         logger.info(f"🧩 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         self.indata = self.indata[:, k_x_idx]
-        self.indata_genes = self.indata_genes[k_x]
+        self.indata_genes = self.indata_genes[k_x_idx]
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
         means_ = self.model.scaler.mean_[lr_idx]
