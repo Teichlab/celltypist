@@ -94,17 +94,12 @@ class Classifier():
         #lab_mat = np.hstack([result[i][0] for i in range(len(result))])
         #prob_mat = np.vstack([result[i][1] for i in range(len(result))])
 
-        logger.info(f"🧙 Gene reference matching")
-        ############################################################
-        #def gene_reference_matching(self, input_data, input_genes):
-        ############################################################    
-        # features is the gene names of the dataset to be annotated
+        logger.info(f"🧙 Matching reference genes")
         k_x = np.isin(self.indata_genes, list(self.model.classifier.features))
         logger.info(f"🧩 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x]
-
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
         means_ = self.model.scaler.mean_[lr_idx]
