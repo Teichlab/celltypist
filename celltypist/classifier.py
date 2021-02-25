@@ -57,6 +57,7 @@ class Classifier():
             self.adata = sc.read(self.filename)
             if transpose:
                 self.adata = self.adata.transpose()
+            self.adata.var_names_make_unique()
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
         elif helpers.is_h5ad(self.filename):
