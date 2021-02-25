@@ -95,7 +95,7 @@ class Classifier():
         #prob_mat = np.vstack([result[i][1] for i in range(len(result))])
 
         logger.info(f"🧙 Matching reference genes")
-        k_x = np.isin(self.indata_genes, list(self.model.classifier.features))
+        k_x = np.isin(self.indata_genes, self.model.classifier.features)
         logger.info(f"🧩 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         self.indata = self.indata[:, k_x_idx]
