@@ -121,6 +121,24 @@ class Classifier():
 
         return AnnotationResult(lab_mat, prob_mat, self.model.classifier.classes_)
 
+    def over_cluster(self, resolution=None):
+        """Over-clustering input data"""
+        if resolution is None:
+            if self.adata.shape[0] < 5000:
+                resolution = 5
+            elif self.adata.shape[0] < 20000:
+                resolution = 10
+            elif self.adata.shape[0] < 40000:
+                resolution = 15
+            else:
+                resolution = 20
+        sc.pp.highly_variable_genes(self.adata)
+        sc.pp.scale(self.adata, max_value=10)
+        sc.tl.pca(self.adata, n_comps=50)
+        sc.pp.neighbors(self.adata, n_neighbors=10, n_pcs=50)
+        sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
+        return self.adata.obs['over_clustering']
+
     # def print_config(self):
     #     """Show current configuration values for this clasifier."""
     #     (f"filename={self.filename}. cpus={self.cpus}. chunk_size={self.chunk_size}")
