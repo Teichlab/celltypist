@@ -68,10 +68,10 @@ class Classifier():
             if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
                 raise Exception("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
-            raise Exception("🛑 Invlaid input file type. Supported types: .csv and .h5ad")
+            raise Exception("🛑 Invalid input file type. Supported types: .csv and .h5ad")
         self.indata = self.adata.X.copy()
         self.indata_genes = self.adata.var_names.copy()
-        
+
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
         # self.chunk_size = chunk_size
         # self.cpus = cpus
