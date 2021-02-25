@@ -88,12 +88,12 @@ class Classifier():
         pass
 
     def celltype(self) -> AnnotationResult:
-        """Run celltyping jobs to get results."""
+        """Run celltyping jobs to predict cell types of input data."""
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
         #lab_mat = np.hstack([result[i][0] for i in range(len(result))])
         #prob_mat = np.vstack([result[i][1] for i in range(len(result))])
-        
+
         logger.info(f"🧙 Gene reference matching")
         ############################################################
         #def gene_reference_matching(self, input_data, input_genes):
