@@ -102,6 +102,7 @@ class Classifier():
         self.indata_genes = self.indata_genes[k_x_idx]
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
+        logger.info(f"🧙 Scaling input data")
         means_ = self.model.scaler.mean_[lr_idx]
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
