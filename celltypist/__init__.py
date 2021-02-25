@@ -13,7 +13,7 @@ def annotate(filename: str,
              #chunk_size: int = defaults.chunk_size,
              #cpus: int = defaults.max_cpus,
              #quiet: bool = False) -> classifier.AnnotationResult:
-    """Run celltying process to annotate the dataset."""
+    """Run celltyping process to annotate the dataset."""
     sgd_classifier = models.load(model)
 
     clf = classifier.Classifier(
