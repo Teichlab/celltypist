@@ -17,11 +17,11 @@ import scanpy as sc
 
 class AnnotationResult():
     """Class that represents the result of a celltyping annotation process."""
-    def __init__(self, labels: np.ndarray, prob_matrix: np.ndarray, model):
+    def __init__(self, labels: np.ndarray, prob_matrix: np.ndarray, classes_):
         self.predicted_labels = labels
         self.probability_matrix = prob_matrix
         self.cell_count = labels.shape
-        self.model_celltypes = model.classifier.classes_
+        self.model_celltypes = classes_
 
     def predicted_labels_as_df(self) -> pd.DataFrame:
         return pd.DataFrame(self.predicted_labels, columns=['predicted labels'])
@@ -119,7 +119,7 @@ class Classifier():
         # # prob_mat = np.vstack(results)
         logger.info("✅ Done!")
 
-        return AnnotationResult(lab_mat, prob_mat, self.model)
+        return AnnotationResult(lab_mat, prob_mat, self.model.classifier.classes_)
 
     # def print_config(self):
     #     """Show current configuration values for this clasifier."""
