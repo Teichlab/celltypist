@@ -136,9 +136,12 @@ class Classifier():
 
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering):
-        votes = pd.crosstab(predictions.predicted_labels, over_clustering)
-        majority = votes.idxmax()
-        return majority[over_clustering].values
+        votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
+        majority = votes.idxmax()[over_clustering].reset_index()
+        majority.index = predictions.predicted_labels.index
+        majority.columns = ['over clustering', 'predicted labels after majority voting']
+        predictions.predicted_labels = predictions.predicted_labels.join(majority)
+        return predictions
 
     # def print_config(self):
     #     """Show current configuration values for this clasifier."""
