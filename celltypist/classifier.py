@@ -17,34 +17,27 @@ import scanpy as sc
 
 class AnnotationResult():
     """Class that represents the result of a celltyping annotation process."""
-    def __init__(self, labels: np.ndarray, prob_matrix: np.ndarray, classes_: np.ndarray):
+    def __init__(self, labels: pd.DataFrame, prob: pd.DataFrame):
         self.predicted_labels = labels
-        self.probability_matrix = prob_matrix
-        self.cell_count = labels.shape
-        self.model_celltypes = classes_
+        self.probability_table = prob
+        self.cell_count = labels.shape[0]
 
-    def predicted_labels_as_df(self) -> pd.DataFrame:
-        return pd.DataFrame(self.predicted_labels, columns=['predicted labels'])
-
-    def probability_matrix_as_df(self) -> pd.DataFrame:
-        return pd.DataFrame(self.probability_matrix, columns=self.model_celltypes)
-
-    def summary_as_df(self) -> pd.DataFrame:
+    def summary_frequency(self, by = 'predicted labels') -> pd.DataFrame:
         """Get a summary of the cells per label obtained in the annotation process."""
-        unique, counts = np.unique(self.predicted_labels, return_counts=True)
+        unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
         df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
     def write_excel(self, filename: str):
-        """Write excel file with both the predicted labels and the probability matrix."""
+        """Write excel file with both the predicted labels and the probability table."""
         filename, _ = os.path.splitext(filename)
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
-            self.predicted_labels_as_df().to_excel(writer, sheet_name="Predicted Labels")
-            self.probability_matrix_as_df().to_excel(writer, sheet_name="Probability Matrix")
+            self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
+            self.probability_table.to_excel(writer, sheet_name="Probability Matrix")
 
     def __str__(self):
-        return f"{self.cell_count[0]} cells predicted into {len(np.unique(self.predicted_labels))} cell types"
+        return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted labels']))} cell types"
 
 class Classifier():
     """Class that wraps the cell typing process."""
