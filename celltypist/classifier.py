@@ -114,7 +114,7 @@ class Classifier():
         cells = self.adata.obs_names
         return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
-    def over_cluster(self, resolution=None):
+    def over_cluster(self, resolution=None) -> pd.Series:
         """Over-clustering input data"""
         if resolution is None:
             if self.adata.shape[0] < 5000:
@@ -133,7 +133,7 @@ class Classifier():
         return self.adata.obs['over_clustering']
 
     @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering):
+    def majority_vote(predictions: AnnotationResult, over_clustering) -> AnnotationResult:
         """Majority voting using the result from the over clustering"""
         votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
