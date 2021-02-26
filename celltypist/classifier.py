@@ -113,7 +113,8 @@ class Classifier():
         # # prob_mat = np.vstack(results)
         logger.info("✅ Done!")
 
-        return AnnotationResult(lab_mat, prob_mat, self.model.classifier.classes_)
+        cells = self.adata.obs_names
+        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
     def over_cluster(self, resolution=None):
         """Over-clustering input data"""
