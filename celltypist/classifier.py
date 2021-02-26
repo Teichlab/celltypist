@@ -140,6 +140,12 @@ class Classifier():
         sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         return self.adata.obs['over_clustering']
 
+    @staticmethod
+    def majority_vote(predictions: AnnotationResult, over_clustering):
+        votes = pd.crosstab(predictions.predicted_labels, over_clustering)
+        majority = votes.idxmax()
+        return majority[over_clustering].values
+
     # def print_config(self):
     #     """Show current configuration values for this clasifier."""
     #     (f"filename={self.filename}. cpus={self.cpus}. chunk_size={self.chunk_size}")
