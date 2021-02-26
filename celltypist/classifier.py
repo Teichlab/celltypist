@@ -5,7 +5,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 from celltypist.models import Model
-from celltypist import models, helpers, logger
+from celltypist import models, logger
 # parallelisation
 #from joblib import Parallel, delayed
 # hide warnings
@@ -45,23 +45,21 @@ class Classifier():
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
-        if self.filename.endswith('.csv'):
-            self.file_type = "csv"
+        if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab')):
             self.adata = sc.read(self.filename)
             if transpose:
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
-        elif helpers.is_h5ad(self.filename):
-            self.file_type = "h5ad"
+        elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
                 raise Exception("🛑 Detect scaled expression while expect log1p normalized expression to 10000 counts per cell")
             if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
                 raise Exception("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
-            raise Exception("🛑 Invalid input file type. Supported types: .csv and .h5ad")
+            raise Exception("🛑 Invalid input file type. Supported types: .csv, .txt, .tsv, .tab and .h5ad")
         self.indata = self.adata.X.copy()
         self.indata_genes = self.adata.var_names.copy()
 
