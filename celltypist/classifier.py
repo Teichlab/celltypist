@@ -17,7 +17,7 @@ import scanpy as sc
 
 class AnnotationResult():
     """Class that represents the result of a celltyping annotation process."""
-    def __init__(self, labels: np.ndarray, prob_matrix: np.ndarray, classes_):
+    def __init__(self, labels: np.ndarray, prob_matrix: np.ndarray, classes_: np.ndarray):
         self.predicted_labels = labels
         self.probability_matrix = prob_matrix
         self.cell_count = labels.shape
@@ -48,7 +48,7 @@ class AnnotationResult():
 
 class Classifier():
     """Class that wraps the cell typing process."""
-    def __init__(self, filename: str, model: Model, transpose = False): #, chunk_size: int, cpus: int, quiet: bool):
+    def __init__(self, filename: str, model: Model, transpose: bool = False): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
