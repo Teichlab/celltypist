@@ -109,7 +109,7 @@ class Classifier():
         # print(results)
         # # lab_mat = np.hstack(results)
         # # prob_mat = np.vstack(results)
-        logger.info("✅ Done!")
+        logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
         return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
@@ -125,6 +125,7 @@ class Classifier():
                 resolution = 15
             else:
                 resolution = 20
+        logger.info(f"🧙 Over-clustering input data with resolution set to {resolution}")
         sc.pp.highly_variable_genes(self.adata)
         sc.pp.scale(self.adata, max_value=10)
         sc.tl.pca(self.adata, n_comps=50)
@@ -135,11 +136,13 @@ class Classifier():
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering) -> AnnotationResult:
         """Majority voting using the result from the over clustering"""
+        logger.info("🧙 Majority voting")
         votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
         majority.index = predictions.predicted_labels.index
         majority.columns = ['over clustering', 'predicted labels after majority voting']
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
+        logger.info("✅ Majority voting done!")
         return predictions
 
     # def print_config(self):
