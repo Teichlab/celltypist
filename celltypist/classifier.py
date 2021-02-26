@@ -136,6 +136,8 @@ class Classifier():
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering) -> AnnotationResult:
         """Majority voting using the result from the over clustering"""
+        if isinstance(over_clustering, list):
+            over_clustering = np.array(over_clustering)
         logger.info("🧙 Majority voting")
         votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
