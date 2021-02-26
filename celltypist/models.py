@@ -26,7 +26,7 @@ class Model():
     @staticmethod
     def load(model_file_path):
         if not os.path.exists(model_file_path):
-            raise Exception(f"🛑 No such file: {model_file_path}")
+            raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
             try:
                 pkl_obj = pickle.load(fh)
