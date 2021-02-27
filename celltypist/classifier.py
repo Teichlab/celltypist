@@ -55,11 +55,11 @@ class Classifier():
         elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
-                raise Exception("🛑 Detect scaled expression while expect log1p normalized expression to 10000 counts per cell")
+                raise ValueError("🛑 Detect scaled expression while expect log1p normalized expression to 10000 counts per cell")
             if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
-                raise Exception("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
+                raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
-            raise Exception("🛑 Invalid input file type. Supported types: .csv, .txt, .tsv, .tab and .h5ad")
+            raise ValueError("🛑 Invalid input file type. Supported types: .csv, .txt, .tsv, .tab and .h5ad")
         self.indata = self.adata.X.copy()
         self.indata_genes = self.adata.var_names.copy()
 
