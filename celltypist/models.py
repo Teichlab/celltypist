@@ -53,7 +53,7 @@ def get_path_in_package(model: str) -> str:
     return os.path.join(models_path, f"{model}")
 
 
-def load(model: str = "") -> Model: #sklearn.linear_model.SGDClassifier:
+def load(model: str = "") -> Model:
     """Load model from package models, use model as named_model and fallback to using it as a path."""
     if not model:
         model = get_default_model()

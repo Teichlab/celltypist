@@ -8,7 +8,6 @@ from celltypist.models import Model
 from celltypist import models, logger
 # parallelisation
 #from joblib import Parallel, delayed
-# hide warnings
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
