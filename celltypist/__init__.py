@@ -1,27 +1,38 @@
 from celltypist import classifier
 from celltypist import models
 from celltypist import defaults
-from celltypist import samples
 from celltypist import logger
-from celltypist import helpers
+from celltypist import samples
 
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 
 def annotate(filename: str,
-             model: str = "", transpose_input: bool = False):
-             #,
-             #chunk_size: int = defaults.chunk_size,
-             #cpus: int = defaults.max_cpus,
-             #quiet: bool = False) -> classifier.AnnotationResult:
-    """Run celltyping process to annotate the dataset."""
+             model: str = "",
+             transpose_input: bool = False,
+             majority_voting: bool = False,
+             over_clustering = None) -> classifier.AnnotationResult:
+    """Run the prediction and (optional) majority voting to annotate the input dataset."""
+    #load model
     sgd_classifier = models.load(model)
-
-    clf = classifier.Classifier(
-        filename=filename,
-        model=sgd_classifier, transpose = transpose_input)
-        # ,
-        # cpus=cpus,
-        # chunk_size=chunk_size,
-        # quiet=quiet)
-
-    return clf.celltype()
+    #construct Classifier class
+    clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input)
+    #predict
+    predictions = clf.celltype()
+    if majority_voting is False:
+        return predictions
+    #over clustering
+    if over_clustering is None:
+        over_clustering = clf.over_cluster()
+    elif len(over_clustering) == 1:
+        if over_clustering in clf.adata.obs.columns.tolist():
+            over_clustering = clf.adata.obs[over_clustering]
+        else:
+            try:
+                with open(over_clustering, 'rt') as f:
+                    over_clustering = [x.strip() for x in f.readlines()]
+            except Exception as e:
+                raise Exception(f"🛑 {e}")
+    if len(over_clustering) != clf.adata.shape[0]:
+        raise ValueError(f"🛑 length of over_clustering ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
+    #majority voting
+    return classifier.Classifier.majority_vote(predictions, over_clustering)
