@@ -50,6 +50,7 @@ class Classifier():
             if transpose:
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
+            sc.pp.filter_genes(self.adata, min_cells=1)
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
         elif self.filename.endswith('.h5ad'):
@@ -98,7 +99,6 @@ class Classifier():
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
         self.indata = self.indata / sds_
-        #self.indata[:, self.indata.std(axis=0).A1 == 0] = self.indata.min()
 
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
