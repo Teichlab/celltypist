@@ -5,7 +5,7 @@ import requests
 import numpy as np
 import pandas as pd
 from typing import List, Tuple
-from celltypist import logger
+from . import logger
 
 
 data_path = os.path.join(
