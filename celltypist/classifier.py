@@ -1,17 +1,18 @@
 import os
-import math
-import anndata
+#import math
+#import anndata
 from typing import Tuple
+import scanpy as sc
 import numpy as np
 import pandas as pd
-from celltypist.models import Model
-from celltypist import models, logger
+from .models import Model
+from . import logger
 # parallelisation
 #from joblib import Parallel, delayed
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
-import scanpy as sc
+
 
 
 class AnnotationResult():

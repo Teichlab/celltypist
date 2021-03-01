@@ -1,7 +1,8 @@
 import os
-import math
+#import math
 import click
-from celltypist import logger, annotate, defaults, models
+from . import logger, defaults, models
+from .annotate import annotate
 
 
 def show_banner():
