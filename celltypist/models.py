@@ -37,12 +37,12 @@ class Model():
     @property
     def cell_types(self) -> List:
         """Get cell types included in the model."""
-        return list(self.classifier.classes_)
+        return self.classifier.classes_
 
     @property
     def features(self) -> List:
         """Get genes included in the model."""
-        return list(self.classifier.features)
+        return self.classifier.features
 
     def predict_labels_and_prob(self, indata: np.ndarray) -> Tuple[List, List]:
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
