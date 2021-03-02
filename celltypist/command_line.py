@@ -3,7 +3,6 @@ import click
 from . import logger, defaults, models
 from .annotate import annotate
 
-
 def show_banner():
     logger.info(r"""
                     oooo  oooo      .                           o8o               .
@@ -23,8 +22,6 @@ def show_config(config: dict):
     logger.info(f"\t🔖 Model: {config['model']}")
     logger.info(f"\t📝 Output prefix: {config['prefix'] if config['prefix'] else '(none)'}")
     logger.info(f"\t📂 Output path: {config['outdir']}")
-    # logger.info(f"\t-Chunk count: {config['chunk_count']} (each one of {config['chunk_size']} cells)")
-    # logger.info(f"\t-CPUs: {config['cpus']}")
 
 
 def show_help_and_exit(message: str):
@@ -41,15 +38,14 @@ def write_xlsx(result, prefix, outdir):
 
 
 def write_all_csv_files(result, prefix, outdir):
-    # write labels
+    #labels
     labels_filename = f"{prefix}predicted_labels.csv"
     result.predicted_labels_as_df().to_csv(
         os.path.join(outdir, labels_filename))
-    # write prob matrix
+    #prob table
     probability_filename = f"{prefix}probability_matrix.csv"
     result.probability_matrix_as_df().to_csv(
         os.path.join(outdir, probability_filename))
-
 
 @click.command()
 @click.option("-i","--indata", help="Input csv matrix (cells by genes). Gene IDs should be Gene Names.", type=str)
@@ -57,13 +53,11 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-o", "--outdir", default="", help="Output directory for all output files.", type=str)
 @click.option("-p","--prefix", default="", help="Output prefix for all output files.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single XLSX.")
-# @click.option("--chunk", default=defaults.chunk_size, help="Chunk sizes to read (adjust for memory performance).", type=int)
-# @click.option("--cpus", default=defaults.max_cpus, help="Limit the numbre of CPUs (default uses all avaiable).", type=int)
 @click.option("--update-models", is_flag=True, default=False, help="Downloads base models from the server.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide all console output.")
 def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_models: bool, quiet: bool):
-    #chunk: int, cpus: int, 
 
+    #update models or not
     if update_models:
         models.update_models()
         exit(0)
@@ -72,40 +66,38 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
     if not indata or not os.path.exists(indata):
         show_help_and_exit(f"🛑 Missing or invalid input file: '{indata}'")
 
-    # validate model name/file
+    # validate model
     if not model:
         model = models.get_default_model()
         logger.info(f"🔖 No model provided. Using deault: {model}")
-
     if model not in models.get_all_models() and not os.path.exists(model):
         show_help_and_exit(f"🛑 Missing or invalid model: '{model}'. Avaiable models are: {','.join(models.get_all_models())}")
 
+    #output dir
     if not outdir:
         outdir = os.getcwd()
         logger.warn(f"👀 No output directory provided. Using current directory: {os.getcwd()}")
 
+    #config settings
     config = {
         "indata": indata,
         "model": model,
         "prefix": prefix,
         "outdir": outdir,
-        # "chunk_size": chunk,
-        # "chunk_count": math.ceil(total_size/chunk),
-        # "cpus": cpus,
         "quiet": quiet
     }
 
+    #quiet or not
     if not quiet:
         show_banner()
         show_config(config)
 
+    #celltyping and majority voting
     result = annotate(
         filename=config["indata"],
         model=config["model"])
-        # chunk_size=config["chunk_size"],
-        # cpus=config["cpus"],
-        # quiet=config["quiet"])
 
+    #write output
     if xlsx:
         write_xlsx(result, config["prefix"], config["outdir"])
     else:
