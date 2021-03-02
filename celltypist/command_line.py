@@ -1,5 +1,4 @@
 import os
-#import math
 import click
 from . import logger, defaults, models
 from .annotate import annotate
@@ -24,7 +23,6 @@ def show_config(config: dict):
     logger.info(f"\t🔖 Model: {config['model']}")
     logger.info(f"\t📝 Output prefix: {config['prefix'] if config['prefix'] else '(none)'}")
     logger.info(f"\t📂 Output path: {config['outdir']}")
-    # logger.info(f"\t-Cell count: {config['cell_count']}")
     # logger.info(f"\t-Chunk count: {config['chunk_count']} (each one of {config['chunk_size']} cells)")
     # logger.info(f"\t-CPUs: {config['cpus']}")
 
@@ -43,10 +41,6 @@ def write_xlsx(result, prefix, outdir):
 
 
 def write_all_csv_files(result, prefix, outdir):
-    # write summary
-    summary_filename = f"{prefix}summary.csv"
-    result.summary_as_df().to_csv(
-        os.path.join(outdir, summary_filename))
     # write labels
     labels_filename = f"{prefix}predicted_labels.csv"
     result.predicted_labels_as_df().to_csv(
@@ -90,9 +84,6 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
         outdir = os.getcwd()
         logger.warn(f"👀 No output directory provided. Using current directory: {os.getcwd()}")
 
-    # with open(indata) as fh:
-    #     total_size = sum(1 for line in fh)
-
     config = {
         "indata": indata,
         "model": model,
@@ -100,7 +91,6 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
         "outdir": outdir,
         # "chunk_size": chunk,
         # "chunk_count": math.ceil(total_size/chunk),
-        # "cell_count": total_size,
         # "cpus": cpus,
         "quiet": quiet
     }
@@ -112,7 +102,6 @@ def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_m
     result = annotate(
         filename=config["indata"],
         model=config["model"])
-        # ,
         # chunk_size=config["chunk_size"],
         # cpus=config["cpus"],
         # quiet=config["quiet"])
