@@ -38,11 +38,11 @@ def write_xlsx(result, prefix, outdir):
 def write_all_csv_files(result, prefix, outdir):
     #labels
     labels_filename = f"{prefix}predicted_labels.csv"
-    result.predicted_labels_as_df().to_csv(
+    result.predicted_labels.to_csv(
         os.path.join(outdir, labels_filename))
     #prob table
     probability_filename = f"{prefix}probability_matrix.csv"
-    result.probability_matrix_as_df().to_csv(
+    result.probability_table.to_csv(
         os.path.join(outdir, probability_filename))
 
 @click.command()
