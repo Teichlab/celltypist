@@ -15,7 +15,7 @@ def annotate(filename: str,
         If it's the former, a cell-by-gene format is desirable (see `transpose_input` for more information).
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        Model used to predict the input cells. Default to using the 'Immune_All_Low.pkl' model.
+        Model used to predict the input cells. Default to using the `Immune_All_Low.pkl` model.
         To see all available models and their description, use `celltypist.models.models_description()`.
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
@@ -33,7 +33,7 @@ def annotate(filename: str,
 
     Returns
     ----------
-    A `~celltypist.classifier.AnnotationResult` object
+    A `~celltypist.classifier.AnnotationResult` object.
     """
     #load model
     sgd_classifier = models.load(model)
