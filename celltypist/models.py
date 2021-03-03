@@ -142,7 +142,13 @@ def update_models() -> None:
     download_models(force_update=True)
 
 def models_description() -> pd.DataFrame:
-    """get the description of all models"""
+    """
+    get the descriptions of all available models
+
+    Returns
+    ----------
+    A `~pandas.DataFrame` object
+    """
     models_json = get_models_index()
     models = models_json["models"]
     filenames = [model['filename'] for model in models]
