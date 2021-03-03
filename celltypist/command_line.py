@@ -109,9 +109,14 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
         show_config(config)
 
     #celltyping and majority voting
+    if over_clustering == 'auto':
+        over_clustering = None
     result = annotate(
-        filename=config["indata"],
-        model=config["model"])
+        filename=indata,
+        model=model,
+        transpose_input=transpose_input,
+        majority_voting=majority_voting,
+        over_clustering=over_clustering)
 
     #write output
     if xlsx:
