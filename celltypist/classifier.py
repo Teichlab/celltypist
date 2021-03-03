@@ -33,7 +33,7 @@ class AnnotationResult():
 
         Returns
         ----------
-        A `~pandas.DataFrame` object.
+        A `~pandas.DataFrame` object with cell type frequencies.
         """
         unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
         df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
@@ -142,7 +142,19 @@ class Classifier():
         return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
     def over_cluster(self, resolution=None) -> pd.Series:
-        """Over-clustering input data"""
+        """
+        Over-clustering input data with a canonical scanpy pipeline.
+
+        Parameters
+        ----------
+        resolution
+            resolution parameter for leiden clustering which controls the coarseness of the clustering.
+            Default to 5, 10, 15 and 20 for datasets with cell numbers less than 5k, 20k, 40k and above, respectively.
+
+        Returns
+        ----------
+        A `~pandas.Series` object showing the over-clustering result.
+        """
         if resolution is None:
             if self.adata.shape[0] < 5000:
                 resolution = 5
