@@ -147,7 +147,7 @@ def models_description() -> pd.DataFrame:
 
     Returns
     ----------
-    A `~pandas.DataFrame` object
+    A `~pandas.DataFrame` object.
     """
     models_json = get_models_index()
     models = models_json["models"]
