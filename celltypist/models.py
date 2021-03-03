@@ -75,7 +75,13 @@ def load(model: str = "") -> Model:
 
 
 def get_default_model() -> str:
-    """Get default model name from models.json"""
+    """
+    Get the default model name.
+
+    Returns
+    ----------
+    A string showing the default model name (should be `Immune_All_Low.pkl`).
+    """
     models_json = get_models_index()
     default_model = [m["filename"] for m in models_json["models"] if ("default" in m and m["default"])]
     if not default_model:
