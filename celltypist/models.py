@@ -131,3 +131,11 @@ def download_models(force_update: bool=False) -> None:
 def update_models() -> None:
     """Update models by re-downloading them."""
     download_models(force_update=True)
+
+def models_description() -> pd.DataFrame:
+    """get the description of all models"""
+    models_json = get_models_index()
+    models = models_json["models"]
+    filenames = [model['filename'] for model in models]
+    descriptions = [model['details'] for model in models]
+    return pd.DataFrame({'model': filenames, 'description': descriptions})
