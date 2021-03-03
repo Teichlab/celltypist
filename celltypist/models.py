@@ -114,7 +114,16 @@ def download_model_index(only_model: bool = True) -> None:
         download_models()
 
 def download_models(force_update: bool=False) -> None:
-    """Download all the models"""
+    """
+    Download all the available models.
+
+    Parameters
+    ----------
+    force_update
+        Whether to fetch a latest JSON index for downloading all available models.
+        Set to `True` if you want to parallel the latest celltypist model releases.
+        (Default: `False`)
+    """
     models_json = get_models_index(force_update)
     model_count = len(models_json["models"])
     logger.info(f"📂 Storing models in {models_path}")
