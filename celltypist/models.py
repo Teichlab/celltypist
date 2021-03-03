@@ -143,7 +143,7 @@ def update_models() -> None:
 
 def models_description() -> pd.DataFrame:
     """
-    get the descriptions of all available models
+    get the descriptions of all available models.
 
     Returns
     ----------
