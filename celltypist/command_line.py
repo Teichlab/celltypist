@@ -55,7 +55,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-oc", "--over-clustering", default=None, help="Input file with clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. Default to using a heuristic over-clustering approach based on input data size. Ignored if --majority-voting is not set.", type=str)
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
-@click.option("-p", "--prefix", default="", help="Prefix for the output file/files.", type=str)
+@click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no specific prefix.", type=str)
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote before running the pipeline.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
