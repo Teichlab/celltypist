@@ -1,7 +1,5 @@
 import os
-#import math
-#import anndata
-from typing import Tuple
+#from typing import Tuple
 import scanpy as sc
 import numpy as np
 import pandas as pd
