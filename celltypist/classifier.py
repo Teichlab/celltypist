@@ -28,7 +28,18 @@ class AnnotationResult():
         return df
 
     def write_excel(self, filename: str):
-        """Write excel file with both the predicted labels and the probability table."""
+        """
+        Write excel file with both the predicted labels and the probability table.
+
+        Parameters
+        ----------
+        filename
+            Excel file (.xlsx) to store the predicted cell types and probability matrix.
+
+        Returns
+        ----------
+        An xlsx file containing two sheets of predicted labels and probability matrix, respectively
+        """
         filename, _ = os.path.splitext(filename)
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
             self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
