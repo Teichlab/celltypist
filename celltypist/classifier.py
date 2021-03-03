@@ -50,7 +50,7 @@ class Classifier():
             if transpose:
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
-            sc.pp.filter_genes(self.adata, min_cells=1)
+            #sc.pp.filter_genes(self.adata, min_cells=1)
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
         elif self.filename.endswith('.h5ad'):
