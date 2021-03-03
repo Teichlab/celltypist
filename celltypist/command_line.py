@@ -52,7 +52,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-m", "--model", default="", help="Model used for predictions. Default to using the 'Immune_All_Low.pkl' model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if --indata file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Run the majority voting classifier to refine the predicted labels.")
-@click.option("-oc", "--over-clustering", default=None, help="Input file with clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. Default to using a heuristic over-clustering approach based on input data size. Ignored if --majority-voting is not set.", type=str)
+@click.option("-oc", "--over-clustering", default='auto', help="Input file with clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. Default to using a heuristic over-clustering approach based on input data size. Ignored if --majority-voting is not set.", type=str)
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no specific prefix.", type=str)
@@ -83,13 +83,27 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
         logger.warn(f"👀 No output directory provided. Using the current directory: {outdir}")
 
     #config settings
-    config = {
-        "indata": indata,
-        "model": model,
-        "prefix": prefix,
-        "outdir": outdir,
-        "quiet": quiet
-    }
+    if not majority_voting:
+        config = {
+                "indata": indata,
+                "model": model,
+                "transpose-input": transpose_input,
+                "majority-voting": majority_voting,
+                "outdir": outdir,
+                "prefix": prefix,
+                "quiet": quiet
+                }
+    else:
+        config = {
+                "indata": indata,
+                "model": model,
+                "transpose-input": transpose_input,
+                "majority-voting": majority_voting,
+                "over-clustering": over_clustering,
+                "outdir": outdir,
+                "prefix": prefix,
+                "quiet": quiet
+                }
 
     #quiet or not
     if not quiet:
