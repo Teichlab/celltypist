@@ -54,7 +54,19 @@ def get_path_in_package(model: str) -> str:
 
 
 def load(model: str = "") -> Model:
-    """Load model from package models, use model as named_model and fallback to using it as a path."""
+    """
+    Load the desired model.
+
+    Parameters
+    ----------
+    model
+        Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
+        To see all available models and their descriptions, use `celltypist.models.models_description()`.
+
+    Returns
+    ----------
+    A `~celltypist.models.Model` object.
+    """
     if not model:
         model = get_default_model()
     if model in get_all_models():
