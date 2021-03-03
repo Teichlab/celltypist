@@ -58,7 +58,8 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files.", type=str)
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote before running the pipeline.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
-def main(indata: str, model: str, outdir: str, prefix: str, xlsx: bool, update_models: bool, quiet: bool):
+def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
+         outdir: str, xlsx: bool, prefix: str, update_models: bool, quiet: bool):
 
     #update models or not
     if update_models:
