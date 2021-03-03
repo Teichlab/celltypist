@@ -48,7 +48,7 @@ def write_all_csv_files(result, prefix, outdir):
         os.path.join(outdir, probability_filename))
 
 @click.command()
-@click.option("-i", "--indata", help="Input count matrix (e.g., .csv) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=str, required=True)
+@click.option("-i", "--indata", help="Input count matrix (e.g., .csv) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=str)
 @click.option("-m", "--model", default="", help="Model used for predictions. Default to using the 'Immune_All_Low.pkl' model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if --indata file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Run the majority voting classifier to refine the predicted labels.")
@@ -56,7 +56,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no specific prefix.", type=str)
-@click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote before running the pipeline.")
+@click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
          outdir: str, xlsx: bool, prefix: str, update_models: bool, quiet: bool):
