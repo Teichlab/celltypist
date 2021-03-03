@@ -18,10 +18,8 @@ d88' `"Y8 d88' `88b  888   888    888    `88.  .8'   888' `88b `888  d88(  "8   
 
 def show_config(config: dict):
     logger.info(f"🛠️ Configuration:")
-    logger.info(f"\t📥 Input: {config['indata']}")
-    logger.info(f"\t🔖 Model: {config['model']}")
-    logger.info(f"\t📝 Output prefix: {config['prefix'] if config['prefix'] else '(none)'}")
-    logger.info(f"\t📂 Output path: {config['outdir']}")
+    for key, value in config.items():
+        logger.info(f"\t📥 {key}: {value}")
 
 
 def show_help_and_exit(message: str):
