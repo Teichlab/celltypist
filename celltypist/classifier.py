@@ -101,7 +101,13 @@ class Classifier():
         pass
 
     def celltype(self) -> AnnotationResult:
-        """Run celltyping jobs to predict cell types of input data."""
+        """
+        Run celltyping jobs to predict cell types of input data.
+
+        Returns
+        ----------
+        A `~celltypist.classifier.AnnotationResult` object.
+        """
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
         #lab_mat = np.hstack([result[i][0] for i in range(len(result))])
