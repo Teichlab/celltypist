@@ -27,13 +27,13 @@ class AnnotationResult():
         Parameters
         ----------
         by
-            Column name of `predicted_labels` specifying the prediction type which the summary is based on.
-            Set to 'predicted labels after majority voting' if you want to summarize for the majority voting classifier.
-            (Default: 'predicted labels')
+            Column name of `.predicted_labels` specifying the prediction type which the summary is based on.
+            Set to `predicted labels after majority voting` if you want to summarize for the majority voting classifier.
+            (Default: `predicted labels`)
 
         Returns
         ----------
-        A `~pandas.DataFrame` object
+        A `~pandas.DataFrame` object.
         """
         unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
         df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
