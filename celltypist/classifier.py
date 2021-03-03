@@ -50,7 +50,6 @@ class Classifier():
             if transpose:
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
-            #sc.pp.filter_genes(self.adata, min_cells=1)
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
         elif self.filename.endswith('.h5ad'):
@@ -126,6 +125,8 @@ class Classifier():
             else:
                 resolution = 20
         logger.info(f"🧙 Over-clustering input data with resolution set to {resolution}")
+        if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab')):
+            sc.pp.filter_genes(self.adata, min_cells=1)
         sc.pp.highly_variable_genes(self.adata)
         sc.pp.scale(self.adata, max_value=10)
         sc.tl.pca(self.adata, n_comps=50)
