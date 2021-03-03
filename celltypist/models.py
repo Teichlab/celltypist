@@ -167,11 +167,11 @@ def update_models() -> None:
 
 def models_description() -> pd.DataFrame:
     """
-    get the descriptions of all available models.
+    Get the descriptions of all available models.
 
     Returns
     ----------
-    A `~pandas.DataFrame` object.
+    A `~pandas.DataFrame` object with model descriptions.
     """
     models_json = get_models_index()
     models = models_json["models"]
