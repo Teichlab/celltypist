@@ -88,6 +88,7 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
                 "transpose-input": transpose_input,
                 "majority-voting": majority_voting,
                 "outdir": outdir,
+                "xlsx": xlsx,
                 "prefix": prefix,
                 "quiet": quiet
                 }
@@ -99,6 +100,7 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
                 "majority-voting": majority_voting,
                 "over-clustering": over_clustering,
                 "outdir": outdir,
+                "xlsx": xlsx,
                 "prefix": prefix,
                 "quiet": quiet
                 }
