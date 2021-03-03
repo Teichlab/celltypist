@@ -80,7 +80,7 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
     #output dir
     if not outdir:
         outdir = os.getcwd()
-        logger.warn(f"👀 No output directory provided. Using current directory: {os.getcwd()}")
+        logger.warn(f"👀 No output directory provided. Using the current directory: {outdir}")
 
     #config settings
     config = {
