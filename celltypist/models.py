@@ -138,7 +138,7 @@ def download_models(force_update: bool=False) -> None:
 
 
 def update_models() -> None:
-    """Update models by re-downloading them."""
+    """Update models by re-downloading the latest model versions."""
     download_models(force_update=True)
 
 def models_description() -> pd.DataFrame:
