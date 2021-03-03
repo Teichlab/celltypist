@@ -48,11 +48,11 @@ def write_all_csv_files(result, prefix, outdir):
         os.path.join(outdir, probability_filename))
 
 @click.command()
-@click.option("-i", "--indata", help="Input count matrix (e.g., .csv) or Scanpy object (.h5ad). Genes should be gene symbols.", type=str)
+@click.option("-i", "--indata", help="Input count matrix (e.g., .csv) or Scanpy object (.h5ad). Genes should be gene symbols.", type=str, required=True)
 @click.option("-m", "--model", default="", help="Model used for predictions. Default to using the 'Immune_All_Low.pkl' model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix. Celltypist needs a cell-by-gene matrix as the input.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Run the majority voting classifier to refine the predicted labels.")
-@click.option("-oc", "--over-clustering", default=None, help="Input file with clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. Default to using a heuristic over-clustering approach based on input data size. Ignored if --majority-voting is not set.")
+@click.option("-oc", "--over-clustering", default=None, help="Input file with clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. Default to using a heuristic over-clustering approach based on input data size. Ignored if --majority-voting is not set.", type=str)
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files.", type=str)
