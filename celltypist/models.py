@@ -94,7 +94,13 @@ def get_default_model() -> str:
 
 
 def get_all_models() -> List[str]:
-    """Get a list of all the available models included in the package."""
+    """
+    Get a list of all the available models included in the package.
+
+    Returns
+    ----------
+    A list of available models.
+    """
     download_if_required()
     avaiable_models = []
     for model_filename in os.listdir(models_path):
