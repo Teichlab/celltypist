@@ -33,7 +33,9 @@ def annotate(filename: str,
 
     Returns
     ----------
-    A `~celltypist.classifier.AnnotationResult` object.
+    A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
+        1) `.predicted_labels`: predicted labels from celltypist.
+        2) `.probability_table`: probability matrix from celltypist.
     """
     #load model
     sgd_classifier = models.load(model)

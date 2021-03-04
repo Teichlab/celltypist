@@ -106,7 +106,9 @@ class Classifier():
 
         Returns
         ----------
-        A `~celltypist.classifier.AnnotationResult` object.
+        A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
+            1) `.predicted_labels`: predicted labels from celltypist.
+            2) `.probability_table`: probability matrix from celltypist.
         """
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
