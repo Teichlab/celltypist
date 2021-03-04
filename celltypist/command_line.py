@@ -79,6 +79,8 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
     if not outdir:
         outdir = os.getcwd()
         logger.warn(f"👀 No output directory provided. Using the current directory: {outdir}")
+    if not os.path.exists(outdir):
+        show_help_and_exit(f"🛑 Output directory '{outdir}' does not exist.")
 
     #config settings
     if not majority_voting:
