@@ -178,7 +178,22 @@ class Classifier():
 
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering) -> AnnotationResult:
-        """Majority voting using the result from the over clustering"""
+        """
+        Majority vote the celltypist predictions using the result from the over-clustering.
+
+        Parameters
+        ----------
+        predictions
+            A `~celltypist.classifier.AnnotationResult` object containing the attribute `.predicted_labels`.
+        over_clustering
+            A list, numpy array or pandas series containing the over-clustering information.
+
+        Returns
+        ----------
+        A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
+            1) `.predicted_labels`: predicted labels from celltypist.
+            2) `.probability_table`: probability matrix from celltypist.
+        """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)
         logger.info("🧙 Majority voting")
