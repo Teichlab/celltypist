@@ -55,13 +55,22 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no specific prefix.", type=str)
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
+@click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
-         outdir: str, xlsx: bool, prefix: str, update_models: bool, quiet: bool):
+         outdir: str, xlsx: bool, prefix: str, update_models: bool, show_models: bool, quiet: bool):
 
     #update models or not
     if update_models:
         models.update_models()
+        exit(0)
+
+    #show all models
+    if show_models:
+        md = models.models_description()
+        for _, row in md.iterrows():
+            row = row.tolist()
+            logger.info(row[0] + '   ' + row[1])
         exit(0)
 
     #validate input file
