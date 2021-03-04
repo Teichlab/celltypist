@@ -130,7 +130,19 @@ def download_if_required() -> None:
 
 
 def get_models_index(force_update: bool=False) -> dict:
-    """Get the model json containing the model list."""
+    """
+    Get the model json object containing the model list.
+
+    Parameters
+    ----------
+    force_update
+        If set to `True`, will download the latest model json file from the remote.
+        (Default: `False`)
+
+    Returns
+    ----------
+    A dict object converted from the json file.
+    """
     models_json_path = os.path.join(models_path, "models.json")
     if not os.path.exists(models_json_path) or force_update:
         download_model_index()
