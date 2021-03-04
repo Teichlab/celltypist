@@ -49,7 +49,19 @@ class Model():
 
 
 def get_path_in_package(model: str) -> str:
-    """Get a named model from the models included in the package."""
+    """
+    Get the full path to the model specified.
+
+    Parameters
+    ----------
+    model
+        Model name as a string.
+        To see all available models and their descriptions, use `celltypist.models.models_description()`
+
+    Returns
+    ----------
+    A string of the full path to the desired model.
+    """
     return os.path.join(models_path, f"{model}")
 
 
