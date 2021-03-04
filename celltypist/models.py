@@ -123,14 +123,14 @@ def get_all_models() -> List[str]:
 
 
 def download_if_required() -> None:
-    """Download models if there are none present in the models directory"""
+    """Download models if there are none present in the package models directory."""
     if len([m for m in os.listdir(models_path) if m.endswith(".pkl")]) == 0:
         logger.info(f"🔎 No available models. Downloading...")
         download_models()
 
 
 def get_models_index(force_update: bool=False) -> dict:
-    """Get model json with the model list"""
+    """Get the model json containing the model list."""
     models_json_path = os.path.join(models_path, "models.json")
     if not os.path.exists(models_json_path) or force_update:
         download_model_index()
@@ -139,7 +139,7 @@ def get_models_index(force_update: bool=False) -> dict:
 
 
 def download_model_index(only_model: bool = True) -> None:
-    """Pull the model list from the server"""
+    """Pull the model list from the server."""
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
     with open(os.path.join(models_path, "models.json"), "wb") as f:
