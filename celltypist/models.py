@@ -151,7 +151,15 @@ def get_models_index(force_update: bool=False) -> dict:
 
 
 def download_model_index(only_model: bool = True) -> None:
-    """Pull the model list from the server."""
+    """
+    Download the models.json file from the remote server.
+
+    Parameters
+    ----------
+    only_model
+        If set to `False`, will also download the models in addition to the json file.
+        (Default: `True`)
+    """
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
     with open(os.path.join(models_path, "models.json"), "wb") as f:
