@@ -35,12 +35,12 @@ class Model():
                 raise Exception(f"🛑 Invalid model: {model_file_path}. {exception}")
 
     @property
-    def cell_types(self) -> List:
+    def cell_types(self) -> np.ndarray:
         """Get cell types included in the model."""
         return self.classifier.classes_
 
     @property
-    def features(self) -> List:
+    def features(self) -> np.ndarray:
         """Get genes included in the model."""
         return self.classifier.features
 
