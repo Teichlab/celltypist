@@ -96,7 +96,7 @@ To turn on the majority voting classifier in addition to the Celltypist predicti
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
 ```
-Before the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
+During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `adata` (pre-created by the user).
    3) a Python list, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
@@ -116,7 +116,7 @@ predictions.write_excel('/path/to/output.xlsx')
 
 ## 2. Use as the command line
 
-### 2.1. Check the command line options of Celltypist
+### 2.1. Check the command line options
 ```bash
 celltypist --help
 ```
@@ -125,33 +125,40 @@ celltypist --help
 ```bash
 celltypist --update-models
 ```
-Note this will download the latest models from the remote server.
+This will download the latest models from the remote server.
 
-### 2.3. Celltyping based on the input of count table
+### 2.3. Overview of the models
+```bash
+celltypist --show-models
+```
+
+### 2.4. Celltyping based on the input of count table
 See `1.5.` for the format of the desired count matrix.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir
 ```
-You can add a different model to be used in the `--model` option. If the `--model` is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model. If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
+You can add a different model to be used in the `--model` option. If the `--model` is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.
+If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
 ```
+Other options that control the output files of Celltypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
 
-### 2.4. Celltyping based on a Scanpy h5ad data
-See `1.6.` for the requirement of the Scanpy expression data. 
+### 2.5. Celltyping based on Scanpy h5ad data
+See `1.6.` for the requirement of the Scanpy expression data.
 ```bash
 celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir
 ```
 
-### 2.5. Use a majority voting classifier combined with celltyping
-See `1.7` for how the majority voting classifier works.
+### 2.6. Use a majority voting classifier combined with celltyping
+See `1.7.` for how the majority voting classifier works.
 ```bash
-celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
+celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
 ```
-After adding the `--majority-voting` argument, Celltypist will turn on the majority voting classifier in addition to the Celltypist predictions.  Users can also provide their own over-clustering result to the `--over-clustering` argument. This argument can be provided in several ways:
+During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
-   2) a string key specifying an existing metadata column in the adata (pre-created by the user).
-   3) if none of the above is provided, will use a heuristic over-clustering approach.
+   2) a string key specifying an existing metadata column in the `adata` (pre-created by the user).
+   3) if none of the above is provided, will use a heuristic over-clustering approach as mentioned.
 ```bash
-celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
+celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
 ```
