@@ -81,29 +81,37 @@ Since the expression of each gene will be centered and scaled by matching with t
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
+#Examine the predicted cell types.
+predictions.predicted_labels
+#Examine the matrix representing the probability each cell belongs to a given cell type.
+predictions.probability_table
+#Export the above two results to an Excel table.
+predictions.write_excel('/path/to/output.xlsx')
 ```
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
-By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a cluster regardless of their predictions from the Celltypist. 
+By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
 To turn on the majority voting classifier in addition to the Celltypist predictions, add `majority_voting = True` to the `annotate` function. 
 ```python
-#Turn on the majority voting classifier
+#Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
 ```
-
-By default, before the majority voting, Celltypist will use a heuristic over-clustering approach on the basis of the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be provided in several ways:
+Before the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
-   2) a string key specifying an existing metadata column in the adata (pre-created by the user).
-   3) a python list, numpy array, or pandas series indicating the over-clustering result of all cells.
+   2) a string key specifying an existing metadata column in the `adata` (pre-created by the user).
+   3) a Python list, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
    4) if none of the above is provided, will use a heuristic over-clustering approach as mentioned.
 ```python
-#Add your own over-clustering file.
-predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = "/path/to/over_clustering/file")
-#Inspect the result
+#Add your own over-clustering result.
+predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
+```
+Again, an instance of the `AnnotationResult` class will be returned.
+```python
+#Inspect the result.
 predictions.predicted_labels
 predictions.probability_table
-#Export the result
-predictions.write_excel("/path/to/output.xlsx")
+#Export the result.
+predictions.write_excel('/path/to/output.xlsx')
 ```
 
 ## 2. Use as the command line
