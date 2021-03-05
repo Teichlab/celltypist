@@ -1,36 +1,38 @@
 # Overview of Celltypist
+Celltypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimized by the stochastic gradient descent algorithm. Celltypist provides several different models for predictions, with a current focus on immune sub-populations, in order to assist in the accurate classification of different cell types and subtypes.
 
-Celltypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimized by the stochastic gradient descent. Celltypist provides several different models, with a current focus on immune sub-populations, in order to assist in the accurate classification of different cell types and subtypes.
-
-# Install the developmental version
-
+# Install the development version
 ```console
 pip install celltypist-dev
 ```
 
 # Usage
 
-## 1. Use in the python environment
+## 1. Use in the Python environment
 
 ### 1.1. Import the module
 ```python
 import celltypist
 from celltypist import models
 ```
+
 ### 1.2. Download all available models
-Each model is on average 5 MB. We thus encourage the users to download all of them.
+The models serve as the basis for cell type predictions. Each model is on average 5 megabytes (MB). We thus encourage the users to download all of them.
 ```python
 #Download all the available models from the remote Sanger server.
 models.download_models()
 #Update all models by re-downloading the latest versions if you think they may be outdated.
 models.update_models()
+#Show the local directory storing these models.
+models.models_path
 ```
+
 ### 1.3. Overview of the models
 ```python
 #Get an overview of what these models represent and their names.
 models.models_description()
 ```
-### 1.4. Load the model of interest
+### 1.4. Inspect the model of interest
 ```python
 #Select the model from the above list. If not provided, will default to `Immune_All_Low.pkl`.  
 model = models.load(model = "Immune_All_Low.pkl")
