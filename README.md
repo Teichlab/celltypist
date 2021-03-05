@@ -38,7 +38,7 @@ models.models_description()
 To take a look at a given model, load the model as an instance of the `Model` class as defined in the Celltypist.
 ```python
 #Select the model from the above list. If not provided, will default to `Immune_All_Low.pkl`.
-model = models.load(model = "Immune_All_Low.pkl")
+model = models.load(model = 'Immune_All_Low.pkl')
 #Examine cell types contained in the model.
 model.cell_types
 #Examine genes/features contained in the model.
@@ -64,20 +64,23 @@ If your input file is in a gene-by-cell format (genes as rows and cells as colum
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True)
 ```
 Similarly, if the `model` argument is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model.
-`annotate` will return an instance of the `AnnotationResult` class as defined in the Celltypist.
+The `annotate` function will return an instance of the `AnnotationResult` class as defined in the Celltypist.
 ```python
 #Examine the predicted cell types.
 predictions.predicted_labels
 #Examine the matrix representing the probability each cell belongs to a given cell type.
 predictions.probability_table
 #Export the above two results to an Excel table.
-predictions.write_excel("/path/to/output.xlsx")
+predictions.write_excel('/path/to/output.xlsx')
 ```
+N.B. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
 
-### 1.6. Celltyping based on a Scanpy h5ad data
-Celltypist also accepts the input data as an `AnnData` generated from the Scanpy. Since proper scaling based on the model will be applied to the input data, Celltypist requires a logarithmized normalized expression matrix in the input adata (log1p normalized expression to 10000 counts per cell). Celltypist will automatically detect the type of the expression matrix contained in the Scanpy object, and raise errors/warnings accordingly.
+### 1.6. Celltyping based on Scanpy h5ad data
+Celltypist also accepts the input data as an `AnnData` generated from [Scanpy](https://scanpy.readthedocs.io/en/stable/).
+Since the expression of each gene will be centered and scaled by matching with the provided model, Celltypist requires a logarithmized and normalized expression matrix stored in the `adata` (log1p normalized expression to 10000 counts per cell). Celltypist will try the `adata.X` first, and if it does not suffice, try the `adata.raw.X`. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
 ```python
-predictions = celltypist.annotate("/path/to/input/adata", model = 'Immune_All_Low.pkl')
+#Provide the input as a Scanpy object.
+predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
 ```
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
