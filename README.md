@@ -28,27 +28,33 @@ models.models_path
 ```
 
 ### 1.3. Overview of the models
+All models are serialized in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
 ```python
 #Get an overview of what these models represent and their names.
 models.models_description()
 ```
+
 ### 1.4. Inspect the model of interest
+To take a look at a given model, load the model as an instance of the `Model` class as defined in the Celltypist.
 ```python
-#Select the model from the above list. If not provided, will default to `Immune_All_Low.pkl`.  
+#Select the model from the above list. If not provided, will default to `Immune_All_Low.pkl`.
 model = models.load(model = "Immune_All_Low.pkl")
 #Examine cell types contained in the model.
 model.cell_types
 #Examine genes/features contained in the model.
 model.features
-#The stochastic gradient descent logistic classifier within the model
+#The stochastic gradient descent logistic regression classifier within the model.
 model.classifier
 ```
-### 1.5. Celltyping based on the input of count table 
 
-Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv` or `.tab`. Raw count matrix (reads or UMIs) is required.
+### 1.5. Celltyping based on the input of count table 
+Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv` or `.tab`. A raw count matrix (reads or UMIs) is required.
 ```python
-#Get a demo input data. This is an UMI count .csv file with cells as rows and genes as columns.
+#Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
 input_file = celltypist.samples.get_sample_csv()
+```
+Assign the cell type labels within the model to the input test cells using the `annotate` function.
+```python
 #Predict the cell identity of each input cell.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
 ```
@@ -57,9 +63,8 @@ If your input file is in a gene-by-cell format (genes as rows and cells as colum
 #In case your input file is a gene-by-cell table.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True)
 ```
-
-Similarly, if the `model` argument is not provided, Celltypist will use the `Immune_All_Low.pkl` model.
-This will return an `AnnotationResult` class as defined in the Celltypist.
+Similarly, if the `model` argument is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model.
+`annotate` will return an instance of the `AnnotationResult` class as defined in the Celltypist.
 ```python
 #Examine the predicted cell types.
 predictions.predicted_labels
@@ -68,6 +73,7 @@ predictions.probability_table
 #Export the above two results to an Excel table.
 predictions.write_excel("/path/to/output.xlsx")
 ```
+
 ### 1.6. Celltyping based on a Scanpy h5ad data
 Celltypist also accepts the input data as an `AnnData` generated from the Scanpy. Since proper scaling based on the model will be applied to the input data, Celltypist requires a logarithmized normalized expression matrix in the input adata (log1p normalized expression to 10000 counts per cell). Celltypist will automatically detect the type of the expression matrix contained in the Scanpy object, and raise errors/warnings accordingly.
 ```python
