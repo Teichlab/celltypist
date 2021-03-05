@@ -18,9 +18,6 @@ class Model():
     """Class that wraps SGDClassifier and its components."""
     def __init__(self, clf, scaler):
         self.classifier = clf
-        if not hasattr(self.classifier, 'features'):
-            with open(os.path.join(data_path, "genes.csv"), "rt") as f:
-                self.classifier.features = np.array([gene.strip() for gene in f.readlines()])
         self.scaler = scaler
 
     @staticmethod
