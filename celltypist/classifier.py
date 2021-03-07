@@ -39,7 +39,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def write_excel(self, filename: str):
+    def write_excel(self, filename: str) -> None:
         """
         Write excel file with both the predicted labels and the probability table.
 
