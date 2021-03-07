@@ -20,7 +20,7 @@ class Model():
         self.scaler = scaler
 
     @staticmethod
-    def load(model_file_path: str) -> Model:
+    def load(model_file_path: str):
         if not os.path.exists(model_file_path):
             raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
