@@ -4,7 +4,6 @@ import pickle
 import requests
 import numpy as np
 import pandas as pd
-from typing import List, Tuple
 from . import logger
 
 
@@ -41,7 +40,7 @@ class Model():
         """Get genes included in the model."""
         return self.classifier.features
 
-    def predict_labels_and_prob(self, indata: np.ndarray) -> Tuple[List, List]:
+    def predict_labels_and_prob(self, indata: np.ndarray):
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 
@@ -102,7 +101,7 @@ def get_default_model() -> str:
     return default_model[0]
 
 
-def get_all_models() -> List[str]:
+def get_all_models():
     """
     Get a list of all the available models included in the package.
 
