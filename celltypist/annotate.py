@@ -7,7 +7,7 @@ def annotate(filename: str,
              model: str = "",
              transpose_input: bool = False,
              majority_voting: bool = False,
-             over_clustering: Optional[Union[str, np.ndarray, pd.Series]] = None) -> classifier.AnnotationResult:
+             over_clustering: Optional[Union[str, list, np.ndarray, pd.Series]] = None) -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
