@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 import scanpy as sc
 import numpy as np
 import pandas as pd
@@ -177,7 +177,7 @@ class Classifier():
         return self.adata.obs['over_clustering']
 
     @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering) -> AnnotationResult:
+    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, np.ndarray, pd.Series]) -> AnnotationResult:
         """
         Majority vote the celltypist predictions using the result from the over-clustering.
 
