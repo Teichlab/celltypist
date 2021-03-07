@@ -1,5 +1,5 @@
 import os
-#from typing import Tuple
+from typing import Optional, Literal
 import scanpy as sc
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ class AnnotationResult():
         self.probability_table = prob
         self.cell_count = labels.shape[0]
 
-    def summary_frequency(self, by = 'predicted labels') -> pd.DataFrame:
+    def summary_frequency(self, by: Literal['predicted labels', 'predicted labels after majority voting'] = 'predicted labels') -> pd.DataFrame:
         """
         Get the frequency of cells belonging to each cell type predicted by celltypist.
 
