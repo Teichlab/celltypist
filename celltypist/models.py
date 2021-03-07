@@ -20,7 +20,7 @@ class Model():
         self.scaler = scaler
 
     @staticmethod
-    def load(model_file_path: str):
+    def load(model_file_path: str) -> Model:
         if not os.path.exists(model_file_path):
             raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
@@ -40,7 +40,7 @@ class Model():
         """Get genes included in the model."""
         return self.classifier.features
 
-    def predict_labels_and_prob(self, indata: np.ndarray) -> tuple:
+    def predict_labels_and_prob(self, indata) -> tuple:
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 
