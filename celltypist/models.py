@@ -20,7 +20,7 @@ class Model():
         self.scaler = scaler
 
     @staticmethod
-    def load(model_file_path):
+    def load(model_file_path: str):
         if not os.path.exists(model_file_path):
             raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
@@ -40,7 +40,7 @@ class Model():
         """Get genes included in the model."""
         return self.classifier.features
 
-    def predict_labels_and_prob(self, indata: np.ndarray):
+    def predict_labels_and_prob(self, indata: np.ndarray) -> tuple:
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 
@@ -101,7 +101,7 @@ def get_default_model() -> str:
     return default_model[0]
 
 
-def get_all_models():
+def get_all_models() -> list:
     """
     Get a list of all the available models included in the package.
 
