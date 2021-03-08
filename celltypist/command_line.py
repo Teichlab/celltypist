@@ -92,8 +92,7 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
         show_help_and_exit(f"🛑 Output directory '{outdir}' does not exist")
 
     #config settings
-    if not majority_voting:
-        config = {
+    config = {
                 "indata": indata,
                 "model": model,
                 "transpose-input": transpose_input,
@@ -102,19 +101,9 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
                 "xlsx": xlsx,
                 "prefix": prefix,
                 "quiet": quiet
-                }
-    else:
-        config = {
-                "indata": indata,
-                "model": model,
-                "transpose-input": transpose_input,
-                "majority-voting": majority_voting,
-                "over-clustering": over_clustering,
-                "outdir": outdir,
-                "xlsx": xlsx,
-                "prefix": prefix,
-                "quiet": quiet
-                }
+             }
+    if majority_voting:
+        config["over-clustering"] = over_clustering
 
     #quiet or not
     if not quiet:
