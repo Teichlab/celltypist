@@ -1,6 +1,6 @@
 import os
 import click
-from . import logger, defaults, models
+from . import logger, models
 from .annotate import annotate
 
 def show_banner():

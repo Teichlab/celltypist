@@ -1,4 +1,4 @@
-from . import classifier, models, defaults, logger, samples
+from . import classifier, models, logger, samples
 from .annotate import *
 
 __version__ = "0.1.11"
