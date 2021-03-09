@@ -54,7 +54,7 @@ def get_path_in_package(model: str) -> str:
     ----------
     model
         Model name as a string.
-        To see all available models and their descriptions, use `celltypist.models.models_description()`.
+        To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
 
     Returns
     ----------
@@ -72,7 +72,7 @@ def load(model: str = "") -> Model:
     ----------
     model
         Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
-        To see all available models and their descriptions, use `celltypist.models.models_description()`.
+        To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
 
     Returns
     ----------
