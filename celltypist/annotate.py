@@ -38,10 +38,8 @@ def annotate(filename: str,
     ----------
     :class:`~celltypist.classifier.AnnotationResult`
         An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
-        :attr:`~predicted_labels`
-            predicted labels from celltypist.
-        :attr:`~probability_table`
-            probability matrix from celltypist.
+        1) :attr:`~predicted_labels`, predicted labels from celltypist.
+        2) :attr:`~probability_table`, probability matrix from celltypist.
     """
     #load model
     sgd_classifier = models.load(model)

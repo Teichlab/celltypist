@@ -110,10 +110,8 @@ class Classifier():
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
-            :attr:`~predicted_labels`
-                predicted labels from celltypist.
-            :attr:`~probability_table`
-                probability matrix from celltypist.
+            1) :attr:`~predicted_labels`, predicted labels from celltypist.
+            2) :attr:`~probability_table`, probability matrix from celltypist.
         """
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
@@ -161,7 +159,7 @@ class Classifier():
         Returns
         ----------
         :class:`~pandas.Series`
-            A `~pandas.Series` object showing the over-clustering result.
+            A :class:`~pandas.Series` object showing the over-clustering result.
         """
         if resolution is None:
             if self.adata.shape[0] < 5000:
@@ -198,10 +196,8 @@ class Classifier():
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
-            :attr:`~predicted_labels`
-                predicted labels from celltypist.
-            :attr:`~probability_table`
-                probability matrix from celltypist.
+            1) :attr:`~predicted_labels`, predicted labels from celltypist.
+            2) :attr:`~probability_table`, probability matrix from celltypist.
         """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)
