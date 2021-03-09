@@ -29,16 +29,19 @@ def annotate(filename: str,
     over_clustering
         This argument can be provided in several ways:
         1) an input plain file with the over-clustering result of one cell per line.
-        2) a string key specifying an existing metadata column in the AnnData (pre-created by the user).
+        2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
         3) a python list, numpy array, or pandas series indicating the over-clustering result of all cells.
         4) if none of the above is provided, will use a heuristic over-clustering approach based on input data size.
         Ignored if `majority_voting` is set to `False`.
 
     Returns
     ----------
-    A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
-        1) `.predicted_labels`: predicted labels from celltypist.
-        2) `.probability_table`: probability matrix from celltypist.
+    An :class:`~celltypist.classifier.AnnotationResult` object.
+        An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are
+        :attr:`~predicted_labels`
+            predicted labels from celltypist.
+        :attr:`~probability_table`
+            probability matrix from celltypist.
     """
     #load model
     sgd_classifier = models.load(model)
