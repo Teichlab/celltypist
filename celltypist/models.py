@@ -14,13 +14,14 @@ models_path = os.path.join(data_path, "models")
 
 
 class Model():
-    """Class that wraps SGDClassifier and its components."""
+    """Class that wraps the SGDClassifier and the StandardScaler."""
     def __init__(self, clf, scaler):
         self.classifier = clf
         self.scaler = scaler
 
     @staticmethod
     def load(model_file_path: str):
+        """Load the desired model."""
         if not os.path.exists(model_file_path):
             raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
@@ -41,6 +42,7 @@ class Model():
         return self.classifier.features
 
     def predict_labels_and_prob(self, indata) -> tuple:
+        """Predict the cell types and probability matrix using input data."""
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 
