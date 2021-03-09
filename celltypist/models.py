@@ -42,7 +42,7 @@ class Model():
         return self.classifier.features
 
     def predict_labels_and_prob(self, indata) -> tuple:
-        """Predict the cell types and probability matrix using input data."""
+        """Predict the cell types and get the probability matrix using input data."""
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 

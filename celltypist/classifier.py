@@ -26,7 +26,7 @@ class AnnotationResult():
         Parameters
         ----------
         by
-            Column name of `.predicted_labels` specifying the prediction type which the summary is based on.
+            Column name of :attr:`~predicted_labels` specifying the prediction type which the summary is based on.
             Set to `predicted labels after majority voting` if you want to summarize for the majority voting classifier.
             (Default: `predicted labels`)
 
@@ -42,7 +42,7 @@ class AnnotationResult():
 
     def write_excel(self, filename: str) -> None:
         """
-        Write excel file with both the predicted labels and the probability table.
+        Write excel file with both the predicted labels and the probability matrix.
 
         Parameters
         ----------
@@ -63,7 +63,7 @@ class AnnotationResult():
         return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted labels']))} cell types"
 
 class Classifier():
-    """Class that wraps the cell typing process."""
+    """Class that wraps the celltyping and majority voting processes."""
     def __init__(self, filename: str, model: Model, transpose: bool = False): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
@@ -96,11 +96,11 @@ class Classifier():
         #self.chunk_iterator = range(math.ceil(self.cell_count/self.chunk_size))
         #self.quiet = quiet
 
-    def process_chunk(self, start_at: int) -> None: #-> Tuple[np.ndarray, np.ndarray]:
-        """Process a chunk of the input file starting at the offset position."""
+    #def process_chunk(self, start_at: int) -> None: #-> Tuple[np.ndarray, np.ndarray]:
+        #"""Process a chunk of the input file starting at the offset position."""
         #X_test = np.log1p(pd.read_csv(self.filename, skiprows=start_at, nrows=self.chunk_size, header=None, index_col=0).values)
         #return self.model.predict_labels_and_prob(X_test)
-        pass
+        #pass
 
     def celltype(self) -> AnnotationResult:
         """
@@ -188,7 +188,7 @@ class Classifier():
         Parameters
         ----------
         predictions
-            A `~celltypist.classifier.AnnotationResult` object containing the attribute `.predicted_labels`.
+            An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~predicted_labels`.
         over_clustering
             A list, numpy array or pandas series containing the over-clustering information.
 
