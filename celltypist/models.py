@@ -76,7 +76,8 @@ def load(model: str = "") -> Model:
 
     Returns
     ----------
-    A `~celltypist.models.Model` object.
+    :class:`~celltypist.models.Model`
+        A :class:`~celltypist.models.Model` object.
     """
     if not model:
         model = get_default_model()
@@ -91,7 +92,8 @@ def get_default_model() -> str:
 
     Returns
     ----------
-    A string showing the default model name (should be `Immune_All_Low.pkl`).
+    str
+        A string showing the default model name (should be `Immune_All_Low.pkl`).
     """
     models_json = get_models_index()
     default_model = [m["filename"] for m in models_json["models"] if ("default" in m and m["default"])]
@@ -110,7 +112,8 @@ def get_all_models() -> list:
 
     Returns
     ----------
-    A list of available models.
+    list
+        A list of available models.
     """
     download_if_required()
     avaiable_models = []
@@ -122,7 +125,7 @@ def get_all_models() -> list:
 
 
 def download_if_required() -> None:
-    """Download models if there are none present in the package models directory."""
+    """Download models if there are none present in the package `models` directory."""
     if len([m for m in os.listdir(models_path) if m.endswith(".pkl")]) == 0:
         logger.info(f"🔎 No available models. Downloading...")
         download_models()
@@ -140,7 +143,8 @@ def get_models_index(force_update: bool=False) -> dict:
 
     Returns
     ----------
-    A dict object converted from the json file.
+    dict
+        A dict object converted from the json file.
     """
     models_json_path = os.path.join(models_path, "models.json")
     if not os.path.exists(models_json_path) or force_update:
@@ -151,7 +155,7 @@ def get_models_index(force_update: bool=False) -> dict:
 
 def download_model_index(only_model: bool = True) -> None:
     """
-    Download the models.json file from the remote server.
+    Download the `models.json` file from the remote server.
 
     Parameters
     ----------
@@ -202,7 +206,8 @@ def models_description() -> pd.DataFrame:
 
     Returns
     ----------
-    A `~pandas.DataFrame` object with model descriptions.
+    :class:`~pandas.DataFrame`
+        A :class:`~pandas.DataFrame` object with model descriptions.
     """
     models_json = get_models_index()
     models = models_json["models"]

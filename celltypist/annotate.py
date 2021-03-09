@@ -36,8 +36,8 @@ def annotate(filename: str,
 
     Returns
     ----------
-    An :class:`~celltypist.classifier.AnnotationResult` object.
-        An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are
+    :class:`~celltypist.classifier.AnnotationResult`
+        An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
         :attr:`~predicted_labels`
             predicted labels from celltypist.
         :attr:`~probability_table`
