@@ -32,7 +32,8 @@ class AnnotationResult():
 
         Returns
         ----------
-        A `~pandas.DataFrame` object with cell type frequencies.
+        :class:`~pandas.DataFrame`
+            A :class:`~pandas.DataFrame` object with cell type frequencies.
         """
         unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
         df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
@@ -50,7 +51,8 @@ class AnnotationResult():
 
         Returns
         ----------
-        An xlsx file containing two sheets of predicted labels and probability matrix, respectively
+        None
+            xlsx table containing two sheets of predicted labels and probability matrix, respectively.
         """
         filename, _ = os.path.splitext(filename)
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
@@ -106,9 +108,12 @@ class Classifier():
 
         Returns
         ----------
-        A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
-            1) `.predicted_labels`: predicted labels from celltypist.
-            2) `.probability_table`: probability matrix from celltypist.
+        :class:`~celltypist.classifier.AnnotationResult`
+            An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
+            :attr:`~predicted_labels`
+                predicted labels from celltypist.
+            :attr:`~probability_table`
+                probability matrix from celltypist.
         """
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
@@ -155,7 +160,8 @@ class Classifier():
 
         Returns
         ----------
-        A `~pandas.Series` object showing the over-clustering result.
+        :class:`~pandas.Series`
+            A `~pandas.Series` object showing the over-clustering result.
         """
         if resolution is None:
             if self.adata.shape[0] < 5000:
@@ -190,9 +196,12 @@ class Classifier():
 
         Returns
         ----------
-        A `~celltypist.classifier.AnnotationResult` object. Two important attributes within are:
-            1) `.predicted_labels`: predicted labels from celltypist.
-            2) `.probability_table`: probability matrix from celltypist.
+        :class:`~celltypist.classifier.AnnotationResult`
+            An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
+            :attr:`~predicted_labels`
+                predicted labels from celltypist.
+            :attr:`~probability_table`
+                probability matrix from celltypist.
         """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)

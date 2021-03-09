@@ -14,6 +14,7 @@ def get_sample_csv() -> str:
 
     Returns
     ----------
-    A string of the full path to the sample csv file (`sample_cell_by_gene.csv`).
+    str
+        A string of the full path to the sample csv file (`sample_cell_by_gene.csv`).
     """
     return get_sample_data("sample_cell_by_gene.csv")
