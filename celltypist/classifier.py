@@ -10,6 +10,7 @@ from . import logger
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
+warnings.simplefilter(action='ignore', category=RuntimeError)
 
 
 class AnnotationResult():
@@ -21,7 +22,7 @@ class AnnotationResult():
     labels
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
     prob
-        A :class:`~pandas.DataFrame` object returned from the celltyping process, shwoing the probability matrix.
+        A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the probability matrix.
 
     Attributes
     ----------
