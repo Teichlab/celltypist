@@ -44,7 +44,7 @@ class AnnotationResult():
         Parameters
         ----------
         by
-            Column name of :attr:`~predicted_labels` specifying the prediction type which the summary is based on.
+            Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the summary is based on.
             Set to `majority voting` if you want to summarize for the majority voting classifier.
             (Default: `predicted labels`)
 
@@ -155,8 +155,8 @@ class Classifier():
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
-            1) :attr:`~predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~probability_table`, probability matrix from celltypist.
+            1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
+            2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
         """
         #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
         #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
@@ -233,7 +233,7 @@ class Classifier():
         Parameters
         ----------
         predictions
-            An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~predicted_labels`.
+            An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`.
         over_clustering
             A list, numpy array or pandas series containing the over-clustering information.
 
@@ -241,8 +241,8 @@ class Classifier():
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Two important attributes within this class are:
-            1) :attr:`~predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~probability_table`, probability matrix from celltypist.
+            1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
+            2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
         """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)
