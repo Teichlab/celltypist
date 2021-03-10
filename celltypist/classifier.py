@@ -19,7 +19,7 @@ class AnnotationResult():
         self.probability_table = prob
         self.cell_count = labels.shape[0]
 
-    def summary_frequency(self, by: Literal['predicted labels', 'predicted labels after majority voting'] = 'predicted labels') -> pd.DataFrame:
+    def summary_frequency(self, by: Literal['predicted labels', 'majority voting'] = 'predicted labels') -> pd.DataFrame:
         """
         Get the frequency of cells belonging to each cell type predicted by celltypist.
 
@@ -27,7 +27,7 @@ class AnnotationResult():
         ----------
         by
             Column name of :attr:`~predicted_labels` specifying the prediction type which the summary is based on.
-            Set to `predicted labels after majority voting` if you want to summarize for the majority voting classifier.
+            Set to `majority voting` if you want to summarize for the majority voting classifier.
             (Default: `predicted labels`)
 
         Returns
@@ -205,7 +205,7 @@ class Classifier():
         votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
         majority.index = predictions.predicted_labels.index
-        majority.columns = ['over clustering', 'predicted labels after majority voting']
+        majority.columns = ['over clustering', 'majority voting']
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
         return predictions
