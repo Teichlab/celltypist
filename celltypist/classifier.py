@@ -13,7 +13,25 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 
 
 class AnnotationResult():
-    """Class that represents the result of a celltyping annotation process."""
+    """
+    Class that represents the result of a celltyping annotation process.
+
+    Parameters
+    ----------
+    labels
+        A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
+    prob
+        A :class:`~pandas.DataFrame` object returned from the celltyping process, shwoing the probability matrix.
+
+    Attributes
+    ----------
+    predicted_labels
+        Predicted labels including the individual prediction results and (if majority voting is done) majority voting results.
+    probability_table
+        Probability matrix representing the probability each cell belongs to a given cell type.
+    cell_count
+        Number of input cells which are predicted by celltypist.
+    """
     def __init__(self, labels: pd.DataFrame, prob: pd.DataFrame):
         self.predicted_labels = labels
         self.probability_table = prob
