@@ -81,7 +81,34 @@ class AnnotationResult():
         return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted labels']))} cell types"
 
 class Classifier():
-    """Class that wraps the celltyping and majority voting processes."""
+    """
+    Class that wraps the celltyping and majority voting processes.
+
+    Parameters
+    ----------
+    filename
+        Path to the input count matrix (supported types are csv, txt, tsv and tab) or Scanpy object (h5ad).
+        If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
+        Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
+    model
+        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
+    transpose
+        Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
+        (Default: `False`)
+
+    Attributes
+    ----------
+    filename
+        Path to the input dataset.
+    adata
+        A Scanpy object which stores the log1p normalized expression data.
+    indata
+        The expression matrix used for predictions stored in the log1p normalized format.
+    indata_genes
+        All the genes included in the input data.
+    model
+        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
+    """
     def __init__(self, filename: str, model: Model, transpose: bool = False): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
