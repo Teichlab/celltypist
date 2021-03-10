@@ -10,7 +10,7 @@ from . import logger
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
-warnings.simplefilter(action='ignore', category=RuntimeError)
+warnings.simplefilter(action='ignore', category=RuntimeWarning)
 
 
 class AnnotationResult():
