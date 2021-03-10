@@ -14,7 +14,23 @@ models_path = os.path.join(data_path, "models")
 
 
 class Model():
-    """Class that wraps the SGDClassifier and the StandardScaler."""
+    """
+    Class that wraps the SGDClassifier and the StandardScaler.
+
+    Parameters
+    ----------
+    clf
+        A SGDClassifier incorporated in the loaded model.
+    scaler
+        A StandardScaler incorporated in the loaded model.
+
+    Attributes
+    ----------
+    classifier
+        The SGDClassifier incorporated in the loaded model.
+    scaler
+        The StandardScaler incorporated in the loaded model.
+    """
     def __init__(self, clf, scaler):
         self.classifier = clf
         self.scaler = scaler
