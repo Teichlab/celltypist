@@ -76,7 +76,7 @@ predictions.write_excel('/path/to/output.xlsx')
 N.B. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
 
 ### 1.6. Celltyping based on Scanpy h5ad data
-Celltypist also accepts the input data as an `AnnData` generated from [Scanpy](https://scanpy.readthedocs.io/en/stable/).
+Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from [Scanpy](https://scanpy.readthedocs.io/en/stable/).
 Since the expression of each gene will be centered and scaled by matching with the provided model, Celltypist requires a logarithmized and normalized expression matrix stored in the `adata` (log1p normalized expression to 10000 counts per cell). Celltypist will try the `adata.X` first, and if it does not suffice, try the `adata.raw.X`. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
 ```python
 #Provide the input as a Scanpy object.
