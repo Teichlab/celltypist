@@ -58,7 +58,7 @@ Assign the cell type labels within the model to the input test cells using the `
 #Predict the cell identity of each input cell.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
 ```
-If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `transpose_input = True` argument.
+If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument.
 ```python
 #In case your input file is a gene-by-cell table.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True)
@@ -91,7 +91,7 @@ predictions.write_excel('/path/to/output.xlsx')
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
 By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
-To turn on the majority voting classifier in addition to the Celltypist predictions, add `majority_voting = True` to the `annotate` function. 
+To turn on the majority voting classifier in addition to the Celltypist predictions, pass in `majority_voting = True` to the `annotate` function. 
 ```python
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
