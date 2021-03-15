@@ -59,6 +59,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
          outdir: str, xlsx: bool, prefix: str, update_models: bool, show_models: bool, quiet: bool):
+    """Celltypist: a tool for semi-automatic cell type annotation"""
 
     #update models or not
     if update_models:
