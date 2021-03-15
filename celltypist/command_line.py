@@ -46,7 +46,7 @@ def write_all_csv_files(result, prefix, outdir):
         os.path.join(outdir, probability_filename))
 
 @click.command()
-@click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False), required=True)
+@click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default="", help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
@@ -63,7 +63,7 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
 
     #update models or not
     if update_models:
-        models.update_models()
+        models.download_models(force_update=True)
         exit(0)
 
     #show all models

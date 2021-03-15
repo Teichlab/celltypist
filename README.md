@@ -22,7 +22,7 @@ The models serve as the basis for cell type predictions. Each model is on averag
 #Download all the available models from the remote Sanger server.
 models.download_models()
 #Update all models by re-downloading the latest versions if you think they may be outdated.
-models.update_models()
+models.download_models(force_update=True)
 #Show the local directory storing these models.
 models.models_path
 ```
