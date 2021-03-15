@@ -128,7 +128,7 @@ class Classifier():
                 try:
                     self.adata = self.adata.raw.to_adata()
                 except Exception:
-                    raise Exception("🛑 Fail to use the .raw attribute in the input object.")
+                    raise Exception("🛑 Fail to use the .raw attribute in the input object")
             if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:

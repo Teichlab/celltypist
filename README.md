@@ -91,7 +91,7 @@ predictions.write_excel('/path/to/output.xlsx')
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
 By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
-To turn on the majority voting classifier in addition to the Celltypist predictions, pass in `majority_voting = True` to the `annotate` function. 
+To turn on the majority voting classifier in addition to the Celltypist predictions, pass in `majority_voting = True` to the `annotate` function.
 ```python
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
