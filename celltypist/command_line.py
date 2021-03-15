@@ -50,7 +50,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-m", "--model", default="", help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
-@click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str)
+@click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no prefix used.", type=str)
