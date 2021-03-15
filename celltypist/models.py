@@ -66,7 +66,7 @@ class Model():
 
 def get_model_path(file: str) -> str:
     """
-    Get the full path to a file in the models folder.
+    Get the full path to a file in the `models` folder.
 
     Parameters
     ----------
@@ -79,7 +79,7 @@ def get_model_path(file: str) -> str:
     str
         A string of the full path to the desired file.
     """
-    pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
+    #pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
     return os.path.join(models_path, f"{file}")
 
 
