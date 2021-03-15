@@ -1,4 +1,5 @@
 import os
+import pathlib
 import json
 import pickle
 import requests
@@ -6,11 +7,12 @@ import numpy as np
 import pandas as pd
 from . import logger
 
-
-data_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "data")
-
+# create ~/.celltypist and subdirs
+celltypist_path = os.path.join(str(pathlib.Path.home()), '.celltypist')
+pathlib.Path(celltypist_path).mkdir(parents=True, exist_ok=True)
+data_path = os.path.join(celltypist_path, "data")
 models_path = os.path.join(data_path, "models")
+pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
 
 
 class Model():
@@ -62,22 +64,23 @@ class Model():
         return self.classifier.predict(indata), self.classifier.predict_proba(indata)
 
 
-def get_path_in_package(model: str) -> str:
+def get_model_path(file: str) -> str:
     """
-    Get the full path to the model specified.
+    Get the full path to a file in the models folder.
 
     Parameters
     ----------
-    model
-        Model name as a string.
+    file
+        File name as a string.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
 
     Returns
     ----------
     str
-        A string of the full path to the desired model.
+        A string of the full path to the desired file.
     """
-    return os.path.join(models_path, f"{model}")
+    pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
+    return os.path.join(models_path, f"{file}")
 
 
 def load(model: str = "") -> Model:
@@ -98,7 +101,7 @@ def load(model: str = "") -> Model:
     if not model:
         model = get_default_model()
     if model in get_all_models():
-        model = get_path_in_package(model)
+        model = get_model_path(model)
     return Model.load(model)
 
 
@@ -162,7 +165,7 @@ def get_models_index(force_update: bool=False) -> dict:
     dict
         A dict object converted from the json file.
     """
-    models_json_path = os.path.join(models_path, "models.json")
+    models_json_path = get_model_path("models.json")
     if not os.path.exists(models_json_path) or force_update:
         download_model_index()
     with open(models_json_path) as f:
@@ -181,7 +184,7 @@ def download_model_index(only_model: bool = True) -> None:
     """
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
-    with open(os.path.join(models_path, "models.json"), "wb") as f:
+    with open(get_model_path("models.json"), "wb") as f:
         f.write(requests.get(url).content)
     model_count = len(requests.get(url).json()["models"])
     logger.info(f"📚 Total models in list: {model_count}")
@@ -203,7 +206,7 @@ def download_models(force_update: bool=False) -> None:
     model_count = len(models_json["models"])
     logger.info(f"📂 Storing models in {models_path}")
     for idx,model in enumerate(models_json["models"]):
-        model_path = os.path.join(models_path, model["filename"])
+        model_path = get_model_path(model["filename"])
         logger.info(f"💾 Downloading model [{idx+1}/{model_count}]: {model['filename']}")
         try:
             with open(model_path, "wb") as f:
@@ -211,10 +214,6 @@ def download_models(force_update: bool=False) -> None:
         except Exception as exception:
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
-
-def update_models() -> None:
-    """Update models by re-downloading the latest model versions."""
-    download_models(force_update=True)
 
 def models_description() -> pd.DataFrame:
     """
