@@ -70,6 +70,6 @@ def annotate(filename: str,
             except Exception as e:
                 raise Exception(f"🛑 {e}")
     if len(over_clustering) != clf.adata.shape[0]:
-        raise ValueError(f"🛑 Length of over_clustering ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
+        raise ValueError(f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
     #majority voting
     return classifier.Classifier.majority_vote(predictions, over_clustering)
