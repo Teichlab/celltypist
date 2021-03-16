@@ -48,7 +48,7 @@ model.classifier
 ```
 
 ### 1.5. Celltyping based on the input of count table 
-Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv` or `.tab`. A raw count matrix (reads or UMIs) is required.
+Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required.
 ```python
 #Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
 input_file = celltypist.samples.get_sample_csv()
@@ -58,10 +58,12 @@ Assign the cell type labels within the model to the input test cells using the `
 #Predict the cell identity of each input cell.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
 ```
-If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument.
+If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument. In addition, if the input is provided in the `.mtx` format, you will also need to specify the `gene_file` and `cell_file` arguments as the files containing names of genes and cells, respectively.
 ```python
 #In case your input file is a gene-by-cell table.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True)
+#In case your input file is a gene-by-cell mtx file.
+predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True, gene_file = '/path/to/gene/file.txt', cell_file = '/path/to/cell/file.txt')
 ```
 Similarly, if the `model` argument is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model.
 The `annotate` function will return an instance of the `AnnotationResult` class as defined in the Celltypist.
@@ -142,6 +144,7 @@ If your input file is in a gene-by-cell format (genes as rows and cells as colum
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
 ```
+If the input is provided in the `.mtx` format, you will also need to specify the `--gene-file` and `--cell-file` options as the files containing names of genes and cells, respectively.
 Other options that control the output files of Celltypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
 
 ### 2.5. Celltyping based on Scanpy h5ad data
