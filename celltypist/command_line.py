@@ -46,9 +46,11 @@ def write_all_csv_files(result, prefix, outdir):
         os.path.join(outdir, probability_filename))
 
 @click.command()
-@click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
+@click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default="", help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
+@click.option("-g", "--gene-file", default=None, type=str, help="Path to the file storing the genes which correspond to the genes used in the provided mtx file. Ignored if `--indata` is not provided as the mtx format.")
+@click.option("-c", "--cell-file", default=None, type=str, help="Path to the file storing the cells which correspond to the cells used in the provided mtx file. Ignored if `--indata` is not provided as the mtx format.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
 @click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
 @click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
@@ -57,7 +59,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
-def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, over_clustering,
+def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering,
          outdir: str, xlsx: bool, prefix: str, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
@@ -93,6 +95,8 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
                 "indata": indata,
                 "model": model,
                 "transpose-input": transpose_input,
+                "gene-file": gene_file,
+                "cell-file": cell_file,
                 "majority-voting": majority_voting,
                 "outdir": outdir,
                 "xlsx": xlsx,
@@ -114,6 +118,8 @@ def main(indata: str, model: str, transpose_input: bool, majority_voting: bool, 
         filename=indata,
         model=model,
         transpose_input=transpose_input,
+        gene_file=gene_file,
+        cell_file=cell_file,
         majority_voting=majority_voting,
         over_clustering=over_clustering)
 
