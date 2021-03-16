@@ -87,7 +87,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
     if not outdir:
         outdir = os.getcwd()
         logger.warn(f"👀 No output directory provided. Using the current directory: '{outdir}'")
-    if not os.path.exists(outdir):
+    if not os.path.isdir(outdir):
         show_help_and_exit(f"🛑 Output directory '{outdir}' does not exist")
 
     #config settings

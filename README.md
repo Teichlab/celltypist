@@ -79,7 +79,7 @@ N.B. Non-expressed genes (if you are sure of their expression absence in your da
 
 ### 1.6. Celltyping based on Scanpy h5ad data
 Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).
-Since the expression of each gene will be centered and scaled by matching with the provided model, Celltypist requires a logarithmized and normalized expression matrix stored in the `AnnData` (log1p normalized expression to 10000 counts per cell). Celltypist will try the `adata.X` first, and if it does not suffice, try the `adata.raw.X`. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
+Since the expression of each gene will be centered and scaled by matching with the mean and standard deviation of that gene in the provided model, Celltypist requires a logarithmized and normalized expression matrix stored in the `AnnData` (log1p normalized expression to 10000 counts per cell). Celltypist will try the `adata.X` first, and if it does not suffice, try the `adata.raw.X`. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
@@ -98,7 +98,7 @@ To turn on the majority voting classifier in addition to the Celltypist predicti
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
 ```
-During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
+During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
    3) a Python list, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
