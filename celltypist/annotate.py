@@ -60,7 +60,7 @@ def annotate(filename: str,
     #over clustering
     if over_clustering is None:
         over_clustering = clf.over_cluster()
-    elif len(over_clustering) == 1:
+    elif isinstance(over_clustering, str):
         if over_clustering in clf.adata.obs:
             over_clustering = clf.adata.obs[over_clustering]
         else:
