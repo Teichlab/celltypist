@@ -88,7 +88,7 @@ class Classifier():
     Parameters
     ----------
     filename
-        Path to the input count matrix (supported types are csv, txt, tsv, mtx and tab) or Scanpy object (h5ad).
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
@@ -97,11 +97,11 @@ class Classifier():
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
         (Default: `False`)
     gene_file
-        Path to the file storing the genes which correspond to the genes used in the provided mtx file.
-        Ignored if `filename` is not provided as the mtx format.
+        Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
     cell_file
-        Path to the file storing the cells which correspond to the cells used in the provided mtx file.
-        Ignored if `filename` is not provided as the mtx format.
+        Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
 
     Attributes
     ----------
