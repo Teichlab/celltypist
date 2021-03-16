@@ -6,6 +6,8 @@ import pandas as pd
 def annotate(filename: str,
              model: str = "",
              transpose_input: bool = False,
+             gene_file: str = None,
+             cell_file: str = None,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, np.ndarray, pd.Series]] = None) -> classifier.AnnotationResult:
     """
@@ -14,7 +16,7 @@ def annotate(filename: str,
     Parameters
     ----------
     filename
-        Path to the input count matrix (supported types are csv, txt, tsv and tab) or Scanpy object (h5ad).
+        Path to the input count matrix (supported types are csv, txt, tsv, mtx and tab) or Scanpy object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose_input` for more information).
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
@@ -23,6 +25,12 @@ def annotate(filename: str,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
         (Default: `False`)
+    gene_file
+        Path to the file storing the genes which correspond to the genes used in the provided mtx file.
+        Ignored if `filename` is not provided as the mtx format.
+    cell_file
+        Path to the file storing the cells which correspond to the cells used in the provided mtx file.
+        Ignored if `filename` is not provided as the mtx format.
     majority_voting
         Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
         (Default: `False`)
@@ -44,7 +52,7 @@ def annotate(filename: str,
     #load model
     sgd_classifier = models.load(model)
     #construct Classifier class
-    clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input)
+    clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
     predictions = clf.celltype()
     if majority_voting is False:
