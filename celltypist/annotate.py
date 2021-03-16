@@ -6,8 +6,8 @@ import pandas as pd
 def annotate(filename: str,
              model: str = "",
              transpose_input: bool = False,
-             gene_file: str = None,
-             cell_file: str = None,
+             gene_file: Optional[str] = None,
+             cell_file: Optional[str] = None,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, np.ndarray, pd.Series]] = None) -> classifier.AnnotationResult:
     """
@@ -70,6 +70,6 @@ def annotate(filename: str,
             except Exception as e:
                 raise Exception(f"🛑 {e}")
     if len(over_clustering) != clf.adata.shape[0]:
-        raise ValueError(f"🛑 length of over_clustering ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
+        raise ValueError(f"🛑 Length of over_clustering ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
     #majority voting
     return classifier.Classifier.majority_vote(predictions, over_clustering)

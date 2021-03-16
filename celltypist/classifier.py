@@ -116,7 +116,7 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
-    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: str = None, cell_file: str = None): #, chunk_size: int, cpus: int, quiet: bool):
+    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None): #, chunk_size: int, cpus: int, quiet: bool):
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data...")
@@ -130,9 +130,9 @@ class Classifier():
                 genes_mtx = pd.read_csv(gene_file, header=None)[0].values
                 cells_mtx = pd.read_csv(cell_file, header=None)[0].values
                 if len(genes_mtx) != self.adata.n_vars:
-                    raise ValueError(f"🛑 The number of genes in {gene_file} does not match the number of genes in the {self.filename}")
+                    raise ValueError(f"🛑 The number of genes in {gene_file} does not match the number of genes in {self.filename}")
                 if len(cells_mtx) != self.adata.n_obs:
-                    raise ValueError(f"🛑 The number of cells in {cell_file} does not match the number of cells in the {self.filename}")
+                    raise ValueError(f"🛑 The number of cells in {cell_file} does not match the number of cells in {self.filename}")
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
             self.adata.var_names_make_unique()
@@ -237,8 +237,7 @@ class Classifier():
             else:
                 resolution = 20
         logger.info(f"🧙 Over-clustering input data with resolution set to {resolution}")
-        if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab')):
-            sc.pp.filter_genes(self.adata, min_cells=1)
+        sc.pp.filter_genes(self.adata, min_cells=1)
         sc.pp.highly_variable_genes(self.adata)
         sc.pp.scale(self.adata, max_value=10)
         sc.tl.pca(self.adata, n_comps=50)
