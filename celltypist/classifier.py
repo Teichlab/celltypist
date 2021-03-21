@@ -197,6 +197,7 @@ class Classifier():
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
         self.indata = self.indata / sds_
+        self.indata[self.indata > 10] = 10
 
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
