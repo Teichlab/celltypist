@@ -53,7 +53,7 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-cf", "--cell-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
 @click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
-@click.option("-o", "--outdir", default="", help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
+@click.option("-o", "--outdir", default=None, help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no prefix used.", type=str)
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
@@ -84,7 +84,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         show_help_and_exit(f"🛑 Invalid model name: '{model}'. Available models are: {', '.join(models.get_all_models())}")
 
     #output dir
-    if not outdir:
+    if outdir is None:
         outdir = os.getcwd()
         logger.warn(f"👀 No output directory provided. Using the current directory: '{outdir}'")
     if not os.path.isdir(outdir):
