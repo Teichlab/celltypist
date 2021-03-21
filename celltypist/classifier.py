@@ -38,7 +38,7 @@ class AnnotationResult():
         self.probability_table = prob
         self.cell_count = labels.shape[0]
 
-    def summary_frequency(self, by: Literal['predicted labels', 'majority voting'] = 'predicted labels') -> pd.DataFrame:
+    def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
         """
         Get the frequency of cells belonging to each cell type predicted by celltypist.
 
@@ -46,8 +46,8 @@ class AnnotationResult():
         ----------
         by
             Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the summary is based on.
-            Set to `majority voting` if you want to summarize for the majority voting classifier.
-            (Default: `predicted labels`)
+            Set to `majority_voting` if you want to summarize for the majority voting classifier.
+            (Default: `predicted_labels`)
 
         Returns
         ----------
@@ -79,7 +79,7 @@ class AnnotationResult():
             self.probability_table.to_excel(writer, sheet_name="Probability Matrix")
 
     def __str__(self):
-        return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted labels']))} cell types"
+        return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted_labels']))} cell types"
 
 class Classifier():
     """
@@ -211,7 +211,7 @@ class Classifier():
         logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
-        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
+        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
     def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
         """
@@ -268,10 +268,10 @@ class Classifier():
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)
         logger.info("🧙 Majority voting")
-        votes = pd.crosstab(predictions.predicted_labels['predicted labels'], over_clustering)
+        votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
         majority.index = predictions.predicted_labels.index
-        majority.columns = ['over clustering', 'majority voting']
+        majority.columns = ['over_clustering', 'majority_voting']
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
         return predictions
