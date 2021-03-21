@@ -5,6 +5,7 @@ import pickle
 import requests
 import numpy as np
 import pandas as pd
+from typing import Optional
 from . import logger
 
 # create ~/.celltypist and subdirs
@@ -83,7 +84,7 @@ def get_model_path(file: str) -> str:
     return os.path.join(models_path, f"{file}")
 
 
-def load(model: str = "") -> Model:
+def load(model: Optional[str] = None) -> Model:
     """
     Load the desired model.
 
@@ -98,7 +99,7 @@ def load(model: str = "") -> Model:
     :class:`~celltypist.models.Model`
         A :class:`~celltypist.models.Model` object.
     """
-    if not model:
+    if model is None:
         model = get_default_model()
     if model in get_all_models():
         model = get_model_path(model)

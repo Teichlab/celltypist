@@ -47,7 +47,7 @@ def write_all_csv_files(result, prefix, outdir):
 
 @click.command()
 @click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
-@click.option("-m", "--model", default="", help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
+@click.option("-m", "--model", default=None, help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
 @click.option("-gf", "--gene-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
 @click.option("-cf", "--cell-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
@@ -77,7 +77,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         exit(0)
 
     #validate model
-    if not model:
+    if model is None:
         model = models.get_default_model()
         logger.info(f"🔖 No model provided. Using the deault: '{model}'")
     if model not in models.get_all_models() and not os.path.exists(model):

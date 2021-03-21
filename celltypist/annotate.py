@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 def annotate(filename: str,
-             model: str = "",
+             model: Optional[str] = None,
              transpose_input: bool = False,
              gene_file: Optional[str] = None,
              cell_file: Optional[str] = None,
