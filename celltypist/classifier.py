@@ -213,7 +213,7 @@ class Classifier():
         cells = self.adata.obs_names
         return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
-    def over_cluster(self, resolution: Optional[int] = None) -> pd.Series:
+    def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
         """
         Over-clustering input data with a canonical scanpy pipeline.
 
