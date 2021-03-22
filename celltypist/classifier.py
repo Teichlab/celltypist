@@ -143,7 +143,7 @@ class Classifier():
             if self.adata.X.min() < 0:
                 logger.info("👀 Detect scaled expression in the input data, will try the .raw attribute...")
                 try:
-                    self.adata = self.adata.raw.to_adata()
+                    self.adata.X = self.adata.raw.X.copy()
                 except Exception:
                     raise Exception("🛑 Fail to use the .raw attribute in the input object")
             if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
