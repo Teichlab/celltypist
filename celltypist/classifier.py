@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 from .models import Model
 from . import logger
-# parallelisation
-#from joblib import Parallel, delayed
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -138,35 +136,27 @@ class Classifier():
             self.adata.var_names_make_unique()
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
+            self.indata = self.adata.X.copy()
+            self.indata_genes = self.adata.var_names.copy()
         elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
                 logger.info("👀 Detect scaled expression in the input data, will try the .raw attribute...")
                 try:
-                    self.adata.X = self.adata.raw.X.copy()
+                    self.indata = self.adata.raw.X.copy()
+                    self.indata_genes = self.adata.raw.var_names.copy()
                 except Exception:
                     raise Exception("🛑 Fail to use the .raw attribute in the input object")
-            if np.abs(np.expm1(self.adata.X[0]).sum()-10000) > 1:
+            else:
+                self.indata = self.adata.X.copy()
+                self.indata_genes = self.adata.var_names.copy()
+            if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
             raise ValueError("🛑 Invalid input file type. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
-        self.indata = self.adata.X.copy()
-        self.indata_genes = self.adata.var_names.copy()
 
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
-        # self.chunk_size = chunk_size
-        # self.cpus = cpus
         self.model = model
-        #with open(self.filename) as fh:
-        #    self.cell_count = sum(1 for line in fh)
-        #self.chunk_iterator = range(math.ceil(self.cell_count/self.chunk_size))
-        #self.quiet = quiet
-
-    #def process_chunk(self, start_at: int) -> None: #-> Tuple[np.ndarray, np.ndarray]:
-        #"""Process a chunk of the input file starting at the offset position."""
-        #X_test = np.log1p(pd.read_csv(self.filename, skiprows=start_at, nrows=self.chunk_size, header=None, index_col=0).values)
-        #return self.model.predict_labels_and_prob(X_test)
-        #pass
 
     def celltype(self) -> AnnotationResult:
         """
@@ -179,10 +169,6 @@ class Classifier():
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
             2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
         """
-        #result = Parallel(n_jobs=self.cpus, verbose=10 if not self.quiet else 0)(
-        #    delayed(self.process_chunk)(start_at=i*self.chunk_size+1) for i in self.chunk_iterator)
-        #lab_mat = np.hstack([result[i][0] for i in range(len(result))])
-        #prob_mat = np.vstack([result[i][1] for i in range(len(result))])
 
         logger.info(f"🧙 Matching reference genes")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
@@ -205,9 +191,6 @@ class Classifier():
 
         logger.info("🖋️ Predicting labels")
         lab_mat, prob_mat = self.model.predict_labels_and_prob(self.indata)
-        # print(results)
-        # # lab_mat = np.hstack(results)
-        # # prob_mat = np.vstack(results)
         logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
@@ -275,7 +258,3 @@ class Classifier():
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
         return predictions
-
-    # def print_config(self):
-    #     """Show current configuration values for this clasifier."""
-    #     (f"filename={self.filename}. cpus={self.cpus}. chunk_size={self.chunk_size}")
