@@ -106,7 +106,7 @@ class Classifier():
     filename
         Path to the input dataset.
     adata
-        A Scanpy object which stores the log1p normalized expression data.
+        A Scanpy object which stores the log1p normalized expression data in `.X` or `.raw.X`.
     indata
         The expression matrix used for predictions stored in the log1p normalized format.
     indata_genes
