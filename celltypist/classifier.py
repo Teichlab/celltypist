@@ -145,8 +145,8 @@ class Classifier():
                 try:
                     self.indata = self.adata.raw.X.copy()
                     self.indata_genes = self.adata.raw.var_names.copy()
-                except Exception:
-                    raise Exception("🛑 Fail to use the .raw attribute in the input object")
+                except Exception as e:
+                    raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
                 self.indata = self.adata.X.copy()
                 self.indata_genes = self.adata.var_names.copy()
