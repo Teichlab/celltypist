@@ -94,7 +94,7 @@ class AnnotationResult():
         else:
             logger.info("🧙 Construct the neighborhood graph and generate UMAP coordinates")
             adata = self.adata.copy()
-            self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
             sc.tl.umap(self.adata)
         for column in self.predicted_labels:
             sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False)
@@ -276,7 +276,7 @@ class Classifier():
         sc.pp.scale(adata, max_value=10)
         sc.tl.pca(adata, n_comps=50)
         sc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
-        return adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
+        return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
     def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
         """
@@ -296,7 +296,7 @@ class Classifier():
         adata = self.adata.copy()
         if 'connectivities' not in adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, construct one before the over-clustering")
-            self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
         else:
             logger.info("👀 Detect a neighborhood graph in the input object, will run over-clustering on the basis of it")
         if resolution is None:
