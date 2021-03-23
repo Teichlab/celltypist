@@ -96,6 +96,7 @@ class AnnotationResult():
             adata = self.adata.copy()
             self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
             sc.tl.umap(self.adata)
+        logger.info("✍️ Plot the results")
         for column in self.predicted_labels:
             sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False)
             plt.savefig(os.path.join(folder, column + '.' + format))

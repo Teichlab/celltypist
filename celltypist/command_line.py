@@ -56,11 +56,12 @@ def write_all_csv_files(result, prefix, outdir):
 @click.option("-o", "--outdir", default=None, help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
 @click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no prefix used.", type=str)
+@click.option('--plot-results', is_flag=True, default=False, help="Plot the results as multiple figures as well.")
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering,
-         outdir: str, xlsx: bool, prefix: str, update_models: bool, show_models: bool, quiet: bool):
+         outdir: str, xlsx: bool, prefix: str, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
     #update models or not
@@ -128,3 +129,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         write_xlsx(result, config["prefix"], config["outdir"])
     else:
         write_all_csv_files(result, config["prefix"], config["outdir"])
+
+    #plot result
+    if plot_results:
+        result.to_plots(folder = outdir)
