@@ -3,6 +3,7 @@ from typing import Optional, Literal, Union
 import scanpy as sc
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from .models import Model
 from . import logger
 import warnings
@@ -57,6 +58,51 @@ class AnnotationResult():
         self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
         self.adata.obs[self.probability_table.columns] = self.probability_table
         return self.adata
+
+    def to_plots(self, folder: str, show_probability: bool = True, format: str = 'png') -> None:
+        """
+        Plot the celltyping and (optional) majority-voting results.
+
+        Parameters
+        ----------
+        folder
+            Path to a folder which stores the output figures.
+        show_probability
+            Whether to also plot the probability distribution of each cell type across all test cells.
+            (Default: `True`)
+        format
+            Format of output figures. Set to `pdf` if you prefer a vector PDF file.
+            (Default: `png`)
+
+        Returns
+        ----------
+        None
+            Depending on whether majority voting is done, multiple UMAP plots showing the prediction and majority voting results in the `folder`:
+            1) **predicted_labels**, individual prediction outcome for each cell.
+            2) **over_clustering**, over-clustering result for the cells.
+            3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
+            4) **name of each cell type**, which represents the prediction probabilities of a given cell type across cells.
+        """
+        if not os.path.isdir(folder):
+            raise ValueError("🛑 Output folder does not exist. Please provide a valid folder")
+        _ = self.to_adata()
+        if 'X_umap' in self.adata.obsm:
+            logger.info("👀 Detect existing UMAP coordinates, will plot the results accordingly")
+        elif 'connectivities' in self.adata.obsp:
+            logger.info("🧙 Generate UMAP coordinates based on the neighborhood graph")
+            sc.tl.umap(self.adata)
+        else:
+            logger.info("🧙 Construct the neighborhood graph and generate UMAP coordinates")
+            adata = self.adata.copy()
+            self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+            sc.tl.umap(self.adata)
+        for column in self.predicted_labels:
+            sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False)
+            plt.savefig(os.path.join(folder, column + '.' + format))
+        if show_probability:
+            for column in self.probability_table:
+                sc.pl.umap(self.adata, color = column, show = False)
+                plt.savefig(os.path.join(folder, column.replace('/','_') + '.' + format))
 
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
         """
