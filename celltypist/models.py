@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import pandas as pd
 from typing import Optional
+from scipy.special import expit
 from . import logger
 
 # create ~/.celltypist and subdirs
@@ -62,7 +63,7 @@ class Model():
 
     def predict_labels_and_prob(self, indata) -> tuple:
         """Predict the cell types and get the probability matrix using input data."""
-        return self.classifier.predict(indata), self.classifier.predict_proba(indata)
+        return self.classifier.predict(indata), expit(self.classifier.decision_function(indata))
 
 
 def get_model_path(file: str) -> str:
