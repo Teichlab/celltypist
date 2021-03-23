@@ -41,6 +41,23 @@ class AnnotationResult():
         self.cell_count = labels.shape[0]
         self.adata = adata
 
+    def to_adata(self) -> sc.AnnData:
+        """
+        Insert the predicted labels and (if majority voting is done) majority voting results into the Scanpy object.
+
+        Returns
+        ----------
+        :class:`~sc.AnnData`
+            Depending on whether majority voting is done, an :class:`~scanpy.AnnData` object with the following columns added to the observation metadata:
+            1) **predicted_labels**, individual prediction outcome for each cell.
+            2) **over_clustering**, over-clustering result for the cells.
+            3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
+            4) **name of each cell type**, which represents the prediction probabilities of a given cell type across cells.
+        """
+        self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
+        self.adata.obs[self.probability_table.columns] = self.probability_table
+        return self.adata
+
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
         """
         Get the frequency of cells belonging to each cell type predicted by celltypist.
