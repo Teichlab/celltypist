@@ -47,7 +47,7 @@ class AnnotationResult():
 
         Returns
         ----------
-        :class:`~sc.AnnData`
+        :class:`~scanpy.AnnData`
             Depending on whether majority voting is done, an :class:`~scanpy.AnnData` object with the following columns added to the observation metadata:
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
