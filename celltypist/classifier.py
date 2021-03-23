@@ -21,6 +21,8 @@ class AnnotationResult():
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
     prob
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the probability matrix.
+    adata
+        An :class:`~scanpy.AnnData` object representing the input object.
 
     Attributes
     ----------
@@ -30,11 +32,14 @@ class AnnotationResult():
         Probability matrix representing the probability each cell belongs to a given cell type.
     cell_count
         Number of input cells which are predicted by celltypist.
+    adata
+        A Scanpy object representing the input object.
     """
-    def __init__(self, labels: pd.DataFrame, prob: pd.DataFrame):
+    def __init__(self, labels: pd.DataFrame, prob: pd.DataFrame, adata: sc.AnnData):
         self.predicted_labels = labels
         self.probability_table = prob
         self.cell_count = labels.shape[0]
+        self.adata = adata
 
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
         """
@@ -194,10 +199,10 @@ class Classifier():
         logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
-        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
+        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
-    def _construct_neighbor_graph(adata):
+    def _construct_neighbor_graph(adata: sc.AnnData):
         """Construct a neighborhood graph. This function is for internal use."""
         if adata.X.min() < 0:
             adata = adata.raw.to_adata()
