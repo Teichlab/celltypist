@@ -196,6 +196,19 @@ class Classifier():
         cells = self.adata.obs_names
         return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells))
 
+    @staticmethod
+    def _construct_neighbor_graph(adata):
+        """Construct a neighborhood graph. This function is for internal use."""
+        if adata.X.min() < 0:
+            adata = adata.raw.to_adata()
+        sc.pp.filter_genes(adata, min_cells=5)
+        sc.pp.highly_variable_genes(adata)
+        adata = adata[:, adata.var.highly_variable]
+        sc.pp.scale(adata, max_value=10)
+        sc.tl.pca(adata, n_comps=50)
+        sc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
+        return adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
+
     def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
         """
         Over-clustering input data with a canonical scanpy pipeline.
@@ -211,6 +224,12 @@ class Classifier():
         :class:`~pandas.Series`
             A :class:`~pandas.Series` object showing the over-clustering result.
         """
+        adata = self.adata.copy()
+        if 'connectivities' not in adata.obsp:
+            logger.info("👀 Can not detect a neighborhood graph, construct one before the over-clustering")
+            self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+        else:
+            logger.info("👀 Detect a neighborhood graph in the input object, will run over-clustering on the basis of it")
         if resolution is None:
             if self.adata.shape[0] < 5000:
                 resolution = 5
@@ -221,13 +240,10 @@ class Classifier():
             else:
                 resolution = 20
         logger.info(f"🧙 Over-clustering input data with resolution set to {resolution}")
-        sc.pp.filter_genes(self.adata, min_cells=1)
-        sc.pp.highly_variable_genes(self.adata)
-        sc.pp.scale(self.adata, max_value=10)
-        sc.tl.pca(self.adata, n_comps=50)
-        sc.pp.neighbors(self.adata, n_neighbors=10, n_pcs=50)
         sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
-        return self.adata.obs['over_clustering']
+        oc_column = self.adata.obs.over_clustering
+        self.adata.obs.drop(columns=['over_clustering'], inplace=True)
+        return oc_column
 
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, np.ndarray, pd.Series]) -> AnnotationResult:
