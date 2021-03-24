@@ -294,6 +294,7 @@ class Classifier():
         :class:`~pandas.Series`
             A :class:`~pandas.Series` object showing the over-clustering result.
         """
+        logger.info("🧙 Over-clustering begins")
         adata = self.adata.copy()
         if 'connectivities' not in adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, construct one before the over-clustering")
