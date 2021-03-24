@@ -98,11 +98,11 @@ class AnnotationResult():
             sc.tl.umap(self.adata)
         logger.info("✍️ Plot the results")
         for column in self.predicted_labels:
-            sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False)
+            sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False, size=10)
             plt.savefig(os.path.join(folder, column + '.' + format))
         if show_probability:
             for column in self.probability_table:
-                sc.pl.umap(self.adata, color = column, show = False)
+                sc.pl.umap(self.adata, color = column, show = False, size=10)
                 plt.savefig(os.path.join(folder, column.replace('/','_') + '.' + format))
 
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
