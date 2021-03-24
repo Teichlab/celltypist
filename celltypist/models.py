@@ -62,8 +62,10 @@ class Model():
         return self.classifier.features
 
     def predict_labels_and_prob(self, indata) -> tuple:
-        """Predict the cell types and get the probability matrix using input data."""
-        return self.classifier.predict(indata), expit(self.classifier.decision_function(indata))
+        """Get the probability matrix and predicted cell types using the input data."""
+        scores = self.classifier.decision_function(indata)
+        probs = expit(scores)
+        return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
 
 
 def get_model_path(file: str) -> str:
