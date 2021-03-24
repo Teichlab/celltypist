@@ -264,7 +264,7 @@ class Classifier():
         logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
-        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
+        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
     def _construct_neighbor_graph(adata: sc.AnnData):
@@ -343,6 +343,7 @@ class Classifier():
         majority = votes.idxmax()[over_clustering].reset_index()
         majority.index = predictions.predicted_labels.index
         majority.columns = ['over_clustering', 'majority_voting']
+        majority['majority_voting'] = majority['majority_voting'].astype('category')
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
         return predictions
