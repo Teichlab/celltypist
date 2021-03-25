@@ -37,14 +37,14 @@ def show_help_and_exit(message: str):
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
 @click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
 @click.option("-o", "--outdir", default=None, help="Directory to store the output file/files. Default to the current working directory.", type=click.Path(exists=False))
+@click.option("-p", "--prefix", default="", help="Prefix for the output files and (if `--plot-results` is set) figures. Default to no prefix used.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
-@click.option("-p", "--prefix", default="", help="Prefix for the output file/files. Default to no prefix used.", type=str)
-@click.option('--plot-results', is_flag=True, default=False, help="Plot the results as multiple figures as well.")
+@click.option("--plot-results", is_flag=True, default=False, help="Plot the results as multiple figures as well.")
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
 def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering,
-         outdir: str, xlsx: bool, prefix: str, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
+         outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
     #update models or not
