@@ -80,7 +80,7 @@ class AnnotationResult():
             self.adata.obs[self.decision_matrix.columns] = self.decision_matrix
         return self.adata
 
-    def to_plots(self, folder: str, plot_probability: bool = False, format: str = 'pdf') -> None:
+    def to_plots(self, folder: str, plot_probability: bool = False, format: str = 'pdf', prefix: str = '') -> None:
         """
         Plot the celltyping and (if majority voting is done) majority-voting results.
 
@@ -94,6 +94,8 @@ class AnnotationResult():
         format
             Format of output figures. Default to a vector PDF file (dots are still drawn with png backend).
             (Default: `pdf`)
+        prefix
+            Prefix for the output figures. Default to no prefix used.
 
         Returns
         ----------
@@ -121,13 +123,13 @@ class AnnotationResult():
         self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
         for column in self.predicted_labels:
             sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False, legend_fontweight = 'normal', title = column.replace('_', ' '))
-            plt.savefig(os.path.join(folder, column + '.' + format))
+            plt.savefig(os.path.join(folder, prefix + column + '.' + format))
         if plot_probability:
             for column in self.probability_matrix:
                 self.adata.obs['decision score'] = self.decision_matrix[column]
                 self.adata.obs['probability'] = self.probability_matrix[column]
                 sc.pl.umap(self.adata, color = ['decision score', 'probability'], show = False)
-                plt.savefig(os.path.join(folder, column.replace('/','_') + '.' + format))
+                plt.savefig(os.path.join(folder, prefix + column.replace('/','_') + '.' + format))
             self.adata.obs.drop(columns=['decision score', 'probability'], inplace=True)
 
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
@@ -151,24 +153,35 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def write_excel(self, filename: str) -> None:
+    def to_table(self, folder: str, prefix: str = '', xlsx: bool = False) -> None:
         """
-        Write excel file with both the predicted labels and the probability matrix.
+        Write out tables with both the predicted labels and the probability matrix.
 
         Parameters
         ----------
-        filename
-            Excel file (.xlsx) to store the predicted cell types and probability matrix.
+        foler
+            Path to a folder which stores the output table/tables.
+        prefix
+            Prefix for the output table/tables. Default to no prefix used.
+        xlsx
+            Whether to merge output tables into a single Excel (.xlsx).
 
         Returns
         ----------
         None
-            xlsx table containing two sheets of predicted labels and probability matrix, respectively.
+            Depending on `xlsx`, return table(s) of predicted labels and probability matrix.
         """
-        filename, _ = os.path.splitext(filename)
-        with pd.ExcelWriter(f"{filename}.xlsx") as writer:
-            self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
-            self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
+        if not os.path.isdir(folder):
+            raise FileNotFoundError("🛑 Output folder does not exist. Please provide a valid folder")
+        if not xlsx:
+            self.predicted_labels.to_csv(os.path.join(folder, f"{prefix}predicted_labels.csv"))
+            self.decision_matrix.to_csv(os.path.join(folder, f"{prefix}decision_matrix.csv"))
+            self.probability_matrix.to_csv(os.path.join(folder, f"{prefix}probability_matrix.csv"))
+        else:
+            with pd.ExcelWriter(os.path.join(folder, f"{prefix}annotation_result.xlsx")) as writer:
+                self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
+                self.decision_matrix.to_excel(writer, sheet_name="Decision Matrix")
+                self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
 
     def __str__(self):
         return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted_labels']))} cell types"
