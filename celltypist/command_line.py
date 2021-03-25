@@ -28,23 +28,6 @@ def show_help_and_exit(message: str):
     click.echo()
     ctx.fail(ctx.get_help())
 
-
-def write_xlsx(result, prefix, outdir):
-    output_filename = f"{prefix}annotation_result.xlsx"
-    result.write_excel(
-        os.path.join(outdir, output_filename))
-
-
-def write_all_csv_files(result, prefix, outdir):
-    #labels
-    labels_filename = f"{prefix}predicted_labels.csv"
-    result.predicted_labels.to_csv(
-        os.path.join(outdir, labels_filename))
-    #prob table
-    probability_filename = f"{prefix}probability_matrix.csv"
-    result.probability_table.to_csv(
-        os.path.join(outdir, probability_filename))
-
 @click.command()
 @click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default=None, help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
@@ -125,11 +108,8 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         over_clustering=over_clustering)
 
     #write output
-    if xlsx:
-        write_xlsx(result, config["prefix"], config["outdir"])
-    else:
-        write_all_csv_files(result, config["prefix"], config["outdir"])
+    result.to_table(folder = outdir, prefix = prefix, xlsx = xlsx)
 
     #plot result
     if plot_results:
-        result.to_plots(folder = outdir)
+        result.to_plots(folder = outdir, prefix = prefix)
