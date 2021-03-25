@@ -38,7 +38,7 @@ class AnnotationResult():
     cell_count
         Number of input cells which are predicted by celltypist.
     adata
-        A Scanpy object representing the input object.
+        A Scanpy object representing the input data.
     """
     def __init__(self, labels: pd.DataFrame, decision_mat: pd.DataFrame, prob_mat: pd.DataFrame, adata: sc.AnnData):
         self.predicted_labels = labels
@@ -98,7 +98,7 @@ class AnnotationResult():
         Returns
         ----------
         None
-            Depending on whether majority voting is done, multiple UMAP plots showing the prediction and majority voting results in the `folder`:
+            Depending on whether majority voting is done and `plot_probability`, multiple UMAP plots showing the prediction and majority voting results in the `folder`:
             1) **predicted_labels**, individual prediction outcome for each cell overlaid onto the UMAP.
             2) **over_clustering**, over-clustering result of the cells overlaid onto the UMAP.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process overlaid onto the UMAP.
