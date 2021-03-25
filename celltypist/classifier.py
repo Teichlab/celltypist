@@ -20,7 +20,9 @@ class AnnotationResult():
     ----------
     labels
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
-    prob
+    decision_mat
+        A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the decision matrix.
+    prob_mat
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the probability matrix.
     adata
         An :class:`~scanpy.AnnData` object representing the input object.
@@ -29,22 +31,37 @@ class AnnotationResult():
     ----------
     predicted_labels
         Predicted labels including the individual prediction results and (if majority voting is done) majority voting results.
-    probability_table
-        Probability matrix representing the probability each cell belongs to a given cell type.
+    decision_matrix
+        Decision matrix with the decision score of each cell belonging to a given cell type.
+    probability_matrix
+        Probability matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
     cell_count
         Number of input cells which are predicted by celltypist.
     adata
         A Scanpy object representing the input object.
     """
-    def __init__(self, labels: pd.DataFrame, prob: pd.DataFrame, adata: sc.AnnData):
+    def __init__(self, labels: pd.DataFrame, decision_mat: pd.DataFrame, prob_mat: pd.DataFrame, adata: sc.AnnData):
         self.predicted_labels = labels
-        self.probability_table = prob
-        self.cell_count = labels.shape[0]
+        self.decision_matrix = decision_mat
+        self.probability_matrix = prob_mat
         self.adata = adata
+        self.cell_count = labels.shape[0]
 
-    def to_adata(self) -> sc.AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_decision: bool = True, insert_probability: bool = False) -> sc.AnnData:
         """
-        Insert the predicted labels and (if majority voting is done) majority voting results into the Scanpy object.
+        Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
+
+        Parameters
+        ----------
+        insert_labels
+            Whether to insert the predicted cell type labels and (if majority voting is done) majority voting-based labels into the Scanpy object.
+            (Default: `True`)
+        insert_decision
+            Whether to insert the decision matrix into the Scanpy object.
+            (Default: `True`)
+        insert_probability
+            Whether to insert the probability matrix into the Scanpy object. This will override the decision matrix even when `insert_decision` is set to `True`.
+            (Default: `False`)
 
         Returns
         ----------
@@ -53,39 +70,42 @@ class AnnotationResult():
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
-            4) **name of each cell type**, which represents the prediction probabilities of a given cell type across cells.
+            4) **name of each cell type**, which represents the decision scores (or probabilities if `insert_probability` is `True`) of a given cell type across cells.
         """
-        self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
-        self.adata.obs[self.probability_table.columns] = self.probability_table
+        if insert_labels:
+            self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
+        if insert_probability:
+            self.adata.obs[self.probability_matrix.columns] = self.probability_matrix
+        elif insert_decision:
+            self.adata.obs[self.decision_matrix.columns] = self.decision_matrix
         return self.adata
 
-    def to_plots(self, folder: str, show_probability: bool = True, format: str = 'png') -> None:
+    def to_plots(self, folder: str, plot_probability: bool = False, format: str = 'pdf') -> None:
         """
-        Plot the celltyping and (optional) majority-voting results.
+        Plot the celltyping and (if majority voting is done) majority-voting results.
 
         Parameters
         ----------
         folder
             Path to a folder which stores the output figures.
-        show_probability
-            Whether to also plot the probability distribution of each cell type across all test cells.
-            (Default: `True`)
+        plot_probability
+            Whether to also plot the decision score and probability distributions of each cell type across the test cells.
+            (Default: `False`)
         format
-            Format of output figures. Set to `pdf` if you prefer a vector PDF file.
-            (Default: `png`)
+            Format of output figures. Default to a vector PDF file (dots are still drawn with png backend).
+            (Default: `pdf`)
 
         Returns
         ----------
         None
             Depending on whether majority voting is done, multiple UMAP plots showing the prediction and majority voting results in the `folder`:
-            1) **predicted_labels**, individual prediction outcome for each cell.
-            2) **over_clustering**, over-clustering result for the cells.
-            3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
-            4) **name of each cell type**, which represents the prediction probabilities of a given cell type across cells.
+            1) **predicted_labels**, individual prediction outcome for each cell overlaid onto the UMAP.
+            2) **over_clustering**, over-clustering result of the cells overlaid onto the UMAP.
+            3) **majority_voting**, the cell type label assigned to each cell after the majority voting process overlaid onto the UMAP.
+            4) **name of each cell type**, which represents the decision scores and probabilities of a given cell type distributed across cells overlaid onto the UMAP.
         """
         if not os.path.isdir(folder):
-            raise ValueError("🛑 Output folder does not exist. Please provide a valid folder")
-        _ = self.to_adata()
+            raise FileNotFoundError("🛑 Output folder does not exist. Please provide a valid folder")
         if 'X_umap' in self.adata.obsm:
             logger.info("👀 Detect existing UMAP coordinates, will plot the results accordingly")
         elif 'connectivities' in self.adata.obsp:
@@ -97,13 +117,18 @@ class AnnotationResult():
             self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
             sc.tl.umap(self.adata)
         logger.info("✍️ Plot the results")
+        sc.settings.set_figure_params(figsize=[6.4, 6.4], format=format)
+        self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
         for column in self.predicted_labels:
-            sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False, size=10)
+            sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False, legend_fontweight = 'normal', title = column.replace('_', ' '))
             plt.savefig(os.path.join(folder, column + '.' + format))
-        if show_probability:
-            for column in self.probability_table:
-                sc.pl.umap(self.adata, color = column, show = False, size=10)
+        if plot_probability:
+            for column in self.probability_matrix:
+                self.adata.obs['decision score'] = self.decision_matrix[column]
+                self.adata.obs['probability'] = self.probability_matrix[column]
+                sc.pl.umap(self.adata, color = ['decision score', 'probability'], show = False)
                 plt.savefig(os.path.join(folder, column.replace('/','_') + '.' + format))
+            self.adata.obs.drop(columns=['decision score', 'probability'], inplace=True)
 
     def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
         """
@@ -143,7 +168,7 @@ class AnnotationResult():
         filename, _ = os.path.splitext(filename)
         with pd.ExcelWriter(f"{filename}.xlsx") as writer:
             self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
-            self.probability_table.to_excel(writer, sheet_name="Probability Matrix")
+            self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
 
     def __str__(self):
         return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted_labels']))} cell types"
@@ -234,10 +259,11 @@ class Classifier():
         Returns
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
-            An :class:`~celltypist.classifier.AnnotationResult` object. Three important attributes within this class are:
+            An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
-            3) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
+            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
 
         logger.info(f"🧙 Matching reference genes")
@@ -260,11 +286,11 @@ class Classifier():
         self.model.classifier.coef_ = self.model.classifier.coef_[:, lr_idx]
 
         logger.info("🖋️ Predicting labels")
-        lab_mat, prob_mat = self.model.predict_labels_and_prob(self.indata)
+        decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata)
         logger.info("✅ Prediction done!")
 
         cells = self.adata.obs_names
-        return AnnotationResult(pd.DataFrame(lab_mat, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
+        return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
     def _construct_neighbor_graph(adata: sc.AnnData):
@@ -331,10 +357,11 @@ class Classifier():
         Returns
         ----------
         :class:`~celltypist.classifier.AnnotationResult`
-            An :class:`~celltypist.classifier.AnnotationResult` object. Three important attributes within this class are:
+            An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
-            3) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
+            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)

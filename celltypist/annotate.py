@@ -45,10 +45,11 @@ def annotate(filename: str,
     Returns
     ----------
     :class:`~celltypist.classifier.AnnotationResult`
-        An :class:`~celltypist.classifier.AnnotationResult` object. Three important attributes within this class are:
+        An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
         1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-        2) :attr:`~celltypist.classifier.AnnotationResult.probability_table`, probability matrix from celltypist.
-        3) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+        2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
+        3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+        4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
     """
     #load model
     sgd_classifier = models.load(model)
