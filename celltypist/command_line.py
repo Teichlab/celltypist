@@ -83,8 +83,9 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
                 "cell-file": cell_file,
                 "majority-voting": majority_voting,
                 "outdir": outdir,
-                "xlsx": xlsx,
                 "prefix": prefix,
+                "xlsx": xlsx,
+                "plot-results": plot_results,
                 "quiet": quiet
              }
     if majority_voting:
