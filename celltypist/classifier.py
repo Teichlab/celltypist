@@ -155,7 +155,7 @@ class AnnotationResult():
 
     def to_table(self, folder: str, prefix: str = '', xlsx: bool = False) -> None:
         """
-        Write out tables with both the predicted labels and the probability matrix.
+        Write out tables of predicted labels, decision matrix, and probability matrix.
 
         Parameters
         ----------
@@ -169,7 +169,7 @@ class AnnotationResult():
         Returns
         ----------
         None
-            Depending on `xlsx`, return table(s) of predicted labels and probability matrix.
+            Depending on `xlsx`, return table(s) of predicted labels, decision matrix and probability matrix.
         """
         if not os.path.isdir(folder):
             raise FileNotFoundError("🛑 Output folder does not exist. Please provide a valid folder")
