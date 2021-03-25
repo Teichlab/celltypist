@@ -47,6 +47,27 @@ class AnnotationResult():
         self.adata = adata
         self.cell_count = labels.shape[0]
 
+    def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
+        """
+        Get the frequency of cells belonging to each cell type predicted by celltypist.
+
+        Parameters
+        ----------
+        by
+            Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the summary is based on.
+            Set to `majority_voting` if you want to summarize for the majority voting classifier.
+            (Default: `predicted_labels`)
+
+        Returns
+        ----------
+        :class:`~pandas.DataFrame`
+            A :class:`~pandas.DataFrame` object with cell type frequencies.
+        """
+        unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
+        df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
+        df.sort_values(['counts'], ascending=False, inplace=True)
+        return df
+
     def to_adata(self, insert_labels: bool = True, insert_decision: bool = True, insert_probability: bool = False) -> sc.AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
@@ -131,27 +152,6 @@ class AnnotationResult():
                 sc.pl.umap(self.adata, color = ['decision score', 'probability'], show = False)
                 plt.savefig(os.path.join(folder, prefix + column.replace('/','_') + '.' + format))
             self.adata.obs.drop(columns=['decision score', 'probability'], inplace=True)
-
-    def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
-        """
-        Get the frequency of cells belonging to each cell type predicted by celltypist.
-
-        Parameters
-        ----------
-        by
-            Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the summary is based on.
-            Set to `majority_voting` if you want to summarize for the majority voting classifier.
-            (Default: `predicted_labels`)
-
-        Returns
-        ----------
-        :class:`~pandas.DataFrame`
-            A :class:`~pandas.DataFrame` object with cell type frequencies.
-        """
-        unique, counts = np.unique(self.predicted_labels[by], return_counts=True)
-        df = pd.DataFrame(list(zip(unique, counts)), columns=["celltype", "counts"])
-        df.sort_values(['counts'], ascending=False, inplace=True)
-        return df
 
     def to_table(self, folder: str, prefix: str = '', xlsx: bool = False) -> None:
         """
