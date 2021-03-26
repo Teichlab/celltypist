@@ -9,7 +9,7 @@ from typing import Optional
 from scipy.special import expit
 from . import logger
 
-# create ~/.celltypist and subdirs
+#create ~/.celltypist and subdirs
 celltypist_path = os.path.join(str(pathlib.Path.home()), '.celltypist')
 pathlib.Path(celltypist_path).mkdir(parents=True, exist_ok=True)
 data_path = os.path.join(celltypist_path, "data")
@@ -42,7 +42,7 @@ class Model():
     @staticmethod
     def load(model_file_path: str):
         """Load the desired model."""
-        if not os.path.exists(model_file_path):
+        if not os.path.isfile(model_file_path):
             raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
         with open(model_file_path, "rb") as fh:
             try:
@@ -62,7 +62,7 @@ class Model():
         return self.classifier.features
 
     def predict_labels_and_prob(self, indata) -> tuple:
-        """Get the probability matrix and predicted cell types using the input data."""
+        """Get the decision matrix, probability matrix, and predicted cell types for the input data."""
         scores = self.classifier.decision_function(indata)
         probs = expit(scores)
         return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
@@ -83,7 +83,6 @@ def get_model_path(file: str) -> str:
     str
         A string of the full path to the desired file.
     """
-    #pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
     return os.path.join(models_path, f"{file}")
 
 
@@ -131,7 +130,7 @@ def get_default_model() -> str:
 
 def get_all_models() -> list:
     """
-    Get a list of all the available models included in the package.
+    Get a list of all the available models.
 
     Returns
     ----------
@@ -139,16 +138,16 @@ def get_all_models() -> list:
         A list of available models.
     """
     download_if_required()
-    avaiable_models = []
+    available_models = []
     for model_filename in os.listdir(models_path):
         if model_filename.endswith(".pkl"):
             model_name = os.path.basename(model_filename)
-            avaiable_models.append(model_name)
-    return avaiable_models
+            available_models.append(model_name)
+    return available_models
 
 
 def download_if_required() -> None:
-    """Download models if there are none present in the package `models` directory."""
+    """Download models if there are none present in the `models` directory."""
     if len([m for m in os.listdir(models_path) if m.endswith(".pkl")]) == 0:
         logger.info(f"🔎 No available models. Downloading...")
         download_models()
@@ -167,7 +166,7 @@ def get_models_index(force_update: bool=False) -> dict:
     Returns
     ----------
     dict
-        A dict object converted from the json file.
+        A dict object converted from the model json file.
     """
     models_json_path = get_model_path("models.json")
     if not os.path.exists(models_json_path) or force_update:
