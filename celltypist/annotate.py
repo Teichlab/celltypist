@@ -38,8 +38,8 @@ def annotate(filename: str,
         This argument can be provided in several ways:
         1) an input plain file with the over-clustering result of one cell per line.
         2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
-        3) a python list, numpy array, or pandas series indicating the over-clustering result of all cells.
-        4) if none of the above is provided, will use a heuristic over-clustering approach based on input data size.
+        3) a python list, numpy array, or pandas series representing the over-clustering result of the input cells.
+        4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
         Ignored if `majority_voting` is set to `False`.
 
     Returns
@@ -47,8 +47,8 @@ def annotate(filename: str,
     :class:`~celltypist.classifier.AnnotationResult`
         An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
         1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-        2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
-        3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+        2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
+        3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
         4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
     """
     #load model
@@ -57,7 +57,7 @@ def annotate(filename: str,
     clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
     predictions = clf.celltype()
-    if majority_voting is False:
+    if not majority_voting:
         return predictions
     #over clustering
     if over_clustering is None:
@@ -72,7 +72,7 @@ def annotate(filename: str,
                     over_clustering = [x.strip() for x in f.readlines()]
             except Exception as e:
                 raise Exception(f"🛑 {e}")
-    if len(over_clustering) != clf.adata.shape[0]:
-        raise ValueError(f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.shape[0]})")
+    if len(over_clustering) != clf.adata.n_obs:
+        raise ValueError(f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
     #majority voting
     return classifier.Classifier.majority_vote(predictions, over_clustering)
