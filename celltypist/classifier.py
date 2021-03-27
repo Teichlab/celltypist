@@ -36,7 +36,7 @@ class AnnotationResult():
     probability_matrix
         Probability matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
     cell_count
-        Number of input cells which are predicted by celltypist.
+        Number of input cells which undergo the prediction process.
     adata
         A Scanpy object representing the input data.
     """
@@ -111,9 +111,10 @@ class AnnotationResult():
             Path to a folder which stores the output figures.
         plot_probability
             Whether to also plot the decision score and probability distributions of each cell type across the test cells.
+            If `True`, a number of figures will be generated (may take some time if the input data is large).
             (Default: `False`)
         format
-            Format of output figures. Default to a vector PDF file (dots are still drawn with png backend).
+            Format of output figures. Default to vector PDF files (note dots are still drawn with png backend).
             (Default: `pdf`)
         prefix
             Prefix for the output figures. Default to no prefix used.
@@ -128,18 +129,18 @@ class AnnotationResult():
             4) **name of each cell type**, which represents the decision scores and probabilities of a given cell type distributed across cells overlaid onto the UMAP.
         """
         if not os.path.isdir(folder):
-            raise FileNotFoundError("🛑 Output folder does not exist. Please provide a valid folder")
+            raise FileNotFoundError(f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
         if 'X_umap' in self.adata.obsm:
-            logger.info("👀 Detect existing UMAP coordinates, will plot the results accordingly")
+            logger.info("👀 Detected existing UMAP coordinates, will plot the results accordingly")
         elif 'connectivities' in self.adata.obsp:
-            logger.info("🧙 Generate UMAP coordinates based on the neighborhood graph")
+            logger.info("🧙 Generating UMAP coordinates based on the neighborhood graph")
             sc.tl.umap(self.adata)
         else:
-            logger.info("🧙 Construct the neighborhood graph and generate UMAP coordinates")
+            logger.info("🧙 Constructing the neighborhood graph and generating UMAP coordinates")
             adata = self.adata.copy()
             self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
             sc.tl.umap(self.adata)
-        logger.info("✍️ Plot the results")
+        logger.info("📈 Plotting the results")
         sc.settings.set_figure_params(figsize=[6.4, 6.4], format=format)
         self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
         for column in self.predicted_labels:
@@ -159,12 +160,13 @@ class AnnotationResult():
 
         Parameters
         ----------
-        foler
+        folder
             Path to a folder which stores the output table/tables.
         prefix
             Prefix for the output table/tables. Default to no prefix used.
         xlsx
             Whether to merge output tables into a single Excel (.xlsx).
+            (Default: `False`)
 
         Returns
         ----------
@@ -172,7 +174,7 @@ class AnnotationResult():
             Depending on `xlsx`, return table(s) of predicted labels, decision matrix and probability matrix.
         """
         if not os.path.isdir(folder):
-            raise FileNotFoundError("🛑 Output folder does not exist. Please provide a valid folder")
+            raise FileNotFoundError(f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
         if not xlsx:
             self.predicted_labels.to_csv(os.path.join(folder, f"{prefix}predicted_labels.csv"))
             self.decision_matrix.to_csv(os.path.join(folder, f"{prefix}decision_matrix.csv"))
@@ -221,10 +223,10 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
-    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None): #, chunk_size: int, cpus: int, quiet: bool):
+    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         self.filename = filename
         logger.info(f"📁 Input file is '{self.filename}'")
-        logger.info(f"⏳ Loading data...")
+        logger.info(f"⏳ Loading data")
         if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             self.adata = sc.read(self.filename)
             if transpose:
@@ -248,7 +250,7 @@ class Classifier():
         elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
-                logger.info("👀 Detect scaled expression in the input data, will try the .raw attribute...")
+                logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:
                     self.indata = self.adata.raw.X.copy()
                     self.indata_genes = self.adata.raw.var_names.copy()
@@ -274,20 +276,19 @@ class Classifier():
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
-            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
+            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
             4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
-
-        logger.info(f"🧙 Matching reference genes")
+        logger.info(f"🔗 Matching reference genes in the model")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
-        logger.info(f"🧩 {k_x.sum()} features used for prediction")
+        logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x_idx]
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
-        logger.info(f"🧙 Scaling input data")
+        logger.info(f"⚖️ Scaling input data")
         means_ = self.model.scaler.mean_[lr_idx]
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = self.indata - means_
@@ -320,12 +321,12 @@ class Classifier():
 
     def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
         """
-        Over-clustering input data with a canonical scanpy pipeline.
+        Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
 
         Parameters
         ----------
         resolution
-            resolution parameter for leiden clustering which controls the coarseness of the clustering.
+            Resolution parameter for leiden clustering which controls the coarseness of the clustering.
             Default to 5, 10, 15 and 20 for datasets with cell numbers less than 5k, 20k, 40k and above, respectively.
 
         Returns
@@ -333,23 +334,22 @@ class Classifier():
         :class:`~pandas.Series`
             A :class:`~pandas.Series` object showing the over-clustering result.
         """
-        logger.info("🧙 Over-clustering begins")
-        adata = self.adata.copy()
-        if 'connectivities' not in adata.obsp:
+        if 'connectivities' not in self.adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, construct one before the over-clustering")
+            adata = self.adata.copy()
             self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
         else:
-            logger.info("👀 Detect a neighborhood graph in the input object, will run over-clustering on the basis of it")
+            logger.info("👀 Detected a neighborhood graph in the input object, will run over-clustering on the basis of it")
         if resolution is None:
-            if self.adata.shape[0] < 5000:
+            if self.adata.n_obs < 5000:
                 resolution = 5
-            elif self.adata.shape[0] < 20000:
+            elif self.adata.n_obs < 20000:
                 resolution = 10
-            elif self.adata.shape[0] < 40000:
+            elif self.adata.n_obs < 40000:
                 resolution = 15
             else:
                 resolution = 20
-        logger.info(f"🧙 Over-clustering input data with resolution set to {resolution}")
+        logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
         sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         oc_column = self.adata.obs.over_clustering
         self.adata.obs.drop(columns=['over_clustering'], inplace=True)
@@ -372,13 +372,13 @@ class Classifier():
         :class:`~celltypist.classifier.AnnotationResult`
             An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix, decision matrix from celltypist.
-            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix, probability matrix from celltypist.
+            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
+            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
             4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
         if isinstance(over_clustering, list):
             over_clustering = np.array(over_clustering)
-        logger.info("🧙 Majority voting")
+        logger.info("🗳️ Majority voting the predictions")
         votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
         majority = votes.idxmax()[over_clustering].reset_index()
         majority.index = predictions.predicted_labels.index
