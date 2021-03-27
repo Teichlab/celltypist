@@ -17,9 +17,9 @@ d88'  "Y8 d88   88b  888   888    888     88.  .8    888   88b  888  d88(  "8   
 
 
 def show_config(config: dict):
-    logger.info(f"🛠️ Configuration:")
+    logger.info(f"⚙️ Configuration:")
     for key, value in config.items():
-        logger.info(f"\t📥 {key}: {value}")
+        logger.info(f"\t🛠️ {key}: {value}")
 
 
 def show_help_and_exit(message: str):
@@ -28,22 +28,23 @@ def show_help_and_exit(message: str):
     click.echo()
     ctx.fail(ctx.get_help())
 
+
 @click.command()
-@click.option("-i", "--indata", help="Input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
+@click.option("-i", "--indata", help="Path to the input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default=None, help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
-@click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist needs a cell-by-gene matrix as input.")
+@click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist requires the cell-by-gene format.")
 @click.option("-gf", "--gene-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
 @click.option("-cf", "--cell-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
-@click.option("-oc", "--over-clustering", default='auto', help="Input file with over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
+@click.option("-oc", "--over-clustering", default='auto', help="Input file with the over-clustering result of one cell per line, or a string key specifying an existing metadata column in the Scanpy object. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
 @click.option("-o", "--outdir", default=None, help="Directory to store the output files and (if `--plot-results` is set) figures. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("-p", "--prefix", default="", help="Prefix for the output files and (if `--plot-results` is set) figures. Default to no prefix used.", type=str)
-@click.option("--xlsx", is_flag=True, default=False, help="Merge output files into a single Excel (.xlsx).")
+@click.option("--xlsx", is_flag=True, default=False, help="Merge output tables into a single Excel (.xlsx).")
 @click.option("--plot-results", is_flag=True, default=False, help="Plot the prediction results as multiple figures as well.")
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
-@click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configure information during the run.")
-def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering,
+@click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configuration information during the run.")
+def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering: str,
          outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
@@ -113,4 +114,4 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
 
     #plot result
     if plot_results:
-        result.to_plots(folder = outdir, prefix = prefix)
+        result.to_plots(folder = outdir, prefix = prefix, plot_probability = True)
