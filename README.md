@@ -96,12 +96,13 @@ You can now manipulate this object with any functions or modules applicable to `
 #Visualize the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
-A different prefix for the output figures can be specified with `prefix`, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument.
+A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
 ```python
 #Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
 ```
-
+Multiple figures will be generated, including:
+1) 
 
 ### 1.6. Celltyping based on Scanpy h5ad data
 Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).
@@ -186,4 +187,13 @@ During the majority voting, to define cell-cell relations, Celltypist will use a
    3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
+```
+
+### 2.7. Generate visualization figures for the results
+In addition to the tables output by Celltypist, you have the option to generate several figures to get an overviw of your prediciton results.
+```bash
+#Plot the results after the celltyping process.
+celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
+#Plot the results after the celltyping and majority-voting processes.
+celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file --plot-results
 ```
