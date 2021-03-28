@@ -77,7 +77,7 @@ predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
-The resulting `AnnotationResult` can be also transformed to an `AnnData` which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default).
+The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default).
 ```python
 #Get an `AnnData` with predicted labels embedded into the observation metadata column.
 adata = predictions.to_adata(insert_labels = True)
@@ -96,7 +96,7 @@ You can now manipulate this object with any functions or modules applicable to `
 #Visualize the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
-A different prefix for the output figures can be specified with `prefix`. UMAP coordinates will be generated for this dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument.
+A different prefix for the output figures can be specified with `prefix`, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument.
 ```python
 #Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
@@ -109,13 +109,8 @@ Since the expression of each gene will be centered and scaled by matching with t
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
-#Examine the predicted cell types.
-predictions.predicted_labels
-#Examine the matrix representing the probability each cell belongs to a given cell type.
-predictions.probability_table
-#Export the above two results to an Excel table.
-predictions.write_excel('/path/to/output.xlsx')
 ```
+All the downstream operations are the same as in `1.5.`, except that when generating the visualization figures, existing UMAP coordiantes will be used. If no UMAP coordiantes are found, Celltypist will fall back on the neighborhood graph to yield new 2D UMAP porjections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
 By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
@@ -124,7 +119,7 @@ To turn on the majority voting classifier in addition to the Celltypist predicti
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
 ```
-During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
+During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
    3) a Python list, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
@@ -137,7 +132,8 @@ Again, an instance of the `AnnotationResult` class will be returned.
 ```python
 #Inspect the result.
 predictions.predicted_labels
-predictions.probability_table
+predictions.decision_matrix
+predictions.probability_matrix
 #Export the result.
 predictions.write_excel('/path/to/output.xlsx')
 ```
