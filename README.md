@@ -77,19 +77,29 @@ predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
-The resulting `AnnotationResult` can be also transformed into the `AnnData` which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` by specifying `insert_labels = True` (which is the default).
+The resulting `AnnotationResult` can be also transformed to an `AnnData` which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default).
 ```python
 #Get an `AnnData` with predicted labels embedded into the observation metadata column.
 adata = predictions.to_adata(insert_labels = True)
 #Inspect this column (`predicted_labels`).
 adata.obs.predicted_labels
 ```
-In addition, you can insert the decision matrix into the 'AnnData' by passing in `insert_decision = True`, shwoing the decision scores of each cell type distributed across the input cells. Alternativley, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probabilitie distributions.
+In addition, you can insert the decision matrix into the 'AnnData' by passing in `insert_decision = True`, shwoing the decision scores of each cell type distributed across the input cells. Alternativley, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probability distributions.
 ```python
 #Get an `AnnData` with predicted labels and decision matrix (recommended).
 adata = predictions.to_adata(insert_labels = True, insert_decision = True)
 #Get an `AnnData` with predicted labels and probability matrix.
 adata = predictions.to_adata(insert_labels = True, insert_probability = True)
+```
+You can then manipulate this object with any functions/modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need to explicitly transform it into an `AnnData`.
+```python
+#Visualize the predicted cell types overlaid onto the UMAP.
+predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
+```
+UMAP coordinates will be generated for this dataset using a canonical Scanpy(https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True`.
+```python
+#Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
+predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
 ```
 N.B. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
 
