@@ -50,7 +50,7 @@ model.scaler
 ```
 
 ### 1.5. Celltyping based on the input of count table 
-Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required.
+Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
 ```python
 #Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
 input_file = celltypist.samples.get_sample_csv()
@@ -91,17 +91,17 @@ adata = predictions.to_adata(insert_labels = True, insert_decision = True)
 #Get an `AnnData` with predicted labels and probability matrix.
 adata = predictions.to_adata(insert_labels = True, insert_probability = True)
 ```
-You can then manipulate this object with any functions/modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need to explicitly transform it into an `AnnData`.
+You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need to explicitly transform it into an `AnnData`.
 ```python
 #Visualize the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
-UMAP coordinates will be generated for this dataset using a canonical Scanpy(https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True`.
+A different prefix for the output figures can be specified with `prefix`. UMAP coordinates will be generated for this dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument.
 ```python
 #Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
 ```
-N.B. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
+
 
 ### 1.6. Celltyping based on Scanpy h5ad data
 Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).
