@@ -72,10 +72,24 @@ The `annotate` function will return an instance of the `AnnotationResult` class 
 ```python
 #Examine the predicted cell types.
 predictions.predicted_labels
-#Examine the matrix representing the probability each cell belongs to a given cell type.
-predictions.probability_table
-#Export the above two results to an Excel table.
-predictions.write_excel('/path/to/output.xlsx')
+#Examine the matrix representing the decision score of each cell belonging to a given cell type.
+predictions.decision_matrix
+#Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
+predictions.probability_matrix
+```
+The resulting `AnnotationResult` can be also transformed into the `AnnData` which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` by specifying `insert_labels = True` (which is the default).
+```python
+#Get an `AnnData` with predicted labels embedded into the observation metadata column.
+adata = predictions.to_adata(insert_labels = True)
+#Inspect this column (`predicted_labels`).
+adata.obs.predicted_labels
+```
+In addition, you can insert the decision matrix into the 'AnnData' by passing in `insert_decision = True`, shwoing the decision scores of each cell type distributed across the input cells. Alternativley, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probabilitie distributions.
+```python
+#Get an `AnnData` with predicted labels and decision matrix (recommended).
+adata = predictions.to_adata(insert_labels = True, insert_decision = True)
+#Get an `AnnData` with predicted labels and probability matrix.
+adata = predictions.to_adata(insert_labels = True, insert_probability = True)
 ```
 N.B. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
 

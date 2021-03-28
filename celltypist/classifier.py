@@ -68,7 +68,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def to_adata(self, insert_labels: bool = True, insert_decision: bool = True, insert_probability: bool = False) -> sc.AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_probability: bool = False) -> sc.AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
 
@@ -79,7 +79,7 @@ class AnnotationResult():
             (Default: `True`)
         insert_decision
             Whether to insert the decision matrix into the Scanpy object.
-            (Default: `True`)
+            (Default: `False`)
         insert_probability
             Whether to insert the probability matrix into the Scanpy object. This will override the decision matrix even when `insert_decision` is set to `True`.
             (Default: `False`)
