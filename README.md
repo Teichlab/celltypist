@@ -140,6 +140,8 @@ Similarly, an instance of the `AnnotationResult` class will be returned.
 ```python
 #Examine the predicted cell type labels.
 predictions.predicted_labels
+#Examine specifically the majority-voting results.
+predictions.predicted_labels.majority_voting
 #Examine the matrix representing the decision score of each cell belonging to a given cell type.
 predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
@@ -171,7 +173,7 @@ See `1.5.` for the format of the desired count matrix.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir
 ```
-You can add a different model to be used in the `--model` option. If the `--model` is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.
+You can add a different model to be used in the `--model` option. If the `--model` is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
 If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
@@ -190,7 +192,7 @@ See `1.7.` for how the majority voting classifier works.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
 ```
-During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a canonical clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` argument. This argument can be specified in several ways:
+During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
    3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
@@ -199,7 +201,7 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 ```
 
 ### 2.7. Generate visualization figures for the results
-In addition to the tables output by Celltypist, you have the option to generate several figures to get an overviw of your prediciton results.
+In addition to the tables output by Celltypist, you have the option to generate multiple figures to get an overviw of your prediciton results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
 ```bash
 #Plot the results after the celltyping process.
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
