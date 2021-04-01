@@ -22,7 +22,7 @@ The models serve as the basis for cell type predictions. Each model is on averag
 #Download all the available models from the remote Sanger server.
 models.download_models()
 #Update all models by re-downloading the latest versions if you think they may be outdated.
-models.download_models(force_update=True)
+models.download_models(force_update = True)
 #Show the local directory storing these models.
 models.models_path
 ```
@@ -50,14 +50,14 @@ model.scaler
 ```
 
 ### 1.5. Celltyping based on the input of count table 
-Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table, as they point to the negative transcriptomic signatures when compared with the model used.
+Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table as well, as they point to the negative transcriptomic signatures when compared with the model used.
 ```python
 #Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
 input_file = celltypist.samples.get_sample_csv()
 ```
-Assign the cell type labels within the model to the input test cells using the `annotate` function.
+Assign the cell type labels from the model to the input test cells using the `annotate` function.
 ```python
-#Predict the cell identity of each input cell.
+#Predict the identity of each input cell.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
 ```
 If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument. In addition, if the input is provided in the `.mtx` format, you will also need to specify the `gene_file` and `cell_file` arguments as the files containing names of genes and cells, respectively.
@@ -67,42 +67,42 @@ predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', tran
 #In case your input file is a gene-by-cell mtx file.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True, gene_file = '/path/to/gene/file.txt', cell_file = '/path/to/cell/file.txt')
 ```
-Similarly, if the `model` argument is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model.
+Again, if the `model` argument is not specified, Celltypist will by default use the `Immune_All_Low.pkl` model.  
 The `annotate` function will return an instance of the `AnnotationResult` class as defined in the Celltypist.
 ```python
-#Examine the predicted cell types.
+#Examine the predicted cell type labels.
 predictions.predicted_labels
 #Examine the matrix representing the decision score of each cell belonging to a given cell type.
 predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
-The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default).
+The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by the function `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior).
 ```python
 #Get an `AnnData` with predicted labels embedded into the observation metadata column.
 adata = predictions.to_adata(insert_labels = True)
 #Inspect this column (`predicted_labels`).
 adata.obs.predicted_labels
 ```
-In addition, you can insert the decision matrix into the 'AnnData' by passing in `insert_decision = True`, shwoing the decision scores of each cell type distributed across the input cells. Alternativley, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probability distributions.
+In addition, you can insert the decision matrix into the `AnnData` by passing in `insert_decision = True`, which represents the decision scores of each cell type distributed across the input cells. Alternatively, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probability values.  
+After the insertion, multiple columns will show up in the cell metadata of `AnnData`, with each column's name as a cell type name.
 ```python
 #Get an `AnnData` with predicted labels and decision matrix (recommended).
 adata = predictions.to_adata(insert_labels = True, insert_decision = True)
 #Get an `AnnData` with predicted labels and probability matrix.
 adata = predictions.to_adata(insert_labels = True, insert_probability = True)
 ```
-You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need to explicitly transform it into an `AnnData`.
+You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
 ```python
 #Visualize the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
-A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) piepline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
+A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) pipeline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
 ```python
 #Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
 ```
-Multiple figures will be generated, including:
-1) 
+Multiple figures will be generated, including the predicted cell type labels overlaid onto the UMAP space, plus the decision score and probability distributions of each cell type on the UMAP.
 
 ### 1.6. Celltyping based on Scanpy h5ad data
 Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).
