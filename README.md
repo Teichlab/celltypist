@@ -121,7 +121,7 @@ predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Lo
 All the downstream operations are the same as in `1.5.`, except that when generating the visualization figures, existing UMAP coordiantes will be used. If no UMAP coordiantes are found, Celltypist will fall back on the neighborhood graph to yield new 2D UMAP porjections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
-By default, Celltypist will only do the prediction job to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
+By default, Celltypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
 To turn on the majority voting classifier in addition to the Celltypist predictions, pass in `majority_voting = True` to the `annotate` function.
 ```python
 #Turn on the majority voting classifier as well.
@@ -136,15 +136,17 @@ During the majority voting, to define cell-cell relations, Celltypist will use a
 #Add your own over-clustering result.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
 ```
-Again, an instance of the `AnnotationResult` class will be returned.
+Similarly, an instance of the `AnnotationResult` class will be returned.
 ```python
-#Inspect the result.
+#Examine the predicted cell type labels.
 predictions.predicted_labels
+#Examine the matrix representing the decision score of each cell belonging to a given cell type.
 predictions.decision_matrix
+#Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
-#Export the result.
-predictions.write_excel('/path/to/output.xlsx')
 ```
+Compared to the results without majority-voting functionality as in `1.5.` and `1.6.`, the `.predicted_labels` attribute now has two extra columns (`over_clustering` and `majority_voting`) in addition to the column `predicted_labels`.  
+Other downstream operations are the same as in `1.5.` and `1.6.`. Note that due to the majority voting results added, the exported tables (by `to_table`), the transformed `AnnData` (by `to_adata`), and the visualization figures (by `to_plots`) will all have additional outputs or information indicating the majority-voting outcomes.
 
 ## 2. Use as the command line
 
