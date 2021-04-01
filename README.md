@@ -77,6 +77,13 @@ predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
+The above three results can be written out to tables by the function `to_table`, specifying the target `folder` for storation and the `prefix` of each table name.
+```python
+#Export the three results to csv tables.
+predictions.to_table(folder = '/path/to/a/folder', prefix = '')
+#Alternatively, export the three results to a single Excel table (.xlsx).
+predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
+```
 The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by the function `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior).
 ```python
 #Get an `AnnData` with predicted labels embedded into the observation metadata column.
