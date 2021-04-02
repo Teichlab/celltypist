@@ -210,6 +210,9 @@ def download_models(force_update: bool=False) -> None:
     logger.info(f"📂 Storing models in {models_path}")
     for idx,model in enumerate(models_json["models"]):
         model_path = get_model_path(model["filename"])
+        if os.path.exists(model_path) and not force_update:
+            logger.info(f"⏩ Skipping [{idx+1}/{model_count}]: {model['filename']} (file exists)")
+            continue
         logger.info(f"💾 Downloading model [{idx+1}/{model_count}]: {model['filename']}")
         try:
             with open(model_path, "wb") as f:
