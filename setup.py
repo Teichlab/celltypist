@@ -19,8 +19,8 @@ def get_version():
 setuptools.setup(
     name="celltypist-dev",
     version=get_version(),
-    author="Tomas Pires de Carvalho Gomes",
-    author_email="tpcg@sanger.ac.uk",
+    author="Chuan Xu",
+    author_email="cx1@sanger.ac.uk",
     description="A tool for semi-automatic cell type annotation",
     long_description=get_readme(),
     long_description_content_type="text/markdown",
