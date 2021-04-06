@@ -256,6 +256,7 @@ class Classifier():
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X.copy()
             self.indata_genes = self.adata.var_names.copy()
+            self.indata_names = self.adata.obs_names.copy()
         elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
@@ -263,11 +264,13 @@ class Classifier():
                 try:
                     self.indata = self.adata.raw.X.copy()
                     self.indata_genes = self.adata.raw.var_names.copy()
+                    self.indata_names = self.adata.raw.obs_names.copy()
                 except Exception as e:
                     raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
                 self.indata = self.adata.X.copy()
                 self.indata_genes = self.adata.var_names.copy()
+                self.indata_names = self.adata.obs_names.copy()
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
@@ -312,7 +315,7 @@ class Classifier():
         decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata)
         logger.info("✅ Prediction done!")
 
-        cells = self.adata.obs_names
+        cells = self.indata_names
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
