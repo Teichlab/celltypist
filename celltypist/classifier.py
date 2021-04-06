@@ -199,7 +199,8 @@ class Classifier():
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
+        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
+        path to the desired model file or the model name.
     transpose
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
         (Default: `False`)
@@ -223,8 +224,16 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
-    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+    def __init__(self, filename: str = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+        if isinstance(model, str):
+            model = Model.load(model)
+        self.model = model
+
         self.filename = filename
+        if not self.filename:
+            logger.warn(f"📭 No input file provided to the classifier. Values for inadat, indata_genes and indata_names are required before running celltype()")
+            return
+
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data")
         if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
