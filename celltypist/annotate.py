@@ -1,4 +1,5 @@
-from . import classifier, models
+from . import classifier
+from .models import Model
 from typing import Optional, Union
 import numpy as np
 import pandas as pd
@@ -52,7 +53,7 @@ def annotate(filename: str,
         4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
     """
     #load model
-    sgd_classifier = models.load(model)
+    sgd_classifier = Model.load(model)
     #construct Classifier class
     clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict

@@ -40,16 +40,33 @@ class Model():
         self.scaler = scaler
 
     @staticmethod
-    def load(model_file_path: str):
-        """Load the desired model."""
-        if not os.path.isfile(model_file_path):
-            raise FileNotFoundError(f"🛑 No such file: {model_file_path}")
-        with open(model_file_path, "rb") as fh:
+    def load(model: Optional[str] = None):
+        """
+        Load the desired model.
+
+        Parameters
+        ----------
+        model
+            Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
+            To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
+
+        Returns
+        ----------
+        :class:`~celltypist.models.Model`
+            A :class:`~celltypist.models.Model` object.
+        """
+        if not model:
+            model = get_default_model()
+        if model in get_all_models():
+            model = get_model_path(model)
+        if not os.path.isfile(model):
+            raise FileNotFoundError(f"🛑 No such file: {model}")
+        with open(model, "rb") as fh:
             try:
                 pkl_obj = pickle.load(fh)
                 return Model(pkl_obj['Model'], pkl_obj['Scaler_'])
             except Exception as exception:
-                raise Exception(f"🛑 Invalid model: {model_file_path}. {exception}")
+                raise Exception(f"🛑 Invalid model: {model}. {exception}")
 
     @property
     def cell_types(self) -> np.ndarray:
@@ -84,28 +101,6 @@ def get_model_path(file: str) -> str:
         A string of the full path to the desired file.
     """
     return os.path.join(models_path, f"{file}")
-
-
-def load(model: Optional[str] = None) -> Model:
-    """
-    Load the desired model.
-
-    Parameters
-    ----------
-    model
-        Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
-        To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
-
-    Returns
-    ----------
-    :class:`~celltypist.models.Model`
-        A :class:`~celltypist.models.Model` object.
-    """
-    if model is None:
-        model = get_default_model()
-    if model in get_all_models():
-        model = get_model_path(model)
-    return Model.load(model)
 
 
 def get_default_model() -> str:
