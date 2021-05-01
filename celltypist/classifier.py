@@ -199,7 +199,8 @@ class Classifier():
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
+        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
+        path to the desired model file or the model name.
     transpose
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
         (Default: `False`)
@@ -223,8 +224,16 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
-    def __init__(self, filename: str, model: Model, transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+    def __init__(self, filename: str = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+        if isinstance(model, str):
+            model = Model.load(model)
+        self.model = model
+
         self.filename = filename
+        if not self.filename:
+            logger.warn(f"📭 No input file provided to the classifier. Values for inadat, indata_genes and indata_names are required before running celltype()")
+            return
+
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data")
         if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
@@ -247,6 +256,7 @@ class Classifier():
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X.copy()
             self.indata_genes = self.adata.var_names.copy()
+            self.indata_names = self.adata.obs_names.copy()
         elif self.filename.endswith('.h5ad'):
             self.adata = sc.read(self.filename)
             if self.adata.X.min() < 0:
@@ -254,11 +264,13 @@ class Classifier():
                 try:
                     self.indata = self.adata.raw.X.copy()
                     self.indata_genes = self.adata.raw.var_names.copy()
+                    self.indata_names = self.adata.raw.obs_names.copy()
                 except Exception as e:
                     raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
                 self.indata = self.adata.X.copy()
                 self.indata_genes = self.adata.var_names.copy()
+                self.indata_names = self.adata.obs_names.copy()
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
@@ -303,7 +315,7 @@ class Classifier():
         decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata)
         logger.info("✅ Prediction done!")
 
-        cells = self.adata.obs_names
+        cells = self.indata_names
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
