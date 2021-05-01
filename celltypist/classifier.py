@@ -200,7 +200,7 @@ class Classifier():
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
-        path to the desired model file or the model name.
+        path to the desired model file, or the model name.
     transpose
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
         (Default: `False`)
@@ -221,6 +221,8 @@ class Classifier():
         The expression matrix used for predictions stored in the log1p normalized format.
     indata_genes
         All the genes included in the input data.
+    indata_names
+        All the cells included in the input data.
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
@@ -228,12 +230,10 @@ class Classifier():
         if isinstance(model, str):
             model = Model.load(model)
         self.model = model
-
         self.filename = filename
         if not self.filename:
-            logger.warn(f"📭 No input file provided to the classifier. Values for inadat, indata_genes and indata_names are required before running celltype()")
+            logger.warn(f"📭 No input file provided to the classifier")
             return
-
         logger.info(f"📁 Input file is '{self.filename}'")
         logger.info(f"⏳ Loading data")
         if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
