@@ -38,7 +38,7 @@ models.models_description()
 To take a look at a given model, load the model as an instance of the `Model` class as defined in Celltypist.
 ```python
 #Select the model from the above list. If the `model` argument is not provided, will default to `Immune_All_Low.pkl`.
-model = models.load(model = 'Immune_All_Low.pkl')
+model = models.Model.load(model = 'Immune_All_Low.pkl')
 #Examine cell types contained in the model.
 model.cell_types
 #Examine genes/features contained in the model.
