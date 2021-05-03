@@ -47,6 +47,8 @@ model.features
 model.classifier
 #The standard scaler within the model (used to scale the input data).
 model.scaler
+#The model information.
+model.description
 ```
 
 ### 1.5. Celltyping based on the input of count table 
