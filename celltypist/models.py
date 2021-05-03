@@ -27,6 +27,8 @@ class Model():
         A SGDClassifier incorporated in the loaded model.
     scaler
         A StandardScaler incorporated in the loaded model.
+    description
+        Description of the model as a dictionary.
 
     Attributes
     ----------
@@ -34,10 +36,13 @@ class Model():
         The SGDClassifier incorporated in the loaded model.
     scaler
         The StandardScaler incorporated in the loaded model.
+    description
+        Description of the loaded model.
     """
-    def __init__(self, clf, scaler):
+    def __init__(self, clf, scaler, description):
         self.classifier = clf
         self.scaler = scaler
+        self.description = description
 
     @staticmethod
     def load(model: Optional[str] = None):
@@ -64,7 +69,7 @@ class Model():
         with open(model, "rb") as fh:
             try:
                 pkl_obj = pickle.load(fh)
-                return Model(pkl_obj['Model'], pkl_obj['Scaler_'])
+                return Model(pkl_obj['Model'], pkl_obj['Scaler_'], pkl_obj['description'])
             except Exception as exception:
                 raise Exception(f"🛑 Invalid model: {model}. {exception}")
 
