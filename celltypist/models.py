@@ -221,17 +221,28 @@ def download_models(force_update: bool=False) -> None:
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
 
-def models_description() -> pd.DataFrame:
+def models_description(on_the_fly: bool=True) -> pd.DataFrame:
     """
     Get the descriptions of all available models.
+
+    Parameters
+    ----------
+    on_the_fly
+        Whether to fetch the model information from downloaded model files.
+        If set to `False`, will fetch the information directly from the JSON file.
+        (Default: `True`)
 
     Returns
     ----------
     :class:`~pandas.DataFrame`
         A :class:`~pandas.DataFrame` object with model descriptions.
     """
-    models_json = get_models_index()
-    models = models_json["models"]
-    filenames = [model['filename'] for model in models]
-    descriptions = [model['details'] for model in models]
+    if on_the_fly:
+        filenames = get_all_models()
+        descriptions = [Model.load(filename).description['details'] for filename in filenames]
+    else:
+        models_json = get_models_index()
+        models = models_json["models"]
+        filenames = [model['filename'] for model in models]
+        descriptions = [model['details'] for model in models]
     return pd.DataFrame({'model': filenames, 'description': descriptions})
