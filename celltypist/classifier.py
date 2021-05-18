@@ -368,7 +368,7 @@ class Classifier():
         return oc_column
 
     @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, np.ndarray, pd.Series]) -> AnnotationResult:
+    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series]) -> AnnotationResult:
         """
         Majority vote the celltypist predictions using the result from the over-clustering.
 
@@ -377,7 +377,7 @@ class Classifier():
         predictions
             An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`.
         over_clustering
-            A list, numpy array or pandas series containing the over-clustering information.
+            A list, tuple, numpy array or pandas series containing the over-clustering information.
 
         Returns
         ----------
@@ -388,7 +388,7 @@ class Classifier():
             3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
             4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
-        if isinstance(over_clustering, list):
+        if isinstance(over_clustering, list) or isinstance(over_clustering, tuple):
             over_clustering = np.array(over_clustering)
         logger.info("🗳️ Majority voting the predictions")
         votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
