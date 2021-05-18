@@ -135,7 +135,7 @@ predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majo
 During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
-   3) a Python list, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
+   3) a Python list, tuple, Numpy 1D array, or Pandas series indicating the over-clustering result of all cells.
    4) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
 ```python
 #Add your own over-clustering result.
