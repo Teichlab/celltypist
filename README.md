@@ -1,9 +1,9 @@
 # Overview of Celltypist
 Celltypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimized by the stochastic gradient descent algorithm. Celltypist provides several different models for predictions, with a current focus on immune sub-populations, in order to assist in the accurate classification of different cell types and subtypes.
 
-# Install the development version
+# Install celltypist
 ```console
-pip install celltypist-dev
+pip install celltypist
 ```
 
 # Usage
