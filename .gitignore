@@ -10,6 +10,8 @@
 env
 .eggs/
 build/
+build_doc.sh
+build_wheel.sh
 
 .DS_Store
 
