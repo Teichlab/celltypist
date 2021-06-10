@@ -230,12 +230,13 @@ class Classifier():
         if isinstance(model, str):
             model = Model.load(model)
         self.model = model
-        self.filename = filename
-        if not self.filename:
+        if not filename:
             logger.warn(f"📭 No input file provided to the classifier")
             return
-        logger.info(f"📁 Input file is '{self.filename}'")
-        logger.info(f"⏳ Loading data")
+        if isinstance(filename, str):
+            self.filename = filename
+            logger.info(f"📁 Input file is '{self.filename}'")
+            logger.info(f"⏳ Loading data")
         if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             self.adata = sc.read(self.filename)
             if transpose:
