@@ -198,6 +198,7 @@ class Classifier():
     filename
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
+        Also accepts the input as an :class:`~scanpy.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
@@ -215,7 +216,7 @@ class Classifier():
     Attributes
     ----------
     filename
-        Path to the input dataset.
+        Path to the input dataset. This attribute exists only when the input is a file path.
     adata
         A Scanpy object which stores the log1p normalized expression data in `.X` or `.raw.X`.
     indata
@@ -227,7 +228,7 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
     """
-    def __init__(self, filename: str = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+    def __init__(self, filename: Union[AnnData,str] = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         if isinstance(model, str):
             model = Model.load(model)
         self.model = model
