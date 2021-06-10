@@ -3,8 +3,9 @@ from .models import Model
 from typing import Optional, Union
 import numpy as np
 import pandas as pd
+from scanpy import AnnData
 
-def annotate(filename: str,
+def annotate(filename: Union[AnnData,str] = "",
              model: Optional[Union[str, Model]] = None,
              transpose_input: bool = False,
              gene_file: Optional[str] = None,
@@ -19,6 +20,7 @@ def annotate(filename: str,
     filename
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose_input` for more information).
+        Also accepts the input as an :class:`~scanpy.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
         Model used to predict the input cells. Default to using the `Immune_All_Low.pkl` model.
