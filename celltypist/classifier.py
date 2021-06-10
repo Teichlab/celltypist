@@ -1,6 +1,7 @@
 import os
 from typing import Optional, Literal, Union
 import scanpy as sc
+from scanpy import AnnData
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -237,7 +238,7 @@ class Classifier():
             self.filename = filename
             logger.info(f"📁 Input file is '{self.filename}'")
             logger.info(f"⏳ Loading data")
-        if self.filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
+        if isinstance(filename, str) and filename.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             self.adata = sc.read(self.filename)
             if transpose:
                 self.adata = self.adata.transpose()
@@ -258,8 +259,8 @@ class Classifier():
             self.indata = self.adata.X.copy()
             self.indata_genes = self.adata.var_names.copy()
             self.indata_names = self.adata.obs_names.copy()
-        elif self.filename.endswith('.h5ad'):
-            self.adata = sc.read(self.filename)
+        elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
+            self.adata = sc.read(filename) if isinstance(filename, str) else filename
             if self.adata.X.min() < 0:
                 logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:
@@ -275,7 +276,7 @@ class Classifier():
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         else:
-            raise ValueError("🛑 Invalid input file type. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
+            raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
 
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
         self.model = model
