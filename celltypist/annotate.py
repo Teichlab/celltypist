@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 def annotate(filename: str,
-             model: Optional[str] = None,
+             model: Optional[Union[str, Model]] = None,
              transpose_input: bool = False,
              gene_file: Optional[str] = None,
              cell_file: Optional[str] = None,
@@ -53,7 +53,7 @@ def annotate(filename: str,
         4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
     """
     #load model
-    sgd_classifier = Model.load(model)
+    sgd_classifier = model if isinstance(model, Model) else Model.load(model)
     #construct Classifier class
     clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
