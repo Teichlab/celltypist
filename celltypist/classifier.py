@@ -280,7 +280,6 @@ class Classifier():
             raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
 
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
-        self.model = model
 
     def celltype(self) -> AnnotationResult:
         """
