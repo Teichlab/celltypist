@@ -61,6 +61,8 @@ Assign the cell type labels from the model to the input test cells using the `an
 ```python
 #Predict the identity of each input cell.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
+#Alternatively, the model argument can be a previously loaded `Model` as in 1.4.
+predictions = celltypist.annotate(input_file, model = model)
 ```
 If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument. In addition, if the input is provided in the `.mtx` format, you will also need to specify the `gene_file` and `cell_file` arguments as the files containing names of genes and cells, respectively.
 ```python
