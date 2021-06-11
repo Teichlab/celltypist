@@ -124,6 +124,8 @@ Since the expression of each gene will be centered and scaled by matching with t
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
+#Alternatively, the input can be specified as an AnnData already loaded in memory.
+predictions = celltypist.annotate(a_loaded_adata, model = 'Immune_All_Low.pkl')
 ```
 All the downstream operations are the same as in `1.5.`, except that 1) the transformed `AnnData` from `to_adata` stores all the expression matrix and other information as is in the original object 2) when generating the visualization figures, existing UMAP coordinates will be used. If no UMAP coordinates are found, Celltypist will fall back on the neighborhood graph to yield new 2D UMAP projections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
 
