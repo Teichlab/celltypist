@@ -7,6 +7,7 @@ from sklearn.linear_model import SGDClassifier
 from typing import Optional, Union
 from .models import Model
 from . import logger
+from scipy.sparse import spmatrix
 
 def _load_file_as_list(_file):
     """
@@ -74,11 +75,23 @@ def _prepare_data(X, labels, genes, transpose):
         indata = X.copy()
         if transpose:
             indata = indata.transpose()
-        if genes is None:
-            raise Exception("🛑 Missing `genes`. Please provide this argument together with the input training data")
-        genes = _load_file_as_list(genes)
-        if len(genes) != indata.shape[1]:
-            raise ValueError(f"🛑 The number of genes provided does not match the number of genes in the training data")
+        if isinstance(indata, pd.DataFrame):
+            genes = indata.columns
+            indata = indata.values
+        else:
+            if isinstance(indata, spmatrix):
+                indata = indata.toarray()
+            elif isinstance(indata, np.matrix):
+                indata = np.array(indata)
+            elif isinstance(indata, np.ndarray):
+                indata = indata
+            else:
+                raise ValueError(f"🛑 Please provide a valid array-like object as input")
+            if genes is None:
+                raise Exception("🛑 Missing `genes`. Please provide this argument together with the input training data")
+            genes = _load_file_as_list(genes)
+            if len(genes) != indata.shape[1]:
+                raise ValueError(f"🛑 The number of genes provided does not match the number of genes in the training data")
         if np.abs(np.expm1(indata[0]).sum()-10000) > 1:
             raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
         labels = _load_file_as_list(labels)
@@ -94,5 +107,13 @@ def train(X = None,
     """
     coming soon...
     """
-    logger.info("")
+    logger.info("🍳 Prepare data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
+    flag = indata.sum(axis = 0) == 0
+    if flag.sum() > 0:
+        logger.info(f"{flag.sum()} non-expressed genes are filtered out")
+        indata = indata[:, ~flag]
+        genes = genes[~flag]
+    scaler = StandardScaler()
+    indata = scaler.fit_transform(indata)
+    indata = np.clip(indata, a_min = None, a_max = 10)
