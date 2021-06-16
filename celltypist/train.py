@@ -101,16 +101,31 @@ def _prepare_data(X, labels, genes, transpose):
 
 def _SGDClassifier(indata, labels,
                    alpha, max_iter, n_jobs,
-                   mini_batch, batch_number, batch_size, epoch,
-                   feature_selection, top_genes, **kwargs):
+                   mini_batch, batch_number, batch_size, epochs, **kwargs):
     """
     For internal use. Get the SGDClassifier.
     """
     classifier = SGDClassifier(loss = 'log', alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
+        logger.info(f"🏋️ Training data using SGD logistic regression")
         classifier.fit(indata, labels)
     else:
-        return
+        logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
+        no_cells = len(labels)
+        if no_cells <= batch_size:
+            raise Exception(f"🛑 Number of cells is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
+        for epoch in range(1, (epochs+1)):
+            logger.info(f"⏳ Epochs: [{epoch}/{epochs}]")
+            indata, labels = shuffle(indata, labels)
+            mini_batches = [indata[k:k+batch_size] for k in range(0, no_cells, batch_size)]
+            mini_labels = [labels[k:k+batch_size] for k in range(0, no_cells, batch_size)]
+            if batch_number < len(mini_batches):
+                s = np.random.choice(range(0, len(mini_batches)), batch_number)
+                mini_batches = [mini_batches[i] for i in s]
+                mini_labels = [mini_labels[i] for i in s]
+            for mini_batch, mini_label in zip(mini_batches, mini_labels):
+                classifier.partial_fit(mini_batch, mini_label, classes = np.unique(labels))
+    return classifier
 
 def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series]] = None,
@@ -119,7 +134,7 @@ def train(X = None,
           #SGD param
           alpha: float = 0.0001, max_iter: int = 1000, n_jobs = None,
           #mini-batch
-          mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epoch: int = 10,
+          mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10,
           #feature selection
           feature_selection: bool = False, top_genes: int = 500,
           #other SGD param
@@ -141,8 +156,6 @@ def train(X = None,
     indata = scaler.fit_transform(indata)
     indata = np.clip(indata, a_min = None, a_max = 10)
     #classifier
-    logger.info(f"🏋️ Training data")
     classifier = _SGDClassifier(indata = indata, labels = labels,
                                 alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
-                                mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epoch = epoch,
-                                feature_selection = feature_selection, top_genes = top_genes, **kwargs)
+                                mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
