@@ -41,7 +41,7 @@ class AnnotationResult():
     adata
         A Scanpy object representing the input data.
     """
-    def __init__(self, labels: pd.DataFrame, decision_mat: pd.DataFrame, prob_mat: pd.DataFrame, adata: sc.AnnData):
+    def __init__(self, labels: pd.DataFrame, decision_mat: pd.DataFrame, prob_mat: pd.DataFrame, adata: AnnData):
         self.predicted_labels = labels
         self.decision_matrix = decision_mat
         self.probability_matrix = prob_mat
@@ -69,7 +69,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_probability: bool = False) -> sc.AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_probability: bool = False) -> AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
 
@@ -321,7 +321,7 @@ class Classifier():
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
-    def _construct_neighbor_graph(adata: sc.AnnData):
+    def _construct_neighbor_graph(adata: AnnData):
         """Construct a neighborhood graph. This function is for internal use."""
         if adata.X.min() < 0:
             adata = adata.raw.to_adata()
