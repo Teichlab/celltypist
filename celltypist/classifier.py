@@ -390,7 +390,7 @@ class Classifier():
             3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
             4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
         """
-        if isinstance(over_clustering, list) or isinstance(over_clustering, tuple):
+        if isinstance(over_clustering, (list, tuple)):
             over_clustering = np.array(over_clustering)
         logger.info("🗳️ Majority voting the predictions")
         votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
