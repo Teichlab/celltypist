@@ -15,12 +15,11 @@ def _load_file_as_list(_file):
     """
     if isinstance(_file, str):
         try:
-            with open(_file, 'rt') as f:
-                return [x.strip() for x in f.readlines()]
+            return pd.read_csv(_file, header=None)[0].values
         except Exception as e:
             raise Exception(f"🛑 {e}")
     else:
-        return _file
+        return np.array(_file)
 
 def _prepare_data(X, labels, genes, transpose):
     """
@@ -137,6 +136,8 @@ def train(X = None,
           mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10,
           #feature selection
           feature_selection: bool = False, top_genes: int = 500,
+          #description
+          date: str = '', details: str = '', url: str = '',
           #other SGD param
           **kwargs
          ) -> Model:
@@ -159,3 +160,23 @@ def train(X = None,
     classifier = _SGDClassifier(indata = indata, labels = labels,
                                 alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
                                 mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
+    #feature selection
+    if feature_selection:
+        logger.info(f"🔎 Selecting features")
+        gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes)[:, -top_genes:]
+        gene_index = np.unique(gene_index)
+        genes = genes[gene_index]
+        indata = indata[:, gene_index]
+        logger.info(f"🏋️ Starting the second round of training")
+        classifier = _SGDClassifier(indata = indata, labels = labels,
+                                    alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
+                                    mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
+        scaler.mean_ = scaler.mean_[gene_index]
+        scaler.var_ = scaler.var_[gene_index]
+        scaler.scale_ = scaler.scale_[gene_index]
+        a.scaler.n_features_in_ = len(gene_index)
+    #Model
+    classifier.features = np.array(genes)
+    description = {'date': date, 'details': details, 'url': url}
+    logger.info(f"✅ Model training done!")
+    return Model(classifier, scaler, description)
