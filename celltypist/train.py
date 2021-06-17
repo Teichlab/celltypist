@@ -9,19 +9,34 @@ from .models import Model
 from . import logger
 from scipy.sparse import spmatrix
 
-def _load_file_as_list(_file):
+def _to_vector(_vector_or_file):
     """
-    For internal use. Load file if it is a string.
+    For internal use. Turn a file into an array.
     """
-    if isinstance(_file, str):
+    if isinstance(_vector_or_file, str):
         try:
-            return pd.read_csv(_file, header=None)[0].values
+            return pd.read_csv(_vector_or_file, header=None)[0].values
         except Exception as e:
             raise Exception(f"🛑 {e}")
     else:
-        return np.array(_file)
+        return _vector_or_file
 
-def _prepare_data(X, labels, genes, transpose):
+def _to_array(_array_like) -> np.ndarray:
+    """
+    For internal use. Turn an array-like object into an array.
+    """
+    if isinstance(_array_like, pd.DataFrame):
+        return _array_like.values
+    elif isinstance(_array_like, spmatrix):
+        return _array_like.toarray()
+    elif isinstance(_array_like, np.matrix):
+        return np.array(_array_like)
+    elif isinstance(_array_like, np.ndarray):
+        return _array_like
+    else:
+        raise ValueError(f"🛑 Please provide a valid array-like object as input")
+
+def _prepare_data(X, labels, genes, transpose) -> tuple:
     """
     For internal use. Prepare data for celltypist training.
     """
@@ -39,15 +54,10 @@ def _prepare_data(X, labels, genes, transpose):
         else:
             indata = adata.X.copy()
             genes = adata.var_names.copy()
-        if np.abs(np.expm1(indata[0]).sum()-10000) > 1:
-            raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
-        if isinstance(labels, str):
-            if labels in adata.obs:
-                labels = adata.obs[labels]
-            else:
-                labels = _load_file_as_list(labels)
-        if len(labels) != indata.shape[0]:
-            raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+        if isinstance(labels, str) and (labels in adata.obs):
+            labels = adata.obs[labels]
+        else:
+            labels = _to_vector(labels)
     elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
         adata = sc.read(X)
         if transpose:
@@ -55,18 +65,16 @@ def _prepare_data(X, labels, genes, transpose):
         if X.endswith(('.mtx', '.mtx.gz')):
             if genes is None:
                 raise Exception("🛑 Missing `genes`. Please provide this argument together with the input mtx file")
-            genes = _load_file_as_list(genes)
+            genes = _to_vector(genes)
             if len(genes) != adata.n_vars:
-                raise ValueError(f"🛑 The number of genes does not match the number of genes in {X}")
-            adata.var_names = genes
+                raise ValueError(f"🛑 The number of genes provided does not match the number of genes in {X}")
+            adata.var_names = np.array(genes)
         adata.var_names_make_unique()
         sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
         indata = adata.X.copy()
         genes = adata.var_names.copy()
-        labels = _load_file_as_list(labels)
-        if len(labels) != indata.shape[0]:
-            raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+        labels = _to_vector(labels)
     elif isinstance(X, str):
         raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
     else:
@@ -75,27 +83,12 @@ def _prepare_data(X, labels, genes, transpose):
         if transpose:
             indata = indata.transpose()
         if isinstance(indata, pd.DataFrame):
-            genes = indata.columns
-            indata = indata.values
+            genes = indata.columns.copy()
         else:
-            if isinstance(indata, spmatrix):
-                indata = indata.toarray()
-            elif isinstance(indata, np.matrix):
-                indata = np.array(indata)
-            elif isinstance(indata, np.ndarray):
-                indata = indata
-            else:
-                raise ValueError(f"🛑 Please provide a valid array-like object as input")
             if genes is None:
                 raise Exception("🛑 Missing `genes`. Please provide this argument together with the input training data")
-            genes = _load_file_as_list(genes)
-            if len(genes) != indata.shape[1]:
-                raise ValueError(f"🛑 The number of genes provided does not match the number of genes in the training data")
-        if np.abs(np.expm1(indata[0]).sum()-10000) > 1:
-            raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
-        labels = _load_file_as_list(labels)
-        if len(labels) != indata.shape[0]:
-            raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+            genes = _to_vector(genes)
+        labels = _to_vector(labels)
     return indata, labels, genes
 
 def _SGDClassifier(indata, labels,
@@ -112,9 +105,9 @@ def _SGDClassifier(indata, labels,
         logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
         no_cells = len(labels)
         if no_cells <= batch_size:
-            raise Exception(f"🛑 Number of cells is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
+            raise ValueError(f"🛑 Number of cells is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
         starts = np.arange(0, no_cells, batch_size)
-        starts = starts[0:min([batch_number, len(starts)])]
+        starts = starts[:min([batch_number, len(starts)])]
         for epoch in range(1, (epochs+1)):
             logger.info(f"⏳ Epochs: [{epoch}/{epochs}]")
             indata, labels = shuffle(indata, labels)
@@ -127,7 +120,7 @@ def train(X = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
           #SGD param
-          alpha: float = 0.0001, max_iter: int = 1000, n_jobs = None,
+          alpha: float = 0.0001, max_iter: int = 1000, n_jobs: Optional[int] = None,
           #mini-batch
           mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10,
           #feature selection
@@ -140,8 +133,20 @@ def train(X = None,
     """
     coming soon...
     """
+    #prepare
     logger.info("🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
+    indata = _to_array(indata)
+    labels = np.array(labels)
+    genes = np.array(genes)
+    #check
+    if np.abs(np.expm1(indata[0]).sum()-10000) > 1:
+        raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
+    if len(labels) != indata.shape[0]:
+        raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+    if len(genes) != indata.shape[1]:
+        raise ValueError(f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
+    #filter
     flag = indata.sum(axis = 0) == 0
     if flag.sum() > 0:
         logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
@@ -156,7 +161,7 @@ def train(X = None,
     classifier = _SGDClassifier(indata = indata, labels = labels,
                                 alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
                                 mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
-    #feature selection
+    #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
         gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes)[:, -top_genes:]
@@ -170,9 +175,9 @@ def train(X = None,
         scaler.mean_ = scaler.mean_[gene_index]
         scaler.var_ = scaler.var_[gene_index]
         scaler.scale_ = scaler.scale_[gene_index]
-        a.scaler.n_features_in_ = len(gene_index)
-    #Model
-    classifier.features = np.array(genes)
+        scaler.n_features_in_ = len(gene_index)
+    #model finalization
+    classifier.features = genes
     description = {'date': date, 'details': details, 'url': url}
     logger.info(f"✅ Model training done!")
     return Model(classifier, scaler, description)
