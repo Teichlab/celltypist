@@ -370,7 +370,7 @@ class Classifier():
         return oc_column
 
     @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series]) -> AnnotationResult:
+    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index]) -> AnnotationResult:
         """
         Majority vote the celltypist predictions using the result from the over-clustering.
 
@@ -379,7 +379,7 @@ class Classifier():
         predictions
             An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`.
         over_clustering
-            A list, tuple, numpy array or pandas series containing the over-clustering information.
+            A list, tuple, numpy array, pandas series or index containing the over-clustering information.
 
         Returns
         ----------

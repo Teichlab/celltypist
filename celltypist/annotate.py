@@ -11,7 +11,7 @@ def annotate(filename: Union[AnnData,str] = "",
              gene_file: Optional[str] = None,
              cell_file: Optional[str] = None,
              majority_voting: bool = False,
-             over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series]] = None) -> classifier.AnnotationResult:
+             over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
@@ -43,7 +43,7 @@ def annotate(filename: Union[AnnData,str] = "",
         This argument can be provided in several ways:
         1) an input plain file with the over-clustering result of one cell per line.
         2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
-        3) a python list, tuple, numpy array, or pandas series representing the over-clustering result of the input cells.
+        3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
         4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
         Ignored if `majority_voting` is set to `False`.
 
