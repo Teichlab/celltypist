@@ -113,22 +113,18 @@ def _SGDClassifier(indata, labels,
         no_cells = len(labels)
         if no_cells <= batch_size:
             raise Exception(f"🛑 Number of cells is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
+        starts = np.arange(0, no_cells, batch_size)
+        starts = starts[0:min([batch_number, len(starts)])]
         for epoch in range(1, (epochs+1)):
             logger.info(f"⏳ Epochs: [{epoch}/{epochs}]")
             indata, labels = shuffle(indata, labels)
-            mini_batches = [indata[k:k+batch_size] for k in range(0, no_cells, batch_size)]
-            mini_labels = [labels[k:k+batch_size] for k in range(0, no_cells, batch_size)]
-            if batch_number < len(mini_batches):
-                s = np.random.choice(range(0, len(mini_batches)), batch_number)
-                mini_batches = [mini_batches[i] for i in s]
-                mini_labels = [mini_labels[i] for i in s]
-            for mini_batch, mini_label in zip(mini_batches, mini_labels):
-                classifier.partial_fit(mini_batch, mini_label, classes = np.unique(labels))
+            for start in starts:
+                classifier.partial_fit(indata[start:start+batch_size], labels[start:start+batch_size], classes = np.unique(labels))
     return classifier
 
 def train(X = None,
-          labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series]] = None,
-          genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series]] = None,
+          labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+          genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
           #SGD param
           alpha: float = 0.0001, max_iter: int = 1000, n_jobs = None,
