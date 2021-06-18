@@ -165,8 +165,11 @@ def train(X = None,
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
+        if len(genes) <= top_genes:
+            raise ValueError(f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
         gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
         gene_index = np.unique(gene_index)
+        logger.info(f"🧬 {len(gene_index)} features are selected")
         genes = genes[gene_index]
         indata = indata[:, gene_index]
         logger.info(f"🏋️ Starting the second round of training")
