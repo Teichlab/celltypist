@@ -8,6 +8,7 @@ from typing import Optional, Union
 from .models import Model
 from . import logger
 from scipy.sparse import spmatrix
+from datetime import datetime
 
 def _to_vector(_vector_or_file):
     """
@@ -93,7 +94,7 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
 
 def _SGDClassifier(indata, labels,
                    alpha, max_iter, n_jobs,
-                   mini_batch, batch_number, batch_size, epochs, **kwargs):
+                   mini_batch, batch_number, batch_size, epochs, **kwargs) -> SGDClassifier:
     """
     For internal use. Get the SGDClassifier.
     """
@@ -164,7 +165,7 @@ def train(X = None,
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
-        gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes)[:, -top_genes:]
+        gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
         gene_index = np.unique(gene_index)
         genes = genes[gene_index]
         indata = indata[:, gene_index]
@@ -178,6 +179,8 @@ def train(X = None,
         scaler.n_features_in_ = len(gene_index)
     #model finalization
     classifier.features = genes
+    if not date:
+        date = str(datetime.now())
     description = {'date': date, 'details': details, 'url': url}
     logger.info(f"✅ Model training done!")
     return Model(classifier, scaler, description)
