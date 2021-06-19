@@ -105,8 +105,10 @@ def _SGDClassifier(indata, labels,
     else:
         logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
         no_cells = len(labels)
+        if no_cells < 10000:
+            logger.warn(f"⚠️ Warning: the number of cells ({no_cells}) is not big enough to conduct a proper mini-batch training. You may consider using traditional SGD classifier (mini_batch = False)")
         if no_cells <= batch_size:
-            raise ValueError(f"🛑 Number of cells is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
+            raise ValueError(f"🛑 Number of cells ({no_cells}) is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
         starts = np.arange(0, no_cells, batch_size)
         starts = starts[:min([batch_number, len(starts)])]
         for epoch in range(1, (epochs+1)):
