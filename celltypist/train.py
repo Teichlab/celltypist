@@ -132,7 +132,71 @@ def train(X = None,
           **kwargs
          ) -> Model:
     """
-    coming soon...
+    Train a celltypist model using mini-batch (optional) logistic classifier with stochastic gradient descent (SGD) learning.
+
+    Parameters
+    ----------
+    X
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
+        Also accepts the input as an :class:`~scanpy.AnnData` object, or any array-like objects already loaded in memory.
+        A cell-by-gene format is desirable (see `transpose_input` for more information).
+    labels
+        Path to the file containing cell type label per line corresponding to the cells in `X`.
+        Also accepts any list-like objects already loaded in memory (such as an array).
+        If `X` is specified as an AnnData, this argument can also be set as a column name from cell metadata.
+    genes
+        Path to the file containing one gene per line corresponding to the genes in `X`.
+        Also accepts any list-like objects already loaded in memory (such as an array).
+        Note `genes` will be extracted from `X` where possible (e.g., `X` is an AnnData or data frame).
+    transpose_input
+        Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
+        (Default: `False`)
+    alpha
+        L2 regularization strength. A higher value can improve model generalization while at the cost of decreased accuracy.
+        (Default: 0.0001)
+    max_iter
+        Maximum number of iterations before reaching the minimum of the cost function.
+        Try to decrease `max_iter` if the cost function does not converge for a long time.
+        This argument is ignored if mini-batch training is conducted (`mini_batch = True`).
+        (Default: 1000)
+    n_jobs
+        Number of CPUs used. Default to one CPU. `-1` means all CPUs are used.
+    mini_batch
+        Whether to implement mini-batch training for the SGD logistic classifier.
+        Setting to `True` may improve the training efficiency for large datasets (for example, >100k cells).
+        (Default: `False`)
+    batch_number
+        The number of batches used for training in each epoch. Each batch contains `batch_size` cells.
+        For datasets which cannot be binned into `batch_number` batches, all batches will be used.
+        (Default: 100)
+    batch_size
+        The number of cells within each batch.
+        (Default: 1000)
+    epochs
+        The number of epochs for the mini-batch training procedure.
+        The default values of `batch_number`, `batch_size`, and `epochs` together allow observing ~10^6 training cells.
+        (Default: 10)
+    feature_selection
+        Whether to perform two-pass data training where the first round is used for selecting important features/genes.
+        If `True`, the training time will be approximately doubled.
+        (Default: `False`)
+    top_genes
+        The number of top genes selected from each class/cell-type based on their absolute regression coefficients.
+        The final feature set is combined across all classes (i.e., union).
+        (Default: 500)
+    date
+        Free text of the date of the model. Default to the time when the training is completed.
+    details
+        Free text of the description of the model.
+    url
+        Free text of the (possible) download url of the model.
+    **kwargs
+        Other keyword arguments passed to the :class:`~sklearn.linear_model.SGDClassifier`.
+
+    Returns
+    ----------
+    :class:`~celltypist.models.Model`
+        An instance of the :class:`~celltypist.models.Model` trained by celltypist.
     """
     #prepare
     logger.info("🍳 Preparing data before training")
