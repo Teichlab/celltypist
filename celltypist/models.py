@@ -89,6 +89,11 @@ class Model():
         probs = expit(scores)
         return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
 
+    def write(self, file: str) -> None:
+        """Write out the model."""
+        file = os.path.splitext(file)[0] + '.pkl'
+        with open(file, 'wb') as output:
+            pickle.dump(self, output)
 
 def get_model_path(file: str) -> str:
     """
