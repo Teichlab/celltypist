@@ -243,7 +243,7 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 ```
 By default, data is trained using stochastic gradient descent (SGD) logistic regression without implementing the mini-batch approach. Among the training parameters, two important ones are `alpha` which sets the L2 regularization strength and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Check out the `celltypist.train` for more information.  
   
-When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binnded into equal-sized batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
+When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binnded into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
 ```python
 #Data training with mini-batch SGD training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
@@ -265,11 +265,11 @@ new_model.write(f'{models.models_path}/some_model_name.pkl')
 ```
 
 ### Two-pass data training incorporating feature selection
-Some single-cell datasets may involve noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data. Check out the `celltypist.train` for more information.
+Some single-cell datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
 ```python
 #Two-pass data training with SGD learning.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
 #Two-pass data training with mini-batch SGD learning.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True, feature_selection = True)
 ```
-Note there are also some free texts that can be inserted (e.g., `date`) to describe the model. The downstream workflow is the same as that from one-pass data training. 
+There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information. The downstream workflow is the same as that from one-pass data training. 
