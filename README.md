@@ -226,17 +226,27 @@ The R version of Celltypist is under development. Currently, you can use for exa
 ***
 ***
 ## Supplemental guidance: generate a custom model
+
 As well as the models provided by Celltypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another single-cell dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two single-cell datasets is under examination.  
   
+### Inputs for data training
 The inputs for Celltypist training comprise the gene expression data, the cell annotaion details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
    1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts while the latter containing log1p normalized expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are alredy loaded in memory (both should be in the log1p format).
    2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
-   3) The genes will be automatically extracted if the gene expression data is provided as an `AnnData` or `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.  
-  
-Train the data by the `celltypist.train` function:
+   3) The genes will be automatically extracted if the gene expression data is provided as an `AnnData` or `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
+
+### One-pass data training
+Derive a new model by training the data using the `celltypist.train` function:
 ```python
-#Model training with default settings. 
+#Data training with SGD learning.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
+```
+By default, data is trained using stochastic gradient descent (SGD) logistic regression without implementing the mini-batch approach. Among the training parameters, two important ones are `alpha` which sets the L2 regularization strength and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Check out the `celltypist.train` for more information.  
+  
+When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binnded into equal-sized batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
+```python
+#Data training with SGD mini-batch training.
+new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
 ```
 The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other celltypist models. For example, it can be specified as the `model` argument in `annotate`.
 ```python
@@ -248,8 +258,10 @@ You can also save this model locally:
 #Write out the model.
 new_model.write('/path/to/local/folder/some_model_name.pkl')
 ```
-A suggested location for storing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by celltypist) will be in the same folder, and can be accessed in the samer manner as in `1.4.`.
+A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by celltypist) will be in the same folder, and can be accessed in the samer manner as in `1.4.`.
 ```python
 #Write out the model in the `models.models_path` folder.
 new_model.write(f'{models.models_path}/some_model_name.pkl')
 ```
+
+### Two-pass data training
