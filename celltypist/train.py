@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import scanpy as sc
-from scanpy import AnnData
+from anndata import AnnData
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import SGDClassifier
 from typing import Optional, Union
@@ -140,7 +140,7 @@ def train(X = None,
     ----------
     X
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
-        Also accepts the input as an :class:`~scanpy.AnnData` object, or any array-like objects already loaded in memory.
+        Also accepts the input as an :class:`~anndata.AnnData` object, or any array-like objects already loaded in memory.
         A cell-by-gene format is desirable (see `transpose_input` for more information).
     labels
         Path to the file containing cell type label per line corresponding to the cells in `X`.

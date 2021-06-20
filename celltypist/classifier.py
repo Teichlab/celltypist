@@ -1,7 +1,7 @@
 import os
 from typing import Optional, Literal, Union
 import scanpy as sc
-from scanpy import AnnData
+from anndata import AnnData
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -26,7 +26,7 @@ class AnnotationResult():
     prob_mat
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the probability matrix.
     adata
-        An :class:`~scanpy.AnnData` object representing the input object.
+        An :class:`~anndata.AnnData` object representing the input object.
 
     Attributes
     ----------
@@ -87,8 +87,8 @@ class AnnotationResult():
 
         Returns
         ----------
-        :class:`~scanpy.AnnData`
-            Depending on whether majority voting is done, an :class:`~scanpy.AnnData` object with the following columns added to the observation metadata:
+        :class:`~anndata.AnnData`
+            Depending on whether majority voting is done, an :class:`~anndata.AnnData` object with the following columns added to the observation metadata:
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
@@ -198,7 +198,7 @@ class Classifier():
     filename
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
-        Also accepts the input as an :class:`~scanpy.AnnData` object already loaded in memory.
+        Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
         A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
@@ -321,7 +321,7 @@ class Classifier():
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
-    def _construct_neighbor_graph(adata: AnnData):
+    def _construct_neighbor_graph(adata: AnnData) -> tuple:
         """Construct a neighborhood graph. This function is for internal use."""
         if adata.X.min() < 0:
             adata = adata.raw.to_adata()
