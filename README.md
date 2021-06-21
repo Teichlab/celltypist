@@ -82,7 +82,7 @@ predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
-The above three results can be written out to tables by the function `to_table`, specifying the target `folder` for storation and the `prefix` of each table name.
+The above three results can be written out to tables by the function `to_table`, specifying the target `folder` for storage and the `prefix` of each table name.
 ```python
 #Export the three results to csv tables.
 predictions.to_table(folder = '/path/to/a/folder', prefix = '')
@@ -212,7 +212,7 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 ```
 
 ### 2.7. Generate visualization figures for the results
-In addition to the tables output by Celltypist, you have the option to generate multiple figures to get an overviw of your prediciton results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
+In addition to the tables output by Celltypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
 ```bash
 #Plot the results after the celltyping process.
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
@@ -221,6 +221,7 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 ```
 
 ## 3. Use in the R environment
+
 The R version of Celltypist is under development. Currently, you can use for example [sceasy](https://github.com/cellgeni/sceasy) to convert a R object into AnnData for use in Celltypist.
 
 ***
@@ -230,8 +231,8 @@ The R version of Celltypist is under development. Currently, you can use for exa
 As well as the models provided by Celltypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another single-cell dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two single-cell datasets is under examination.  
   
 ### Inputs for data training
-The inputs for Celltypist training comprise the gene expression data, the cell annotaion details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
-   1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts while the latter containing log1p normalized expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are alredy loaded in memory (both should be in the log1p format).
+The inputs for Celltypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
+   1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts while the latter containing log1p normalized expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format).
    2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
    3) The genes will be automatically extracted if the gene expression data is provided as an `AnnData` or `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
 
@@ -243,7 +244,7 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 ```
 By default, data is trained using stochastic gradient descent (SGD) logistic regression without implementing the mini-batch approach. Among the training parameters, two important ones are `alpha` which sets the L2 regularization strength and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Check out the `celltypist.train` for more information.  
   
-When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binnded into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
+When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binned into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
 ```python
 #Data training with mini-batch SGD training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
@@ -258,14 +259,14 @@ You can also save this model locally:
 #Write out the model.
 new_model.write('/path/to/local/folder/some_model_name.pkl')
 ```
-A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by celltypist) will be in the same folder, and can be accessed in the samer manner as in `1.4.`.
+A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by celltypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
 ```python
 #Write out the model in the `models.models_path` folder.
 new_model.write(f'{models.models_path}/some_model_name.pkl')
 ```
 
 ### Two-pass data training incorporating feature selection
-Some single-cell datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
+Some single-cell datasets may involve the noise mostly from genes not helpful or even detrimental to the characterization of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
 ```python
 #Two-pass data training with SGD learning.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
