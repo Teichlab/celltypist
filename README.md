@@ -234,7 +234,7 @@ As well as the models provided by Celltypist (see `1.2.`), you can generate your
 The inputs for Celltypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
    1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts while the latter containing log1p normalized expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format).
    2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
-   3) The genes will be automatically extracted if the gene expression data is provided as an `AnnData` or `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
+   3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
 
 ### One-pass data training
 Derive a new model by training the data using the `celltypist.train` function:
@@ -246,10 +246,10 @@ By default, data is trained using stochastic gradient descent (SGD) logistic reg
   
 When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binned into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
 ```python
-#Data training with mini-batch SGD training.
+#Data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
 ```
-The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other celltypist models. For example, it can be specified as the `model` argument in `annotate`.
+The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other Celltypist models. For example, it can be specified as the `model` argument in `annotate`.
 ```python
 #Predict the identity of each input cell with the new model.
 predictions = celltypist.annotate(input_file, model = new_model)
@@ -259,7 +259,7 @@ You can also save this model locally:
 #Write out the model.
 new_model.write('/path/to/local/folder/some_model_name.pkl')
 ```
-A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by celltypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
+A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by Celltypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
 ```python
 #Write out the model in the `models.models_path` folder.
 new_model.write(f'{models.models_path}/some_model_name.pkl')
@@ -270,7 +270,7 @@ Some single-cell datasets may involve the noise mostly from genes not helpful or
 ```python
 #Two-pass data training with SGD learning.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
-#Two-pass data training with mini-batch SGD learning.
+#Two-pass data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True, feature_selection = True)
 ```
-There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information. The downstream workflow is the same as that from one-pass data training. 
+There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information. The downstream workflow is the same as that from one-pass data training.
