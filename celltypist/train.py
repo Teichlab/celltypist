@@ -9,6 +9,7 @@ from .models import Model
 from . import logger
 from scipy.sparse import spmatrix
 from datetime import datetime
+from sklearn.utils import shuffle
 
 def _to_vector(_vector_or_file):
     """
