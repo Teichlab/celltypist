@@ -91,9 +91,10 @@ class Model():
 
     def write(self, file: str) -> None:
         """Write out the model."""
+        obj = dict(Model = self.classifier, Scaler_ = self.scaler, description = self.description)
         file = os.path.splitext(file)[0] + '.pkl'
         with open(file, 'wb') as output:
-            pickle.dump(self, output)
+            pickle.dump(obj, output)
 
 def get_model_path(file: str) -> str:
     """
