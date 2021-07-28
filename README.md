@@ -1,7 +1,10 @@
-# Overview of Celltypist
-Celltypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimized by the stochastic gradient descent algorithm. Celltypist provides several different models for predictions, with a current focus on immune sub-populations, in order to assist in the accurate classification of different cell types and subtypes.
+# Overview of CellTypist
+CellTypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimized by the stochastic gradient descent algorithm. CellTypist provides several different models for predictions, with a current focus on immune sub-populations, in order to assist in the accurate classification of different cell types and subtypes.
 
-# Install celltypist
+# CellTypist website
+Information of CellTypist can be also found in our CellTypist [portal](https://www.celltypist.org).
+
+# Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
 ```console
 pip install celltypist
@@ -41,7 +44,7 @@ models.models_description()
 ```
 
 ### 1.4. Inspect the model of interest
-To take a look at a given model, load the model as an instance of the `Model` class as defined in Celltypist.
+To take a look at a given model, load the model as an instance of the `Model` class as defined in CellTypist.
 ```python
 #Select the model from the above list. If the `model` argument is not provided, will default to `Immune_All_Low.pkl`.
 model = models.Model.load(model = 'Immune_All_Low.pkl')
@@ -58,7 +61,7 @@ model.description
 ```
 
 ### 1.5. Celltyping based on the input of count table 
-Celltypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table as well, as they point to the negative transcriptomic signatures when compared with the model used.
+CellTypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table as well, as they point to the negative transcriptomic signatures when compared with the model used.
 ```python
 #Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
 input_file = celltypist.samples.get_sample_csv()
@@ -77,9 +80,9 @@ predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', tran
 #In case your input file is a gene-by-cell mtx file.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', transpose_input = True, gene_file = '/path/to/gene/file.txt', cell_file = '/path/to/cell/file.txt')
 ```
-Again, if the `model` argument is not specified, Celltypist will by default use the `Immune_All_Low.pkl` model.  
+Again, if the `model` argument is not specified, CellTypist will by default use the `Immune_All_Low.pkl` model.  
   
-The `annotate` function will return an instance of the `AnnotationResult` class as defined in Celltypist.
+The `annotate` function will return an instance of the `AnnotationResult` class as defined in CellTypist.
 ```python
 #Examine the predicted cell type labels.
 predictions.predicted_labels
@@ -111,7 +114,7 @@ adata = predictions.to_adata(insert_labels = True, insert_decision = True)
 #Get an `AnnData` with predicted labels and probability matrix.
 adata = predictions.to_adata(insert_labels = True, insert_probability = True)
 ```
-You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, Celltypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
+You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
 ```python
 #Visualize the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
@@ -124,25 +127,25 @@ predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability
 Multiple figures will be generated, including the predicted cell type labels overlaid onto the UMAP space, plus the decision score and probability distributions of each cell type on the UMAP.
 
 ### 1.6. Celltyping based on Scanpy h5ad data
-Celltypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).  
+CellTypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).  
   
-Since the expression of each gene will be centered and scaled by matching with the mean and standard deviation of that gene in the provided model, Celltypist requires a logarithmized and normalized expression matrix stored in the `AnnData` (log1p normalized expression to 10,000 counts per cell). Celltypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
+Since the expression of each gene will be centered and scaled by matching with the mean and standard deviation of that gene in the provided model, CellTypist requires a logarithmized and normalized expression matrix stored in the `AnnData` (log1p normalized expression to 10,000 counts per cell). CellTypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
 #Alternatively, the input can be specified as an AnnData already loaded in memory.
 predictions = celltypist.annotate(a_loaded_adata, model = 'Immune_All_Low.pkl')
 ```
-All the downstream operations are the same as in `1.5.`, except that 1) the transformed `AnnData` from `to_adata` stores all the expression matrix and other information as is in the original object 2) when generating the visualization figures, existing UMAP coordinates will be used. If no UMAP coordinates are found, Celltypist will fall back on the neighborhood graph to yield new 2D UMAP projections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
+All the downstream operations are the same as in `1.5.`, except that 1) the transformed `AnnData` from `to_adata` stores all the expression matrix and other information as is in the original object 2) when generating the visualization figures, existing UMAP coordinates will be used. If no UMAP coordinates are found, CellTypist will fall back on the neighborhood graph to yield new 2D UMAP projections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
-By default, Celltypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, Celltypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
-To turn on the majority voting classifier in addition to the Celltypist predictions, pass in `majority_voting = True` to the `annotate` function.
+By default, CellTypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, CellTypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
+To turn on the majority voting classifier in addition to the CellTypist predictions, pass in `majority_voting = True` to the `annotate` function.
 ```python
 #Turn on the majority voting classifier as well.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
 ```
-During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
+During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
    3) a list-like object (such as a numpy 1D array) indicating the over-clustering result of all cells.
@@ -189,14 +192,14 @@ See `1.5.` for the format of the desired count matrix.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir
 ```
-You can add a different model to be used in the `--model` option. If the `--model` is not provided, Celltypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
+You can add a different model to be used in the `--model` option. If the `--model` is not provided, CellTypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
   
 If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
 ```
 If the input is provided in the `.mtx` format, you will also need to specify the `--gene-file` and `--cell-file` options as the files containing names of genes and cells, respectively.
-Other options that control the output files of Celltypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
+Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
 
 ### 2.5. Celltyping based on Scanpy h5ad data
 See `1.6.` for the requirement of the Scanpy expression data.
@@ -209,7 +212,7 @@ See `1.7.` for how the majority voting classifier works.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
 ```
-During the majority voting, to define cell-cell relations, Celltypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
+During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
    3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
@@ -218,7 +221,7 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 ```
 
 ### 2.7. Generate visualization figures for the results
-In addition to the tables output by Celltypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
+In addition to the tables output by CellTypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
 ```bash
 #Plot the results after the celltyping process.
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
@@ -228,16 +231,16 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 
 ## 3. Use in the R environment
 
-The R version of Celltypist is under development. Currently, you can use for example [sceasy](https://github.com/cellgeni/sceasy) to convert a R object into AnnData for use in Celltypist.
+The R version of CellTypist is under development. Currently, you can use for example [sceasy](https://github.com/cellgeni/sceasy) to convert a R object into AnnData for use in CellTypist.
 
 ***
 ***
 ## Supplemental guidance: generate a custom model
 
-As well as the models provided by Celltypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another single-cell dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two single-cell datasets is under examination.  
+As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another single-cell dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two single-cell datasets is under examination.  
   
 ### Inputs for data training
-The inputs for Celltypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
+The inputs for CellTypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
    1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts while the latter containing log1p normalized expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format).
    2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
    3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
@@ -255,7 +258,7 @@ When the training data contains a large number of cells (for example >100k cells
 #Data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
 ```
-The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other Celltypist models. For example, it can be specified as the `model` argument in `annotate`.
+The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models. For example, it can be specified as the `model` argument in `annotate`.
 ```python
 #Predict the identity of each input cell with the new model.
 predictions = celltypist.annotate(input_file, model = new_model)
@@ -265,7 +268,7 @@ You can also save this model locally:
 #Write out the model.
 new_model.write('/path/to/local/folder/some_model_name.pkl')
 ```
-A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by Celltypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
+A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by CellTypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
 ```python
 #Write out the model in the `models.models_path` folder.
 new_model.write(f'{models.models_path}/some_model_name.pkl')
