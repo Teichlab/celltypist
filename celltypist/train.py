@@ -251,6 +251,6 @@ def train(X = None,
     classifier.features = genes
     if not date:
         date = str(datetime.now())
-    description = {'date': date, 'details': details, 'url': url}
+    description = {'date': date, 'details': details, 'url': url, 'number_celltypes': len(classifier.classes_)}
     logger.info(f"✅ Model training done!")
     return Model(classifier, scaler, description)
