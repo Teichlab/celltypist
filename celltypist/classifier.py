@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Literal, Union
+from typing import Optional, Union
 import scanpy as sc
 from anndata import AnnData
 import numpy as np
@@ -48,7 +48,7 @@ class AnnotationResult():
         self.adata = adata
         self.cell_count = labels.shape[0]
 
-    def summary_frequency(self, by: Literal['predicted_labels', 'majority_voting'] = 'predicted_labels') -> pd.DataFrame:
+    def summary_frequency(self, by: str = 'predicted_labels') -> pd.DataFrame:
         """
         Get the frequency of cells belonging to each cell type predicted by celltypist.
 
