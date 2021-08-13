@@ -38,5 +38,5 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Development Status :: 4 - Beta",
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.6',
 )
