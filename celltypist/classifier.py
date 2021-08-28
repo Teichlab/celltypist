@@ -255,6 +255,8 @@ class Classifier():
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
             self.adata.var_names_make_unique()
+            if not float(self.adata.X.max()).is_integer():
+                logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may be biased")
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X.copy()
