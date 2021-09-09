@@ -285,9 +285,19 @@ class Classifier():
 
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
 
-    def celltype(self) -> AnnotationResult:
+    def celltype(self, mode: str = 'best match', p_thres: float = 0.5) -> AnnotationResult:
         """
         Run celltyping jobs to predict cell types of input data.
+
+        Parameters
+        ----------
+        mode
+            The way cell prediction is performed.
+            For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
+            Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+            (Default: `best match`)
+        p_thres
+            Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
 
         Returns
         ----------
@@ -318,7 +328,7 @@ class Classifier():
         self.model.classifier.coef_ = self.model.classifier.coef_[:, lr_idx]
 
         logger.info("🖋️ Predicting labels")
-        decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata)
+        decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata, mode = mode, p_thres = p_thres)
         logger.info("✅ Prediction done!")
 
         cells = self.indata_names
