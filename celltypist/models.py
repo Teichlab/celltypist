@@ -83,11 +83,38 @@ class Model():
         """Get genes included in the model."""
         return self.classifier.features
 
-    def predict_labels_and_prob(self, indata) -> tuple:
-        """Get the decision matrix, probability matrix, and predicted cell types for the input data."""
+    def predict_labels_and_prob(self, indata, mode: str = 'best match', p_thres: float = 0.5) -> tuple:
+        """
+        Get the decision matrix, probability matrix, and predicted cell types for the input data.
+
+        Parameters
+        ----------
+        indata
+            The input array-like object used as a query.
+        mode
+            The way cell prediction is performed.
+            For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
+            Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+            (Default: `best match`)
+        p_thres
+            Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+
+        Returns
+        ----------
+        tuple
+            A tuple of decision score matrix, raw probability matrix, and predicted cell type labels.
+        """
         scores = self.classifier.decision_function(indata)
         probs = expit(scores)
-        return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
+        if mode == 'best match':
+            return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
+        elif mode == 'prob match':
+            flags = probs > p_thres
+            labs = np.array(['|'.join(self.classifier.classes_[np.where(x)[0]]) for x in flags])
+            labs[labs == ''] = 'Unassigned'
+            return scores, probs, labs
+        else:
+            raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `best match` or `prob match`")
 
     def write(self, file: str) -> None:
         """Write out the model."""
