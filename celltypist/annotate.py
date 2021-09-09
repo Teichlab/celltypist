@@ -10,6 +10,8 @@ def annotate(filename: Union[AnnData,str] = "",
              transpose_input: bool = False,
              gene_file: Optional[str] = None,
              cell_file: Optional[str] = None,
+             mode: str = 'best match',
+             p_thres: float = 0.5,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> classifier.AnnotationResult:
     """
@@ -36,6 +38,13 @@ def annotate(filename: Union[AnnData,str] = "",
     cell_file
         Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file.
         Ignored if `filename` is not provided in the mtx format.
+    mode
+        The way cell prediction is performed.
+        For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
+        Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+        (Default: `best match`)
+    p_thres
+        Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
     majority_voting
         Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
         (Default: `False`)
@@ -61,7 +70,7 @@ def annotate(filename: Union[AnnData,str] = "",
     #construct Classifier class
     clf = classifier.Classifier(filename = filename, model = sgd_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
-    predictions = clf.celltype()
+    predictions = clf.celltype(mode = mode, p_thres = p_thres)
     if not majority_voting:
         return predictions
     #over clustering
