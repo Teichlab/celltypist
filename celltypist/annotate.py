@@ -13,7 +13,8 @@ def annotate(filename: Union[AnnData,str] = "",
              mode: str = 'best match',
              p_thres: float = 0.5,
              majority_voting: bool = False,
-             over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> classifier.AnnotationResult:
+             over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+             min_prop: float = 0.5) -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
@@ -55,6 +56,10 @@ def annotate(filename: Union[AnnData,str] = "",
         3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
         4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
         Ignored if `majority_voting` is set to `False`.
+    min_prop
+        For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
+        Ignored if `majority_voting` is set to `False`.
+        Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.
 
     Returns
     ----------
@@ -89,4 +94,4 @@ def annotate(filename: Union[AnnData,str] = "",
     if len(over_clustering) != clf.adata.n_obs:
         raise ValueError(f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
     #majority voting
-    return classifier.Classifier.majority_vote(predictions, over_clustering)
+    return classifier.Classifier.majority_vote(predictions, over_clustering, min_prop = min_prop)
