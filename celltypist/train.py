@@ -9,7 +9,6 @@ from .models import Model
 from . import logger
 from scipy.sparse import spmatrix
 from datetime import datetime
-from sklearn.utils import shuffle
 
 def _to_vector(_vector_or_file):
     """
@@ -95,7 +94,7 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
 
 def _SGDClassifier(indata, labels,
                    alpha, max_iter, n_jobs,
-                   mini_batch, batch_number, batch_size, epochs, **kwargs) -> SGDClassifier:
+                   mini_batch, batch_number, batch_size, epochs, balance_cell_type, **kwargs) -> SGDClassifier:
     """
     For internal use. Get the SGDClassifier.
     """
@@ -110,13 +109,21 @@ def _SGDClassifier(indata, labels,
             logger.warn(f"⚠️ Warning: the number of cells ({no_cells}) is not big enough to conduct a proper mini-batch training. You may consider using traditional SGD classifier (mini_batch = False)")
         if no_cells <= batch_size:
             raise ValueError(f"🛑 Number of cells ({no_cells}) is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
-        starts = np.arange(0, no_cells, batch_size)
-        starts = starts[:min([batch_number, len(starts)])]
+        no_cells_sample = min([batch_number*batch_size, no_cells])
+        starts = np.arange(0, no_cells_sample, batch_size)
+        if balance_cell_type:
+            celltype_freq = np.unique(labels, return_counts = True)
+            len_celltype = len(celltype_freq[0])
+            mapping = pd.Series(1 / (celltype_freq[1]*len_celltype), index = celltype_freq[0])
+            p = mapping[labels].values
         for epoch in range(1, (epochs+1)):
             logger.info(f"⏳ Epochs: [{epoch}/{epochs}]")
-            indata, labels = shuffle(indata, labels)
+            if not balance_cell_type:
+                sampled_cell_index = np.random.choice(no_cells, no_cells_sample, replace = False)
+            else:
+                sampled_cell_index = np.random.choice(no_cells, no_cells_sample, replace = False, p = p)
             for start in starts:
-                classifier.partial_fit(indata[start:start+batch_size], labels[start:start+batch_size], classes = np.unique(labels))
+                classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = np.unique(labels))
     return classifier
 
 def train(X = None,
@@ -126,7 +133,7 @@ def train(X = None,
           #SGD param
           alpha: float = 0.0001, max_iter: int = 1000, n_jobs: Optional[int] = None,
           #mini-batch
-          mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10,
+          mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
           #feature selection
           feature_selection: bool = False, top_genes: int = 500,
           #description
@@ -179,6 +186,10 @@ def train(X = None,
         The number of epochs for the mini-batch training procedure.
         The default values of `batch_number`, `batch_size`, and `epochs` together allow observing ~10^6 training cells.
         (Default: 10)
+    balance_cell_type
+        Whether to balance the cell type frequencies in mini-batches during each epoch.
+        Setting to `True` will sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches.
+        (Default: `False`)
     feature_selection
         Whether to perform two-pass data training where the first round is used for selecting important features/genes.
         If `True`, the training time will be approximately doubled.
@@ -228,7 +239,7 @@ def train(X = None,
     #classifier
     classifier = _SGDClassifier(indata = indata, labels = labels,
                                 alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
-                                mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
+                                mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
@@ -242,7 +253,7 @@ def train(X = None,
         logger.info(f"🏋️ Starting the second round of training")
         classifier = _SGDClassifier(indata = indata, labels = labels,
                                     alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
-                                    mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, **kwargs)
+                                    mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
         scaler.mean_ = scaler.mean_[gene_index]
         scaler.var_ = scaler.var_[gene_index]
         scaler.scale_ = scaler.scale_[gene_index]
