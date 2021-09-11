@@ -339,8 +339,8 @@ class Classifier():
         """Construct a neighborhood graph. This function is for internal use."""
         if adata.X.min() < 0:
             adata = adata.raw.to_adata()
-        sc.pp.filter_genes(adata, min_cells=5)
         if 'highly_variable' not in adata.var:
+            sc.pp.filter_genes(adata, min_cells=5)
             sc.pp.highly_variable_genes(adata)
         adata = adata[:, adata.var.highly_variable]
         sc.pp.scale(adata, max_value=10)
