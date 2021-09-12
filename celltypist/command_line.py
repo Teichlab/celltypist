@@ -35,8 +35,11 @@ def show_help_and_exit(message: str):
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist requires the cell-by-gene format.")
 @click.option("-gf", "--gene-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
 @click.option("-cf", "--cell-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
+@click.option("-mo", "--mode", default="best_match", help="Choose the cell type with the largest score/probability as the final prediction (`best_match`), or enable a multi-label classification (`prob_match`), which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.", type=click.Choice(['best_match','prob_match']), show_default=True)
+@click.option("-ps", "--p-thres", default=0.5, help="Probability threshold for the multi-label classification. Ignored if `--mode` is `best_match`.", type=float, show_default=True)
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
 @click.option("-oc", "--over-clustering", default='auto', help="Input file with the over-clustering result of one cell per line, or a string key specifying an existing metadata column in the Scanpy object. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
+@click.option("-mp", "--min-prop", default=0.5, help="For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type. Ignored if `--majority-voting` is not set.", type=float, show_default=True)
 @click.option("-o", "--outdir", default=None, help="Directory to store the output files and (if `--plot-results` is set) figures. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("-p", "--prefix", default="", help="Prefix for the output files and (if `--plot-results` is set) figures. Default to no prefix used.", type=str)
 @click.option("--xlsx", is_flag=True, default=False, help="Merge output tables into a single Excel (.xlsx).")
@@ -44,7 +47,7 @@ def show_help_and_exit(message: str):
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configuration information during the run.")
-def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, majority_voting: bool, over_clustering: str,
+def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, mode: str, p_thres: float, majority_voting: bool, over_clustering: str, min_prop: float,
          outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
@@ -82,6 +85,8 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
                 "transpose-input": transpose_input,
                 "gene-file": gene_file,
                 "cell-file": cell_file,
+                "mode": mode,
+                "p-thres": p_thres,
                 "majority-voting": majority_voting,
                 "outdir": outdir,
                 "prefix": prefix,
@@ -91,6 +96,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
              }
     if majority_voting:
         config["over-clustering"] = over_clustering
+        config["min-prop"] = min_prop
 
     #quiet or not
     if not quiet:
@@ -106,8 +112,11 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         transpose_input=transpose_input,
         gene_file=gene_file,
         cell_file=cell_file,
+        mode = mode.replace('_', ' '),
+        p_thres = p_thres,
         majority_voting=majority_voting,
-        over_clustering=over_clustering)
+        over_clustering=over_clustering,
+        min_prop = min_prop)
 
     #write output
     result.to_table(folder = outdir, prefix = prefix, xlsx = xlsx)
