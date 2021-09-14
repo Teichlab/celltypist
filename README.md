@@ -157,6 +157,7 @@ During the majority voting, to define cell-cell relations, CellTypist will use a
 #Add your own over-clustering result.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
 ```
+There is also a `min_prop` parameter (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type.  
 Similarly, an instance of the `AnnotationResult` class will be returned.
 ```python
 #Examine the predicted cell type labels.
