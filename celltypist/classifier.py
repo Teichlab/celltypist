@@ -385,7 +385,7 @@ class Classifier():
         return oc_column
 
     @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0.5) -> AnnotationResult:
+    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> AnnotationResult:
         """
         Majority vote the celltypist predictions using the result from the over-clustering.
 
@@ -397,6 +397,7 @@ class Classifier():
             A list, tuple, numpy array, pandas series or index containing the over-clustering information.
         min_prop
             For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
+            (Default: 0)
 
         Returns
         ----------

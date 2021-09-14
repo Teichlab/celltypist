@@ -14,7 +14,7 @@ def annotate(filename: Union[AnnData,str] = "",
              p_thres: float = 0.5,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
-             min_prop: float = 0.5) -> classifier.AnnotationResult:
+             min_prop: float = 0) -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
@@ -60,6 +60,7 @@ def annotate(filename: Union[AnnData,str] = "",
         For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
         Ignored if `majority_voting` is set to `False`.
         Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.
+        (Default: 0)
 
     Returns
     ----------
