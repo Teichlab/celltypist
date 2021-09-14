@@ -257,7 +257,7 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 ```
 By default, data is trained using stochastic gradient descent (SGD) logistic regression without implementing the mini-batch approach. Among the training parameters, two important ones are `alpha` which sets the L2 regularization strength and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Check out the `celltypist.train` for more information.  
   
-When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binned into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, and `epochs` control the configuration of this training. Check out the `celltypist.train` for more information.
+When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binned into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, `epochs`, and `balance_cell_type` control the configuration of this training. Check out the `celltypist.train` for more information.
 ```python
 #Data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
