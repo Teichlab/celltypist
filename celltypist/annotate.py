@@ -46,6 +46,7 @@ def annotate(filename: Union[AnnData,str] = "",
         (Default: `best match`)
     p_thres
         Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+        (Default: 0.5)
     majority_voting
         Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
         (Default: `False`)

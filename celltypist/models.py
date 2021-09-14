@@ -98,6 +98,7 @@ class Model():
             (Default: `best match`)
         p_thres
             Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+            (Default: 0.5)
 
         Returns
         ----------
