@@ -3,6 +3,7 @@ import pandas as pd
 import scanpy as sc
 from anndata import AnnData
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from typing import Optional, Union
 from .models import Model
@@ -130,8 +131,10 @@ def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
+          #LR param
+          C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, n_jobs: Optional[int] = None,
           #SGD param
-          alpha: float = 0.0001, max_iter: int = 1000, n_jobs: Optional[int] = None,
+          use_SGD: bool = False, alpha: float = 0.0001,
           #mini-batch
           mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
           #feature selection
