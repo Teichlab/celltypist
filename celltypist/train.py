@@ -226,7 +226,7 @@ def train(X = None,
     url
         Free text of the (possible) download url of the model.
     **kwargs
-        Other keyword arguments passed to the :class:`~sklearn.linear_model.SGDClassifier`.
+        Other keyword arguments passed to :class:`~sklearn.linear_model.LogisticRegression` (`use_SGD = False`) or :class:`~sklearn.linear_model.SGDClassifier` (`use_SGD = True`).
 
     Returns
     ----------
