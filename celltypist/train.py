@@ -72,6 +72,8 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
                 raise ValueError(f"🛑 The number of genes provided does not match the number of genes in {X}")
             adata.var_names = np.array(genes)
         adata.var_names_make_unique()
+        if not float(adata.X.max()).is_integer():
+            logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
         sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
         indata = adata.X.copy()
