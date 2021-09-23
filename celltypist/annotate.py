@@ -27,7 +27,7 @@ def annotate(filename: Union[AnnData,str] = "",
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
         Model used to predict the input cells. Default to using the `Immune_All_Low.pkl` model.
-        Can be a :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
+        Can be a :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
     transpose_input

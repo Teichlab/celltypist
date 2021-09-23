@@ -201,7 +201,7 @@ class Classifier():
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler, the
+        A :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
     transpose
         Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
@@ -226,7 +226,7 @@ class Classifier():
     indata_names
         All the cells included in the input data.
     model
-        A :class:`~celltypist.models.Model` object that wraps the SGDClassifier and the StandardScaler.
+        A :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler.
     """
     def __init__(self, filename: Union[AnnData,str] = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         if isinstance(model, str):
