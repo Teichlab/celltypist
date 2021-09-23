@@ -338,14 +338,15 @@ class Classifier():
     @staticmethod
     def _construct_neighbor_graph(adata: AnnData) -> tuple:
         """Construct a neighborhood graph. This function is for internal use."""
-        if adata.X.min() < 0:
-            adata = adata.raw.to_adata()
-        if 'highly_variable' not in adata.var:
-            sc.pp.filter_genes(adata, min_cells=5)
-            sc.pp.highly_variable_genes(adata)
-        adata = adata[:, adata.var.highly_variable]
-        sc.pp.scale(adata, max_value=10)
-        sc.tl.pca(adata, n_comps=50)
+        if 'X_pca' not in adata.obsm.keys():
+            if adata.X.min() < 0:
+                adata = adata.raw.to_adata()
+            if 'highly_variable' not in adata.var:
+                sc.pp.filter_genes(adata, min_cells=5)
+                sc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
+            adata = adata[:, adata.var.highly_variable]
+            sc.pp.scale(adata, max_value=10)
+            sc.tl.pca(adata, n_comps=50)
         sc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
         return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
