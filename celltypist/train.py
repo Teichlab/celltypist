@@ -118,6 +118,8 @@ def _SGDClassifier(indata, labels,
     classifier = SGDClassifier(loss = 'log', alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
         logger.info(f"🏋️ Training data using SGD logistic regression")
+        if len(labels) > 100000:
+            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with ({len(labels)}) cells, try to decrease `max_iter` if the training does not finish in practical time")
         classifier.fit(indata, labels)
     else:
         logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
