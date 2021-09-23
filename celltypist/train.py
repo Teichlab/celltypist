@@ -149,6 +149,7 @@ def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
+          check_expression: bool = True,
           #LR param
           C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, n_jobs: Optional[int] = None,
           #SGD param
@@ -170,6 +171,7 @@ def train(X = None,
     X
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
         Also accepts the input as an :class:`~anndata.AnnData` object, or any array-like objects already loaded in memory.
+        See `check_expression` for detailed format requirements.
         A cell-by-gene format is desirable (see `transpose_input` for more information).
     labels
         Path to the file containing cell type label per line corresponding to the cells in `X`.
@@ -182,6 +184,11 @@ def train(X = None,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
+    check_expression
+        Check whether the expression matrix in the input data is supplied as required.
+        Except the case where a path to the raw count table file is specified, all other inputs for `X` should be in log1p normalized expression to 10000 counts per cell.
+        Set to `False` if you want to train the data regardless of the expression formats.
+        (Default: `True`)
     C
         Inverse of L2 regularization strength for traditional logistic classifier. A smaller value can possibly improve model generalization while at the cost of decreased accuracy.
         This argument is ignored if SGD learning is enabled (`use_SGD = True`).
@@ -258,7 +265,7 @@ def train(X = None,
     labels = np.array(labels)
     genes = np.array(genes)
     #check
-    if np.abs(np.expm1(indata[0]).sum()-10000) > 1:
+    if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
         raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
     if len(labels) != indata.shape[0]:
         raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
