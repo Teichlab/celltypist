@@ -145,7 +145,7 @@ def train(X = None,
           **kwargs
          ) -> Model:
     """
-    Train a celltypist model using mini-batch (optional) logistic classifier with stochastic gradient descent (SGD) learning.
+    Train a celltypist model using mini-batch (optional) logistic classifier with a global solver or stochastic gradient descent (SGD) learning.
 
     Parameters
     ----------
@@ -164,34 +164,52 @@ def train(X = None,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
-    alpha
-        L2 regularization strength. A higher value can improve model generalization while at the cost of decreased accuracy.
-        (Default: 0.0001)
+    C
+        Inverse of L2 regularization strength for traditional logistic classifier. A smaller value can possibly improve model generalization while at the cost of decreased accuracy.
+        This argument is ignored if SGD learning is enabled (`use_SGD = True`).
+        (Default: 1.0)
+    solver
+        Algorithm to use in the optimization problem for traditional logistic classifier.
+        The default behavior is to choose the solver according to the size of the input data.
+        This argument is ignored if SGD learning is enabled (`use_SGD = True`).
     max_iter
         Maximum number of iterations before reaching the minimum of the cost function.
         Try to decrease `max_iter` if the cost function does not converge for a long time.
-        This argument is ignored if mini-batch training is conducted (`mini_batch = True`).
+        This argument is for both traditional and SGD logistic classifiers, and will be ignored if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: 1000)
     n_jobs
         Number of CPUs used. Default to one CPU. `-1` means all CPUs are used.
+        This argument is for both traditional and SGD logistic classifiers.
+    use_SGD
+        Whether to implement SGD learning for the logistic classifier.
+        (Default: `False`)
+    alpha
+        L2 regularization strength for SGD logistic classifier. A larger value can possibly improve model generalization while at the cost of decreased accuracy.
+        This argument is ignored if SGD learning is disabled (`use_SGD = False`).
+        (Default: 0.0001)
     mini_batch
         Whether to implement mini-batch training for the SGD logistic classifier.
         Setting to `True` may improve the training efficiency for large datasets (for example, >100k cells).
+        This argument is ignored if SGD learning is disabled (`use_SGD = False`).
         (Default: `False`)
     batch_number
         The number of batches used for training in each epoch. Each batch contains `batch_size` cells.
         For datasets which cannot be binned into `batch_number` batches, all batches will be used.
+        This argument is relevant only if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: 100)
     batch_size
         The number of cells within each batch.
+        This argument is relevant only if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: 1000)
     epochs
         The number of epochs for the mini-batch training procedure.
         The default values of `batch_number`, `batch_size`, and `epochs` together allow observing ~10^6 training cells.
+        This argument is relevant only if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: 10)
     balance_cell_type
         Whether to balance the cell type frequencies in mini-batches during each epoch.
         Setting to `True` will sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches.
+        This argument is relevant only if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: `False`)
     feature_selection
         Whether to perform two-pass data training where the first round is used for selecting important features/genes.
