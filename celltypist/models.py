@@ -19,12 +19,12 @@ pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
 
 class Model():
     """
-    Class that wraps the SGDClassifier and the StandardScaler.
+    Class that wraps the logistic Classifier and the StandardScaler.
 
     Parameters
     ----------
     clf
-        A SGDClassifier incorporated in the loaded model.
+        A logistic Classifier incorporated in the loaded model.
     scaler
         A StandardScaler incorporated in the loaded model.
     description
@@ -33,7 +33,7 @@ class Model():
     Attributes
     ----------
     classifier
-        The SGDClassifier incorporated in the loaded model.
+        The logistic Classifier incorporated in the loaded model.
     scaler
         The StandardScaler incorporated in the loaded model.
     description
