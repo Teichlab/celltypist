@@ -104,7 +104,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
         raise ValueError(f"🛑 Invalid `solver`, should be one of `liblinear`, `lbfgs`, `newton-cg`, `sag`, and `saga`")
     logger.info(f"🏋️ Training data using logistic regression")
     if no_cells > 100000:
-        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with ({no_cells}) cells, try to decrease `max_iter` if the training does not finish in practical time")
+        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells, try to decrease `max_iter` if the training does not finish in practical time")
     classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
@@ -119,7 +119,7 @@ def _SGDClassifier(indata, labels,
     if not mini_batch:
         logger.info(f"🏋️ Training data using SGD logistic regression")
         if len(labels) > 100000:
-            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with ({len(labels)}) cells, try to decrease `max_iter` if the training does not finish in practical time")
+            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {len(labels)} cells, try to decrease `max_iter` if the training does not finish in practical time")
         classifier.fit(indata, labels)
     else:
         logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
@@ -276,9 +276,10 @@ def train(X = None,
     indata = scaler.fit_transform(indata)
     indata = np.clip(indata, a_min = None, a_max = 10)
     #classifier
-    classifier = _SGDClassifier(indata = indata, labels = labels,
-                                alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
-                                mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+    if use_SGD:
+        classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+    else:
+        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
@@ -290,9 +291,10 @@ def train(X = None,
         genes = genes[gene_index]
         indata = indata[:, gene_index]
         logger.info(f"🏋️ Starting the second round of training")
-        classifier = _SGDClassifier(indata = indata, labels = labels,
-                                    alpha = alpha, max_iter = max_iter, n_jobs = n_jobs,
-                                    mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+        if use_SGD:
+            classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+        else:
+            classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
         scaler.mean_ = scaler.mean_[gene_index]
         scaler.var_ = scaler.var_[gene_index]
         scaler.scale_ = scaler.scale_[gene_index]
