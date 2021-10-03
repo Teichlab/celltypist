@@ -40,7 +40,7 @@ models.models_path
 ```
 
 ### 1.3. Overview of the models
-All models are serialized in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
+All models are serialised in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
 ```python
 #Get an overview of what these models represent and their names.
 models.models_description()
