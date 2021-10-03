@@ -96,6 +96,13 @@ predictions.decision_matrix
 #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
 predictions.probability_matrix
 ```
+By default, with the `annotate` function, each query cell is predicted into the cell type with the largest score/probability among all possible cell types (`mode = 'best match'`). This mode is straightforward and can be used to differentiate between highly homogeneous cell types.  
+However, in some scenarios where a query cell cannot be assigned to any cell type in the reference model (i.e., a novel cell type) or can be assigned to multiple cell types (i.e., multi-label classification), a mode of probability match can be turned on (`mode = 'prob match'`) with a probability cutoff (default to 0.5, `p_thres = 0.5`) to decide the cell types (none, 1, or multiple) assigned for a given cell.
+```python
+#Query cell will get the label of 'Unassigned' if it fails to pass the probability cutoff in each cell type.
+#Query cell will get multiple label outputs (concatenated by '|') if more than one cell type passes the probability cutoff.
+predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', mode = 'prob match', p_thres = 0.5)
+```
 The above three results can be written out to tables by the function `to_table`, specifying the target `folder` for storage and the `prefix` of each table name.
 ```python
 #Export the three results to csv tables.
