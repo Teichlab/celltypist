@@ -66,7 +66,7 @@ model.description
 ### 1.5. Celltyping based on the input of count table 
 CellTypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table as well, as they point to the negative transcriptomic signatures when compared with the model used.
 ```python
-#Get a demo test data. This is a UMI count csv file with cells as rows and genes as columns.
+#Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
 input_file = celltypist.samples.get_sample_csv()
 ```
 Assign the cell type labels from the model to the input test cells using the `annotate` function.
