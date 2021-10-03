@@ -29,7 +29,7 @@ from celltypist import models
 ```
 
 ### 1.2. Download all available models
-The models serve as the basis for cell type predictions. Each model is on average 3 megabytes (MB). We thus encourage the users to download all of them.
+The models serve as the basis for cell type predictions. Each model is on average 1 megabyte (MB). We thus encourage the users to download all of them.
 ```python
 #Download all the available models from the remote Sanger server.
 models.download_models()
