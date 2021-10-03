@@ -57,7 +57,7 @@ model.cell_types
 model.features
 #The stochastic gradient descent logistic regression classifier within the model.
 model.classifier
-#The standard scaler within the model (used to scale the input data).
+#The standard scaler within the model (used to scale the input query data).
 model.scaler
 #The model information.
 model.description
