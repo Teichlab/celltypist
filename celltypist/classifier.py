@@ -266,6 +266,7 @@ class Classifier():
             self.indata_names = self.adata.obs_names.copy()
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
+            self.adata.var_names_make_unique()
             if self.adata.X.min() < 0:
                 logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:

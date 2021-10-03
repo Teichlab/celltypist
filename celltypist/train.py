@@ -46,6 +46,7 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
         raise Exception("🛑 Missing training data and/or training labels. Please provide both arguments")
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X) if isinstance(X, str) else X
+        adata.var_names_make_unique()
         if adata.X.min() < 0:
             logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
             try:
