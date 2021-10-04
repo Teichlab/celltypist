@@ -126,14 +126,15 @@ adata = predictions.to_adata(insert_labels = True, insert_decision = True)
 #Get an `AnnData` with predicted labels and probability matrix (recommended).
 adata = predictions.to_adata(insert_labels = True, insert_prob = True)
 ```
-You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
+You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
 ```python
-#Visualize the predicted cell types overlaid onto the UMAP.
+#Visualise the predicted cell types overlaid onto the UMAP.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
-A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) pipeline. If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
+A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) pipeline. The labels in the figure may be crowded if too many cell types are predicted (can be alleviated by a majority voting process, see `1.7.`).  
+If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
 ```python
-#Visualize the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
+#Visualise the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability = True)
 ```
 Multiple figures will be generated, including the predicted cell type labels overlaid onto the UMAP space, plus the decision score and probability distributions of each cell type on the UMAP.
