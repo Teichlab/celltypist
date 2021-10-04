@@ -69,7 +69,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_probability: bool = False) -> AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_prob: bool = False) -> AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
 
@@ -81,7 +81,7 @@ class AnnotationResult():
         insert_decision
             Whether to insert the decision matrix into the Scanpy object.
             (Default: `False`)
-        insert_probability
+        insert_prob
             Whether to insert the probability matrix into the Scanpy object. This will override the decision matrix even when `insert_decision` is set to `True`.
             (Default: `False`)
 
@@ -92,11 +92,11 @@ class AnnotationResult():
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
-            4) **name of each cell type**, which represents the decision scores (or probabilities if `insert_probability` is `True`) of a given cell type across cells.
+            4) **name of each cell type**, which represents the decision scores (or probabilities if `insert_prob` is `True`) of a given cell type across cells.
         """
         if insert_labels:
             self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
-        if insert_probability:
+        if insert_prob:
             self.adata.obs[self.probability_matrix.columns] = self.probability_matrix
         elif insert_decision:
             self.adata.obs[self.decision_matrix.columns] = self.decision_matrix

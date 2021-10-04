@@ -110,21 +110,21 @@ predictions.to_table(folder = '/path/to/a/folder', prefix = '')
 #Alternatively, export the three results to a single Excel table (.xlsx).
 predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
 ```
-The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalized format (to 10,000 counts per cell) by the function `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).
+The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).
 ```python
 #Get an `AnnData` with predicted labels embedded into the observation metadata column.
 adata = predictions.to_adata(insert_labels = True)
 #Inspect this column (`predicted_labels`).
 adata.obs.predicted_labels
 ```
-In addition, you can insert the decision matrix into the `AnnData` by passing in `insert_decision = True`, which represents the decision scores of each cell type distributed across the input cells. Alternatively, setting `insert_probability = True` will insert the probability matrix into the `AnnData`. The former is the recommended way as not all test datasets converge to a meaningful range of probability values.  
+In addition, you can insert the decision matrix into the `AnnData` by passing in `insert_decision = True`, which represents the decision scores of each cell type distributed across the input cells. Alternatively, setting `insert_prob = True` will insert the probability matrix into the `AnnData`. The latter is the recommended way as probabilities are more interpretable (though sometimes not all test datasets converge to a meaningful range of probability values).  
   
 After the insertion, multiple columns will show up in the cell metadata of `AnnData`, with each column's name as a cell type name.
 ```python
-#Get an `AnnData` with predicted labels and decision matrix (recommended).
+#Get an `AnnData` with predicted labels and decision matrix.
 adata = predictions.to_adata(insert_labels = True, insert_decision = True)
-#Get an `AnnData` with predicted labels and probability matrix.
-adata = predictions.to_adata(insert_labels = True, insert_probability = True)
+#Get an `AnnData` with predicted labels and probability matrix (recommended).
+adata = predictions.to_adata(insert_labels = True, insert_prob = True)
 ```
 You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualize your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
 ```python
