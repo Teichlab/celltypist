@@ -103,7 +103,7 @@ However, in some scenarios where a query cell cannot be assigned to any cell typ
 #Query cell will get multiple label outputs (concatenated by '|') if more than one cell type passes the probability cutoff.
 predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', mode = 'prob match', p_thres = 0.5)
 ```
-The above three results can be written out to tables by the function `to_table`, specifying the target `folder` for storage and the `prefix` of each table name.
+The three tables in the `AnnotationResult` (`.predicted_labels`, `.decision_matrix` and `.probability_matrix`) can be written out to local files (tables) by the function `to_table`, specifying the target `folder` for storage and the `prefix` common to each table.
 ```python
 #Export the three results to csv tables.
 predictions.to_table(folder = '/path/to/a/folder', prefix = '')
