@@ -97,6 +97,7 @@ predictions.decision_matrix
 predictions.probability_matrix
 ```
 By default, with the `annotate` function, each query cell is predicted into the cell type with the largest score/probability among all possible cell types (`mode = 'best match'`). This mode is straightforward and can be used to differentiate between highly homogeneous cell types.  
+  
 However, in some scenarios where a query cell cannot be assigned to any cell type in the reference model (i.e., a novel cell type) or can be assigned to multiple cell types (i.e., multi-label classification), a mode of probability match can be turned on (`mode = 'prob match'`) with a probability cutoff (default to 0.5, `p_thres = 0.5`) to decide the cell types (none, 1, or multiple) assigned for a given cell.
 ```python
 #Query cell will get the label of 'Unassigned' if it fails to pass the probability cutoff in each cell type.
@@ -132,6 +133,7 @@ You can now manipulate this object with any functions or modules applicable to `
 predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
 ```
 A different prefix for the output figures can be specified with the `prefix` tag, and UMAP coordinates will be generated for the input dataset using a canonical [Scanpy](https://scanpy.readthedocs.io/en/stable/) pipeline. The labels in the figure may be crowded if too many cell types are predicted (can be alleviated by a majority voting process, see `1.7.`).  
+  
 If you also would like to inspect the decision score and probability distributions for each cell type involved in the model, pass in the `plot_probability = True` argument. This may take a bit longer time as one figure will be generated for each of the cell types from the model.
 ```python
 #Visualise the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
