@@ -146,12 +146,12 @@ CellTypist also accepts the input data as an [AnnData](https://anndata.readthedo
   
 Since the expression of each gene will be centred and scaled by matching with the mean and standard deviation of that gene in the provided model, CellTypist requires a logarithmised and normalised expression matrix stored in the `AnnData` (log1p normalised expression to 10,000 counts per cell). CellTypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalised, an error will be raised.
 ```python
-#Provide the input as a Scanpy object.
-predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
-#Alternatively, the input can be specified as an AnnData already loaded in memory.
+#Provide the input as an `AnnData`.
+predictions = celltypist.annotate('/path/to/input.h5ad', model = 'Immune_All_Low.pkl')
+#Alternatively, the input can be specified as an `AnnData` already loaded in memory.
 predictions = celltypist.annotate(a_loaded_adata, model = 'Immune_All_Low.pkl')
 ```
-All the downstream operations are the same as in `1.5.`, except that 1) the transformed `AnnData` from `to_adata` stores all the expression matrix and other information as is in the original object 2) when generating the visualization figures, existing UMAP coordinates will be used. If no UMAP coordinates are found, CellTypist will fall back on the neighborhood graph to yield new 2D UMAP projections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
+All the parameters and downstream operations are the same as in `1.5.`, except that 1) the transformed `AnnData` from `to_adata` stores all the expression matrix and other information as is in the original object. 2) when generating the visualisation figures, existing UMAP coordinates will be used. If no UMAP coordinates are found, CellTypist will fall back on the neighborhood graph to yield new 2D UMAP projections. If none is available, a canonical Scanpy pipeline will be performed to generate the UMAP coordinates as in `1.5.`.
 
 ### 1.7. Use a majority voting classifier combined with celltyping 
 By default, CellTypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, CellTypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
