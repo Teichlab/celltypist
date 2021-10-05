@@ -221,11 +221,12 @@ The default mode (`--mode best_match`) for prediction is to choose the cell type
   
 Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
 
-### 2.5. Celltyping based on Scanpy h5ad data
-See `1.6.` for the requirement of the Scanpy expression data.
+### 2.5. Celltyping based on AnnData
+See `1.6.` for the requirement of the expression matrix in the AnnData object (`.h5ad`).
 ```bash
 celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir
 ```
+Other command line options are the same as in `2.4.`.
 
 ### 2.6. Use a majority voting classifier combined with celltyping
 See `1.7.` for how the majority voting classifier works.
