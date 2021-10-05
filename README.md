@@ -244,7 +244,7 @@ There is also a `--min-prop` option (defaults to 0) which controls the minimum p
   
 Other command line options are the same as in `2.4.`.
 
-### 2.7. Generate visualization figures for the results
+### 2.7. Generate visualisation figures for the results
 In addition to the tables output by CellTypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
 ```bash
 #Plot the results after the celltyping process.
