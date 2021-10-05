@@ -235,11 +235,14 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 ```
 During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
-   2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
+   2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
    3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
 ```bash
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
 ```
+There is also a `--min-prop` option (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type. Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.  
+  
+Other command line options are the same as in `2.4.`.
 
 ### 2.7. Generate visualization figures for the results
 In addition to the tables output by CellTypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
