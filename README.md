@@ -141,10 +141,10 @@ predictions.to_plots(folder = '/path/to/a/folder', prefix = '', plot_probability
 ```
 Multiple figures will be generated, including the predicted cell type labels overlaid onto the UMAP space, plus the decision score and probability distributions of each cell type on the UMAP.
 
-### 1.6. Celltyping based on Scanpy h5ad data
+### 1.6. Celltyping based on AnnData
 CellTypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).  
   
-Since the expression of each gene will be centered and scaled by matching with the mean and standard deviation of that gene in the provided model, CellTypist requires a logarithmized and normalized expression matrix stored in the `AnnData` (log1p normalized expression to 10,000 counts per cell). CellTypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalized, an error will be raised.
+Since the expression of each gene will be centred and scaled by matching with the mean and standard deviation of that gene in the provided model, CellTypist requires a logarithmised and normalised expression matrix stored in the `AnnData` (log1p normalised expression to 10,000 counts per cell). CellTypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalised, an error will be raised.
 ```python
 #Provide the input as a Scanpy object.
 predictions = celltypist.annotate('/path/to/input/adata', model = 'Immune_All_Low.pkl')
