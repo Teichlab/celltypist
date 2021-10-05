@@ -272,8 +272,17 @@ The inputs for CellTypist training comprise the gene expression data, the cell a
 ### One-pass data training
 Derive a new model by training the data using the `celltypist.train` function:
 ```python
-#Data training with SGD learning.
+#Training a CellTypist model.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
+```
+If the input is a table file, an `AnnData` or a `DataFrame`, genes will be automatically extracted and the `genes` tag can thus be omitted from the above code. If your input is in a gene-by-cell format (genes as rows and cells as columns), remember to pass in the `transpose_input = True` argument.  
+  
+Before the training is conducted, the gene expression format will be checked to make sure the input data is supplied as required. For example, the expression matrix should be in log1p normalised expression (to 10,000 counts per cell) if the input is an `AnnData`. This means when you subset the input with given genes (e.g., by highly variable genes), an error may be raised as CellTypist cannot judge the input as properly normalised with only a subset of genes. In such a case, pass in `check_expression = False` to skip the expression format check.
+```python
+#Training a CellTypist model with only subset of genes (e.g., highly variable genes).
+#Restricting the input to a subset of genes can accelerate the training process.
+#Use `AnnData` here as an example.
+new_model = celltypist.train(some_adata[:, some_adata.var.highly_variable], labels = label_input, check_expression = False)
 ```
 By default, data is trained using stochastic gradient descent (SGD) logistic regression without implementing the mini-batch approach. Among the training parameters, two important ones are `alpha` which sets the L2 regularization strength and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Check out the `celltypist.train` for more information.  
   
