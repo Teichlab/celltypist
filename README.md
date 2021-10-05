@@ -184,7 +184,7 @@ predictions.probability_matrix
 ```
 Compared to the results without majority-voting functionality as in `1.5.` and `1.6.`, the `.predicted_labels` attribute now has two extra columns (`over_clustering` and `majority_voting`) in addition to the column `predicted_labels`.  
   
-Other downstream operations are the same as in `1.5.` and `1.6.`. Note that due to the majority voting results added, the exported tables (by `to_table`), the transformed `AnnData` (by `to_adata`), and the visualization figures (by `to_plots`) will all have additional outputs or information indicating the majority-voting outcomes.
+Other parameters and downstream operations are the same as in `1.5.` and `1.6.`. Note that due to the majority-voting results added, the exported tables (by `to_table`), the transformed `AnnData` (by `to_adata`), and the visualisation figures (by `to_plots`) will all have additional outputs or information indicating the majority-voting outcomes.
 
 ## 2. Use as the command line
 
