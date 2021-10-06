@@ -6,6 +6,7 @@ Information of CellTypist can be also found in our CellTypist [portal](https://w
 
 # Interactive tutorial
 [Using CellTypist for cell type classification](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial.ipynb)
+[Using CellTypist for multi-label classification](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial_ml.ipynb)
 
 # Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
