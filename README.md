@@ -298,6 +298,8 @@ When the training data contains a huge number of cells (for example >500k cells)
 #Get a CellTypist model with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True)
 ```
+By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs`*`batch_size`*`batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
+  
 The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models. For example, it can be specified as the `model` argument in `annotate`.
 ```python
 #Predict the identity of each input cell with the new model.
