@@ -261,7 +261,7 @@ The R version of CellTypist is under development. Currently, you can use for exa
 ***
 ## Supplemental guidance: generate a custom model
 
-As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another single-cell dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two single-cell datasets is under examination.  
+As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another scRNA-seq dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two scRNA-seq datasets is under examination.  
   
 ### Inputs for data training
 The inputs for CellTypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
@@ -322,7 +322,7 @@ This model can be used as with the built-in CellTypist models, for example, it c
 ```python
 #Predict the identity of each input cell with the new model.
 predictions = celltypist.annotate(input_file, model = new_model)
-#Alternatively, just specify the model path (recommended as this ensures the model is intact everytime it is loaded).
+#Alternatively, just specify the model path (recommended as this ensures the model is intact every time it is loaded).
 predictions = celltypist.annotate(input_file, model = '/path/to/local/folder/some_model_name.pkl')
 #If the model is stored in `models.models_path`, only the model name is needed.
 predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
@@ -330,11 +330,13 @@ predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
 Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
 
 ### Two-pass data training incorporating feature selection
-Some single-cell datasets may involve the noise mostly from genes not helpful or even detrimental to the characterization of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
+Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
 ```python
-#Two-pass data training with SGD learning.
+#Two-pass data training with traditional logistic regression.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
+#Two-pass data training with SGD learning.
+new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, feature_selection = True)
 #Two-pass data training with SGD mini-batch training.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True, feature_selection = True)
+new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True, feature_selection = True)
 ```
 The downstream workflow is the same as that from one-pass data training.
