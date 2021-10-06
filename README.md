@@ -298,7 +298,9 @@ When the training data contains a huge number of cells (for example >500k cells)
 #Get a CellTypist model with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True)
 ```
-By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs`x`batch_size`x`batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
+By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs` x `batch_size` x `batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
+  
+There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information.  
   
 The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
   
@@ -316,12 +318,14 @@ To leverage this model, first load it by `models.Model.load`.
 ```python
 new_model = models.Model.load('/path/to/local/folder/some_model_name.pkl')
 ```
-This model can be used as with the built-in CellTypist models, for example, it can specified as the `model` argument in `annotate`.
+This model can be used as with the built-in CellTypist models, for example, it can be specified as the `model` argument in `annotate`.
 ```python
 #Predict the identity of each input cell with the new model.
 predictions = celltypist.annotate(input_file, model = new_model)
 #Alternatively, just specify the model path (recommended as this ensures the model is intact everytime it is loaded).
 predictions = celltypist.annotate(input_file, model = '/path/to/local/folder/some_model_name.pkl')
+#If the model is stored in `models.models_path`, only the model name is needed.
+predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
 ```
 Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
 
@@ -333,4 +337,4 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 #Two-pass data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True, feature_selection = True)
 ```
-There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information. The downstream workflow is the same as that from one-pass data training.
+The downstream workflow is the same as that from one-pass data training.
