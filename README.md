@@ -293,10 +293,10 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 ```
 A logistic regression classifier with SGD learning reduces the training burden dramatically and has a comparable performance versus a traditional logistic regression classifier. A minor caveat is that more careful model parameter tuning may be needed if you want to utilise the probability values from the model for scoring cell types in the prediction step (the selection of the most likely cell type for each query cell is not influenced however). Among the training parameters, two important ones are `alpha` which sets the L2 regularisation strength and `max_iter` which controls the maximum number of iterations. Other (hyper)parameters from [SGDClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html) are also applicable in the `train` function.  
   
-When the training data contains a large number of cells (for example >100k cells), you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `mini_batch = True`. As a result, in each epoch cells are binned into equal-sized random batches, and are trained in a batch-by-batch manner. The parameters `batch_number`, `batch_size`, `epochs`, and `balance_cell_type` control the configuration of this training. Check out the `celltypist.train` for more information.
+When the training data contains a huge number of cells (for example >500k cells) or more randomness in selecting cells for training is needed, you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `use_SGD = True` and `mini_batch = True`. As a result, in each epoch (default to 10 epochs, `epochs = 10`), cells are binned into equal-sized (the size is default to 1000, `batch_size = 1000`) random batches, and are trained in a batch-by-batch manner (default to 100 batches, `batch_number = 100`).
 ```python
-#Data training with SGD mini-batch training.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, mini_batch = True)
+#Get a CellTypist model with SGD mini-batch training.
+new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True)
 ```
 The new model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models. For example, it can be specified as the `model` argument in `annotate`.
 ```python
