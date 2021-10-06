@@ -172,7 +172,7 @@ def train(X = None,
     Parameters
     ----------
     X
-        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData (h5ad).
         Also accepts the input as an :class:`~anndata.AnnData` object, or any array-like objects already loaded in memory.
         See `check_expression` for detailed format requirements.
         A cell-by-gene format is desirable (see `transpose_input` for more information).

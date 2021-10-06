@@ -21,7 +21,7 @@ def annotate(filename: Union[AnnData,str] = "",
     Parameters
     ----------
     filename
-        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose_input` for more information).
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
@@ -70,7 +70,7 @@ def annotate(filename: Union[AnnData,str] = "",
         1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
         2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
         3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
-        4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+        4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData representation of the input data.
     """
     #load model
     lr_classifier = model if isinstance(model, Model) else Model.load(model)

@@ -39,7 +39,7 @@ class AnnotationResult():
     cell_count
         Number of input cells which undergo the prediction process.
     adata
-        A Scanpy object representing the input data.
+        An :class:`~anndata.AnnData` object representing the input data.
     """
     def __init__(self, labels: pd.DataFrame, decision_mat: pd.DataFrame, prob_mat: pd.DataFrame, adata: AnnData):
         self.predicted_labels = labels
@@ -71,18 +71,18 @@ class AnnotationResult():
 
     def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_prob: bool = False) -> AnnData:
         """
-        Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the Scanpy object.
+        Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the AnnData object.
 
         Parameters
         ----------
         insert_labels
-            Whether to insert the predicted cell type labels and (if majority voting is done) majority voting-based labels into the Scanpy object.
+            Whether to insert the predicted cell type labels and (if majority voting is done) majority voting-based labels into the AnnData object.
             (Default: `True`)
         insert_decision
-            Whether to insert the decision matrix into the Scanpy object.
+            Whether to insert the decision matrix into the AnnData object.
             (Default: `False`)
         insert_prob
-            Whether to insert the probability matrix into the Scanpy object. This will override the decision matrix even when `insert_decision` is set to `True`.
+            Whether to insert the probability matrix into the AnnData object. This will override the decision matrix even when `insert_decision` is set to `True`.
             (Default: `False`)
 
         Returns
@@ -196,7 +196,7 @@ class Classifier():
     Parameters
     ----------
     filename
-        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or Scanpy object (h5ad).
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
@@ -218,7 +218,7 @@ class Classifier():
     filename
         Path to the input dataset. This attribute exists only when the input is a file path.
     adata
-        A Scanpy object which stores the log1p normalized expression data in `.X` or `.raw.X`.
+        An :class:`~anndata.AnnData` object which stores the log1p normalized expression data in `.X` or `.raw.X`.
     indata
         The expression matrix used for predictions stored in the log1p normalized format.
     indata_genes
@@ -308,7 +308,7 @@ class Classifier():
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
             2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
             3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
-            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData object representation of the input data.
         """
         logger.info(f"🔗 Matching reference genes in the model")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
@@ -409,7 +409,7 @@ class Classifier():
             1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
             2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
             3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
-            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, Scanpy object representation of the input data.
+            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData object representation of the input data.
         """
         if isinstance(over_clustering, (list, tuple)):
             over_clustering = np.array(over_clustering)

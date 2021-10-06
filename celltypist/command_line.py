@@ -30,7 +30,7 @@ def show_help_and_exit(message: str):
 
 
 @click.command()
-@click.option("-i", "--indata", help="Path to the input count matrix (.csv/txt/tsv/tab/mtx) or Scanpy object (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
+@click.option("-i", "--indata", help="Path to the input count matrix (.csv/txt/tsv/tab/mtx) or AnnData (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default=None, help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist requires the cell-by-gene format.")
 @click.option("-gf", "--gene-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
@@ -38,7 +38,7 @@ def show_help_and_exit(message: str):
 @click.option("-mo", "--mode", default="best_match", help="Choose the cell type with the largest score/probability as the final prediction (`best_match`), or enable a multi-label classification (`prob_match`), which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.", type=click.Choice(['best_match','prob_match']), show_default=True)
 @click.option("-ps", "--p-thres", default=0.5, help="Probability threshold for the multi-label classification. Ignored if `--mode` is `best_match`.", type=float, show_default=True)
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
-@click.option("-oc", "--over-clustering", default='auto', help="Input file with the over-clustering result of one cell per line, or a string key specifying an existing metadata column in the Scanpy object. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
+@click.option("-oc", "--over-clustering", default='auto', help="Input file with the over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData object. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
 @click.option("-mp", "--min-prop", default=0, help="For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type. Ignored if `--majority-voting` is not set.", type=float, show_default=True)
 @click.option("-o", "--outdir", default=None, help="Directory to store the output files and (if `--plot-results` is set) figures. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("-p", "--prefix", default="", help="Prefix for the output files and (if `--plot-results` is set) figures. Default to no prefix used.", type=str)
