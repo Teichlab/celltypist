@@ -339,4 +339,8 @@ new_model = celltypist.train(expression_input, labels = label_input, genes = gen
 #Two-pass data training with SGD mini-batch training.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True, feature_selection = True)
 ```
+If you prefer other feature selection approaches and obtain a set of genes which are designated as important features, you can subset your input data and train the CellTypist model accordingly. As noted in the previous section, remember to pass in the `check_expression = False` argument.
+```python
+new_model = celltypist.train(expression_input_subset, labels = label_input, genes = gene_input, check_expression = False)
+```
 The downstream workflow is the same as that from one-pass data training.
