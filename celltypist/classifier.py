@@ -359,7 +359,7 @@ class Classifier():
         ----------
         resolution
             Resolution parameter for leiden clustering which controls the coarseness of the clustering.
-            Default to 5, 10, 15 and 20 for datasets with cell numbers less than 5k, 20k, 40k and above, respectively.
+            Default to 5, 10, 15, 20, 25 and 30 for datasets with cell numbers less than 5k, 20k, 40k, 100k, 200k and above, respectively.
 
         Returns
         ----------
@@ -379,8 +379,12 @@ class Classifier():
                 resolution = 10
             elif self.adata.n_obs < 40000:
                 resolution = 15
-            else:
+            elif self.adata.n_obs < 100000:
                 resolution = 20
+            elif self.adata.n_obs < 200000:
+                resolution = 25
+            else:
+                resolution = 30
         logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
         sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         oc_column = self.adata.obs.over_clustering
