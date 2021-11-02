@@ -4,9 +4,9 @@ CellTypist is an automated cell type annotation tool for scRNA-seq datasets on t
 # CellTypist website
 Information of CellTypist can be also found in our CellTypist [portal](https://www.celltypist.org).
 
-# Interactive tutorial
-[Using CellTypist for cell type classification](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial.ipynb)  
-[Using CellTypist for multi-label classification](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial_ml.ipynb)
+# Interactive tutorials
+[Using CellTypist for cell type classification ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial.ipynb)
+[Using CellTypist for multi-label classification ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial_ml.ipynb)
 
 # Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
