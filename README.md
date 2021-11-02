@@ -16,7 +16,7 @@ pip install celltypist
 
 ### Using conda [![install with bioconda](https://img.shields.io/conda/vn/bioconda/celltypist.svg?color=brightgreen&style=flat)](https://anaconda.org/bioconda/celltypist)
 ```console
-conda install -c bioconda celltypist
+conda install -c bioconda -c conda-forge celltypist
 ```
 
 # Usage
