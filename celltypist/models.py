@@ -228,7 +228,7 @@ def download_model_index(only_model: bool = True) -> None:
     if not only_model:
         download_models()
 
-def download_models(force_update: bool=False) -> None:
+def download_models(force_update: bool=False, model_list = []) -> None:
     """
     Download all the available models.
 
@@ -238,10 +238,19 @@ def download_models(force_update: bool=False) -> None:
         Whether to fetch a latest JSON index for downloading all available models.
         Set to `True` if you want to parallel the latest celltypist model releases.
         (Default: `False`)
+    model_list
+        List of specific models to download. By default it's empty meaning all models
+        are downloaded. Set to `["ModelA.pkl", "ModelB.pkl"]` to only download a subset
+        of the models. (Default: `[]`)
     """
     models_json = get_models_index(force_update)
-    model_count = len(models_json["models"])
     logger.info(f"📂 Storing models in {models_path}")
+    if len(model_list)!=0:
+         logger.info(f"🔎 Filtering model list using {model_list}")
+         models_json["models"] = [m for m in models_json["models"] if m["filename"] in model_list]
+         if len(models_json["models"])==0:
+             logger.error(f"🛑 All models filetered out. No match for {model_list}")
+    model_count = len(models_json["models"])
     for idx,model in enumerate(models_json["models"]):
         model_path = get_model_path(model["filename"])
         if os.path.exists(model_path) and not force_update:
