@@ -246,11 +246,18 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
     """
     models_json = get_models_index(force_update)
     logger.info(f"📂 Storing models in {models_path}")
-    if len(model_list)!=0:
-         logger.info(f"🔎 Filtering model list using {model_list}")
-         models_json["models"] = [m for m in models_json["models"] if m["filename"] in model_list]
-         if len(models_json["models"])==0:
-             logger.error(f"🛑 All models filetered out. No match for {model_list}")
+    if model is not None:
+        model_list = {model} if isinstance(model, str) else set(model)
+        models_json["models"] = [m for m in models_json["models"] if m["filename"] in model_list]
+        provided_no = len(model_list)
+        filtered_no = len(models_json["models"])
+        if filtered_no == 0:
+            raise ValueError(f"🛑 No models match the celltypist model repertoire. Please provide valid model names")
+        elif provided_no == filtered_no:
+            logger.info(f"💾 Total models to download: {provided_no}")
+        else:
+            ignored_models = model_list.difference({m["filename"] for m in models_json["models"]})
+            logger.warn(f"💾 Total models to download: {filtered_no}. {len(ignored_models)} not available: {ignored_models}")
     model_count = len(models_json["models"])
     for idx,model in enumerate(models_json["models"]):
         model_path = get_model_path(model["filename"])
