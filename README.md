@@ -43,7 +43,7 @@ models.download_models(model = ['Immune_All_Low.pkl', 'Immune_All_High.pkl'], fo
 #Show the local directory storing these models.
 models.models_path
 ```
-A simple way is to download all available models. Since each model is on average 1 megabyte (MB), We encourage the users to download all of them.
+A simple way is to download all available models. Since each model is on average 1 megabyte (MB), we encourage the users to download all of them.
 ```python
 #Download all the available models.
 models.download_models()
@@ -54,8 +54,9 @@ models.download_models(force_update = True)
 ### 1.3. Overview of the models
 All models are serialised in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
 ```python
-#Get an overview of what these models represent and their names.
-models.models_description()
+#Get an overview of the models that are downloaded in `1.2.`.
+#By default (`on_the_fly = False`), all possible models (even those that are not downloaded) are shown.
+models.models_description(on_the_fly = True)
 ```
 
 ### 1.4. Inspect the model of interest
