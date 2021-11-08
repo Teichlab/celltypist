@@ -272,7 +272,7 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
 
-def models_description(on_the_fly: bool=True) -> pd.DataFrame:
+def models_description(on_the_fly: bool=False) -> pd.DataFrame:
     """
     Get the descriptions of all available models.
 
@@ -280,8 +280,9 @@ def models_description(on_the_fly: bool=True) -> pd.DataFrame:
     ----------
     on_the_fly
         Whether to fetch the model information from downloaded model files.
-        If set to `False`, will fetch the information directly from the JSON file.
-        (Default: `True`)
+        If set to `True`, will fetch the information by loading downloaded models.
+        Default to fetching the information for all available models from the JSON file.
+        (Default: `False`)
 
     Returns
     ----------
