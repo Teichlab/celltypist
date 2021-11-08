@@ -5,7 +5,7 @@ import pickle
 import requests
 import numpy as np
 import pandas as pd
-from typing import Optional
+from typing import Optional, Union
 from scipy.special import expit
 from . import logger
 
@@ -228,20 +228,21 @@ def download_model_index(only_model: bool = True) -> None:
     if not only_model:
         download_models()
 
-def download_models(force_update: bool=False, model_list = []) -> None:
+def download_models(force_update: bool=False, model: Optional[Union[str, list, tuple]] = None) -> None:
     """
-    Download all the available models.
+    Download all the available or selected models.
 
     Parameters
     ----------
     force_update
-        Whether to fetch a latest JSON index for downloading all available models.
+        Whether to fetch a latest JSON index for downloading all available or selected models.
         Set to `True` if you want to parallel the latest celltypist model releases.
         (Default: `False`)
-    model_list
-        List of specific models to download. By default it's empty meaning all models
-        are downloaded. Set to `["ModelA.pkl", "ModelB.pkl"]` to only download a subset
-        of the models. (Default: `[]`)
+    model
+        Specific model(s) to download. By default, all available models are downloaded.
+        Set to a specific model name or a list of model names to only download a subset of models.
+        For example, set to `["ModelA.pkl", "ModelB.pkl"]` to only download ModelA and ModelB.
+        To check all available models, ues `celltypist.models.models_description(on_the_fly=False)`
     """
     models_json = get_models_index(force_update)
     logger.info(f"📂 Storing models in {models_path}")
