@@ -50,13 +50,13 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
         if adata.X.min() < 0:
             logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
             try:
-                indata = adata.raw.X.copy()
-                genes = adata.raw.var_names.copy()
+                indata = adata.raw.X
+                genes = adata.raw.var_names
             except Exception as e:
                 raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
         else:
-            indata = adata.X.copy()
-            genes = adata.var_names.copy()
+            indata = adata.X
+            genes = adata.var_names
         if isinstance(labels, str) and (labels in adata.obs):
             labels = adata.obs[labels]
         else:
@@ -77,18 +77,18 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
             logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
         sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
-        indata = adata.X.copy()
-        genes = adata.var_names.copy()
+        indata = adata.X
+        genes = adata.var_names
         labels = _to_vector(labels)
     elif isinstance(X, str):
         raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
     else:
         logger.info("👀 The input training data is processed as an array-like object")
-        indata = X.copy()
+        indata = X
         if transpose:
             indata = indata.transpose()
         if isinstance(indata, pd.DataFrame):
-            genes = indata.columns.copy()
+            genes = indata.columns
         else:
             if genes is None:
                 raise Exception("🛑 Missing `genes`. Please provide this argument together with the input training data")
