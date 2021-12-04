@@ -261,7 +261,7 @@ class Classifier():
                 raise ValueError(f"🛑 The input matrix is detected to be a gene-by-cell matrix. Please provide a cell-by-gene matrix or add the input transpose option")
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
-            self.indata = self.adata.X.copy()
+            self.indata = self.adata.X
             self.indata_genes = self.adata.var_names
             self.indata_names = self.adata.obs_names
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
@@ -270,13 +270,13 @@ class Classifier():
             if self.adata.X.min() < 0:
                 logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:
-                    self.indata = self.adata.raw.X.copy()
+                    self.indata = self.adata.raw.X
                     self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
                 except Exception as e:
                     raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
-                self.indata = self.adata.X.copy()
+                self.indata = self.adata.X
                 self.indata_genes = self.adata.var_names
                 self.indata_names = self.adata.obs_names
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
@@ -314,15 +314,14 @@ class Classifier():
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
         logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
-        self.indata = self.indata[:, k_x_idx]
+        #self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x_idx]
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
         logger.info(f"⚖️ Scaling input data")
         means_ = self.model.scaler.mean_[lr_idx]
         sds_ = self.model.scaler.scale_[lr_idx]
-        self.indata = self.indata - means_
-        self.indata = self.indata / sds_
+        self.indata = (self.indata[:, k_x_idx] - means_) / sds_
         self.indata[self.indata > 10] = 10
 
         self.model.classifier.n_features_in_ = lr_idx.size
