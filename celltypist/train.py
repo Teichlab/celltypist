@@ -278,13 +278,13 @@ def train(X = None,
     flag = indata.sum(axis = 0) == 0
     if flag.sum() > 0:
         logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
-        indata = indata[:, ~flag]
+        #indata = indata[:, ~flag]
         genes = genes[~flag]
     #scaler
     logger.info(f"⚖️ Scaling input data")
     scaler = StandardScaler()
-    indata = scaler.fit_transform(indata)
-    indata = np.clip(indata, a_min = None, a_max = 10)
+    indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
+    indata[indata > 10] = 10
     #classifier
     if use_SGD:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
