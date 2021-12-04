@@ -262,7 +262,7 @@ class Classifier():
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X.copy()
-            self.indata_genes = self.adata.var_names.copy()
+            self.indata_genes = self.adata.var_names
             self.indata_names = self.adata.obs_names
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
@@ -271,13 +271,13 @@ class Classifier():
                 logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:
                     self.indata = self.adata.raw.X.copy()
-                    self.indata_genes = self.adata.raw.var_names.copy()
+                    self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
                 except Exception as e:
                     raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
                 self.indata = self.adata.X.copy()
-                self.indata_genes = self.adata.var_names.copy()
+                self.indata_genes = self.adata.var_names
                 self.indata_names = self.adata.obs_names
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
