@@ -69,7 +69,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def to_adata(self, insert_labels: bool = True, insert_decision: bool = False, insert_prob: bool = False) -> AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_conf: bool = True, insert_decision: bool = False, insert_prob: bool = False, prefix: str = '') -> AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the AnnData object.
 
@@ -78,17 +78,22 @@ class AnnotationResult():
         insert_labels
             Whether to insert the predicted cell type labels and (if majority voting is done) majority voting-based labels into the AnnData object.
             (Default: `True`)
+        insert_conf
+            Whether to insert the confidence scores (the maximal probability of query cells) into the AnnData object.
+            (Default: `True`)
         insert_decision
             Whether to insert the decision matrix into the AnnData object.
             (Default: `False`)
         insert_prob
             Whether to insert the probability matrix into the AnnData object. This will override the decision matrix even when `insert_decision` is set to `True`.
             (Default: `False`)
+        prefix
+            Prefix for the inserted columns in the AnnData object. Default to no prefix used.
 
         Returns
         ----------
         :class:`~anndata.AnnData`
-            Depending on whether majority voting is done, an :class:`~anndata.AnnData` object with the following columns added to the observation metadata:
+            Depending on whether majority voting is done, an :class:`~anndata.AnnData` object with the following columns (prefixed with `prefix`) added to the observation metadata:
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
