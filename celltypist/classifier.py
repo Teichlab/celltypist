@@ -97,14 +97,17 @@ class AnnotationResult():
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
-            4) **name of each cell type**, which represents the decision scores (or probabilities if `insert_prob` is `True`) of a given cell type across cells.
+            4) **conf_score**, the confidence score (maximum probability across all cell types) of each cell.
+            5) **name of each cell type**, which represents the decision scores (or probabilities if `insert_prob` is `True`) of a given cell type across cells.
         """
         if insert_labels:
-            self.adata.obs[self.predicted_labels.columns] = self.predicted_labels
+            self.adata.obs[[f"{prefix}{x}" for x in self.predicted_labels.columns]] = self.predicted_labels
+        if insert_conf:
+            self.adata.obs[f"{prefix}conf_score"] = self.probability_matrix.max(axis=1).values
         if insert_prob:
-            self.adata.obs[self.probability_matrix.columns] = self.probability_matrix
+            self.adata.obs[[f"{prefix}{x}" for x in self.probability_matrix.columns]] = self.probability_matrix
         elif insert_decision:
-            self.adata.obs[self.decision_matrix.columns] = self.decision_matrix
+            self.adata.obs[[f"{prefix}{x}" for x in self.decision_matrix.columns]] = self.decision_matrix
         return self.adata
 
     def to_plots(self, folder: str, plot_probability: bool = False, format: str = 'pdf', prefix: str = '') -> None:
