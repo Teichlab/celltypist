@@ -107,7 +107,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
         raise ValueError(f"🛑 Invalid `solver`, should be one of `liblinear`, `lbfgs`, `newton-cg`, `sag`, and `saga`")
     logger.info(f"🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
-        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to decrease `max_iter` if the training does not finish in practical time")
+        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
@@ -122,7 +122,7 @@ def _SGDClassifier(indata, labels,
     if not mini_batch:
         logger.info(f"🏋️ Training data using SGD logistic regression")
         if (len(labels) > 100000) and (indata.shape[1] > 10000):
-            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {len(labels)} cells and {indata.shape[1]} genes, try to decrease `max_iter` if the training does not finish in practical time")
+            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {len(labels)} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
         classifier.fit(indata, labels)
     else:
         logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
