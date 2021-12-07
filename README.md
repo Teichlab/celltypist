@@ -129,15 +129,15 @@ The resulting `AnnotationResult` can be also transformed to an [AnnData](https:/
 #Get an `AnnData` with predicted labels and confidence scores embedded into the observation metadata columns.
 adata = predictions.to_adata(insert_labels = True, insert_conf = True)
 #Inspect these columns (`predicted_labels` and `conf_score`).
-adata.obs.predicted_labels
+adata.obs
 ```
 In addition, you can insert the decision matrix into the `AnnData` by passing in `insert_decision = True`, which represents the decision scores of each cell type distributed across the input cells. Alternatively, setting `insert_prob = True` will insert the probability matrix into the `AnnData`. The latter is the recommended way as probabilities are more interpretable (though sometimes not all query datasets converge to a meaningful range of probability values).  
   
 After the insertion, multiple columns will show up in the cell metadata of `AnnData`, with each column's name as a cell type name. Of note, all these columns (including the `predicted_labels` and `conf_score`) can be prefixed with a specific string by setting `prefix` in `to_adata`.
 ```python
-#Get an `AnnData` with predicted labels and decision matrix.
+#Get an `AnnData` with predicted labels, confidence scores, and decision matrix.
 adata = predictions.to_adata(insert_labels = True, insert_conf = True, insert_decision = True)
-#Get an `AnnData` with predicted labels and probability matrix (recommended).
+#Get an `AnnData` with predicted labels, confidence scores, and probability matrix (recommended).
 adata = predictions.to_adata(insert_labels = True, insert_conf = True, insert_prob = True)
 ```
 You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
