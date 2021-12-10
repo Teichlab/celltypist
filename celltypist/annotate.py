@@ -4,6 +4,7 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from anndata import AnnData
+from . import logger
 
 def annotate(filename: Union[AnnData,str] = "",
              model: Optional[Union[str, Model]] = None,
@@ -88,6 +89,7 @@ def annotate(filename: Union[AnnData,str] = "",
         if over_clustering in clf.adata.obs:
             over_clustering = clf.adata.obs[over_clustering]
         else:
+            logger.info(f"👀 Did not identify '{over_clustering}' as a cell metadata column, assume it to be a plain text file")
             try:
                 with open(over_clustering, 'rt') as f:
                     over_clustering = [x.strip() for x in f.readlines()]
