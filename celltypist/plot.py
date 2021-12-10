@@ -50,7 +50,7 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
         reference_max_score = dot_size_df.max(axis = 0)
         sort_df = pd.DataFrame(dict(reference_order = dot_size_df.columns, reference_max_pred = reference_max_pred, reference_max_score = reference_max_score))
         sort_df['reference_max_pred'] = sort_df.reference_max_pred.astype('category')
-        sort_df.reference_max_pred.cat.categories = [x for x in dot_size_df.index if x in sort_df.reference_max_pred.cat.categories]
+        sort_df.reference_max_pred.cat.reorder_categories([x for x in dot_size_df.index if x in sort_df.reference_max_pred.cat.categories], inplace = True)
         reference_order = sort_df.sort_values(by=['reference_max_pred', 'reference_max_score'], ascending = [True, False]).reference_order.values
     else:
         if not np.all(np.unique(reference_order) == np.unique(dot_size_df.columns)):
