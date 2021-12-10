@@ -60,3 +60,80 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
     dot_color_df = dot_color_df[reference_order]
     #return
     return dot_size_df, dot_color_df
+
+def dotplot(
+            #get size and color df
+            predictions: AnnotationResult,
+            use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
+            use_as_prediction: str = 'majority_voting',
+            prediction_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+            reference_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+            #color
+            cmap: str = 'RdBu_r',
+            vmin: Optional[float] = 0.0,
+            vmax: Optional[float] = 1.0,
+            #color bar
+            colorbar_title: Optional[str] = 'Mean probability',
+            #size
+            dot_min: Optional[float] = 0.0,
+            dot_max: Optional[float] = 1.0,
+            smallest_dot: Optional[float] = 0.0,
+            #size bar
+            size_title: Optional[str] = 'Fraction of cells (%)',
+            #global
+            swap_axes: Optional[bool] = False,
+            title: Optional[str] = 'CellTypist label transfer',
+            figsize: Optional[tuple] = None,
+            #display
+            show: Optional[bool] = None,
+            save: Union[str, bool, None] = None,
+            ax: Optional[sc.pl._utils._AxesSubplot] = None,
+            return_fig: Optional[bool] = False,
+            #other
+            **kwds
+           ) -> Union[sc.pl.DotPlot, dict, None]:
+    """
+    Generate a dot plot showing CellTypist label transfer. This is a wrapper around the :class:`~scanpy.pl.DotPlot` with selected parameters and customized defaults.
+
+    Parameters
+    ----------
+    predictions
+        An :class:`~celltypist.classifier.AnnotationResult` object containing celltypist prediction result through :func:`~celltypist.annotate`.
+    use_as_reference
+        Key (column name) of the input AnnData representing the reference cell types (or clusters) celltypist will assess.
+        Also accepts any list-like objects already loaded in memory (such as an array).
+    use_as_prediction
+        Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the assessment is based on.
+        Set to `predicted_labels` if you want to assess the prediction result without majority voting.
+        (Default: `majority_voting`)
+    prediction_order
+        Order in which to show the predicted cell types. Default to the order of categories as is (alphabetical order in most cases).
+    reference_order
+        Order in which to show the reference cell types (or clusters). Default to an order that ensures the resulting dot plot is diagonal.
+    *other parameters*
+        All other parameters are the same as :func:`~scanpy.pl.dotplot` with selected tags and customized defaults.
+
+    Returns
+    ----------
+    If `return_fig` is `True`, returns a :class:`~scanpy.pl.DotPlot` object, else if `show` is false, return axes dict.
+    """
+    #df x 2
+    dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, prediction_order, reference_order)
+    #AnnData, groupby, and var_names
+    _adata = sc.AnnData(np.zeros(dot_size_df.shape))
+    _adata.var_names = dot_size_df.columns
+    _adata.obs_names = dot_size_df.index
+    _adata.obs['_pred'] = dot_size_df.index
+    #DotPlot
+    dp = sc.pl.DotPlot(_adata, dot_size_df.columns, '_pred', title = title, figsize = figsize, dot_color_df = dot_color_df, dot_size_df = dot_size_df, ax = ax, vmin = vmin, vmax = vmax, **kwds)
+    if swap_axes:
+        dp.swap_axes()
+    dp = dp.style(cmap = cmap, dot_max = dot_max, dot_min = dot_min, smallest_dot = smallest_dot, dot_edge_lw = kwds.pop('linewidth', 0.2)).legend(colorbar_title = colorbar_title, size_title = size_title)
+    if return_fig:
+        return dp
+    else:
+        dp.make_figure()
+        sc.pl._utils.savefig_or_show('CellTypist_dotplot_', show = show, save = save)
+        show = sc._settings.settings.autoshow if show is None else show
+        if not show:
+            return dp.get_axes()
