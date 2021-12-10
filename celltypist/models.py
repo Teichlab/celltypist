@@ -53,7 +53,7 @@ class Model():
         ----------
         model
             Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
-            To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
+            To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
 
         Returns
         ----------
@@ -132,7 +132,7 @@ def get_model_path(file: str) -> str:
     ----------
     file
         File name as a string.
-        To see all available models and their descriptions, use :func:`~celltypist.models.models_description()`.
+        To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
 
     Returns
     ----------
@@ -242,7 +242,7 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
         Specific model(s) to download. By default, all available models are downloaded.
         Set to a specific model name or a list of model names to only download a subset of models.
         For example, set to `["ModelA.pkl", "ModelB.pkl"]` to only download ModelA and ModelB.
-        To check all available models, use :func:`~celltypist.models.models_description()`.
+        To check all available models, use :func:`~celltypist.models.models_description`.
     """
     models_json = get_models_index(force_update)
     logger.info(f"📂 Storing models in {models_path}")
