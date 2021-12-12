@@ -162,8 +162,8 @@ def train(X = None,
           #feature selection
           feature_selection: bool = False, top_genes: int = 500,
           #description
-          date: str = '', details: str = '', url: str = '',
-          #other SGD param
+          date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
+          #other param
           **kwargs
          ) -> Model:
     """
@@ -253,6 +253,10 @@ def train(X = None,
         Free text of the description of the model.
     url
         Free text of the (possible) download url of the model.
+    source
+        Free text of the source (publication, database, etc.) of the model.
+    version
+        Free text of the version of the model.
     **kwargs
         Other keyword arguments passed to :class:`~sklearn.linear_model.LogisticRegression` (`use_SGD = False`) or :class:`~sklearn.linear_model.SGDClassifier` (`use_SGD = True`).
 
@@ -313,6 +317,6 @@ def train(X = None,
     classifier.features = genes
     if not date:
         date = str(datetime.now())
-    description = {'date': date, 'details': details, 'url': url, 'number_celltypes': len(classifier.classes_)}
+    description = {'date': date, 'details': details, 'url': url, 'source': source, 'version': version, 'number_celltypes': len(classifier.classes_)}
     logger.info(f"✅ Model training done!")
     return Model(classifier, scaler, description)
