@@ -289,6 +289,7 @@ def models_description(on_the_fly: bool=False) -> pd.DataFrame:
     :class:`~pandas.DataFrame`
         A :class:`~pandas.DataFrame` object with model descriptions.
     """
+    logger.info(f"👉 Detailed model information can be found at `https://www.celltypist.org/models`")
     if on_the_fly:
         filenames = get_all_models()
         descriptions = [Model.load(filename).description['details'] for filename in filenames]
