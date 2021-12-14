@@ -160,7 +160,7 @@ def train(X = None,
           #mini-batch
           mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
           #feature selection
-          feature_selection: bool = False, top_genes: int = 500,
+          feature_selection: bool = False, top_genes: int = 300,
           #description
           date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
           #other param
@@ -246,7 +246,7 @@ def train(X = None,
     top_genes
         The number of top genes selected from each class/cell-type based on their absolute regression coefficients.
         The final feature set is combined across all classes (i.e., union).
-        (Default: 500)
+        (Default: 300)
     date
         Free text of the date of the model. Default to the time when the training is completed.
     details
