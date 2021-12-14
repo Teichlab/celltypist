@@ -356,7 +356,7 @@ predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
 Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
 
 ### Two-pass data training incorporating feature selection
-Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 500`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
+Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 300`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
 ```python
 #Two-pass data training with traditional logistic regression.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
