@@ -240,8 +240,8 @@ def train(X = None,
         This argument is relevant only if mini-batch SGD training is conducted (`use_SGD = True` and `mini_batch = True`).
         (Default: `False`)
     feature_selection
-        Whether to perform two-pass data training where the first round is used for selecting important features/genes.
-        If `True`, the training time will be approximately doubled.
+        Whether to perform two-pass data training where the first round is used for selecting important features/genes using SGD learning.
+        If `True`, the training time will be longer.
         (Default: `False`)
     top_genes
         The number of top genes selected from each class/cell-type based on their absolute regression coefficients.
@@ -290,7 +290,7 @@ def train(X = None,
     indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
     indata[indata > 10] = 10
     #classifier
-    if use_SGD:
+    if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
     else:
         classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
