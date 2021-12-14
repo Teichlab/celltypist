@@ -356,13 +356,13 @@ predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
 Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
 
 ### Two-pass data training incorporating feature selection
-Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients). In short, top important genes (default: `top_genes = 300`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
+Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients) using SGD learning. In short, top important genes (default: `top_genes = 300`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
 ```python
-#Two-pass data training with traditional logistic regression.
+#Two-pass data training with traditional logistic regression after SGD-based feature selection.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
-#Two-pass data training with SGD learning.
+#Two-pass data training with SGD learning after feature selection.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, feature_selection = True)
-#Two-pass data training with SGD mini-batch training.
+#Two-pass data training with SGD mini-batch training after feature selection.
 new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True, feature_selection = True)
 ```
 If you prefer other feature selection approaches and obtain a set of genes which are designated as important features, you can subset your input data and train the CellTypist model accordingly. As noted in the previous section, remember to pass in the `check_expression = False` argument.
