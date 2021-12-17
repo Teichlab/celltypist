@@ -69,7 +69,7 @@ class AnnotationResult():
         df.sort_values(['counts'], ascending=False, inplace=True)
         return df
 
-    def to_adata(self, insert_labels: bool = True, insert_conf: bool = True, insert_decision: bool = False, insert_prob: bool = False, prefix: str = '') -> AnnData:
+    def to_adata(self, insert_labels: bool = True, insert_conf: bool = True, insert_conf_by: str = 'predicted_labels', insert_decision: bool = False, insert_prob: bool = False, prefix: str = '') -> AnnData:
         """
         Insert the predicted labels, decision or probability matrix, and (if majority voting is done) majority voting results into the AnnData object.
 
@@ -79,8 +79,12 @@ class AnnotationResult():
             Whether to insert the predicted cell type labels and (if majority voting is done) majority voting-based labels into the AnnData object.
             (Default: `True`)
         insert_conf
-            Whether to insert the confidence scores (the maximal probability of query cells) into the AnnData object.
+            Whether to insert the confidence scores into the AnnData object.
             (Default: `True`)
+        insert_conf_by
+            Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the confidence scores are based on.
+            Setting to `majority_voting` will insert the confidence scores corresponding to the majority-voting result.
+            (Default: `predicted_labels`)
         insert_decision
             Whether to insert the decision matrix into the AnnData object.
             (Default: `False`)
@@ -97,13 +101,20 @@ class AnnotationResult():
             1) **predicted_labels**, individual prediction outcome for each cell.
             2) **over_clustering**, over-clustering result for the cells.
             3) **majority_voting**, the cell type label assigned to each cell after the majority voting process.
-            4) **conf_score**, the confidence score (maximum probability across all cell types) of each cell.
+            4) **conf_score**, the confidence score of each cell.
             5) **name of each cell type**, which represents the decision scores (or probabilities if `insert_prob` is `True`) of a given cell type across cells.
         """
         if insert_labels:
             self.adata.obs[[f"{prefix}{x}" for x in self.predicted_labels.columns]] = self.predicted_labels
         if insert_conf:
-            self.adata.obs[f"{prefix}conf_score"] = self.probability_matrix.max(axis=1).values
+            if insert_conf_by == 'predicted_labels':
+                self.adata.obs[f"{prefix}conf_score"] = self.probability_matrix.max(axis=1).values
+            elif insert_conf_by == 'majority_voting':
+                if insert_conf_by not in self.predicted_labels:
+                    raise ValueError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
+                self.adata.obs[f"{prefix}conf_score"] = [row[self.predicted_labels.majority_voting[index]] for index, row in self.probability_matrix.iterrows()]
+            else:
+                raise ValueError(f"🛑 Unrecognized `insert_conf_by` value, should be one of `predicted_labels` or `majority_voting`")
         if insert_prob:
             self.adata.obs[[f"{prefix}{x}" for x in self.probability_matrix.columns]] = self.probability_matrix
         elif insert_decision:
