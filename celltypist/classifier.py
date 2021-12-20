@@ -276,7 +276,7 @@ class Classifier():
             self.adata.var_names_make_unique()
             if not float(self.adata.X.max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may be biased")
-            if (self.adata.n_vars >= 80000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(pd.Index(['GAPDH', 'ACTB', 'CALM1']))) >= 1):
+            if (self.adata.n_vars >= 80000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(pd.Index(['GAPDH', 'ACTB', 'CALM1', 'PTPRC']))) >= 1):
                 raise ValueError(f"🛑 The input matrix is detected to be a gene-by-cell matrix. Please provide a cell-by-gene matrix or add the input transpose option")
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
