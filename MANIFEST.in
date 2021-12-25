@@ -4,4 +4,3 @@ include requirements.txt
 recursive-include celltypist/data *
 recursive-exclude * __pycache__
 recursive-exclude * *.pyc
-recursive-exclude * notebook
