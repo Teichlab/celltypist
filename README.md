@@ -283,7 +283,7 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 
 ## 3. Use in the R environment
 
-The R version of CellTypist is under development. Currently, you can use for example [sceasy](https://github.com/cellgeni/sceasy) to convert a R object into AnnData for use in CellTypist.
+Currently, there is no plan for R compatibility. Try to convert R objects into AnnData for use in CellTypist.
 
 ***
 ***
