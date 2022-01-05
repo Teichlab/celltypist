@@ -216,7 +216,8 @@ celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotat
 ```
 </details>
 
-## 2. Use as the command line
+<details>
+<summary><strong>2. Use as the command line</strong></summary>
 
 ### 2.1. Check the command line options
 ```bash
@@ -282,10 +283,13 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 #Plot the results after the celltyping and majority-voting processes.
 celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --plot-results
 ```
+</details>
 
-## 3. Use in the R environment
+<details>
+<summary><strong>3. Use in the R environment</strong></summary>
 
 Currently, there is no plan for R compatibility. Try to convert R objects into AnnData for use in CellTypist.
+</details>
 
 ***
 ***
