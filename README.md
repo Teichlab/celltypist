@@ -293,6 +293,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>4. Supplemental guidance: generate a custom model</strong></summary>
+
 ## Supplemental guidance: generate a custom model
 
 As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another scRNA-seq dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two scRNA-seq datasets is under examination.  
