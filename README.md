@@ -25,33 +25,39 @@ conda install -c bioconda -c conda-forge celltypist
 <details>
 <summary><strong>1. Use in the Python environment</strong></summary>
 
-### 1.1. Import the module
-```python
-import celltypist
-from celltypist import models
-```
++ <details>
+  <summary><strong>1.1. Import the module</strong></summary>
 
-### 1.2. Download available models
-The models serve as the basis for cell type predictions. Information of available models can be also found [here](https://www.celltypist.org/models).
-```python
-#Show all available models that can be downloaded and used.
-models.models_description()
-#Download a specific model, for example, `Immune_All_Low.pkl`.
-models.download_models(model = 'Immune_All_Low.pkl')
-#Download a list of models, for example, `Immune_All_Low.pkl` and `Immune_All_High.pkl`.
-models.download_models(model = ['Immune_All_Low.pkl', 'Immune_All_High.pkl'])
-#Update the models by re-downloading the latest versions if you think they may be outdated.
-models.download_models(model = ['Immune_All_Low.pkl', 'Immune_All_High.pkl'], force_update = True)
-#Show the local directory storing these models.
-models.models_path
-```
-A simple way is to download all available models. Since each model is on average 1 megabyte (MB), we encourage the users to download all of them.
-```python
-#Download all the available models.
-models.download_models()
-#Update all models by re-downloading the latest versions if you think they may be outdated.
-models.download_models(force_update = True)
-```
+  ```python
+  import celltypist
+  from celltypist import models
+  ```
+  </details>
+
++ <details>
+  <summary><strong>1.2. Download available models</strong></summary>
+
+  The models serve as the basis for cell type predictions. Information of available models can be also found [here](https://www.celltypist.org/models).
+  ```python
+  #Show all available models that can be downloaded and used.
+  models.models_description()
+  #Download a specific model, for example, `Immune_All_Low.pkl`.
+  models.download_models(model = 'Immune_All_Low.pkl')
+  #Download a list of models, for example, `Immune_All_Low.pkl` and `Immune_All_High.pkl`.
+  models.download_models(model = ['Immune_All_Low.pkl', 'Immune_All_High.pkl'])
+  #Update the models by re-downloading the latest versions if you think they may be outdated.
+  models.download_models(model = ['Immune_All_Low.pkl', 'Immune_All_High.pkl'], force_update = True)
+  #Show the local directory storing these models.
+  models.models_path
+  ```
+  A simple way is to download all available models. Since each model is on average 1 megabyte (MB), we encourage the users to download all of them.
+  ```python
+  #Download all the available models.
+  models.download_models()
+  #Update all models by re-downloading the latest versions if you think they may be outdated.
+  models.download_models(force_update = True)
+  ```
+  </details>
 
 ### 1.3. Overview of the models
 All models are serialised in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
