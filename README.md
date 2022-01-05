@@ -22,7 +22,8 @@ conda install -c bioconda -c conda-forge celltypist
 
 # Usage
 
-## 1. Use in the Python environment
+<details>
+<summary><strong>1. Use in the Python environment</strong></summary>
 
 ### 1.1. Import the module
 ```python
@@ -212,7 +213,8 @@ Other parameters and downstream operations are the same as in `1.5.` and `1.6.`.
 ```python
 #Examine the correspondence between CellTypist predictions (`use_as_prediction`) and manual annotations (`use_as_reference`).
 celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotation', use_as_prediction = 'majority_voting')
- ```
+```
+</details>
 
 ## 2. Use as the command line
 
