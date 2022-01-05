@@ -93,7 +93,7 @@ def dotplot(
             **kwds
            ) -> Union[sc.pl.DotPlot, dict, None]:
     """
-    Generate a dot plot showing CellTypist label transfer. This is a wrapper around the :class:`~scanpy.pl.DotPlot` with selected parameters and customized defaults.
+    Generate a dot plot showing CellTypist label transfer. This is a wrapper around the :class:`scanpy.pl.DotPlot` with selected parameters and customized defaults.
 
     Parameters
     ----------
@@ -110,12 +110,12 @@ def dotplot(
         Order in which to show the predicted cell types. Default to the order of categories as is (alphabetical order in most cases).
     reference_order
         Order in which to show the reference cell types (or clusters). Default to an order that ensures the resulting dot plot is diagonal.
-    *other parameters*
-        All other parameters are the same as :func:`~scanpy.pl.dotplot` with selected tags and customized defaults.
+    others
+        All other parameters are the same as :func:`scanpy.pl.dotplot` with selected tags and customized defaults.
 
     Returns
     ----------
-    If `return_fig` is `True`, returns a :class:`~scanpy.pl.DotPlot` object, else if `show` is false, return axes dict.
+    If `return_fig` is `True`, returns a :class:`scanpy.pl.DotPlot` object, else if `show` is false, return axes dict.
     """
     #df x 2
     dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, prediction_order, reference_order)
