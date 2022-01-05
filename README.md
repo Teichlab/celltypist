@@ -239,70 +239,90 @@ conda install -c bioconda -c conda-forge celltypist
 <details>
 <summary><strong>2. Use as the command line</strong></summary>
 
-### 2.1. Check the command line options
-```bash
-celltypist --help
-```
++ <details>
+  <summary><strong>2.1. Check the command line options</strong></summary>
 
-### 2.2. Download all available models
-```bash
-celltypist --update-models
-```
-This will download the latest models from the remote server.
+  ```bash
+  celltypist --help
+  ```
+  </details>
 
-### 2.3. Overview of the models
-```bash
-celltypist --show-models
-```
++ <details>
+  <summary><strong>2.2. Download all available models</strong></summary>
 
-### 2.4. Celltyping based on the input of count table
-See `1.5.` for the format of the desired count matrix.
-```bash
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir
-```
-You can add a different model to be used in the `--model` option. If the `--model` is not provided, CellTypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
-  
-If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
-```bash
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
-```
-If the input is provided in the `.mtx` format, you will also need to specify the `--gene-file` and `--cell-file` options as the files containing names of genes and cells, respectively.  
-  
-The default mode (`--mode best_match`) for prediction is to choose the cell type with the largest score/probability as the final prediction; setting `--mode prob_match` combined with a probability threshold (default to 0.5, `--p-thres 0.5`) will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.  
-  
-Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
+  ```bash
+  celltypist --update-models
+  ```
+  This will download the latest models from the remote server.
+  </details>
 
-### 2.5. Celltyping based on AnnData
-See `1.6.` for the requirement of the expression matrix in the AnnData object (`.h5ad`).
-```bash
-celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir
-```
-Other command line options are the same as in `2.4.`.
++ <details>
+  <summary><strong>2.3. Overview of the models</strong></summary>
 
-### 2.6. Use a majority voting classifier combined with celltyping
-See `1.7.` for how the majority voting classifier works.
-```bash
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
-```
-During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
-   1) an input plain file with the over-clustering result of one cell per line.
-   2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
-   3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
-```bash
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
-```
-There is also a `--min-prop` option (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type. Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.  
-  
-Other command line options are the same as in `2.4.`.
+  ```bash
+  celltypist --show-models
+  ```
+  </details>
 
-### 2.7. Generate visualisation figures for the results
-In addition to the tables output by CellTypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
-```bash
-#Plot the results after the celltyping process.
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
-#Plot the results after the celltyping and majority-voting processes.
-celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --plot-results
-```
++ <details>
+  <summary><strong>2.4. Celltyping based on the input of count table</strong></summary>
+
+  See `1.5.` for the format of the desired count matrix.
+  ```bash
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir
+  ```
+  You can add a different model to be used in the `--model` option. If the `--model` is not provided, CellTypist will by default use the `Immune_All_Low.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
+    
+  If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
+  ```bash
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --transpose-input
+  ```
+  If the input is provided in the `.mtx` format, you will also need to specify the `--gene-file` and `--cell-file` options as the files containing names of genes and cells, respectively.  
+    
+  The default mode (`--mode best_match`) for prediction is to choose the cell type with the largest score/probability as the final prediction; setting `--mode prob_match` combined with a probability threshold (default to 0.5, `--p-thres 0.5`) will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.  
+    
+  Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
+  </details>
+
++ <details>
+  <summary><strong>2.5. Celltyping based on AnnData</strong></summary>
+
+  See `1.6.` for the requirement of the expression matrix in the AnnData object (`.h5ad`).
+  ```bash
+  celltypist --indata /path/to/input/adata --model Immune_All_Low.pkl --outdir /path/to/outdir
+  ```
+  Other command line options are the same as in `2.4.`.
+  </details>
+
++ <details>
+  <summary><strong>2.6. Use a majority voting classifier combined with celltyping</strong></summary>
+  See `1.7.` for how the majority voting classifier works.
+  ```bash
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
+  ```
+  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
+     1) an input plain file with the over-clustering result of one cell per line.
+     2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
+     3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
+  ```bash
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --over-clustering /path/to/over_clustering/file
+  ```
+  There is also a `--min-prop` option (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type. Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.  
+    
+  Other command line options are the same as in `2.4.`.
+  </details>
+
++ <details>
+  <summary><strong>2.7. Generate visualisation figures for the results</strong></summary>
+
+  In addition to the tables output by CellTypist, you have the option to generate multiple figures to get an overview of your prediction results. See `1.5.`, `1.6.` and `1.7.` for what these figures represent.
+  ```bash
+  #Plot the results after the celltyping process.
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --plot-results
+  #Plot the results after the celltyping and majority-voting processes.
+  celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting --plot-results
+  ```
+  </details>
 </details>
 
 <details>
