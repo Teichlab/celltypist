@@ -206,10 +206,10 @@ conda install -c bioconda -c conda-forge celltypist
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
   ```
   During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
-     1) an input plain file with the over-clustering result of one cell per line.
-     2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
-     3) a list-like object (such as a numpy 1D array) indicating the over-clustering result of all cells.
-     4) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
+   1) an input plain file with the over-clustering result of one cell per line.
+   2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
+   3) a list-like object (such as a numpy 1D array) indicating the over-clustering result of all cells.
+   4) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
   ```python
   #Add your own over-clustering result.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
