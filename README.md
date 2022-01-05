@@ -291,8 +291,8 @@ celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /pat
 Currently, there is no plan for R compatibility. Try to convert R objects into AnnData for use in CellTypist.
 </details>
 
-***
-***
+<details>
+<summary><strong>4. Supplemental guidance: generate a custom model</strong></summary>
 ## Supplemental guidance: generate a custom model
 
 As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another scRNA-seq dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two scRNA-seq datasets is under examination.  
@@ -378,3 +378,4 @@ If you prefer other feature selection approaches and obtain a set of genes which
 new_model = celltypist.train(expression_input_subset, labels = label_input, genes = gene_input, check_expression = False)
 ```
 The downstream workflow is the same as that from one-pass data training.
+</details>
