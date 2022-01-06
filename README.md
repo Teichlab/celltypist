@@ -334,7 +334,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 <details>
-<summary><strong>4. Supplemental guidance: generate a custom model</strong></summary>
+<summary><strong>Supplemental guidance: generate a custom model</strong></summary>
 
 ## Supplemental guidance: generate a custom model
 
