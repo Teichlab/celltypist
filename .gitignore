@@ -16,3 +16,6 @@ build_wheel.sh
 .DS_Store
 
 /**/__pycache__/
+
+# Symbolic soft link
+/docs/source/notebook/
