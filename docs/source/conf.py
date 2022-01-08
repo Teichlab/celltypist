@@ -29,14 +29,15 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
-    'myst_parser'
+    'myst_parser',
+    'nbsphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
-source_suffix = ['.rst', '.ipynb', '.md']
+source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # List of patterns, relative to source directory, that match files and
