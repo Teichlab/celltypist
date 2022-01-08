@@ -16,6 +16,9 @@ Welcome to CellTypist's documentation!
    :start-line: 11
    :end-line: 20
 
+.. include:: ../../CHANGELOG.md
+   :parser: myst_parser.sphinx_
+
 .. toctree::
    :maxdepth: 2
    :caption: Tutorials:
