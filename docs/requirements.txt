@@ -1,3 +1,11 @@
+numpy>=1.19.0
+pandas>=1.0.5
+scikit-learn>=0.24.1
+openpyxl>=3.0.4
+click>=7.1.2
+requests>=2.23.0
+scanpy>=1.7.0
+leidenalg>=0.8.3
 myst_parser==0.15.2
 sphinx==3.5.2
 nbsphinx==0.8.8
