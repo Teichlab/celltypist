@@ -18,4 +18,4 @@ build_wheel.sh
 /**/__pycache__/
 
 # Symbolic soft link
-/docs/source/notebook/
+/docs/source/notebook/*
