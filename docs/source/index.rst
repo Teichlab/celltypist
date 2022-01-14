@@ -8,13 +8,13 @@ Welcome to CellTypist's documentation!
 
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
-   :start-line: 1
-   :end-line: 6
+   :start-line: 2
+   :end-line: 7
 
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
-   :start-line: 12
-   :end-line: 22
+   :start-line: 13
+   :end-line: 23
 
 .. include:: ../../CHANGELOG.md
    :parser: myst_parser.sphinx_
