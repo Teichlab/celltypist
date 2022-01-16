@@ -68,6 +68,7 @@ def dotplot(
             use_as_prediction: str = 'majority_voting',
             prediction_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
             reference_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+            filter_prediction: float = 0.0,
             #color
             cmap: str = 'RdBu_r',
             vmin: Optional[float] = 0.0,
@@ -110,6 +111,9 @@ def dotplot(
         Order in which to show the predicted cell types. Default to the order of categories as is (alphabetical order in most cases).
     reference_order
         Order in which to show the reference cell types (or clusters). Default to an order that ensures the resulting dot plot is diagonal.
+    filter_prediction
+        Filter out the predicted cell types with the maximal assignment fractions less than `filter_prediction`.
+        This argument can be used to reduce the number of predicted cell types displayed in the dot plot. Default to 0 (no filtering).
     others
         All other parameters are the same as :func:`scanpy.pl.dotplot` with selected tags and customized defaults.
 
@@ -119,6 +123,12 @@ def dotplot(
     """
     #df x 2
     dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, prediction_order, reference_order)
+    #filter
+    if filter_prediction < 0 or filter_prediction > 1:
+        raise ValueError(f"🛑 Please provide the `filter_prediction` between 0 and 1")
+    keep_pred = dot_size_df.max(axis = 1) >= filter_prediction
+    dot_size_df = dot_size_df[keep_pred]
+    dot_color_df = dot_color_df[keep_pred]
     #AnnData, groupby, and var_names
     _adata = sc.AnnData(np.zeros(dot_size_df.shape))
     _adata.var_names = dot_size_df.columns
