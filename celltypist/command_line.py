@@ -124,3 +124,6 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
     #plot result
     if plot_results:
         result.to_plots(folder = outdir, prefix = prefix, plot_probability = True)
+
+if __name__ == "__main__":
+    main()
