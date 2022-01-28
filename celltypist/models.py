@@ -8,6 +8,7 @@ import pandas as pd
 from typing import Optional, Union
 from scipy.special import expit
 from . import logger
+from .samples import _get_sample_data
 
 #create ~/.celltypist and subdirs
 celltypist_path = os.path.join(str(pathlib.Path.home()), '.celltypist')
@@ -16,6 +17,17 @@ data_path = os.path.join(celltypist_path, "data")
 models_path = os.path.join(data_path, "models")
 pathlib.Path(models_path).mkdir(parents=True, exist_ok=True)
 
+def _collapse_mean(arr: np.ndarray) -> Union[float, np.ndarray]:
+    """
+    For internal use. Average 1D array, or 2D array by row.
+    """
+    return np.mean(arr, axis = -1)
+
+def _collapse_random(arr: np.ndarray) -> Union[float, np.ndarray]:
+    """
+    For internal use. Choose a random number from 1D array, or a random column from 2D array.
+    """
+    return np.random.choice(arr, 1)[0] if arr.ndim == 1 else arr[:, np.random.choice(arr.shape[1], 1)[0]]
 
 class Model():
     """
@@ -123,6 +135,105 @@ class Model():
         file = os.path.splitext(file)[0] + '.pkl'
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
+
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average'):
+        """
+        Convert the model of one species to another species by mapping orthologous genes.
+
+        Parameters
+        ----------
+        map_file
+            A two-column gene mapping file between two species.
+            Default to a human-mouse (mouse-human) conversion using the built-in mapping file provided by CellTypist.
+        sep
+            Delimiter of the mapping file. Default to comma (i.e., a csv file is by default expected from the user if provided).
+        convert_from
+            Column index (0 or 1) of the mapping file corresponding to the species converted from.
+            Default to an automatical detection.
+        convert_to
+            Column index (0 or 1) of the mapping file corresponding to the species converted to.
+            Default to an automatical detection.
+        unique_only
+            Whether to leverage only 1:1 orthologs between the two species.
+            (Default: `True`)
+        collapse
+            The way 1:N orthologs are handled. Possible values are `average` which averages the classifier weights and `random` which randomly choose one gene's weights from all its orthologs.
+            This argument is ignored if `unique_only = 'True'`.
+            (Default: `average`)
+
+        Returns
+        ----------
+        :class:`~celltypist.models.Model`
+            A :class:`~celltypist.models.Model` object converted from one species to another species (in-place operation).
+        """
+        map_file = _get_sample_data('Ensembl105_Human2Mouse_Genes.csv') if map_file is None else map_file
+        if not os.path.isfile(map_file):
+            raise FileNotFoundError(f"🛑 No such file: {map_file}")
+        #with and without headers are both ok -> real headers become fake genes and are removed afterwards
+        map_content = pd.read_csv(map_file, sep = sep, header = None)
+        map_content.dropna(axis = 0, inplace = True)
+        map_content.drop_duplicates(inplace = True)
+        #From & To detection
+        if (convert_from is None) and (convert_to is None):
+            column1_overlap = map_content[0].isin(self.features).sum()
+            column2_overlap = map_content[1].isin(self.features).sum()
+            convert_from = 0 if column1_overlap > column2_overlap else 1
+            convert_to = 1 - convert_from
+        elif convert_from is None:
+            if convert_to not in [0, 1]:
+                raise ValueError(f"🛑 `convert_to` should be either 0 or 1")
+            convert_from = 1 - convert_to
+        elif convert_to is None:
+            if convert_from not in [0, 1]:
+                raise ValueError(f"🛑 `convert_from` should be either 0 or 1")
+            convert_to = 1 - convert_from
+        else:
+            if {convert_from, convert_to} != {0, 1}:
+                raise ValueError(f"🛑 `convert_from` and `convert_to` should be 0 (or 1) and 1 (or 0)")
+        #filter
+        map_content = map_content[map_content[convert_from].isin(self.features)]
+        if unique_only:
+            map_content.drop_duplicates([0],inplace=True)
+            map_content.drop_duplicates([1],inplace=True)
+        map_content['index_from'] = pd.DataFrame(self.features, columns=['features']).reset_index().set_index('features').loc[map_content[convert_from], 'index'].values
+        #main
+        logger.info(f"🧬 Number of genes in the original model: {len(self.features)}")
+        features_to = map_content[convert_to].values if unique_only else np.unique(map_content[convert_to])
+        if unique_only:
+            index_from = map_content['index_from'].values
+            self.classifier.coef_ = self.classifier.coef_[:, index_from]
+            self.scaler.mean_ = self.scaler.mean_[index_from]
+            self.scaler.var_ = self.scaler.var_[index_from]
+            self.scaler.scale_ = self.scaler.scale_[index_from]
+        else:
+            if collapse not in ['average', 'random']:
+                raise ValueError(f"🛑 Unrecognized `collapse` value, should be one of `average` or `random`")
+            collapse_func = _collapse_mean if collapse == 'average' else _collapse_random
+            coef_to = []
+            mean_to = []
+            var_to = []
+            scale_to = []
+            for feature_to in features_to:
+                sub_map_content = map_content[map_content[convert_to] == feature_to]
+                index_from = sub_map_content.index_from.values
+                if len(index_from) == 1:
+                    coef_to.append(self.classifier.coef_[:, index_from[0]])
+                    mean_to.append(self.scaler.mean_[index_from[0]])
+                    var_to.append(self.scaler.var_[index_from[0]])
+                    scale_to.append(self.scaler.scale_[index_from[0]])
+                else:
+                    coef_to.append(collapse_func(self.classifier.coef_[:, index_from]))
+                    mean_to.append(collapse_func(self.scaler.mean_[index_from]))
+                    var_to.append(collapse_func(self.scaler.var_[index_from]))
+                    scale_to.append(collapse_func(self.scaler.scale_[index_from]))
+            self.classifier.coef_ = np.column_stack(coef_to)
+            self.scaler.mean_ = np.array(mean_to)
+            self.scaler.var_ = np.array(var_to)
+            self.scaler.scale_ = np.array(scale_to)
+        self.classifier.n_features_in_ = len(features_to)
+        self.classifier.features = features_to
+        self.scaler.n_features_in_ = len(features_to)
+        logger.info(f"✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
 
 def get_model_path(file: str) -> str:
     """
