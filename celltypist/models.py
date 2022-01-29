@@ -149,16 +149,16 @@ class Model():
             Delimiter of the mapping file. Default to comma (i.e., a csv file is by default expected from the user if provided).
         convert_from
             Column index (0 or 1) of the mapping file corresponding to the species converted from.
-            Default to an automatical detection.
+            Default to an automatic detection.
         convert_to
             Column index (0 or 1) of the mapping file corresponding to the species converted to.
-            Default to an automatical detection.
+            Default to an automatic detection.
         unique_only
             Whether to leverage only 1:1 orthologs between the two species.
             (Default: `True`)
         collapse
             The way 1:N orthologs are handled. Possible values are `average` which averages the classifier weights and `random` which randomly choose one gene's weights from all its orthologs.
-            This argument is ignored if `unique_only = 'True'`.
+            This argument is ignored if `unique_only = True`.
             (Default: `average`)
 
         Returns
@@ -214,8 +214,7 @@ class Model():
             var_to = []
             scale_to = []
             for feature_to in features_to:
-                sub_map_content = map_content[map_content[convert_to] == feature_to]
-                index_from = sub_map_content.index_from.values
+                index_from = map_content[map_content[convert_to] == feature_to].index_from.values
                 if len(index_from) == 1:
                     coef_to.append(self.classifier.coef_[:, index_from[0]])
                     mean_to.append(self.scaler.mean_[index_from[0]])

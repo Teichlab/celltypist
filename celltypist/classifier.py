@@ -385,7 +385,7 @@ class Classifier():
             A :class:`~pandas.Series` object showing the over-clustering result.
         """
         if 'connectivities' not in self.adata.obsp:
-            logger.info("👀 Can not detect a neighborhood graph, construct one before the over-clustering")
+            logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
             adata = self.adata.copy()
             self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
         else:
