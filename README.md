@@ -426,4 +426,32 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   The downstream workflow is the same as that from one-pass data training.
   </details>
+
++ <details>
+  <summary><strong>Cross-species model conversion</strong></summary>
+
+  It is always recommended to predict a query dataset using the reference model from the same species. In cases where a cross-species label projection is needed, you can convert the model of interest to its "orthologous" form of another species. This is achieved by aligning orthologous genes between species.  
+    
+  Load a human immune model.
+  ```python
+  model = models.Model.load('Immune_All_Low.pkl')
+  ```
+  This model can be converted to a mouse equivalent through the `convert` method. By default, a human-mouse conversion (or the opposite) will be conducted by automatically detecting the species of the model (e.g., human) and transforming it to the other species (e.g., mouse).
+  ```python
+  #Note `model` is modified in-place.
+  model.convert()
+  ```
+  By default (`unique_only = True`), only 1:1 orthologs between the two species are kept and all other genes are discarded in the model. You can also keep those genes (including both 1:N and N:1 orthologs) by specifying `unique_only = False`. By doing so, you need to specify how these 1:N orthologs will be handled: for each gene, averaging the classifier weights (`collapse = 'average'`, which is the default when `unique_only = False`) or randomly choosing one gene's weight as the representative (`collapse = 'random'`) from all its orthologs.
+  ```python
+  #For illustration purpose. Convert the model by utilising 1:N orthologs and their average weights.
+  #model.convert(unique_only = False, collapse = 'average')
+  ```
+  As mentioned above, the default mode is a human-to-mouse (or mouse-to-human) conversion using the built-in gene mapping [file](https://github.com/Teichlab/celltypist/blob/main/celltypist/data/samples/Ensembl105_Human2Mouse_Genes.csv) (Ensembl105 version). For conversion to other species, you can provide a different file (`map_file`), with one column being the species of the model and the other column being the species you want to convert to. Check out `models.Model.convert` for more information.  
+    
+  Lastly, write out the converted model locally.
+  ```python
+  model.write('/path/to/local/folder/some_model_name.pkl')
+  ```
+  This model can be used as with other CellTypist models.
+  </details>
 </details>
