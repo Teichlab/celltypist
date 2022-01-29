@@ -337,91 +337,93 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 <details>
-<summary><strong>Supplemental guidance: generate a custom model</strong></summary>
+<summary><strong>Supplemental guidance</strong></summary>
 
-## Supplemental guidance: generate a custom model
-
-As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another scRNA-seq dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two scRNA-seq datasets is under examination.  
++ <details>
+  <summary><strong>Generate a custom model</strong></summary>
   
-### Inputs for data training
-The inputs for CellTypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
-   1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts (in order to reduce the file size) while the latter containing log1p normalised expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format). A cell-by-gene format (cells as rows and genes as columns) is required.
-   2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
-   3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
-
-### One-pass data training
-Derive a new model by training the data using the `celltypist.train` function:
-```python
-#Training a CellTypist model.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
-```
-If the input is a table file, an `AnnData` or a `DataFrame`, genes will be automatically extracted and the `genes` tag can thus be omitted from the above code. If your input is in a gene-by-cell format (genes as rows and cells as columns), remember to pass in the `transpose_input = True` argument.  
+  As well as the models provided by CellTypist (see `1.2.`), you can generate your own model from which the cell type labels can be transferred to another scRNA-seq dataset. This will be most useful when a large and comprehensive reference atlas is trained for future use, or when the similarity between two scRNA-seq datasets is under examination.  
+    
+  ### Inputs for data training
+  The inputs for CellTypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
+     1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts (in order to reduce the file size) while the latter containing log1p normalised expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format). A cell-by-gene format (cells as rows and genes as columns) is required.
+     2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
+     3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
   
-Before the training is conducted, the gene expression format will be checked to make sure the input data is supplied as required. For example, the expression matrix should be in log1p normalised expression (to 10,000 counts per cell) if the input is an `AnnData`. This means when you subset the input with given genes (e.g., by highly variable genes), an error may be raised as CellTypist cannot judge the input as properly normalised with only a subset of genes. In such a case, pass in `check_expression = False` to skip the expression format check.
-```python
-#Training a CellTypist model with only subset of genes (e.g., highly variable genes).
-#Restricting the input to a subset of genes can accelerate the training process.
-#Use `AnnData` here as an example.
-new_model = celltypist.train(some_adata[:, some_adata.var.highly_variable], labels = label_input, check_expression = False)
-```
-By default, data is trained using a traditional logistic regression classifier. This classifier is well suited to datasets of small or intermediate sizes (as an empirical estimate, <= 100k cells), and usually leads to an unbiased probability range with less parameter tuning. Among the training parameters, three important ones are `solver` which (if not specified by the user) is selected based on the size of the input data by CellTypist, `C` which sets the inverse of L2 regularisation strength, and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Other (hyper)parameters from [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) are also applicable in the `train` function.  
+  ### One-pass data training
+  Derive a new model by training the data using the `celltypist.train` function:
+  ```python
+  #Training a CellTypist model.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
+  ```
+  If the input is a table file, an `AnnData` or a `DataFrame`, genes will be automatically extracted and the `genes` tag can thus be omitted from the above code. If your input is in a gene-by-cell format (genes as rows and cells as columns), remember to pass in the `transpose_input = True` argument.  
+    
+  Before the training is conducted, the gene expression format will be checked to make sure the input data is supplied as required. For example, the expression matrix should be in log1p normalised expression (to 10,000 counts per cell) if the input is an `AnnData`. This means when you subset the input with given genes (e.g., by highly variable genes), an error may be raised as CellTypist cannot judge the input as properly normalised with only a subset of genes. In such a case, pass in `check_expression = False` to skip the expression format check.
+  ```python
+  #Training a CellTypist model with only subset of genes (e.g., highly variable genes).
+  #Restricting the input to a subset of genes can accelerate the training process.
+  #Use `AnnData` here as an example.
+  new_model = celltypist.train(some_adata[:, some_adata.var.highly_variable], labels = label_input, check_expression = False)
+  ```
+  By default, data is trained using a traditional logistic regression classifier. This classifier is well suited to datasets of small or intermediate sizes (as an empirical estimate, <= 100k cells), and usually leads to an unbiased probability range with less parameter tuning. Among the training parameters, three important ones are `solver` which (if not specified by the user) is selected based on the size of the input data by CellTypist, `C` which sets the inverse of L2 regularisation strength, and `max_iter` which controls the maximum number of iterations before reaching the minimum of the cost function. Other (hyper)parameters from [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) are also applicable in the `train` function.  
+    
+  When the dimensions of the input data are large, training may take longer time even with CPU parallelisation (achieved by the `n_jobs` argument). To reduce the training time as well as to add some randomness to the classifier's solution, a stochastic gradient descent (SGD) logistic regression classifier can be enabled by `use_SGD = True`.
+  ```python
+  #Training a CellTypist model with SGD learning.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True)
+  ```
+  A logistic regression classifier with SGD learning reduces the training burden dramatically and has a comparable performance versus a traditional logistic regression classifier. A minor caveat is that more careful model parameter tuning may be needed if you want to utilise the probability values from the model for scoring cell types in the prediction step (the selection of the most likely cell type for each query cell is not influenced however). Among the training parameters, two important ones are `alpha` which sets the L2 regularisation strength and `max_iter` which controls the maximum number of iterations. Other (hyper)parameters from [SGDClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html) are also applicable in the `train` function.  
+    
+  When the training data contains a huge number of cells (for example >500k cells) or more randomness in selecting cells for training is needed, you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `use_SGD = True` and `mini_batch = True`. As a result, in each epoch (default to 10 epochs, `epochs = 10`), cells are binned into equal-sized (the size is default to 1000, `batch_size = 1000`) random batches, and are trained in a batch-by-batch manner (default to 100 batches, `batch_number = 100`).
+  ```python
+  #Get a CellTypist model with SGD mini-batch training.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True)
+  ```
+  By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs` x `batch_size` x `batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
+    
+  There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information.  
+    
+  The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
+    
+  Save this model locally:
+  ```python
+  #Write out the model.
+  new_model.write('/path/to/local/folder/some_model_name.pkl')
+  ```
+  A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by CellTypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
+  ```python
+  #Write out the model in the `models.models_path` folder.
+  new_model.write(f'{models.models_path}/some_model_name.pkl')
+  ```
+  To leverage this model, first load it by `models.Model.load`.
+  ```python
+  new_model = models.Model.load('/path/to/local/folder/some_model_name.pkl')
+  ```
+  This model can be used as with the built-in CellTypist models, for example, it can be specified as the `model` argument in `annotate`.
+  ```python
+  #Predict the identity of each input cell with the new model.
+  predictions = celltypist.annotate(input_file, model = new_model)
+  #Alternatively, just specify the model path (recommended as this ensures the model is intact every time it is loaded).
+  predictions = celltypist.annotate(input_file, model = '/path/to/local/folder/some_model_name.pkl')
+  #If the model is stored in `models.models_path`, only the model name is needed.
+  predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
+  ```
+  Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
   
-When the dimensions of the input data are large, training may take longer time even with CPU parallelisation (achieved by the `n_jobs` argument). To reduce the training time as well as to add some randomness to the classifier's solution, a stochastic gradient descent (SGD) logistic regression classifier can be enabled by `use_SGD = True`.
-```python
-#Training a CellTypist model with SGD learning.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True)
-```
-A logistic regression classifier with SGD learning reduces the training burden dramatically and has a comparable performance versus a traditional logistic regression classifier. A minor caveat is that more careful model parameter tuning may be needed if you want to utilise the probability values from the model for scoring cell types in the prediction step (the selection of the most likely cell type for each query cell is not influenced however). Among the training parameters, two important ones are `alpha` which sets the L2 regularisation strength and `max_iter` which controls the maximum number of iterations. Other (hyper)parameters from [SGDClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html) are also applicable in the `train` function.  
-  
-When the training data contains a huge number of cells (for example >500k cells) or more randomness in selecting cells for training is needed, you may consider using the mini-batch version of the SGD logistic regression classifier by specifying `use_SGD = True` and `mini_batch = True`. As a result, in each epoch (default to 10 epochs, `epochs = 10`), cells are binned into equal-sized (the size is default to 1000, `batch_size = 1000`) random batches, and are trained in a batch-by-batch manner (default to 100 batches, `batch_number = 100`).
-```python
-#Get a CellTypist model with SGD mini-batch training.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True)
-```
-By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs` x `batch_size` x `batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
-  
-There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information.  
-  
-The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
-  
-Save this model locally:
-```python
-#Write out the model.
-new_model.write('/path/to/local/folder/some_model_name.pkl')
-```
-A suggested location for stashing the model is the `models.models_path` (see `1.2.`). Through this, all models (including the models provided by CellTypist) will be in the same folder, and can be accessed in the same manner as in `1.4.`.
-```python
-#Write out the model in the `models.models_path` folder.
-new_model.write(f'{models.models_path}/some_model_name.pkl')
-```
-To leverage this model, first load it by `models.Model.load`.
-```python
-new_model = models.Model.load('/path/to/local/folder/some_model_name.pkl')
-```
-This model can be used as with the built-in CellTypist models, for example, it can be specified as the `model` argument in `annotate`.
-```python
-#Predict the identity of each input cell with the new model.
-predictions = celltypist.annotate(input_file, model = new_model)
-#Alternatively, just specify the model path (recommended as this ensures the model is intact every time it is loaded).
-predictions = celltypist.annotate(input_file, model = '/path/to/local/folder/some_model_name.pkl')
-#If the model is stored in `models.models_path`, only the model name is needed.
-predictions = celltypist.annotate(input_file, model = 'some_model_name.pkl')
-```
-Downstream operations are the same as in `1.4.`, `1.5.`, `1.6.`, and `1.7.`.
-
-### Two-pass data training incorporating feature selection
-Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients) using SGD learning. In short, top important genes (default: `top_genes = 300`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
-```python
-#Two-pass data training with traditional logistic regression after SGD-based feature selection.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
-#Two-pass data training with SGD learning after feature selection.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, feature_selection = True)
-#Two-pass data training with SGD mini-batch training after feature selection.
-new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True, feature_selection = True)
-```
-If you prefer other feature selection approaches and obtain a set of genes which are designated as important features, you can subset your input data and train the CellTypist model accordingly. As noted in the previous section, remember to pass in the `check_expression = False` argument.
-```python
-new_model = celltypist.train(expression_input_subset, labels = label_input, genes = gene_input, check_expression = False)
-```
-The downstream workflow is the same as that from one-pass data training.
+  ### Two-pass data training incorporating feature selection
+  Some scRNA-seq datasets may involve the noise mostly from genes not helpful or even detrimental to the characterisation of cell types. To mitigate this, `celltypist.train` has the option (`feature_selection = True`) to do a fast feature selection based on the feature importance (here, the absolute regression coefficients) using SGD learning. In short, top important genes (default: `top_genes = 300`) are selected from each cell type, and are further combined across cell types as the final feature set. The classifier is then re-run using the corresponding subset of the input data.
+  ```python
+  #Two-pass data training with traditional logistic regression after SGD-based feature selection.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, feature_selection = True)
+  #Two-pass data training with SGD learning after feature selection.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, feature_selection = True)
+  #Two-pass data training with SGD mini-batch training after feature selection.
+  new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input, use_SGD = True, mini_batch = True, feature_selection = True)
+  ```
+  If you prefer other feature selection approaches and obtain a set of genes which are designated as important features, you can subset your input data and train the CellTypist model accordingly. As noted in the previous section, remember to pass in the `check_expression = False` argument.
+  ```python
+  new_model = celltypist.train(expression_input_subset, labels = label_input, genes = gene_input, check_expression = False)
+  ```
+  The downstream workflow is the same as that from one-pass data training.
+  </details>
 </details>
