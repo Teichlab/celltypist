@@ -136,7 +136,7 @@ class Model():
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
 
-    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average'):
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0):
         """
         Convert the model of one species to another species by mapping orthologous genes.
 
@@ -160,6 +160,8 @@ class Model():
             The way 1:N orthologs are handled. Possible values are `average` which averages the classifier weights and `random` which randomly choose one gene's weights from all its orthologs.
             This argument is ignored if `unique_only = True`.
             (Default: `average`)
+        random_state
+            Random seed for reproducibility. This argument is only relevant if `unique_only = False` and `collapse = 'random'`.
 
         Returns
         ----------
@@ -208,6 +210,8 @@ class Model():
         else:
             if collapse not in ['average', 'random']:
                 raise ValueError(f"🛑 Unrecognized `collapse` value, should be one of `average` or `random`")
+            if collapse == 'random':
+                np.random.seed(random_state)
             collapse_func = _collapse_mean if collapse == 'average' else _collapse_random
             coef_to = []
             mean_to = []
