@@ -287,13 +287,13 @@ class Classifier():
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
             self.adata.var_names_make_unique()
             if self.adata.X.min() < 0:
-                logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
+                logger.info("👀 Detected scaled expression in the input data, will try the `.raw` attribute")
                 try:
                     self.indata = self.adata.raw.X
                     self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
                 except Exception as e:
-                    raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
+                    raise Exception(f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
             else:
                 self.indata = self.adata.X
                 self.indata_genes = self.adata.var_names
