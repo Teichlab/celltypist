@@ -111,10 +111,10 @@ class AnnotationResult():
                 self.adata.obs[f"{prefix}conf_score"] = self.probability_matrix.max(axis=1).values
             elif insert_conf_by == 'majority_voting':
                 if insert_conf_by not in self.predicted_labels:
-                    raise ValueError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
+                    raise AttributeError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
                 self.adata.obs[f"{prefix}conf_score"] = [row[self.predicted_labels.majority_voting[index]] for index, row in self.probability_matrix.iterrows()]
             else:
-                raise ValueError(f"🛑 Unrecognized `insert_conf_by` value, should be one of `predicted_labels` or `majority_voting`")
+                raise ValueError(f"🛑 Unrecognized `insert_conf_by` value ('{insert_conf_by}'), should be one of `predicted_labels` or `majority_voting`")
         if insert_prob:
             self.adata.obs[[f"{prefix}{x}" for x in self.probability_matrix.columns]] = self.probability_matrix
         elif insert_decision:
