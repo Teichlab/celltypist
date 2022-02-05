@@ -136,7 +136,7 @@ class Model():
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
 
-    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0):
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0) -> None:
         """
         Convert the model of one species to another species by mapping orthologous genes.
 
@@ -165,8 +165,8 @@ class Model():
 
         Returns
         ----------
-        :class:`~celltypist.models.Model`
-            A :class:`~celltypist.models.Model` object converted from one species to another species (in-place operation).
+        None
+            The original model is modified by converting to the other species.
         """
         map_file = _get_sample_data('Ensembl105_Human2Mouse_Genes.csv') if map_file is None else map_file
         if not os.path.isfile(map_file):
