@@ -18,7 +18,7 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
         if use_as_prediction == 'majority_voting':
             raise AttributeError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `use_as_prediction = 'predicted_labels'` instead")
         else:
-            raise AttributeError(f"🛑 Did not find such column '{use_as_prediction}', should be one of `majority_voting` or `predicted_labels`")
+            raise AttributeError(f"🛑 Did not find such column '{use_as_prediction}', should be one of `'majority_voting'` or `'predicted_labels'`")
     pred = predictions.predicted_labels[use_as_prediction]
     #reference
     if isinstance(use_as_reference, str):
@@ -105,8 +105,8 @@ def dotplot(
         Also accepts any list-like objects already loaded in memory (such as an array).
     use_as_prediction
         Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the assessment is based on.
-        Set to `predicted_labels` if you want to assess the prediction result without majority voting.
-        (Default: `majority_voting`)
+        Set to `'predicted_labels'` if you want to assess the prediction result without majority voting.
+        (Default: `'majority_voting'`)
     prediction_order
         Order in which to show the predicted cell types. Default to the order of categories as is (alphabetical order in most cases).
     reference_order

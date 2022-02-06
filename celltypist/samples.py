@@ -39,8 +39,8 @@ def downsample_adata(adata: AnnData,
         An :class:`~anndata.AnnData` object representing the input data.
     mode
         The way downsampling is performed. Default to downsampling the input cells to a total of `n_cells`.
-        Set to `each` if you want to downsample cells within each cell type to `n_cells`.
-        (Default: `total`)
+        Set to `'each'` if you want to downsample cells within each cell type to `n_cells`.
+        (Default: `'total'`)
     n_cells
         The total number of cells (`mode = 'total'`) or the number of cells from each cell type (`mode = 'each'`) to sample.
         For the latter, all cells from a given cell type will be selected if its cell number is fewer than `n_cells`.
@@ -85,7 +85,7 @@ def downsample_adata(adata: AnnData,
         celltypes = np.unique(adata.obs[by])
         sampled_cell_index = np.concatenate([np.random.choice(np.where(adata.obs[by] == celltype)[0], min([n_cells, np.sum(adata.obs[by] == celltype)]), replace = False) for celltype in celltypes])
     else:
-        raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `total` or `each`")
+        raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `'total'` or `'each'`")
     if return_index:
         return sampled_cell_index
     else:

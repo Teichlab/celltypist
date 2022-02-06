@@ -56,8 +56,8 @@ class AnnotationResult():
         ----------
         by
             Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the summary is based on.
-            Set to `majority_voting` if you want to summarize for the majority voting classifier.
-            (Default: `predicted_labels`)
+            Set to `'majority_voting'` if you want to summarize for the majority voting classifier.
+            (Default: `'predicted_labels'`)
 
         Returns
         ----------
@@ -83,8 +83,8 @@ class AnnotationResult():
             (Default: `True`)
         insert_conf_by
             Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the confidence scores are based on.
-            Setting to `majority_voting` will insert the confidence scores corresponding to the majority-voting result.
-            (Default: `predicted_labels`)
+            Setting to `'majority_voting'` will insert the confidence scores corresponding to the majority-voting result.
+            (Default: `'predicted_labels'`)
         insert_decision
             Whether to insert the decision matrix into the AnnData object.
             (Default: `False`)
@@ -114,7 +114,7 @@ class AnnotationResult():
                     raise AttributeError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
                 self.adata.obs[f"{prefix}conf_score"] = [row[self.predicted_labels.majority_voting[index]] for index, row in self.probability_matrix.iterrows()]
             else:
-                raise ValueError(f"🛑 Unrecognized `insert_conf_by` value ('{insert_conf_by}'), should be one of `predicted_labels` or `majority_voting`")
+                raise ValueError(f"🛑 Unrecognized `insert_conf_by` value ('{insert_conf_by}'), should be one of `'predicted_labels'` or `'majority_voting'`")
         if insert_prob:
             self.adata.obs[[f"{prefix}{x}" for x in self.probability_matrix.columns]] = self.probability_matrix
         elif insert_decision:
@@ -135,7 +135,7 @@ class AnnotationResult():
             (Default: `False`)
         format
             Format of output figures. Default to vector PDF files (note dots are still drawn with png backend).
-            (Default: `pdf`)
+            (Default: `'pdf'`)
         prefix
             Prefix for the output figures. Default to no prefix used.
 
@@ -313,11 +313,11 @@ class Classifier():
         ----------
         mode
             The way cell prediction is performed.
-            For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
-            Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
-            (Default: `best match`)
+            For each query cell, the default (`'best match'`) is to choose the cell type with the largest score/probability as the final prediction.
+            Setting to `'prob match'` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+            (Default: `'best match'`)
         p_thres
-            Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+            Probability threshold for the multi-label classification. Ignored if `mode` is `'best match'`.
             (Default: 0.5)
 
         Returns

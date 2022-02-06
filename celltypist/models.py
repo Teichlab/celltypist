@@ -64,7 +64,7 @@ class Model():
         Parameters
         ----------
         model
-            Model name specifying the model you want to load. Default to `Immune_All_Low.pkl` if not provided.
+            Model name specifying the model you want to load. Default to `'Immune_All_Low.pkl'` if not provided.
             To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
 
         Returns
@@ -105,11 +105,11 @@ class Model():
             The input array-like object used as a query.
         mode
             The way cell prediction is performed.
-            For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
-            Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
-            (Default: `best match`)
+            For each query cell, the default (`'best match'`) is to choose the cell type with the largest score/probability as the final prediction.
+            Setting to `'prob match'` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+            (Default: `'best match'`)
         p_thres
-            Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+            Probability threshold for the multi-label classification. Ignored if `mode` is `'best match'`.
             (Default: 0.5)
 
         Returns
@@ -127,7 +127,7 @@ class Model():
             labs[labs == ''] = 'Unassigned'
             return scores, probs, labs
         else:
-            raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `best match` or `prob match`")
+            raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `'best match'` or `'prob match'`")
 
     def write(self, file: str) -> None:
         """Write out the model."""
@@ -157,9 +157,9 @@ class Model():
             Whether to leverage only 1:1 orthologs between the two species.
             (Default: `True`)
         collapse
-            The way 1:N orthologs are handled. Possible values are `average` which averages the classifier weights and `random` which randomly choose one gene's weights from all its orthologs.
+            The way 1:N orthologs are handled. Possible values are `'average'` which averages the classifier weights and `'random'` which randomly chooses one gene's weights from all its orthologs.
             This argument is ignored if `unique_only = True`.
-            (Default: `average`)
+            (Default: `'average'`)
         random_state
             Random seed for reproducibility. This argument is only relevant if `unique_only = False` and `collapse = 'random'`.
 
@@ -209,7 +209,7 @@ class Model():
             self.scaler.scale_ = self.scaler.scale_[index_from]
         else:
             if collapse not in ['average', 'random']:
-                raise ValueError(f"🛑 Unrecognized `collapse` value, should be one of `average` or `random`")
+                raise ValueError(f"🛑 Unrecognized `collapse` value, should be one of `'average'` or `'random'`")
             if collapse == 'random':
                 np.random.seed(random_state)
             collapse_func = _collapse_mean if collapse == 'average' else _collapse_random
@@ -263,7 +263,7 @@ def get_default_model() -> str:
     Returns
     ----------
     str
-        A string showing the default model name (should be `Immune_All_Low.pkl`).
+        A string showing the default model name (should be `'Immune_All_Low.pkl'`).
     """
     models_json = get_models_index()
     default_model = [m["filename"] for m in models_json["models"] if ("default" in m and m["default"])]

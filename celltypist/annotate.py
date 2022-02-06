@@ -27,7 +27,7 @@ def annotate(filename: Union[AnnData,str] = "",
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        Model used to predict the input cells. Default to using the `Immune_All_Low.pkl` model.
+        Model used to predict the input cells. Default to using the `'Immune_All_Low.pkl'` model.
         Can be a :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
@@ -42,11 +42,11 @@ def annotate(filename: Union[AnnData,str] = "",
         Ignored if `filename` is not provided in the mtx format.
     mode
         The way cell prediction is performed.
-        For each query cell, the default (`best match`) is to choose the cell type with the largest score/probability as the final prediction.
-        Setting to `prob match` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
-        (Default: `best match`)
+        For each query cell, the default (`'best match'`) is to choose the cell type with the largest score/probability as the final prediction.
+        Setting to `'prob match'` will enable a multi-label classification, which assigns 0 (i.e., unassigned), 1, or >=2 cell type labels to each query cell.
+        (Default: `'best match'`)
     p_thres
-        Probability threshold for the multi-label classification. Ignored if `mode` is `best match`.
+        Probability threshold for the multi-label classification. Ignored if `mode` is `'best match'`.
         (Default: 0.5)
     majority_voting
         Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
@@ -54,14 +54,14 @@ def annotate(filename: Union[AnnData,str] = "",
     over_clustering
         This argument can be provided in several ways:
         1) an input plain file with the over-clustering result of one cell per line.
-        2) a string key specifying an existing metadata column in the `AnnData` (pre-created by the user).
+        2) a string key specifying an existing metadata column in the AnnData (pre-created by the user).
         3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
         4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
         Ignored if `majority_voting` is set to `False`.
     min_prop
         For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
         Ignored if `majority_voting` is set to `False`.
-        Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.
+        Subcluster that fails to pass this proportion threshold will be assigned `'Heterogeneous'`.
         (Default: 0)
 
     Returns
