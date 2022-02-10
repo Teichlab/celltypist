@@ -10,8 +10,8 @@ from scipy.special import expit
 from . import logger
 from .samples import _get_sample_data
 
-#create ~/.celltypist and subdirs
-celltypist_path = os.path.join(str(pathlib.Path.home()), '.celltypist')
+#create ~/.celltypist (or folder specified by the environment variable $CELLTYPIST_FOLDER) and subdirs
+celltypist_path = os.getenv('CELLTYPIST_FOLDER', default = os.path.join(str(pathlib.Path.home()), '.celltypist'))
 pathlib.Path(celltypist_path).mkdir(parents=True, exist_ok=True)
 data_path = os.path.join(celltypist_path, "data")
 models_path = os.path.join(data_path, "models")
