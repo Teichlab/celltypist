@@ -60,6 +60,11 @@ conda install -c bioconda -c conda-forge celltypist
   #Update all models by re-downloading the latest versions if you think they may be outdated.
   models.download_models(force_update = True)
   ```
+  By default, a folder `.celltypist/` will be created in the user's home directory to store model files. A different path/folder can be specified by exporting the environment variable `CELLTYPIST_FOLDER` in your configuration file (e.g. in `~/.bash_profile`).
+  ```bash
+  #In the shell configuration file.
+  export CELLTYPIST_FOLDER='/path/to/model/folder/'
+  ```
   </details>
 
 + <details>
