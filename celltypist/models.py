@@ -95,6 +95,14 @@ class Model():
         """Get genes included in the model."""
         return self.classifier.features
 
+    def __repr__(self):
+        base = f"CellTypist model with {len(self.cell_types)} cell types and {len(self.features)} features"
+        for x in ['date', 'details', 'source', 'version']:
+            if self.description[x] != '':
+                base += f"\n    {x}: {self.description[x]}"
+        base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}, ..., {self.cell_types[-1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
+        return base
+
     def predict_labels_and_prob(self, indata, mode: str = 'best match', p_thres: float = 0.5) -> tuple:
         """
         Get the decision matrix, probability matrix, and predicted cell types for the input data.
