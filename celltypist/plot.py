@@ -16,14 +16,14 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
     #prediction
     if use_as_prediction not in predictions.predicted_labels:
         if use_as_prediction == 'majority_voting':
-            raise AttributeError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `use_as_prediction = 'predicted_labels'` instead")
+            raise KeyError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `use_as_prediction = 'predicted_labels'` instead")
         else:
-            raise AttributeError(f"🛑 Did not find such column '{use_as_prediction}', should be one of `'majority_voting'` or `'predicted_labels'`")
+            raise KeyError(f"🛑 Did not find such column '{use_as_prediction}', should be one of `'majority_voting'` or `'predicted_labels'`")
     pred = predictions.predicted_labels[use_as_prediction]
     #reference
     if isinstance(use_as_reference, str):
         if use_as_reference not in predictions.adata.obs:
-            raise AttributeError(f"🛑 Did not find such column '{use_as_reference}', please provide a valid metadata column")
+            raise KeyError(f"🛑 Did not find such column '{use_as_reference}', please provide a valid metadata column")
         refer = predictions.adata.obs[use_as_reference]
     else:
         refer = np.array(use_as_reference)

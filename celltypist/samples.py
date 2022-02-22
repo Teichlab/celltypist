@@ -70,7 +70,7 @@ def downsample_adata(adata: AnnData,
             raise ValueError(f"🛑 `n_cells` ({n_cells}) should be fewer than the total number of cells ({adata.n_obs})")
         if balance_cell_type:
             if by is None:
-                raise ValueError(f"🛑 Please specify the cell type column if you want to balance the cell type frequencies")
+                raise KeyError(f"🛑 Please specify the cell type column if you want to balance the cell type frequencies")
             labels = adata.obs[by]
             celltype_freq = np.unique(labels, return_counts = True)
             len_celltype = len(celltype_freq[0])
@@ -81,7 +81,7 @@ def downsample_adata(adata: AnnData,
             sampled_cell_index = np.random.choice(adata.n_obs, n_cells, replace = False)
     elif mode == 'each':
         if by is None:
-            raise ValueError(f"🛑 Please specify the cell type column for downsampling")
+            raise KeyError(f"🛑 Please specify the cell type column for downsampling")
         celltypes = np.unique(adata.obs[by])
         sampled_cell_index = np.concatenate([np.random.choice(np.where(adata.obs[by] == celltype)[0], min([n_cells, np.sum(adata.obs[by] == celltype)]), replace = False) for celltype in celltypes])
     else:
