@@ -205,8 +205,13 @@ class AnnotationResult():
                 self.decision_matrix.to_excel(writer, sheet_name="Decision Matrix")
                 self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
 
-    def __str__(self):
-        return f"{self.cell_count} cells predicted into {len(np.unique(self.predicted_labels['predicted_labels']))} cell types"
+    def __repr__(self):
+        base = f"CellTypist prediction result for {self.cell_count} query cells"
+        base += f"\n    predicted_labels: data frame with {self.predicted_labels.shape[1]} {'columns' if self.predicted_labels.shape[1] > 1 else 'column'} ({str(list(self.predicted_labels.columns))[1:-1]})"
+        base += f"\n    decision_matrix: data frame with {self.cell_count} query cells and {self.decision_matrix.shape[1]} cell types"
+        base += f"\n    probability_matrix: data frame with {self.cell_count} query cells and {self.probability_matrix.shape[1]} cell types"
+        base += f"\n    adata: AnnData object referred"
+        return base
 
 class Classifier():
     """
