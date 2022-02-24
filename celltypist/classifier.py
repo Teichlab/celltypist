@@ -410,9 +410,7 @@ class Classifier():
                 resolution = 30
         logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
         sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
-        oc_column = self.adata.obs.over_clustering
-        self.adata.obs.drop(columns=['over_clustering'], inplace=True)
-        return oc_column
+        return self.adata.obs.pop('over_clustering')
 
     @staticmethod
     def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> AnnotationResult:
