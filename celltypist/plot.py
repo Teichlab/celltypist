@@ -108,12 +108,27 @@ def dotplot(
         Set to `'predicted_labels'` if you want to assess the prediction result without majority voting.
         (Default: `'majority_voting'`)
     prediction_order
-        Order in which to show the predicted cell types. Default to the order of categories as is (alphabetical order in most cases).
+        Order in which to show the predicted cell types. Can be a subset of predicted cell type labels.
+        Default to plotting all predicted labels, with the order of categories as is (alphabetical order in most cases).
     reference_order
-        Order in which to show the reference cell types (or clusters). Default to an order that ensures the resulting dot plot is diagonal.
+        Order in which to show the reference cell types (or clusters). Can be a subset of reference cell types (or clusters).
+        Default to plotting all reference cell types, with an order that ensures the resulting dot plot is diagonal.
     filter_prediction
         Filter out the predicted cell types with the maximal assignment fractions less than `filter_prediction`.
-        This argument can be used to reduce the number of predicted cell types displayed in the dot plot. Default to 0 (no filtering).
+        This argument is only effective when `prediction_order` is not specified, and can be used to reduce the number of predicted cell types displayed in the dot plot.
+        Default to 0 (no filtering).
+    title
+        Title of the dot plot.
+        (Default: `'CellTypist label transfer'`)
+    size_title
+        Legend title for the dot sizes.
+        (Default: `'Fraction of cells (%)'`)
+    colorbar_title
+        Legend title for the dot colors.
+        (Default: `'Mean probability'`)
+    swap_axes
+        Whether to swap the x and y axes.
+        (Default: `False`)
     others
         All other parameters are the same as :func:`scanpy.pl.dotplot` with selected tags and customized defaults.
 
@@ -122,13 +137,18 @@ def dotplot(
     If `return_fig` is `True`, returns a :class:`scanpy.pl.DotPlot` object, else if `show` is false, return axes dict.
     """
     #df x 2
-    dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, prediction_order, reference_order)
-    #filter
-    if filter_prediction < 0 or filter_prediction > 1:
-        raise ValueError(f"🛑 Please provide the `filter_prediction` between 0 and 1")
-    keep_pred = dot_size_df.max(axis = 1) >= filter_prediction
-    dot_size_df = dot_size_df[keep_pred]
-    dot_color_df = dot_color_df[keep_pred]
+    dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, None, None)
+    #reference
+    reference_order = reference_order if reference_order is not None else dot_size_df.columns
+    #prediction
+    if prediction_order is None:
+        if filter_prediction < 0 or filter_prediction > 1:
+            raise ValueError(f"🛑 Please provide the `filter_prediction` between 0 and 1")
+        keep_pred = dot_size_df.max(axis = 1) >= filter_prediction
+        prediction_order = dot_size_df.index[keep_pred]
+    #subset
+    dot_size_df = dot_size_df.loc[prediction_order, reference_order]
+    dot_color_df = dot_color_df.loc[prediction_order, reference_order]
     #AnnData, groupby, and var_names
     _adata = sc.AnnData(np.zeros(dot_size_df.shape))
     _adata.var_names = dot_size_df.columns
