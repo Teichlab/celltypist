@@ -348,6 +348,7 @@ class Classifier():
         self.indata = (self.indata[:, k_x_idx] - means_) / sds_
         self.indata[self.indata > 10] = 10
 
+        ni, fs, cf = self.model.classifier.n_features_in_, self.model.classifier.features, self.model.classifier.coef_
         self.model.classifier.n_features_in_ = lr_idx.size
         self.model.classifier.features = self.model.classifier.features[lr_idx]
         self.model.classifier.coef_ = self.model.classifier.coef_[:, lr_idx]
@@ -355,6 +356,9 @@ class Classifier():
         logger.info("🖋️ Predicting labels")
         decision_mat, prob_mat, lab = self.model.predict_labels_and_prob(self.indata, mode = mode, p_thres = p_thres)
         logger.info("✅ Prediction done!")
+
+        #restore model after prediction
+        self.model.classifier.n_features_in_, self.model.classifier.features, self.model.classifier.coef_ = ni, fs, cf
 
         cells = self.indata_names
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
