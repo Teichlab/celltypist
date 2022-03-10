@@ -81,6 +81,9 @@ def annotate(filename: Union[AnnData,str] = "",
     predictions = clf.celltype(mode = mode, p_thres = p_thres)
     if not majority_voting:
         return predictions
+    if predictions.cell_count <= 50:
+        logger.warn(f"⚠️ Warning: the input number of cells ({predictions.cell_count}) is too few to conduct proper over-clustering; no majority voting is performed")
+        return predictions
     #over clustering
     if over_clustering is None:
         over_clustering = clf.over_cluster()
