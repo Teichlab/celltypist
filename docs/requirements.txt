@@ -7,5 +7,5 @@ requests>=2.23.0
 scanpy>=1.7.0
 leidenalg>=0.8.3
 myst_parser==0.15.2
-sphinx==3.5.2
+sphinx==4.4.0
 nbsphinx==0.8.8
