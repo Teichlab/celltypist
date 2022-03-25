@@ -336,7 +336,10 @@ class Classifier():
         """
         logger.info(f"🔗 Matching reference genes in the model")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
-        logger.info(f"🧬 {k_x.sum()} features used for prediction")
+        if k_x.sum() == 0:
+            raise ValueError(f"🛑 No features overlap with the model. Please provide gene symbols")
+        else:
+            logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
         #self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x_idx]
