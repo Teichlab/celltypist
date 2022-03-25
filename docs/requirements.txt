@@ -10,3 +10,4 @@ myst_parser==0.15.2
 sphinx>=3.5.2
 nbsphinx==0.8.8
 ipython_genutils==0.2.0
+Jinja2<3.1
