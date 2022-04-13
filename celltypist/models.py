@@ -144,6 +144,32 @@ class Model():
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
 
+    def extract_top_markers(self, cell_type: str, top_n: int = 10, only_positive: bool = True) -> np.ndarray:
+        """
+        Extract the top driving genes for a given cell type.
+
+        Parameters
+        ----------
+        cell_type
+            The cell type to extract markers for.
+        top_n
+            Number of markers to extract for a given cell type.
+        only_positive
+            Whether to extract positive markers only. Set to `False` to include negative markers as well.
+            (Default: `True`)
+
+        Returns
+        ----------
+        :class:`~numpy.ndarray`
+            A list of marker genes for the query cell type.
+        """
+        if cell_type not in self.cell_types:
+            raise ValueError(f"🛑 '{cell_type}' is not found. Please provide a valid cell type name")
+        coef_vector = self.classifier.coef_[self.cell_types == cell_type][0]
+        if not only_positive:
+            coef_vector = np.abs(coef_vector)
+        return self.features[np.argsort(-coef_vector)][:top_n]
+
     def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0) -> None:
         """
         Convert the model of one species to another species by mapping orthologous genes.
