@@ -156,7 +156,7 @@ def train(X = None,
           transpose_input: bool = False,
           check_expression: bool = True,
           #LR param
-          C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, n_jobs: Optional[int] = None,
+          C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, multi_class='ovr', n_jobs: Optional[int] = None,
           #SGD param
           use_SGD: bool = False, alpha: float = 0.0001,
           #mini-batch
@@ -295,7 +295,7 @@ def train(X = None,
     if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
     else:
-        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, multi_class = multi_class, n_jobs = n_jobs, **kwargs)
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
