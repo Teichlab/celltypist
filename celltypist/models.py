@@ -128,7 +128,13 @@ class Model():
         scores = self.classifier.decision_function(indata)
         probs = expit(scores)
         if mode == 'best match':
-            return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
+            try:
+                return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
+            except np.AxisError:
+                # When making binary decisions, decision_function returns an ndarray of shape (n_samples,) rather
+                # than, as expected above, (n_samples, n_classes). Scores > 0 for any given sample means the sample
+                # is predicted to belong to classifier.classes_[1]
+                return scores, probs, self.classifier.classes_[(scores > 0).astype(int)]
         elif mode == 'prob match':
             flags = probs > p_thres
             labs = np.array(['|'.join(self.classifier.classes_[np.where(x)[0]]) for x in flags])

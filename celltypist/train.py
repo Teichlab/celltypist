@@ -96,13 +96,11 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
         labels = _to_vector(labels)
     return indata, labels, genes
 
-def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, multi_class=None, **kwargs) -> LogisticRegression:
+def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the logistic Classifier.
     """
     no_cells = len(labels)
-    if multi_class is None:
-        multi_class = 'ovr'        
     if solver is None:
         solver = 'sag' if no_cells>50000 else 'lbfgs'
     elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
@@ -110,7 +108,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, multi_class=None,
     logger.info(f"🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
-    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = multi_class, n_jobs = n_jobs, **kwargs)
+    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
 
@@ -156,7 +154,7 @@ def train(X = None,
           transpose_input: bool = False,
           check_expression: bool = True,
           #LR param
-          C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, multi_class='ovr', n_jobs: Optional[int] = None,
+          C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, n_jobs: Optional[int] = None,
           #SGD param
           use_SGD: bool = False, alpha: float = 0.0001,
           #mini-batch
@@ -295,7 +293,7 @@ def train(X = None,
     if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
     else:
-        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, multi_class = multi_class, n_jobs = n_jobs, **kwargs)
+        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     #feature selection -> new classifier and scaler
     if feature_selection:
         logger.info(f"🔎 Selecting features")
