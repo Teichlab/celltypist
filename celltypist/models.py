@@ -126,6 +126,19 @@ class Model():
             A tuple of decision score matrix, raw probability matrix, and predicted cell type labels.
         """
         scores = self.classifier.decision_function(indata)
+        if scores.ndim == 1:
+            # When making binary decisions, decision_function returns an ndarray of shape (n_samples,) rather
+            # than, as expected above, (n_samples, n_classes). Scores > 0 for any given sample means the sample
+            # is predicted to belong to classifier.classes_[1]
+            # Emulate the output of decision_function for non-binary decisions, setting score at the idx
+            # corresponding to the predicted class equal to the absolute value of the ouput of decision_function
+            # for that row/cell
+            predicted_class_idx0 = (scores <= 0).astype(int)
+            predicted_class_idx0 = np.absolute(predicted_class_idx0 * scores)
+            predicted_class_idx1 = (scores > 0).astype(int)
+            predicted_class_idx1 = np.absolute(predicted_class_idx1 * scores)
+            scores = np.dstack((predicted_class_idx0, predicted_class_idx1))
+
         probs = expit(scores)
         if mode == 'best match':
             try:
@@ -134,7 +147,7 @@ class Model():
                 # When making binary decisions, decision_function returns an ndarray of shape (n_samples,) rather
                 # than, as expected above, (n_samples, n_classes). Scores > 0 for any given sample means the sample
                 # is predicted to belong to classifier.classes_[1]
-                return scores, probs, self.classifier.classes_[(scores > 0).astype(int)]
+                return scores, probs, self.classifier.classes_[]
         elif mode == 'prob match':
             flags = probs > p_thres
             labs = np.array(['|'.join(self.classifier.classes_[np.where(x)[0]]) for x in flags])
