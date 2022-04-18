@@ -137,7 +137,7 @@ class Model():
             predicted_class_idx0 = np.absolute(predicted_class_idx0 * scores)
             predicted_class_idx1 = (scores > 0).astype(int)
             predicted_class_idx1 = np.absolute(predicted_class_idx1 * scores)
-            scores = np.dstack((predicted_class_idx0, predicted_class_idx1))
+            scores = np.dstack((predicted_class_idx0, predicted_class_idx1))[0]
 
         probs = expit(scores)
         if mode == 'best match':
