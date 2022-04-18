@@ -96,11 +96,13 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
         labels = _to_vector(labels)
     return indata, labels, genes
 
-def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> LogisticRegression:
+def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, multi_class=None, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the logistic Classifier.
     """
     no_cells = len(labels)
+    if multi_class is None:
+        multi_class = 'ovr'        
     if solver is None:
         solver = 'sag' if no_cells>50000 else 'lbfgs'
     elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
@@ -108,7 +110,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
     logger.info(f"🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
-    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
+    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = multi_class, n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
 
