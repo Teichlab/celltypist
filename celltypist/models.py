@@ -100,7 +100,10 @@ class Model():
         for x in ['date', 'details', 'source', 'version']:
             if self.description[x] != '':
                 base += f"\n    {x}: {self.description[x]}"
-        base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}, ..., {self.cell_types[-1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
+        if len(self.cell_types) == 2:
+            base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
+        else:
+            base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}, ..., {self.cell_types[-1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
         return base
 
     def predict_labels_and_prob(self, indata, mode: str = 'best match', p_thres: float = 0.5) -> tuple:
@@ -126,6 +129,8 @@ class Model():
             A tuple of decision score matrix, raw probability matrix, and predicted cell type labels.
         """
         scores = self.classifier.decision_function(indata)
+        if len(self.cell_types) == 2:
+            scores = np.column_stack([-scores, scores])
         probs = expit(scores)
         if mode == 'best match':
             return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
@@ -154,6 +159,7 @@ class Model():
             The cell type to extract markers for.
         top_n
             Number of markers to extract for a given cell type.
+            (Default: 10)
         only_positive
             Whether to extract positive markers only. Set to `False` to include negative markers as well.
             (Default: `True`)
@@ -165,7 +171,10 @@ class Model():
         """
         if cell_type not in self.cell_types:
             raise ValueError(f"🛑 '{cell_type}' is not found. Please provide a valid cell type name")
-        coef_vector = self.classifier.coef_[self.cell_types == cell_type][0]
+        if len(self.cell_types) == 2:
+            coef_vector = self.classifier.coef_[0] if cell_type == self.cell_types[1] else -self.classifier.coef_[0]
+        else:
+            coef_vector = self.classifier.coef_[self.cell_types == cell_type][0]
         if not only_positive:
             coef_vector = np.abs(coef_vector)
         return self.features[np.argsort(-coef_vector)][:top_n]
