@@ -121,7 +121,7 @@ conda install -c bioconda -c conda-forge celltypist
   The `annotate` function will return an instance of the `AnnotationResult` class as defined in CellTypist.
   ```python
   #Summary information for the prediction result.
-  str(predictions)
+  predictions
   #Examine the predicted cell type labels.
   predictions.predicted_labels
   #Examine the matrix representing the decision score of each cell belonging to a given cell type.
