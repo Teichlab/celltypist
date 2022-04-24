@@ -102,7 +102,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
   input_file = celltypist.samples.get_sample_csv()
   ```
-  Assign the cell type labels from the model to the input test cells using the `annotate` function.
+  Assign the cell type labels from the model to the input test cells using the [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.html#module-celltypist.annotate) function.
   ```python
   #Predict the identity of each input cell.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
