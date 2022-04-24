@@ -198,6 +198,7 @@ conda install -c bioconda -c conda-forge celltypist
   #`use_as_prediction` can be also set as `majority_voting` (see `1.7.`).
   celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotation', use_as_prediction = 'predicted_labels')
   ```
+  Check [celltypist.dotplot](https://celltypist.readthedocs.io/en/latest/celltypist.html#module-celltypist.plot) for other parameters controlling visualisation details of this plot.
   </details>
 
 + <details>
