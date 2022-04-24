@@ -137,14 +137,14 @@ conda install -c bioconda -c conda-forge celltypist
   #Query cell will get multiple label outputs (concatenated by '|') if more than one cell type passes the probability cutoff.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', mode = 'prob match', p_thres = 0.5)
   ```
-  The three tables in the `AnnotationResult` (`.predicted_labels`, `.decision_matrix` and `.probability_matrix`) can be written out to local files (tables) by the function `to_table`, specifying the target `folder` for storage and the `prefix` common to each table.
+  The three tables in the `AnnotationResult` (`.predicted_labels`, `.decision_matrix` and `.probability_matrix`) can be written out to local files (tables) by the function [to_table](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_table), specifying the target `folder` for storage and the `prefix` common to each table.
   ```python
   #Export the three results to csv tables.
   predictions.to_table(folder = '/path/to/a/folder', prefix = '')
   #Alternatively, export the three results to a single Excel table (.xlsx).
   predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
   ```
-  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function `to_adata`. The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).  
+  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_adata). The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).  
   
   Confidence scores of query cells can be inserted by specifying `insert_conf = True` (which is also the default behavior of `to_adata`). The scores correspond to the probabilities of cell predictions based on either `predictions.predicted_labels.predicted_labels` or `predictions.predicted_labels.majority_voting` (see `1.7.`), which can be specified by `insert_conf_by` (default to the former, `predicted_labels`).
   ```python
@@ -162,7 +162,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Get an `AnnData` with predicted labels, confidence scores, and probability matrix (recommended).
   adata = predictions.to_adata(insert_labels = True, insert_conf = True, insert_prob = True)
   ```
-  You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function `to_plots` to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
+  You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function [to_plots](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_plots) to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
   ```python
   #Visualise the predicted cell types overlaid onto the UMAP.
   predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
