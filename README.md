@@ -353,7 +353,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
      3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
   
   ### One-pass data training
-  Derive a new model by training the data using the `celltypist.train` function:
+  Derive a new model by training the data using the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.html) function:
   ```python
   #Training a CellTypist model.
   new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
