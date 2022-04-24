@@ -383,7 +383,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs` x `batch_size` x `batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
     
-  There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the `celltypist.train` for more information.  
+  There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.html) for more information.  
     
   The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
     
@@ -438,7 +438,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   model = models.Model.load('Immune_All_Low.pkl')
   ```
-  This model can be converted to a mouse equivalent through the `convert` method. By default, a human-mouse conversion (or the opposite) will be conducted by automatically detecting the species of the model (e.g., human) and transforming it to the other species (e.g., mouse).
+  This model can be converted to a mouse equivalent through the [convert](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.models.Model.convert) method. By default, a human-mouse conversion (or the opposite) will be conducted by automatically detecting the species of the model (e.g., human) and transforming it to the other species (e.g., mouse).
   ```python
   #Note `model` is modified in-place.
   model.convert()
