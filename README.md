@@ -85,16 +85,12 @@ conda install -c bioconda -c conda-forge celltypist
   ```python
   #Select the model from the above list. If the `model` argument is not provided, will default to `Immune_All_Low.pkl`.
   model = models.Model.load(model = 'Immune_All_Low.pkl')
+  #The model summary information.
+  model
   #Examine cell types contained in the model.
   model.cell_types
   #Examine genes/features contained in the model.
   model.features
-  #The stochastic gradient descent logistic regression classifier within the model.
-  model.classifier
-  #The standard scaler within the model (used to scale the input query data).
-  model.scaler
-  #The model information.
-  model.description
   ```
   </details>
 
