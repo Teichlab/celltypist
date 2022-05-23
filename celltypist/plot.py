@@ -40,7 +40,7 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
     if prediction_order is None:
         prediction_order = pred.cat.categories
     else:
-        if not np.all(np.unique(prediction_order) == np.unique(dot_size_df.index)):
+        if not np.array_equal(np.sort(prediction_order), np.sort(dot_size_df.index)):
             raise ValueError(f"🛑 Please provide a correct and comprehensive list of prediction cell types")
         prediction_order = np.array(prediction_order)
     dot_size_df = dot_size_df.loc[prediction_order]
@@ -53,7 +53,7 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
         sort_df.reference_max_pred.cat.reorder_categories([x for x in dot_size_df.index if x in sort_df.reference_max_pred.cat.categories], inplace = True)
         reference_order = sort_df.sort_values(by=['reference_max_pred', 'reference_max_score'], ascending = [True, False]).reference_order.values
     else:
-        if not np.all(np.unique(reference_order) == np.unique(dot_size_df.columns)):
+        if not np.array_equal(np.sort(reference_order), np.sort(dot_size_df.columns)):
             raise ValueError(f"🛑 Please provide a correct and comprehensive list of reference cell types/clusters")
         reference_order = np.array(reference_order)
     dot_size_df = dot_size_df[reference_order]
