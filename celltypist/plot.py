@@ -149,6 +149,9 @@ def dotplot(
     #subset
     dot_size_df = dot_size_df.loc[prediction_order, reference_order]
     dot_color_df = dot_color_df.loc[prediction_order, reference_order]
+    #column to string
+    dot_size_df.columns = dot_size_df.columns.astype(str)
+    dot_color_df.columns = dot_color_df.columns.astype(str)
     #AnnData, groupby, and var_names
     _adata = sc.AnnData(np.zeros(dot_size_df.shape))
     _adata.var_names = dot_size_df.columns
