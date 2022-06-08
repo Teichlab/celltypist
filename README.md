@@ -339,6 +339,55 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 <details>
+<summary><strong>4. Use as Docker/Singularity container</strong></summary>
+
+  ### Docker
+
+  A docker image is available from the Quay.io Container Registry as [`quay.io/teichlab/celltypist:1.0.0`](https://quay.io/repository/teichlab/celltypist?tab=tags).
+  
+  **Simple usage:**
+  ```bash
+  docker run --rm -it \
+    -v /path/to/data:/data \
+    quay.io/teichlab/celltypist:1.0.0 \
+    celltypist --indata /data/file --model Immune_All_Low.pkl --outdir /data/output
+  ```
+  **Usage with custom models:**
+  ```bash
+  docker run --rm -it \
+    -v /path/to/data:/data \
+    -v /path/to/models:/opt/celltypist/data/models \
+    quay.io/teichlab/celltypist:1.0.0 \
+    celltypist --indata /data/file --model My_Custom_Model.pkl --outdir /data/output
+  ```
+  
+  ### Singularity
+  
+  Use the `singularity pull` command to download the container from the given container registry:
+  ```bash
+  singularity pull celltypist-1.0.0.sif docker://quay.io/teichlab/celltypist:1.0.0
+  ```
+  Then run the downloaded image as a container.
+  
+  **Simple usage:**
+  ```bash
+  singularity run \
+    -B /path/to/data:/data \
+    celltypist-1.0.0.sif \
+    celltypist --indata /data/file --model Immune_All_Low.pkl --outdir /data/output
+  ```
+  **Usage with custom models:**
+  ```bash
+  singularity run \
+    -B /path/to/data:/data \
+    -B /path/to/models:/opt/celltypist/data/models \
+    celltypist-1.0.0.sif \
+    celltypist --indata /data/file --model My_Custom_Model.pkl --outdir /data/output
+  ```
+  
+</details>
+
+<details>
 <summary><strong>Supplemental guidance</strong></summary>
 
 + <details>
