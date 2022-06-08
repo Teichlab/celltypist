@@ -343,7 +343,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   ### Docker
 
-  A docker image is available from the Quay.io Registry as `quay.io/teichlab/celltypist:1.0.0`.
+  A docker image is available from the Quay.io Container Registry as [`quay.io/teichlab/celltypist:1.0.0`](https://quay.io/repository/teichlab/celltypist?tab=tags).
   
   **Simple usage:**
   ```bash
@@ -363,7 +363,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   
   ### Singularity
   
-  Use the Singularity pull command to download container from a given Docker/OCI image from a container registry:
+  Use the `singularity pull` command to download the container from the given container registry:
   ```bash
   singularity pull celltypist-1.0.0.sif docker://quay.io/teichlab/celltypist:1.0.0
   ```
