@@ -278,11 +278,12 @@ class Classifier():
                     raise ValueError(f"🛑 The number of cells in {cell_file} does not match the number of cells in {self.filename}")
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
-            self.adata.var_names_make_unique()
             if not float(self.adata.X.max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may be biased")
             if (self.adata.n_vars >= 100000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(['GAPDH', 'ACTB', 'CALM1', 'PTPRC', 'MALAT1'])) >= 1):
-                raise ValueError(f"🛑 The input matrix is detected to be a gene-by-cell matrix. Please provide a cell-by-gene matrix or add the input transpose option")
+                logger.warn(f"⚠️ The input matrix is detected to be a gene-by-cell matrix, will transpose it")
+                self.adata = self.adata.transpose()
+            self.adata.var_names_make_unique()
             sc.pp.normalize_total(self.adata, target_sum=1e4)
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X
