@@ -29,6 +29,17 @@ def _collapse_random(arr: np.ndarray) -> Union[float, np.ndarray]:
     """
     return np.random.choice(arr, 1)[0] if arr.ndim == 1 else arr[:, np.random.choice(arr.shape[1], 1)[0]]
 
+def _requests_get(url: str, timeout = 30):
+    """
+    For internal use. Make a request and raise errors (including timeout error) if it fails.
+    """
+    try:
+        r = requests.get(url, timeout = timeout)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"🛑 Cannot fetch '{url}', the error is: {e}")
+    return r
+
 class Model():
     """
     Class that wraps the logistic Classifier and the StandardScaler.
@@ -380,8 +391,8 @@ def download_model_index(only_model: bool = True) -> None:
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
     with open(get_model_path("models.json"), "wb") as f:
-        f.write(requests.get(url).content)
-    model_count = len(requests.get(url).json()["models"])
+        f.write(_requests_get(url).content)
+    model_count = len(_requests_get(url).json()["models"])
     logger.info(f"📚 Total models in list: {model_count}")
     if not only_model:
         download_models()
@@ -425,7 +436,7 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
         logger.info(f"💾 Downloading model [{idx+1}/{model_count}]: {model['filename']}")
         try:
             with open(model_path, "wb") as f:
-                f.write(requests.get(model["url"]).content)
+                f.write(_requests_get(model["url"]).content)
         except Exception as exception:
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
