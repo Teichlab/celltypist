@@ -1,0 +1,148 @@
+cff-version: 1.2.0
+title: CellTypist
+authors:
+- family-names: Xu
+  given-names: Chuan
+url: https://github.com/Teichlab/celltypist
+message: If you use this software, please cite the article from preferred-citation
+
+preferred-citation:
+  type: article
+  title: Cross-tissue immune cell analysis reveals tissue-specific features in humans
+  doi: 10.1126/science.abl5197
+  issue: '6594'
+  journal: Science
+  month: 5
+  url: https://dx.doi.org/10.1126/science.abl5197
+  volume: '376'
+  year: 2022
+  abstract: Despite their crucial role in health and disease, our knowledge of immune
+    cells within human tissues remains limited. We surveyed the immune compartment
+    of 16 tissues from 12 adult donors by single-cell RNA sequencing and VDJ sequencing
+    generating a dataset of ~360,000 cells. To systematically resolve immune cell
+    heterogeneity across tissues, we developed CellTypist, a machine learning tool
+    for rapid and precise cell type annotation. Using this approach, combined with
+    detailed curation, we determined the tissue distribution of finely phenotyped
+    immune cell types, revealing hitherto unappreciated tissue-specific features and
+    clonal architecture of T and B cells. Our multitissue approach lays the foundation
+    for identifying highly resolved immune cell types by leveraging a common reference
+    dataset, tissue-integrated expression analysis, and antigen receptor sequencing.
+  authors:
+  - family-names: Domínguez Conde
+    given-names: C.
+    orcid: https://orcid.org/0000-0002-8684-4655
+  - family-names: Xu
+    given-names: C.
+    orcid: https://orcid.org/0000-0002-6265-999X
+  - family-names: Jarvis
+    given-names: L. B.
+    orcid: https://orcid.org/0000-0002-5760-0125
+  - family-names: Rainbow
+    given-names: D. B.
+    orcid: https://orcid.org/0000-0003-4931-3289
+  - family-names: Wells
+    given-names: S. B.
+    orcid: https://orcid.org/0000-0001-5428-0683
+  - family-names: Gomes
+    given-names: T.
+    orcid: https://orcid.org/0000-0003-1333-0191
+  - family-names: Howlett
+    given-names: S. K.
+    orcid: https://orcid.org/0000-0003-0504-4937
+  - family-names: Suchanek
+    given-names: O.
+  - family-names: Polanski
+    given-names: K.
+    orcid: https://orcid.org/0000-0002-2586-9576
+  - family-names: King
+    given-names: H. W.
+    orcid: https://orcid.org/0000-0001-5972-8926
+  - family-names: Mamanova
+    given-names: L.
+    orcid: https://orcid.org/0000-0003-1463-8622
+  - family-names: Huang
+    given-names: N.
+    orcid: https://orcid.org/0000-0001-8849-038X
+  - family-names: Szabo
+    given-names: P. A.
+    orcid: https://orcid.org/0000-0003-1603-761X
+  - family-names: Richardson
+    given-names: L.
+    orcid: https://orcid.org/0000-0001-9064-1271
+  - family-names: Bolt
+    given-names: L.
+    orcid: https://orcid.org/0000-0001-7293-0774
+  - family-names: Fasouli
+    given-names: E. S.
+    orcid: https://orcid.org/0000-0003-1621-3396
+  - family-names: Mahbubani
+    given-names: K. T.
+    orcid: https://orcid.org/0000-0002-1327-2334
+  - family-names: Prete
+    given-names: M.
+    orcid: https://orcid.org/0000-0002-5946-821X
+  - family-names: Tuck
+    given-names: L.
+    orcid: https://orcid.org/0000-0002-1837-7549
+  - family-names: Richoz
+    given-names: N.
+  - family-names: Tuong
+    given-names: Z. K.
+    orcid: https://orcid.org/0000-0002-6735-6808
+  - family-names: Campos
+    given-names: L.
+    orcid: https://orcid.org/0000-0003-2445-7120
+  - family-names: Mousa
+    given-names: H. S.
+    orcid: https://orcid.org/0000-0002-8327-7114
+  - family-names: Needham
+    given-names: E. J.
+    orcid: https://orcid.org/0000-0001-7042-7462
+  - family-names: Pritchard
+    given-names: S.
+  - family-names: Li
+    given-names: T.
+    orcid: https://orcid.org/0000-0002-8240-4476
+  - family-names: Elmentaite
+    given-names: R.
+    orcid: https://orcid.org/0000-0001-7366-5466
+  - family-names: Park
+    given-names: J.
+    orcid: https://orcid.org/0000-0002-1687-2423
+  - family-names: Rahmani
+    given-names: E.
+  - family-names: Chen
+    given-names: D.
+    orcid: https://orcid.org/0000-0002-9710-1857
+  - family-names: Menon
+    given-names: D. K.
+    orcid: https://orcid.org/0000-0002-3228-9692
+  - family-names: Bayraktar
+    given-names: O. A.
+  - family-names: James
+    given-names: L. K.
+    orcid: https://orcid.org/0000-0002-2252-4636
+  - family-names: Meyer
+    given-names: K. B.
+    orcid: https://orcid.org/0000-0001-5906-1498
+  - family-names: Yosef
+    given-names: N.
+    orcid: https://orcid.org/0000-0001-9004-1225
+  - family-names: Clatworthy
+    given-names: M. R.
+    orcid: https://orcid.org/0000-0002-3340-9828
+  - family-names: Sims
+    given-names: P. A.
+    orcid: https://orcid.org/0000-0002-3921-4837
+  - family-names: Farber
+    given-names: D. L.
+    orcid: https://orcid.org/0000-0001-8236-9183
+  - family-names: Saeb-Parsy
+    given-names: K.
+    orcid: https://orcid.org/0000-0002-0633-3696
+  - family-names: Jones
+    given-names: J. L.
+    orcid: https://orcid.org/0000-0003-4974-1371
+  - family-names: Teichmann
+    given-names: S. A.
+    orcid: https://orcid.org/0000-0002-6294-6366
