@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 title: CellTypist
 authors:
-- family-names: Chuan
-  given-names: Xu
+- family-names: Xu
+  given-names: Chuan
 url: https://github.com/Teichlab/celltypist
 message: If you use this software, please cite the article from preferred-citation
 
