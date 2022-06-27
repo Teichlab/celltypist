@@ -347,7 +347,7 @@ class Classifier():
         lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
 
         logger.info(f"⚖️ Scaling input data")
-        means_ = self.model.scaler.mean_[lr_idx]
+        means_ = self.model.scaler.mean_[lr_idx] if self.model.scaler.with_mean else 0
         sds_ = self.model.scaler.scale_[lr_idx]
         self.indata = (self.indata[:, k_x_idx] - means_) / sds_
         self.indata[self.indata > 10] = 10

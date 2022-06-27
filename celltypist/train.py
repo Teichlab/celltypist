@@ -152,6 +152,7 @@ def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
+          with_mean: bool = True,
           check_expression: bool = True,
           #LR param
           C: float = 1.0, solver: Optional[str] = None, max_iter: int = 1000, n_jobs: Optional[int] = None,
@@ -187,6 +188,9 @@ def train(X = None,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
+    with_mean
+        Whether to subtract the mean values during data scaling. Setting to `False` can lower the memory usage when the input is a sparse matrix but possibly reduce the model performance.
+        (Default: `True`)
     check_expression
         Check whether the expression matrix in the input data is supplied as required.
         Except the case where a path to the raw count table file is specified, all other inputs for `X` should be in log1p normalized expression to 10000 counts per cell.
@@ -268,7 +272,10 @@ def train(X = None,
     #prepare
     logger.info("🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
-    indata = _to_array(indata)
+    if isinstance(indata, pd.DataFrame):
+        indata = indata.values
+    elif with_mean and isinstance(indata, spmatrix):
+        indata = indata.toarray()
     labels = np.array(labels)
     genes = np.array(genes)
     #check
@@ -280,13 +287,15 @@ def train(X = None,
         raise ValueError(f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
     #filter
     flag = indata.sum(axis = 0) == 0
+    if isinstance(flag, np.matrix):
+        flag = flag.A1
     if flag.sum() > 0:
         logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
         #indata = indata[:, ~flag]
         genes = genes[~flag]
     #scaler
     logger.info(f"⚖️ Scaling input data")
-    scaler = StandardScaler()
+    scaler = StandardScaler(with_mean = with_mean)
     indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
     indata[indata > 10] = 10
     #classifier
@@ -315,6 +324,7 @@ def train(X = None,
         scaler.n_features_in_ = len(gene_index)
     #model finalization
     classifier.features = genes
+    classifier.n_features_in_ = len(genes)
     if not date:
         date = str(datetime.now())
     description = {'date': date, 'details': details, 'url': url, 'source': source, 'version': version, 'number_celltypes': len(classifier.classes_)}
