@@ -189,7 +189,7 @@ def train(X = None,
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
     with_mean
-        Whether to subtract the mean values during data scaling. Setting to `False` can lower the memory usage when the input is a sparse matrix but possibly reduce the model performance.
+        Whether to subtract the mean values during data scaling. Setting to `False` can lower the memory usage when the input is a sparse matrix but may slightly reduce the model performance.
         (Default: `True`)
     check_expression
         Check whether the expression matrix in the input data is supplied as required.

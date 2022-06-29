@@ -476,6 +476,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   new_model = celltypist.train(expression_input_subset, labels = label_input, genes = gene_input, check_expression = False)
   ```
   The downstream workflow is the same as that from one-pass data training.
+
+  ### General parameters relating to runtime and RAM usage
+  `max_iter`: when `celltypist.train` does not converge for a long time, setting `max_iter` to a lower number (default to 1000) can reduce runtime at a possible cost of a suboptimal model.  
+    
+  `with_mean`: when the training data is a sparse matrix, setting `with_mean = False` will preserve sparsity by skipping the step of subtraction by the mean during scaling, and thus lower the RAM usage at the cost of a suboptimal model.  
+    
+  `n_jobs`: Number of CPUs used. This argument is not applicable to mini-batch training.
   </details>
 
 + <details>
