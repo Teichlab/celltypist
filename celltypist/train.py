@@ -298,6 +298,9 @@ def train(X = None,
     scaler = StandardScaler(with_mean = with_mean)
     indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
     indata[indata > 10] = 10
+    #sklearn (Cython) does not support very large sparse matrices for the time being
+    if isinstance(indata, spmatrix) and ((indata.indices.dtype == 'int64') or (indata.indptr.dtype == 'int64')):
+        indata = indata.toarray()
     #classifier
     if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
