@@ -146,6 +146,11 @@ def dotplot(
             raise ValueError(f"🛑 Please provide the `filter_prediction` between 0 and 1")
         keep_pred = dot_size_df.max(axis = 1) >= filter_prediction
         prediction_order = dot_size_df.index[keep_pred]
+    #in case reference_order or prediction_order is string
+    if isinstance(reference_order, str):
+        reference_order = [reference_order]
+    if isinstance(prediction_order, str):
+        prediction_order = [prediction_order]
     #subset
     dot_size_df = dot_size_df.loc[prediction_order, reference_order]
     dot_color_df = dot_color_df.loc[prediction_order, reference_order]
