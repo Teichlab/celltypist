@@ -279,7 +279,7 @@ class Classifier():
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
             if not float(self.adata.X.max()).is_integer():
-                logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may be biased")
+                logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may not be accurate")
             if (self.adata.n_vars >= 100000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(['GAPDH', 'ACTB', 'CALM1', 'PTPRC', 'MALAT1'])) >= 1):
                 logger.warn(f"⚠️ The input matrix is detected to be a gene-by-cell matrix, will transpose it")
                 self.adata = self.adata.transpose()
@@ -292,20 +292,22 @@ class Classifier():
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
             self.adata.var_names_make_unique()
-            if self.adata.X.min() < 0:
-                logger.info("👀 Detected scaled expression in the input data, will try the `.raw` attribute")
+            if (self.adata.X.min() < 0) or (self.adata.X.max() > np.log1p(10000)):
+                logger.info("👀 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell; will try the `.raw` attribute")
                 try:
                     self.indata = self.adata.raw.X
                     self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
                 except Exception as e:
                     raise Exception(f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
+                if (self.indata.min() < 0) or (self.indata.max() > np.log1p(10000)):
+                    raise ValueError("🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
             else:
                 self.indata = self.adata.X
                 self.indata_genes = self.adata.var_names
                 self.indata_names = self.adata.obs_names
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
-                raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
+                logger.warn(f"⚠️ Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
         else:
             raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
 
