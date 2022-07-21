@@ -66,8 +66,8 @@ def dotplot(
             predictions: AnnotationResult,
             use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
             use_as_prediction: str = 'majority_voting',
-            prediction_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
-            reference_order: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+            prediction_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+            reference_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
             filter_prediction: float = 0.0,
             #color
             cmap: str = 'RdBu_r',
