@@ -30,7 +30,20 @@ Welcome to CellTypist's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :caption: API:
+   :hidden:
+
+   celltypist.train
+   celltypist.annotate
+   celltypist.dotplot
+   celltypist.models.download_models
+   celltypist.samples.downsample_adata
+
+.. toctree::
+   :maxdepth: 2
    :caption: Package organization:
    :hidden:
 
-   celltypist
+   celltypist.classifier.AnnotationResult
+   celltypist.classifier.Classifier
+   celltypist.models.Model
