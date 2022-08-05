@@ -102,7 +102,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
   input_file = celltypist.samples.get_sample_csv()
   ```
-  Assign the cell type labels from the model to the input test cells using the [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.html#module-celltypist.annotate) function.
+  Assign the cell type labels from the model to the input test cells using the [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.annotate.html) function.
   ```python
   #Predict the identity of each input cell.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
@@ -137,14 +137,14 @@ conda install -c bioconda -c conda-forge celltypist
   #Query cell will get multiple label outputs (concatenated by '|') if more than one cell type passes the probability cutoff.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', mode = 'prob match', p_thres = 0.5)
   ```
-  The three tables in the `AnnotationResult` (`.predicted_labels`, `.decision_matrix` and `.probability_matrix`) can be written out to local files (tables) by the function [to_table](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_table), specifying the target `folder` for storage and the `prefix` common to each table.
+  The three tables in the `AnnotationResult` (`.predicted_labels`, `.decision_matrix` and `.probability_matrix`) can be written out to local files (tables) by the function [to_table](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_table), specifying the target `folder` for storage and the `prefix` common to each table.
   ```python
   #Export the three results to csv tables.
   predictions.to_table(folder = '/path/to/a/folder', prefix = '')
   #Alternatively, export the three results to a single Excel table (.xlsx).
   predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
   ```
-  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_adata). The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).  
+  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_adata). The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).  
   
   Confidence scores of query cells can be inserted by specifying `insert_conf = True` (which is also the default behavior of `to_adata`). The scores correspond to the probabilities of cell predictions based on either `predictions.predicted_labels.predicted_labels` or `predictions.predicted_labels.majority_voting` (see `1.7.`), which can be specified by `insert_conf_by` (default to the former, `predicted_labels`).
   ```python
@@ -162,7 +162,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Get an `AnnData` with predicted labels, confidence scores, and probability matrix (recommended).
   adata = predictions.to_adata(insert_labels = True, insert_conf = True, insert_prob = True)
   ```
-  You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function [to_plots](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.classifier.AnnotationResult.to_plots) to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
+  You can now manipulate this object with any functions or modules applicable to `AnnData`. Actually, CellTypist provides a quick function [to_plots](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_plots) to visualise your `AnnotationResult` and store the figures without the need of explicitly transforming it into an `AnnData`.
   ```python
   #Visualise the predicted cell types overlaid onto the UMAP.
   predictions.to_plots(folder = '/path/to/a/folder', prefix = '')
@@ -200,7 +200,7 @@ conda install -c bioconda -c conda-forge celltypist
   #`use_as_prediction` can be also set as `majority_voting` (see `1.7.`).
   celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotation', use_as_prediction = 'predicted_labels')
   ```
-  Check [celltypist.dotplot](https://celltypist.readthedocs.io/en/latest/celltypist.html#module-celltypist.plot) for other parameters controlling visualisation details of this plot.
+  Check [celltypist.dotplot](https://celltypist.readthedocs.io/en/latest/celltypist.dotplot.html) for other parameters controlling visualisation details of this plot.
   </details>
 
 + <details>
@@ -404,7 +404,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
      3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
   
   ### One-pass data training
-  Derive a new model by training the data using the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.html) function:
+  Derive a new model by training the data using the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) function:
   ```python
   #Training a CellTypist model.
   new_model = celltypist.train(expression_input, labels = label_input, genes = gene_input)
@@ -434,7 +434,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   By selecting part of cells for training (default to 1,000,000 cells with possible duplications, `epochs` x `batch_size` x `batch_number`), training time can be again reduced and the performance of the derived model is shown to persist as compared to the above two methods. Since some rare cell types may be undersampled during this procedure, you can pass in the `balance_cell_type = True` argument to sample rare cell types with a higher probability, ensuring close-to-even cell type distributions in mini-batches (subject to the maximum number of cells that can be provided by a given cell type).
     
-  There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.html) for more information.  
+  There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) for more information.  
     
   The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
     
@@ -496,7 +496,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   model = models.Model.load('Immune_All_Low.pkl')
   ```
-  This model can be converted to a mouse equivalent through the [convert](https://celltypist.readthedocs.io/en/latest/celltypist.html#celltypist.models.Model.convert) method. By default, a human-mouse conversion (or the opposite) will be conducted by automatically detecting the species of the model (e.g., human) and transforming it to the other species (e.g., mouse).
+  This model can be converted to a mouse equivalent through the [convert](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html#celltypist.models.Model.convert) method. By default, a human-mouse conversion (or the opposite) will be conducted by automatically detecting the species of the model (e.g., human) and transforming it to the other species (e.g., mouse).
   ```python
   #Note `model` is modified in-place.
   model.convert()
