@@ -169,12 +169,14 @@ class AnnotationResult():
         for column in self.predicted_labels:
             sc.pl.umap(self.adata, color = column, legend_loc = 'on data', show = False, legend_fontweight = 'normal', title = column.replace('_', ' '))
             plt.savefig(os.path.join(folder, prefix + column + '.' + format))
+            plt.close()
         if plot_probability:
             for column in self.probability_matrix:
                 self.adata.obs['decision score'] = self.decision_matrix[column]
                 self.adata.obs['probability'] = self.probability_matrix[column]
                 sc.pl.umap(self.adata, color = ['decision score', 'probability'], show = False)
                 plt.savefig(os.path.join(folder, prefix + column.replace('/','_') + '.' + format))
+                plt.close()
             self.adata.obs.drop(columns=['decision score', 'probability'], inplace=True)
 
     def to_table(self, folder: str, prefix: str = '', xlsx: bool = False) -> None:
