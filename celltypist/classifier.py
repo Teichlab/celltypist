@@ -316,7 +316,7 @@ class Classifier():
                 self.indata_genes = self.adata.var_names
                 self.indata_names = self.adata.obs_names
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
-                logger.warn(f"⚠️ Invalid expression matrix, expect all genes and log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
+                logger.warn(f"⚠️ Warning: invalid expression matrix, expect all genes and log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
         else:
             raise ValueError(
                     "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")

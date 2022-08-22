@@ -34,7 +34,7 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
             raise ValueError(
                     f"🛑 Length of `use_as_reference` ({len(refer)}) provided does not match the number of cells ({len(pred)})")
     #score
-    score = [row[pred[index]] for index, row in predictions.probability_matrix.iterrows()]
+    score = [(row[pred[index]] if pred[index] in row.index else row.max()) for index, row in predictions.probability_matrix.iterrows()]
     #df x 2
     df = pd.DataFrame(dict(pred = pred, refer = refer, score = score))
     dot_size_df = df.pivot_table(values = 'score', index = 'pred', columns = 'refer', aggfunc = len, fill_value = 0, dropna = False, observed = True)
