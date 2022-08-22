@@ -1,6 +1,6 @@
-from . import classifier, models, logger, samples
-from .annotate import *
-from .train import *
-from .plot import *
+from . import classifier, models, samples
+from .annotate import annotate, Model
+from .train import train
+from .plot import dotplot
 
 __version__ = "1.1.0"
