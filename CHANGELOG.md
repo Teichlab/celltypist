@@ -1,5 +1,12 @@
 # Changelog
 *********************************
+## CellTypist 1.2.0 (August 22, 2022)
+- Report all model url request errors (including timeout error) [#28](https://github.com/Teichlab/celltypist/issues/28)
+- Add `with_mean` parameter in [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) to optimize RAM usage by not subtracting the mean [#29](https://github.com/Teichlab/celltypist/issues/29)
+- Raise warning instead of error during prediction when the input expression matrix contains only a subset of genes
+- Reformat [docs](https://celltypist.readthedocs.io/en/latest/?badge=latest#) with independent pages for main functions
+- Support dot plot when the prediction comes from the 'prob match' mode [#33](https://github.com/Teichlab/celltypist/issues/33)
+- Disable hard-coded `max_iter` in [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) with default values varying according to dataset sizes
 ## CellTypist 1.1.0 (June 09, 2022)
 - Add citation (PMID: 35549406)
 - Add Docker/Singularity container
