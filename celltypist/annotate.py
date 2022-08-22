@@ -97,8 +97,10 @@ def annotate(filename: Union[AnnData,str] = "",
                 with open(over_clustering, 'rt') as f:
                     over_clustering = [x.strip() for x in f.readlines()]
             except Exception as e:
-                raise Exception(f"🛑 {e}")
+                raise Exception(
+                        f"🛑 {e}")
     if len(over_clustering) != clf.adata.n_obs:
-        raise ValueError(f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
+        raise ValueError(
+                f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
     #majority voting
     return classifier.Classifier.majority_vote(predictions, over_clustering, min_prop = min_prop)

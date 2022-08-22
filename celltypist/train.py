@@ -19,7 +19,8 @@ def _to_vector(_vector_or_file):
         try:
             return pd.read_csv(_vector_or_file, header=None)[0].values
         except Exception as e:
-            raise Exception(f"🛑 {e}")
+            raise Exception(
+                    f"🛑 {e}")
     else:
         return _vector_or_file
 
@@ -36,14 +37,16 @@ def _to_array(_array_like) -> np.ndarray:
     elif isinstance(_array_like, np.ndarray):
         return _array_like
     else:
-        raise ValueError(f"🛑 Please provide a valid array-like object as input")
+        raise ValueError(
+                f"🛑 Please provide a valid array-like object as input")
 
 def _prepare_data(X, labels, genes, transpose) -> tuple:
     """
     For internal use. Prepare data for celltypist training.
     """
     if (X is None) or (labels is None):
-        raise Exception("🛑 Missing training data and/or training labels. Please provide both arguments")
+        raise Exception(
+                "🛑 Missing training data and/or training labels. Please provide both arguments")
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X) if isinstance(X, str) else X
         adata.var_names_make_unique()
@@ -53,7 +56,8 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
                 indata = adata.raw.X
                 genes = adata.raw.var_names
             except Exception as e:
-                raise Exception(f"🛑 Fail to use the .raw attribute in the input object. {e}")
+                raise Exception(
+                        f"🛑 Fail to use the .raw attribute in the input object. {e}")
         else:
             indata = adata.X
             genes = adata.var_names
@@ -67,10 +71,12 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
             adata = adata.transpose()
         if X.endswith(('.mtx', '.mtx.gz')):
             if genes is None:
-                raise Exception("🛑 Missing `genes`. Please provide this argument together with the input mtx file")
+                raise Exception(
+                        "🛑 Missing `genes`. Please provide this argument together with the input mtx file")
             genes = _to_vector(genes)
             if len(genes) != adata.n_vars:
-                raise ValueError(f"🛑 The number of genes provided does not match the number of genes in {X}")
+                raise ValueError(
+                        f"🛑 The number of genes provided does not match the number of genes in {X}")
             adata.var_names = np.array(genes)
         adata.var_names_make_unique()
         if not float(adata.X.max()).is_integer():
@@ -81,7 +87,8 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
         genes = adata.var_names
         labels = _to_vector(labels)
     elif isinstance(X, str):
-        raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
+        raise ValueError(
+                "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
     else:
         logger.info("👀 The input training data is processed as an array-like object")
         indata = X
@@ -91,7 +98,8 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
             genes = indata.columns
         else:
             if genes is None:
-                raise Exception("🛑 Missing `genes`. Please provide this argument together with the input training data")
+                raise Exception(
+                        "🛑 Missing `genes`. Please provide this argument together with the input training data")
             genes = _to_vector(genes)
         labels = _to_vector(labels)
     return indata, labels, genes
@@ -104,7 +112,8 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
     if solver is None:
         solver = 'sag' if no_cells>50000 else 'lbfgs'
     elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
-        raise ValueError(f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, and `'saga'`")
+        raise ValueError(
+                f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, and `'saga'`")
     logger.info(f"🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
@@ -130,7 +139,8 @@ def _SGDClassifier(indata, labels,
         if no_cells < 10000:
             logger.warn(f"⚠️ Warning: the number of cells ({no_cells}) is not big enough to conduct a proper mini-batch training. You may consider using traditional SGD classifier (mini_batch = False)")
         if no_cells <= batch_size:
-            raise ValueError(f"🛑 Number of cells ({no_cells}) is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
+            raise ValueError(
+                    f"🛑 Number of cells ({no_cells}) is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
         no_cells_sample = min([batch_number*batch_size, no_cells])
         starts = np.arange(0, no_cells_sample, batch_size)
         if balance_cell_type:
@@ -280,11 +290,14 @@ def train(X = None,
     genes = np.array(genes)
     #check
     if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
-        raise ValueError("🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
+        raise ValueError(
+                "🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
     if len(labels) != indata.shape[0]:
-        raise ValueError(f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+        raise ValueError(
+                f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
     if len(genes) != indata.shape[1]:
-        raise ValueError(f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
+        raise ValueError(
+                f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
     #filter
     flag = indata.sum(axis = 0) == 0
     if isinstance(flag, np.matrix):
@@ -310,7 +323,8 @@ def train(X = None,
     if feature_selection:
         logger.info(f"🔎 Selecting features")
         if len(genes) <= top_genes:
-            raise ValueError(f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
+            raise ValueError(
+                    f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
         gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
         gene_index = np.unique(gene_index)
         logger.info(f"🧬 {len(gene_index)} features are selected")

@@ -111,10 +111,12 @@ class AnnotationResult():
                 self.adata.obs[f"{prefix}conf_score"] = self.probability_matrix.max(axis=1).values
             elif insert_conf_by == 'majority_voting':
                 if insert_conf_by not in self.predicted_labels:
-                    raise KeyError(f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
+                    raise KeyError(
+                            f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `insert_conf_by = 'predicted_labels'` instead")
                 self.adata.obs[f"{prefix}conf_score"] = [row[self.predicted_labels.majority_voting[index]] for index, row in self.probability_matrix.iterrows()]
             else:
-                raise KeyError(f"🛑 Unrecognized `insert_conf_by` value ('{insert_conf_by}'), should be one of `'predicted_labels'` or `'majority_voting'`")
+                raise KeyError(
+                        f"🛑 Unrecognized `insert_conf_by` value ('{insert_conf_by}'), should be one of `'predicted_labels'` or `'majority_voting'`")
         if insert_prob:
             self.adata.obs[[f"{prefix}{x}" for x in self.probability_matrix.columns]] = self.probability_matrix
         elif insert_decision:
@@ -149,7 +151,8 @@ class AnnotationResult():
             4) **name of each cell type**, which represents the decision scores and probabilities of a given cell type distributed across cells overlaid onto the UMAP.
         """
         if not os.path.isdir(folder):
-            raise FileNotFoundError(f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
+            raise FileNotFoundError(
+                    f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
         if 'X_umap' in self.adata.obsm:
             logger.info("👀 Detected existing UMAP coordinates, will plot the results accordingly")
         elif 'connectivities' in self.adata.obsp:
@@ -194,7 +197,8 @@ class AnnotationResult():
             Depending on `xlsx`, return table(s) of predicted labels, decision matrix and probability matrix.
         """
         if not os.path.isdir(folder):
-            raise FileNotFoundError(f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
+            raise FileNotFoundError(
+                    f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
         if not xlsx:
             self.predicted_labels.to_csv(os.path.join(folder, f"{prefix}predicted_labels.csv"))
             self.decision_matrix.to_csv(os.path.join(folder, f"{prefix}decision_matrix.csv"))
@@ -269,13 +273,16 @@ class Classifier():
                 self.adata = self.adata.transpose()
             if self.filename.endswith(('.mtx', '.mtx.gz')):
                 if (gene_file is None) or (cell_file is None):
-                    raise FileNotFoundError("🛑 Missing `gene_file` and/or `cell_file`. Please provide both arguments together with the input mtx file")
+                    raise FileNotFoundError(
+                            "🛑 Missing `gene_file` and/or `cell_file`. Please provide both arguments together with the input mtx file")
                 genes_mtx = pd.read_csv(gene_file, header=None)[0].values
                 cells_mtx = pd.read_csv(cell_file, header=None)[0].values
                 if len(genes_mtx) != self.adata.n_vars:
-                    raise ValueError(f"🛑 The number of genes in {gene_file} does not match the number of genes in {self.filename}")
+                    raise ValueError(
+                            f"🛑 The number of genes in {gene_file} does not match the number of genes in {self.filename}")
                 if len(cells_mtx) != self.adata.n_obs:
-                    raise ValueError(f"🛑 The number of cells in {cell_file} does not match the number of cells in {self.filename}")
+                    raise ValueError(
+                            f"🛑 The number of cells in {cell_file} does not match the number of cells in {self.filename}")
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
             if not float(self.adata.X.max()).is_integer():
@@ -299,9 +306,11 @@ class Classifier():
                     self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
                 except Exception as e:
-                    raise Exception(f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
+                    raise Exception(
+                            f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
                 if (self.indata.min() < 0) or (self.indata.max() > np.log1p(10000)):
-                    raise ValueError("🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
+                    raise ValueError(
+                            "🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
             else:
                 self.indata = self.adata.X
                 self.indata_genes = self.adata.var_names
@@ -309,7 +318,8 @@ class Classifier():
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
                 logger.warn(f"⚠️ Invalid expression matrix, expect all genes and log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
         else:
-            raise ValueError("🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
+            raise ValueError(
+                    "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
 
         logger.info(f"🔬 Input data has {self.indata.shape[0]} cells and {len(self.indata_genes)} genes")
 
@@ -340,7 +350,8 @@ class Classifier():
         logger.info(f"🔗 Matching reference genes in the model")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
         if k_x.sum() == 0:
-            raise ValueError(f"🛑 No features overlap with the model. Please provide gene symbols")
+            raise ValueError(
+                    f"🛑 No features overlap with the model. Please provide gene symbols")
         else:
             logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]

@@ -37,7 +37,8 @@ def _requests_get(url: str, timeout = 30):
         r = requests.get(url, timeout = timeout)
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        raise Exception(f"🛑 Cannot fetch '{url}', the error is: {e}")
+        raise Exception(
+                f"🛑 Cannot fetch '{url}', the error is: {e}")
     return r
 
 class Model():
@@ -88,13 +89,15 @@ class Model():
         if model in get_all_models():
             model = get_model_path(model)
         if not os.path.isfile(model):
-            raise FileNotFoundError(f"🛑 No such file: {model}")
+            raise FileNotFoundError(
+                    f"🛑 No such file: {model}")
         with open(model, "rb") as fh:
             try:
                 pkl_obj = pickle.load(fh)
                 return Model(pkl_obj['Model'], pkl_obj['Scaler_'], pkl_obj['description'])
             except Exception as exception:
-                raise Exception(f"🛑 Invalid model: {model}. {exception}")
+                raise Exception(
+                        f"🛑 Invalid model: {model}. {exception}")
 
     @property
     def cell_types(self) -> np.ndarray:
@@ -151,7 +154,8 @@ class Model():
             labs[labs == ''] = 'Unassigned'
             return scores, probs, labs
         else:
-            raise ValueError(f"🛑 Unrecognized `mode` value, should be one of `'best match'` or `'prob match'`")
+            raise ValueError(
+                    f"🛑 Unrecognized `mode` value, should be one of `'best match'` or `'prob match'`")
 
     def write(self, file: str) -> None:
         """Write out the model."""
@@ -181,7 +185,8 @@ class Model():
             A list of marker genes for the query cell type.
         """
         if cell_type not in self.cell_types:
-            raise ValueError(f"🛑 '{cell_type}' is not found. Please provide a valid cell type name")
+            raise ValueError(
+                    f"🛑 '{cell_type}' is not found. Please provide a valid cell type name")
         if len(self.cell_types) == 2:
             coef_vector = self.classifier.coef_[0] if cell_type == self.cell_types[1] else -self.classifier.coef_[0]
         else:
@@ -225,7 +230,8 @@ class Model():
         """
         map_file = _get_sample_data('Ensembl105_Human2Mouse_Genes.csv') if map_file is None else map_file
         if not os.path.isfile(map_file):
-            raise FileNotFoundError(f"🛑 No such file: {map_file}")
+            raise FileNotFoundError(
+                    f"🛑 No such file: {map_file}")
         #with and without headers are both ok -> real headers become fake genes and are removed afterwards
         map_content = pd.read_csv(map_file, sep = sep, header = None)
         map_content.dropna(axis = 0, inplace = True)
@@ -238,15 +244,18 @@ class Model():
             convert_to = 1 - convert_from
         elif convert_from is None:
             if convert_to not in [0, 1]:
-                raise ValueError(f"🛑 `convert_to` should be either 0 or 1")
+                raise ValueError(
+                        f"🛑 `convert_to` should be either 0 or 1")
             convert_from = 1 - convert_to
         elif convert_to is None:
             if convert_from not in [0, 1]:
-                raise ValueError(f"🛑 `convert_from` should be either 0 or 1")
+                raise ValueError(
+                        f"🛑 `convert_from` should be either 0 or 1")
             convert_to = 1 - convert_from
         else:
             if {convert_from, convert_to} != {0, 1}:
-                raise ValueError(f"🛑 `convert_from` and `convert_to` should be 0 (or 1) and 1 (or 0)")
+                raise ValueError(
+                        f"🛑 `convert_from` and `convert_to` should be 0 (or 1) and 1 (or 0)")
         #filter
         map_content = map_content[map_content[convert_from].isin(self.features)]
         if unique_only:
@@ -264,7 +273,8 @@ class Model():
             self.scaler.scale_ = self.scaler.scale_[index_from]
         else:
             if collapse not in ['average', 'random']:
-                raise ValueError(f"🛑 Unrecognized `collapse` value, should be one of `'average'` or `'random'`")
+                raise ValueError(
+                        f"🛑 Unrecognized `collapse` value, should be one of `'average'` or `'random'`")
             if collapse == 'random':
                 np.random.seed(random_state)
             collapse_func = _collapse_mean if collapse == 'average' else _collapse_random
@@ -421,7 +431,8 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
         provided_no = len(model_list)
         filtered_no = len(models_json["models"])
         if filtered_no == 0:
-            raise ValueError(f"🛑 No models match the celltypist model repertoire. Please provide valid model names")
+            raise ValueError(
+                    f"🛑 No models match the celltypist model repertoire. Please provide valid model names")
         elif provided_no == filtered_no:
             logger.info(f"💾 Total models to download: {provided_no}")
         else:
