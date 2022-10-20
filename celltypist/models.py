@@ -116,6 +116,8 @@ class Model():
                 base += f"\n    {x}: {self.description[x]}"
         if len(self.cell_types) == 2:
             base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
+        elif len(self.cell_types) == 3:
+            base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}, {self.cell_types[2]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
         else:
             base += f"\n    cell types: {self.cell_types[0]}, {self.cell_types[1]}, ..., {self.cell_types[-1]}\n    features: {self.features[0]}, {self.features[1]}, ..., {self.features[-1]}"
         return base
