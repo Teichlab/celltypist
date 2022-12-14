@@ -1,5 +1,7 @@
 # Changelog
 *********************************
+## CellTypist 1.3.0 (December 14, 2022)
+- Transfer numpy matrix to array during prediction for compatibility with sklearn >= 1.0 [#50](https://github.com/Teichlab/celltypist/issues/50)
 ## CellTypist 1.2.0 (August 22, 2022)
 - Report all model url request errors (including timeout error) [#28](https://github.com/Teichlab/celltypist/issues/28)
 - Add `with_mean` parameter in [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) to optimize RAM usage by not subtracting the mean [#29](https://github.com/Teichlab/celltypist/issues/29)
