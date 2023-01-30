@@ -3,17 +3,22 @@
 [![Python Versions](https://img.shields.io/badge/python-3.6+-brightgreen.svg)](https://pypi.org/project/celltypist) [![Documentation Status](https://readthedocs.org/projects/celltypist/badge/?version=latest)](https://celltypist.readthedocs.io/en/latest/?badge=latest)
 
 CellTypist is an automated tool for cell type classification, harmonisation, and integration.
-- classification: transfer cell type labels from the reference to query dataset
-- harmonisation: match and harmonise cell types defined by independent datasets
-- integration: integrate cell and cell types with supervision from harmonisation
+- _classification_: transfer cell type labels from the reference to query dataset
+- _harmonisation_: match and harmonise cell types defined by independent datasets
+- _integration_: integrate cell and cell types with supervision from harmonisation
 
 # CellTypist website
 Information of CellTypist can be also found in our CellTypist portal. [![Website www.celltypist.org](https://img.shields.io/website-up-down-brightgreen-red/http/shields.io.svg)](https://www.celltypist.org/)
 
 # Interactive tutorials
+### Classification
 [Using CellTypist for cell type classification ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/docs/notebook/celltypist_tutorial.ipynb)  
 [Using CellTypist for multi-label classification ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/docs/notebook/celltypist_tutorial_ml.ipynb)  
 [Best practice in large-scale cross-dataset label transfer using CellTypist ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/docs/notebook/celltypist_tutorial_cv.ipynb)
+### Harmonisation
+[Using CellTypist for cell type harmonisation ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/docs/notebook/celltypist_tutorial_harmonisation.ipynb)
+### Integration
+[Using CellTypist for annotation-aware data integration ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Teichlab/celltypist/blob/main/docs/notebook/celltypist_tutorial_integration.ipynb)
 
 # Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
