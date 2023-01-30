@@ -2,7 +2,10 @@
 
 [![Python Versions](https://img.shields.io/badge/python-3.6+-brightgreen.svg)](https://pypi.org/project/celltypist) [![Documentation Status](https://readthedocs.org/projects/celltypist/badge/?version=latest)](https://celltypist.readthedocs.io/en/latest/?badge=latest)
 
-CellTypist is an automated cell type annotation tool for scRNA-seq datasets on the basis of logistic regression classifiers optimised by the stochastic gradient descent algorithm. CellTypist allows for cell prediction using either built-in (with a current focus on immune sub-populations) or custom models, in order to assist in the accurate classification of different cell types and subtypes.
+CellTypist is an automated tool for cell type classification, harmonisation, and integration.
+- classification: transfer cell type labels from the reference to query dataset
+- harmonisation: match and harmonise cell types defined by independent datasets
+- integration: integrate cell and cell types with supervision from harmonisation
 
 # CellTypist website
 Information of CellTypist can be also found in our CellTypist portal. [![Website www.celltypist.org](https://img.shields.io/website-up-down-brightgreen-red/http/shields.io.svg)](https://www.celltypist.org/)

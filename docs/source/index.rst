@@ -9,12 +9,12 @@ Welcome to CellTypist's documentation!
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
    :start-line: 2
-   :end-line: 8
+   :end-line: 11
 
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
-   :start-line: 14
-   :end-line: 24
+   :start-line: 17
+   :end-line: 27
 
 .. include:: ../../CHANGELOG.md
    :parser: myst_parser.sphinx_
