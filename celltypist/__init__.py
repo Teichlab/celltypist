@@ -4,10 +4,8 @@ from .annotate import annotate, Model
 from .train import train
 from .plot import dotplot
 #CellTypist 2.0
-from .contro.harmonize import harmonize
+from .contro.harmonize import harmonize, DistanceAlignment
 from .contro.integrate import integrate
-from .contro.plot import treeplot
-from .contro.plot import sankeyplot
-from .contro.align import DistanceAlignment
+from .contro.plot import treeplot, sankeyplot
 
 __version__ = "1.4.0"
