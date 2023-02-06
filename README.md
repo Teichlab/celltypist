@@ -542,5 +542,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 <summary><strong>4. List of key parameters</strong></summary>
 </details>
 
+# Usage (integration)
+
+<details>
+<summary><strong>1. Supervised data integration</strong></summary>
+</details>
+
+<details>
+<summary><strong>2. Tips for data integration</strong></summary>
+</details>
+
 # Citation
 Dominguez Conde et al., Cross-tissue immune cell analysis reveals tissue-specific features in humans. Science 376, eabl5197 (2022). [Link](https://doi.org/10.1126/science.abl5197)
