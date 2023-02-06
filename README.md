@@ -31,7 +31,7 @@ pip install celltypist
 conda install -c bioconda -c conda-forge celltypist
 ```
 
-# Usage
+# Usage (classification)
 
 <details>
 <summary><strong>1. Use in the Python environment</strong></summary>
@@ -522,6 +522,24 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   This model can be used as with other CellTypist models.
   </details>
+</details>
+
+# Usage (harmonisation)
+
+<details>
+<summary><strong>1. Cross-dataset cell type harmonisation</strong></summary>
+</details>
+
+<details>
+<summary><strong>2. Reharmonisation and reannotation</strong></summary>
+</details>
+
+<details>
+<summary><strong>3. Visualisation</strong></summary>
+</details>
+
+<details>
+<summary><strong>4. List of key parameters</strong></summary>
 </details>
 
 # Citation
