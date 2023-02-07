@@ -16,6 +16,112 @@ DEFAULT_SANKEY_COLORS = ['#2E91E5', '#E15F99', '#1CA71C', '#FB0D0D', '#DA16FF', 
                          '#A777F1', '#620042', '#1616A7', '#DA60CA', '#6C4516', '#0D2A63', '#AF0038', '#FD3216', '#00FE35', '#6A76FC', '#FED4C4', '#FE00CE', '#0DF9FF', '#F6F926', '#FF9616', '#479B55',
                          '#EEA6FB', '#DC587D', '#D626FF', '#6E899C', '#00B5F7', '#B68E00', '#C9FBE5', '#FF0092', '#22FFA7', '#E3EE9E', '#86CE00', '#BC7196', '#7E7DCD', '#FC6955', '#E48F72']
 
+def _qq_order(sub_relation, ordered_cols):
+    """
+    Disentangle the cross connections in tree plot.
+    """
+    sub_relation2 = sub_relation[ordered_cols].copy()
+    nms = sub_relation2.iloc[:, 0].value_counts().index.values
+    for i in range(len(ordered_cols) - 1):
+        i += 1
+        val1 = sub_relation2.iloc[:, :i].agg('_'.join, axis = 1)
+        val2 = sub_relation2.iloc[:, i]
+        tb = pd.crosstab(val1, val2).loc[nms]
+        nms = []
+        flag = 0
+        for j in range(tb.shape[0]):
+            ind1 = (tb.iloc[j] > 0).values
+            if j < (tb.shape[0] - 1):
+                ind2 = (tb.iloc[j + 1] > 0).values
+            else:
+                ind2 = np.repeat([False], tb.shape[1])
+            ind = ind1 & ind2
+            all_nms = tb.columns[ind1][np.argsort(tb.loc[:, ind1].iloc[j])[::-1]]
+            nm1 = tb.index[j]
+            if ind.sum() > 0:
+                last_nm = tb.columns[ind][0]
+                mid_nms = np.setdiff1d(all_nms, last_nm)
+                if flag == 1:
+                    first_nm = fnm
+                    mid_nms = np.setdiff1d(mid_nms, first_nm)
+                    nms.append(nm1 + '_' + first_nm)
+                for md in mid_nms:
+                    nms.append(nm1 + '_' + md)
+                nms.append(nm1 + '_' + last_nm)
+                flag = 1
+                fnm = last_nm
+            else:
+                if flag == 1:
+                    all_nms = np.setdiff1d(all_nms, fnm)
+                    nms.append(nm1 + '_' + fnm)
+                for md in all_nms:
+                    nms.append(nm1 + '_' + md)
+                flag = 0
+    sub_relation.reset_index(inplace = True, drop = False)
+    sub_relation.index = sub_relation2.agg('_'.join, axis = 1)
+    return sub_relation.loc[nms].set_index('index', drop = True)
+
+#def _qq_order2(sub_relation, ordered_cols):
+#    sub_relation2 = sub_relation[ordered_cols].copy()
+#    nms = sub_relation2.iloc[:, 0].value_counts().index.values
+#    for i in range(len(ordered_cols)-1):
+#        i += 1
+#        val1 = sub_relation2.iloc[:, :i].agg('@'.join, axis=1)
+#        val2 = sub_relation2.iloc[:, i]
+#        tb = pd.crosstab(val1, val2)
+#        tb = tb.loc[nms]
+#        csum = (tb > 0).sum(0)
+#        if csum.max() > 1:
+#            idxs = np.argsort(csum)
+#            for idx in idxs[csum[idxs] > 1]:
+#                idxs2 = np.where(tb.iloc[:, idx] > 0)[0]
+#                if np.any(np.diff(idxs2) > 1):
+#                    ti = idxs2[0]
+#                    tnm = np.array(nms[ti].split('@'))
+#                    for idx2 in idxs2[1:]:
+#                        nm = np.array(nms[idx2].split('@'))
+#                        if idx2 == 0:
+#                            nm2 = nms[idx2+1].split('_')
+#                        elif idx2 + 1 < len(nms):
+#                            nm2 = nms[idx2-1].split('_') + nms[idx2+1].split('_')
+#                        else:
+#                            nm2 = nms[idx2-1].split('_')
+#                        if len(set(nm) & set(nm2)) == 0:
+#                            mv_idxs.append(idx2)
+#        nms = []
+#        flag = 0
+#        for j in range(tb.shape[0]):
+#            ind1 = (tb.iloc[j] > 0).values
+#            if j < (tb.shape[0] - 1):
+#                ind2 = (tb.iloc[j+1] > 0).values
+#            else:
+#                ind2 = np.repeat([False], tb.shape[1])
+#            ind = (ind1 & ind2)
+#            all_nms = tb.columns[ind1][np.argsort(tb.loc[:, ind1].iloc[j])[::-1]]
+#            nm1 = tb.index[j]
+#            if ind.sum() > 0:
+#                last_nm = tb.columns[ind][0]
+#                mid_nms = np.setdiff1d(all_nms, last_nm)
+#                if flag == 1:
+#                    first_nm = fnm
+#                    mid_nms = np.setdiff1d(mid_nms, first_nm)
+#                    nms.append(nm1 + '_' + first_nm)
+#                for md in mid_nms:
+#                    nms.append(nm1 + '_' + md)
+#                nms.append(nm1 + '_' + last_nm)
+#                flag = 1
+#                fnm = last_nm
+#            else:
+#                if flag == 1:
+#                    all_nms = np.setdiff1d(all_nms, fnm)
+#                    nms.append(nm1 + '_' + fnm)
+#                for md in all_nms:
+#                    nms.append(nm1 + '_' + md)
+#                flag = 0
+#    sub_relation.index = sub_relation2.agg('_'.join, axis=1)
+#    sub_relation = sub_relation.loc[nms]
+#    return sub_relation
+
 def _relation_to_data(relation, return_sankey: bool = True) -> Union[pd.DataFrame, tuple]:
     """
     For internal use. Turn the harmonization result into Sankey input.
@@ -108,7 +214,8 @@ def _identify_relation_groups(relation, group_prefix: str = 'Group', order_row: 
             if sub_relation.shape[0] > 1:
                 col_uniques = sub_relation.apply(pd.Series.nunique).values
                 ordered_cols = datasets[np.argsort(col_uniques)]
-                sub_relation = sub_relation.sort_values(by = ordered_cols.tolist())
+                #sub_relation = sub_relation.sort_values(by = ordered_cols.tolist())
+                sub_relation = _qq_order(sub_relation, ordered_cols)
                 if order_column:
                     sub_relation = sub_relation[ordered_cols]
                     sub_relation.columns = [f"D{x+1}" for x in range(sub_relation.shape[1])]
