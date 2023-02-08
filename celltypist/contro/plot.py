@@ -57,9 +57,8 @@ def _qq_order(sub_relation, ordered_cols):
                 for md in all_nms:
                     nms.append(nm1 + '_' + md)
                 flag = 0
-    sub_relation.reset_index(inplace = True, drop = False)
     sub_relation.index = sub_relation2.agg('_'.join, axis = 1)
-    return sub_relation.loc[nms].set_index('index', drop = True)
+    return sub_relation.loc[nms]
 
 #def _qq_order2(sub_relation, ordered_cols):
 #    sub_relation2 = sub_relation[ordered_cols].copy()
