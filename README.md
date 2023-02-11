@@ -528,6 +528,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>1. Cross-dataset cell type harmonisation</strong></summary>
+
+The input [AnnData](https://anndata.readthedocs.io/en/latest/) needs two columns in `.obs` representing dataset origin and cell annotation respectively. The aim is to harmonise cell types across datasets using [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html).  
+  
+Internally, transcriptional distances between cells and cell types (denoted here as the cell centroid) will first be calculated. Since cell type is usually defined at the cluster level and no cluster is 100% pure, you can set `filter_cells = True` (default to `False`) to filter out cells whose gene expression profiles do not correlate most with the cell type they belong to. This will speed up the run as only a subset of cells are used, but will render these filtered cells unannotated (see `2.`). Distances are calculated at either gene or low-dimensional space. The latter is preferred to denoise the data by providing a latent representation via the argument `use_rep` (default to PCA coordinates).
 </details>
 
 <details>
