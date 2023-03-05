@@ -290,7 +290,7 @@ class Distance():
                 for rec in all_combine[~column_keep]:
                     logger.info(f"      {rec}")
 
-    def to_meta(self, check_symmetry: bool = True, turn_binary: bool = False) -> pd.DataFrame:
+    def to_meta(self, check_symmetry: bool = True, turn_binary: bool = False, return_symmetry: bool = True) -> pd.DataFrame:
         """
         Meta-analysis of cross-dataset cell type dissimilarity or membership.
 
@@ -302,6 +302,9 @@ class Distance():
         turn_binary
             Whether to turn the distance matrix into a cell type membership matrix before meta analysis.
             (Default: `False`)
+        return_symmetry
+            Whether to return a symmetric dissimilarity matrix by averaging with its transposed form.
+            (Default: `True`)
 
         Returns
         ----------
@@ -318,7 +321,7 @@ class Distance():
         meta_cell = pd.DataFrame(np.array(meta_cell))
         meta_cell.index = (self.cell_type.dataset + ': ' + self.cell_type.cell_type).values
         meta_cell.columns = meta_cell.index
-        return meta_cell
+        return (meta_cell + meta_cell.T)/2 if return_symmetry else meta_cell
 
     def to_binary(self, check_symmetry: bool = True):
         """

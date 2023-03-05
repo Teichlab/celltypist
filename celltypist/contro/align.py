@@ -206,7 +206,7 @@ class DistanceAlignment():
             return
         weights = np.array(weights, dtype = 'float')
         meta_distance = self.base_distance.to_meta(False)
-        meta_similarity = 1 - (meta_distance + meta_distance.T) / 2
+        meta_similarity = 1 - meta_distance
         sim_df = pd.DataFrame([self.dataset_order[[i, j]] for i in range(0, len(self.dataset_order) - 1) for j in range(i + 1, len(self.dataset_order))], columns = ['D1', 'D2'])
         scores = []
         for _, s in sim_df.iterrows():
