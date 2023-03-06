@@ -545,6 +545,11 @@ alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 
 ```
 Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalised, log-normalised, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.  
   
+In CellTypist, datasets are iteratively incorporated and harmonised. The order of datasets can be specified by providing a list of dataset names to the argument `dataset_order`. Otherwise, the order will be determined by CellTypist through iteratively adding a dataset that is most similar (i.e., more shared cell types) to the datasets already incorporated. This behaviour can be disabled by setting `reorder_dataset = False` (default to `True`) and an alphabetical order of datasets will be used.
+```python
+#Specify the order of datasets to be harmonised.
+alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', dataset_order = a_list_of_datasets)
+```
 </details>
 
 <details>
