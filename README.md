@@ -536,14 +536,14 @@ Internally, transcriptional distances between cells and cell types (denoted here
 #`use_rep` can be omitted here as it defaults to 'X_pca'.
 alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
 ```
-If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalized (to a constant total count per cell).  
+If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).  
   
 Inferring cell type relationships based on directly calculated distances will suffice in most cases due to a normalisation procedure applied to the derived distances. If a very strong batch effect exists across datasets, you can turn on `use_pct = True` (default to `False`) to predict instead of calculate these distances. Through this parameter, a predictive clustering tree (PCT) is built for each dataset, and distances between cells in query datasets and cell types in the reference dataset are predicted, often resulting in unbiased distance measures.
 ```python
 #Use PCT to predict transcriptional cell-cell distances across datasets.
 alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', use_pct = True)
 ```
-Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalized, log-normalized, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.  
+Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalised, log-normalised, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.  
   
 </details>
 
