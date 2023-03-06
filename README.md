@@ -543,6 +543,8 @@ Inferring cell type relationships based on directly calculated distances will su
 #Use PCT to predict transcriptional cell-cell distances across datasets.
 alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', use_pct = True)
 ```
+Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalized, log-normalized, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.  
+  
 </details>
 
 <details>
