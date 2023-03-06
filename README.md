@@ -558,15 +558,15 @@ Four kinds of harmonisations will be anchored with this function:
 </details>
 
 <details>
-<summary><strong>2. Reharmonisation and reannotation</strong></summary>
+<summary><strong>2. Inspection of the harmonisation result</strong></summary>
 </details>
 
 <details>
-<summary><strong>3. Visualisation</strong></summary>
+<summary><strong>3. Reharmonisation and reannotation</strong></summary>
 </details>
 
 <details>
-<summary><strong>4. List of key parameters</strong></summary>
+<summary><strong>4. Visualisation</strong></summary>
 </details>
 
 # Usage (integration)
