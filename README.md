@@ -537,6 +537,12 @@ Internally, transcriptional distances between cells and cell types (denoted here
 alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
 ```
 If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalized (to a constant total count per cell).  
+  
+Inferring cell type relationships based on directly calculated distances will suffice in most cases due to a normalisation procedure applied to the derived distances. If a very strong batch effect exists across datasets, you can turn on `use_pct = True` (default to `False`) to predict instead of calculate these distances. Through this parameter, a predictive clustering tree (PCT) is built for each dataset, and distances between cells in query datasets and cell types in the reference dataset are predicted, often resulting in unbiased distance measures.
+```python
+#Use PCT to predict transcriptional cell-cell distances across datasets.
+alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', use_pct = True)
+```
 </details>
 
 <details>
