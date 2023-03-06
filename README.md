@@ -550,6 +550,11 @@ In CellTypist, datasets are iteratively incorporated and harmonised. The order o
 #Specify the order of datasets to be harmonised.
 alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', dataset_order = a_list_of_datasets)
 ```
+Four kinds of harmonisations will be anchored with this function:
+   1) Novel cell types as determined by `maximum_novel_percent` (default to `0.05`). In each harmonisation iteration, a cell type (or meta-cell-type) whose maximal alignment fraction is < `maximum_novel_percent` with any cell types in any other datasets is assigned `NONE`.
+   2) One-to-one aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If the alignments (in both directions) between two cell types from two respective datasets are greater than `minimum_unique_percents`, plus that these alignments are not one-to-many (see the third point below), this will be a 1:1 (`=`) match. Dynamic cutoffs of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
+   3) One-to-many (or many-to-one) aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If one cell type has more than two cell types aligned in the other dataset with a match proportion greater than `minimum_divide_percents`, and these matched cell types have a back-match proportion greater than `minimum_unique_percents`, this will be a 1:N (`∋`) or N:1 (`∈`) match. Dynamic cutoffs of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
+   4) Unharmonised cell types. If after all the above categorisations, a cell type remains unharmonised, then this cell type will be an unharmonised cell type (`UNRESOLVED`).
 </details>
 
 <details>
