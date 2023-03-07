@@ -355,6 +355,11 @@ class DistanceAlignment():
         """Get the datasets which are already harmonized."""
         return np.array(self.relation.columns[0::2])
 
+    @property
+    def groups(self) -> np.ndarray:
+        """Get the cell type groups (high hierarchy) based on the relation table."""
+        return _identify_relation_groups(self.relation, order_row = False, order_column = False)[0]
+
     def __repr__(self):
         base = f"Cross-dataset cell type alignment for {len(self.dataset_order)} datasets"
         base += f"\n    base_distance: a cross-dataset distance object"
