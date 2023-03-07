@@ -529,32 +529,49 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 <details>
 <summary><strong>1. Cross-dataset cell type harmonisation</strong></summary>
 
-The input [AnnData](https://anndata.readthedocs.io/en/latest/) needs two columns in `.obs` representing dataset origin and cell annotation respectively. The aim is to harmonise cell types across datasets using [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html).  
-  
-Internally, transcriptional distances between cells and cell types (denoted here as the cell centroid) will first be calculated. Since cell type is usually defined at the cluster level and no cluster is 100% pure, you can set `filter_cells = True` (default to `False`) to filter out cells whose gene expression profiles do not correlate most with the cell type they belong to. This will speed up the run as only a subset of cells are used, but will render these filtered cells unannotated (see `2.`). Distances are calculated at either gene or low-dimensional space. The latter is preferred to denoise the data by providing a latent representation via the argument `use_rep` (default to PCA coordinates).
-```python
-#`use_rep` can be omitted here as it defaults to 'X_pca'.
-alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
-```
-If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).  
-  
-Inferring cell type relationships based on directly calculated distances will suffice in most cases due to a normalisation procedure applied to the derived distances. If a very strong batch effect exists across datasets, you can turn on `use_pct = True` (default to `False`) to predict instead of calculate these distances. Through this parameter, a predictive clustering tree (PCT) is built for each dataset, and distances between cells in query datasets and cell types in the reference dataset are predicted, often resulting in unbiased distance measures.
-```python
-#Use PCT to predict transcriptional cell-cell distances across datasets.
-alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', use_pct = True)
-```
-Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalised, log-normalised, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.  
-  
-In CellTypist, datasets are iteratively incorporated and harmonised. The order of datasets can be specified by providing a list of dataset names to the argument `dataset_order`. Otherwise, the order will be determined by CellTypist through iteratively adding a dataset that is most similar (i.e., more shared cell types) to the datasets already incorporated. This behaviour can be disabled by setting `reorder_dataset = False` (default to `True`) and an alphabetical order of datasets will be used.
-```python
-#Specify the order of datasets to be harmonised.
-alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', dataset_order = a_list_of_datasets)
-```
-Four kinds of harmonisations will be anchored with this function:
-   1) Novel cell types as determined by `maximum_novel_percent` (default to `0.05`). In each harmonisation iteration, a cell type (or meta-cell-type) whose maximal alignment fraction is < `maximum_novel_percent` with any cell types in any other datasets is designated as a novel cell type (`NONE`).
-   2) One-to-one aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If the alignments (in both directions) between two cell types from two respective datasets are greater than `minimum_unique_percents`, plus that these alignments are not one-to-many (see the third point below), this will be an 1:1 (`=`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
-   3) One-to-many (or many-to-one) aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If one cell type has more than two cell types aligned in the other dataset with a match proportion greater than `minimum_divide_percents`, and these matched cell types have a back-match proportion greater than `minimum_unique_percents`, this will be an 1:N (`∋`) or N:1 (`∈`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
-   4) Unharmonised cell types. If after the above categorisation, a cell type remains unharmonised, then this cell type will be an unharmonised cell type (`UNRESOLVED`).
++ <details>
+  <summary><strong>1.1. Cell type harmonisation</strong></summary>
+
+  The input [AnnData](https://anndata.readthedocs.io/en/latest/) needs two columns in `.obs` representing dataset origin and cell annotation respectively. The aim is to harmonise cell types across datasets using [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html).  
+    
+  Internally, transcriptional distances between cells and cell types (denoted here as the cell centroid) will first be calculated. Since cell type is usually defined at the cluster level and no cluster is 100% pure, you can set `filter_cells = True` (default to `False`) to filter out cells whose gene expression profiles do not correlate most with the cell type they belong to. This will speed up the run as only a subset of cells are used, but will render these filtered cells unannotated (see `2.`). Distances are calculated at either gene or low-dimensional space. The latter is preferred to denoise the data by providing a latent representation via the argument `use_rep` (default to PCA coordinates).
+  ```python
+  #`use_rep` can be omitted here as it defaults to 'X_pca'.
+  alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
+  ```
+  If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).
+  </details>
+
++ <details>
+  <summary><strong>1.2. Cell type harmonisation with PCT</strong></summary>
+
+  Inferring cell type relationships based on directly calculated distances will suffice in most cases due to a normalisation procedure applied to the derived distances. If a very strong batch effect exists across datasets, you can turn on `use_pct = True` (default to `False`) to predict instead of calculate these distances. Through this parameter, a predictive clustering tree (PCT) is built for each dataset, and distances between cells in query datasets and cell types in the reference dataset are predicted, often resulting in unbiased distance measures.
+  ```python
+  #Use PCT to predict transcriptional cell-cell distances across datasets.
+  alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', use_pct = True)
+  ```
+  Due to the nonparametric nature of PCT, the format of the expression `.X` in the AnnData is flexible (normalised, log-normalised, z-scaled, etc.), but subsetting the AnnData to highly variable genes is always suggested. To avoid overfitting, each PCT is pruned at nodes where no further splits are needed based on F-test, which is turned on by default (`F_test_prune = True`). You can increase the p-value cutoff (default to 0.05, `p_thres = 0.05`) to prune fewer nodes for improved accuracy at the cost of reduced generalisability.
+  </details>
+
++ <details>
+  <summary><strong>1.3. Specify the dataset order</strong></summary>
+
+  In CellTypist, datasets are iteratively incorporated and harmonised. The order of datasets can be specified by providing a list of dataset names to the argument `dataset_order`. Otherwise, the order will be determined by CellTypist through iteratively adding a dataset that is most similar (i.e., more shared cell types) to the datasets already incorporated. This behaviour can be disabled by setting `reorder_dataset = False` (default to `True`) and an alphabetical order of datasets will be used.
+  ```python
+  #Specify the order of datasets to be harmonised.
+  alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', dataset_order = a_list_of_datasets)
+  ```
+  </details>
+
++ <details>
+  <summary><strong>1.4. Categories of harmonised cell types</strong></summary>
+
+  Four kinds of harmonisations will be anchored with this function:
+     1) Novel cell types as determined by `maximum_novel_percent` (default to `0.05`). In each harmonisation iteration, a cell type (or meta-cell-type) whose maximal alignment fraction is < `maximum_novel_percent` with any cell types in any other datasets is designated as a novel cell type (`NONE`).
+     2) One-to-one aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If the alignments (in both directions) between two cell types from two respective datasets are greater than `minimum_unique_percents`, plus that these alignments are not one-to-many (see the third point below), this will be an 1:1 (`=`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
+     3) One-to-many (or many-to-one) aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If one cell type has more than two cell types aligned in the other dataset with a match proportion greater than `minimum_divide_percents`, and these matched cell types have a back-match proportion greater than `minimum_unique_percents`, this will be an 1:N (`∋`) or N:1 (`∈`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
+     4) Unharmonised cell types. If after the above categorisation, a cell type remains unharmonised, then this cell type will be an unharmonised cell type (`UNRESOLVED`).
+  </details>
 </details>
 
 <details>
