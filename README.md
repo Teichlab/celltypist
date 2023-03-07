@@ -602,6 +602,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |J    |∋       |K    |∈       |M         |
   |J    |∋       |L    |∈       |M         |
   </div>
+  The table columns are the dataset1 name, relation, dataset2 name, ..., all the way to the name of the last dataset. Accordingly, each row of the table is a list of cell types connected by predefined symbols of `=`, `∈`, and `∋`. In addition to cell type names, there are two extra definitions of `NONE` and `UNRESOLVED` in the table, representing two levels of novelties (see `1.4.`).  
+    
   </details>
 
 + <details>
