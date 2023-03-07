@@ -605,6 +605,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   The table columns are the dataset1 name, relation, dataset2 name, ..., all the way to the name of the last dataset. Accordingly, each row of the table is a list of cell types connected by predefined symbols of `=`, `∈`, and `∋`. In addition to cell type names, there are two extra definitions of `NONE` and `UNRESOLVED` in the table, representing two levels of novelties (see `1.4.`).  
     
+  The table should be interpreted from left to right. For example, for the first row `A = B = C`, although it may look like an 1:1 match between A and B plus an 1:1 match between B and C, a correct interpretation should be an 1:1 match between A and B, resulting in a meta cell type of `A = B`. This meta cell type, as a whole, has an 1:1 match with C, further leading to `A = B = C`. Similarly, for the second row `D = NONE = UNRESOLVED`, instead of a novel cell type D in dataset1, this cell type should be read as a dataset1-specific cell type not existing in dataset2 (`D = NONE`), which as a whole is unharmonised when aligning with dataset3 (`D = NONE = UNRESOLVED`).  
+    
   </details>
 
 + <details>
