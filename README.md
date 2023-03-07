@@ -586,7 +586,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>2.1. Harmonisation table</strong></summary>
 
-  The previously saved harmonisation object can be loaded using the function `celltypist.DistanceAlignment.load`.
+  The previously saved harmonisation object can be loaded using `celltypist.DistanceAlignment.load`.
   ```python
   alignment = celltypist.DistanceAlignment.load('/path/to/local/folder/some_name.pkl')
   ```
