@@ -97,10 +97,11 @@ def harmonize(adata: AnnData,
     Returns
     ----------
     DistanceAlignment
-        A :class:`~celltypist.contro.align.DistanceAlignment` object. Three important attributes within this class are:
+        A :class:`~celltypist.contro.align.DistanceAlignment` object. Four important attributes within this class are:
         1) :attr:`~celltypist.contro.align.DistanceAlignment.base_distance`, cross-dataset distances between all cells and all cell types.
         2) :attr:`~celltypist.contro.align.DistanceAlignment.relation`, the harmonization table.
-        3) :attr:`~celltypist.contro.align.DistanceAlignment.reannotation`, reannotated cell types and cell type groups.
+        3) :attr:`~celltypist.contro.align.DistanceAlignment.groups`, high-hierarchy cell types categorizing rows of the harmonization table.
+        4) :attr:`~celltypist.contro.align.DistanceAlignment.reannotation`, reannotated cell types and cell type groups.
     """
     #raw counts are not allowed to build trees
     if use_pct and adata.X.min() >= 0 and float(adata.X.max()).is_integer():

@@ -152,6 +152,8 @@ class DistanceAlignment():
         A :class:`~pandas.DataFrame` representing the harmonization result.
     aligned_datasets
         List of datasets that are already harmonized.
+    groups
+        Cell type groups (high-hierarchy cell types) categorizing the rows of `.relation`.
     reannotation
         A :class:`~pandas.DataFrame` representing the reannotated cell types.
     minimum_unique_percents
