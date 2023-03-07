@@ -534,7 +534,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   The input [AnnData](https://anndata.readthedocs.io/en/latest/) needs two columns in `.obs` representing dataset origin and cell annotation respectively. The aim is to harmonise cell types across datasets using [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html).  
     
-  Internally, transcriptional distances between cells and cell types (denoted here as the cell centroid) will first be calculated. Since cell type is usually defined at the cluster level and no cluster is 100% pure, you can set `filter_cells = True` (default to `False`) to filter out cells whose gene expression profiles do not correlate most with the cell type they belong to. This will speed up the run as only a subset of cells are used, but will render these filtered cells unannotated (see `2.`). Distances are calculated at either gene or low-dimensional space. The latter is preferred to denoise the data by providing a latent representation via the argument `use_rep` (default to PCA coordinates).
+  Internally, transcriptional distances between cells and cell types (denoted here as the cell centroid) will first be calculated. Since cell type is usually defined at the cluster level and no cluster is 100% pure, you can set `filter_cells = True` (default to `False`) to filter out cells whose gene expression profiles do not correlate most with the cell type they belong to. This will speed up the run as only a subset of cells are used, but will render these filtered cells unannotated (see `2.2.`). Distances are calculated at either gene or low-dimensional space. The latter is preferred to denoise the data by providing a latent representation via the argument `use_rep` (default to PCA coordinates).
   ```python
   #`use_rep` can be omitted here as it defaults to 'X_pca'.
   alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
@@ -602,6 +602,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |J    |∋       |K    |∈       |M         |
   |J    |∋       |L    |∈       |M         |
   </div>
+
   The table columns are the dataset1 name, relation, dataset2 name, ..., all the way to the name of the last dataset. Accordingly, each row of the table is a list of cell types connected by predefined symbols of `=`, `∈`, and `∋`. In addition to cell type names, there are two extra definitions of `NONE` and `UNRESOLVED` in the table, representing two levels of novelties (see `1.4.`).  
     
   </details>
