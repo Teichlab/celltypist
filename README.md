@@ -566,12 +566,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>1.4. Categories of harmonised cell types</strong></summary>
 
-  Four kinds of harmonisations will be anchored with [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html):
+  Four kinds of harmonisations are anchored with [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html):
      1) Novel cell types as determined by `maximum_novel_percent` (default to `0.05`). In each harmonisation iteration, a cell type (or meta-cell-type) whose maximal alignment fraction is < `maximum_novel_percent` with any cell types in any other datasets is designated as a novel cell type (`NONE`).
      2) One-to-one aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If the alignments (in both directions) between two cell types from two respective datasets are greater than `minimum_unique_percents`, plus that these alignments are not one-to-many (see the third point below), this will be an 1:1 (`=`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
      3) One-to-many (or many-to-one) aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If one cell type has more than two cell types aligned in the other dataset with a match proportion greater than `minimum_divide_percents`, and these matched cell types have a back-match proportion greater than `minimum_unique_percents`, this will be an 1:N (`∋`) or N:1 (`∈`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
      4) Unharmonised cell types. If after the above categorisation, a cell type remains unharmonised, then this cell type will be an unharmonised cell type (`UNRESOLVED`).  
-    
     
   The resulting `alignment` is an instance of the class `DistanceAlignment` as defined by CellTypist, and can be written out as follows.
   ```python
@@ -586,6 +585,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.1. Harmonisation table</strong></summary>
+
+  The previously saved harmonisation object can be loaded using the function `celltypist.DistanceAlignment.load`.
+  ```python
+  alignment = celltypist.DistanceAlignment.load('/path/to/local/folder/some_name.pkl')
+  ```
+  In `alignment`, the harmonisation table, which summarizes cell types across datasets into semantically connected ones, is stored as the attribute `.relation` (`alignment.relation`). One illustrative example will be:
   </details>
 
 + <details>
