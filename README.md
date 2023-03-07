@@ -592,6 +592,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   In `alignment`, the harmonisation table, which summarizes cell types across datasets into semantically connected ones, is stored as the attribute `.relation` (`alignment.relation`). One illustrative example is:
   <center>
+
   |D1   |relation|D2   |relation|D3        |
   |:---:|:---:   |:---:|:---:   |:---:     |
   |A    |=       |B    |=       |C         |
