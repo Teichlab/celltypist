@@ -652,6 +652,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   The main content of this object is the distance matrix (`alignment.base_distance.dist_mat`) between all cells (rows) and all cell types (columns). Values in this matrix are either calculated (the default) or inferred (if `use_pct` is `True`) by `celltypist.harmonize`, and after a normalisation procedure, lie between 0 and 1. If there are strong cross-dataset batches, an inferred distance matrix obtained from the PCT algorithm is usually more accurate. Metadata of cells and cell types for this matrix can be found in `alignment.base_distance.cell` and `alignment.base_distance.cell_type`, which record raw information such as the dataset origin and original author annotation.  
     
+  During the internal harmonisation process, each cell is assigned the most similar cell type from each dataset. This result is stored in the assignment matrix (`alignment.base_distance.assignment`), with rows being cells (cell metadata can be found in `alignment.base_distance.cell` as mentioned above), columns being datasets, and elements being the assigned cell types in different datasets. This matrix can be interpreted as a summary of multi-data label transfers.
+  ```python
+  #Access the cell type assignment result.
+  alignment.base_distance.assignment
+  ```
+  Each column (corresponding to one dataset) of the assignment matrix can be thought as a unified naming schema when all cells are named by this given dataset.  
+    
   </details>
 </details>
 
