@@ -624,6 +624,20 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Access the cell reannotation information.
   alignment.reannotation
   ```
+  This is a data frame with an example shown below. Unless `filter_cells = True` is set (see `1.1.`), all cells in the AnnData will be present in this data frame.
+  <div align="center">
+
+  |     |dataset|cell_type|reannotation         |group |
+  |:---:|:---:  |:---:    |:---:                |:---: |
+  |cell1|D1     |A        |A = B = C            |Group1|
+  |cell2|D1     |D        |D = NONE = UNRESOLVED|Group2|
+  |cell3|D2     |G        |E ∈ G = H            |Group3|
+  |cell4|D2     |G        |F ∈ G = I            |Group3|
+  |cell5|D3     |L        |J = K ∋ L            |Group4|
+  |cell6|D3     |M        |J = K ∋ M            |Group4|
+  </div>
+
+
   </details>
 
 + <details>
