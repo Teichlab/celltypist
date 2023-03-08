@@ -609,7 +609,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   Extending this interpretation to the third and fourth rows, they denote two cell types (E and F) in dataset1 collectively constituting the cell type G in dataset2. The resulting subtypes (`E ∈ G` and `F ∈ G`) are 1:1 matched with H and I in dataset3, respectively. For the last two rows, they describe the subdivision of a meta cell type (`J = K`) into L and M in dataset3, being more than a subdivision of K.  
     
-  In the table, each row corresponds to a harmonised low-hierarchy cell type, in other words, the most fine-grained level of annotation that can be achieved by automatic alignment. At a high hierarchy, some cell types belong to the same group, such as `E ∈ G = H` and `F ∈ G = I`. CellTypist defines a high-hierarchy cell type as fully connected rows in the harmonisation table. As a result, each high-hierarchy cell type is a cell type group independent of each other. This information can be accessed in the attribute `.groups`.
+  In the table, each row corresponds to a harmonised low-hierarchy cell type, in other words, the most fine-grained level of annotation that can be achieved by automatic alignment. At a high hierarchy, some cell types belong to the same group, such as `E ∈ G = H` and `F ∈ G = I`. CellTypist defines a high-hierarchy cell type as fully connected rows in the harmonisation table. As a result, each high-hierarchy cell type is a cell type group independent of each other. This information can be accessed in the attribute `.groups` which is an array/vector with an length of the number of rows in the harmonisation table.
   ```python
   #Access the high-hierarchy cell types (cell type groups).
   alignment.groups
