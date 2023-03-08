@@ -618,6 +618,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.2. Cell reannotation</strong></summary>
+
+  After cell type harmonisation, each cell can be assigned a cell type label corresponding to a given row of the harmonisation table, denoted as the process of cell reannotation. By default, reannotation is enabled (`reannotate = True`) when using [celltypist.harmonize](https://celltypist.readthedocs.io/en/latest/celltypist.harmonize.html) and information of reannotated cell types is already in place as the attribute `.reannotation`.
+  ```python
+  #Access the cell reannotation information.
+  alignment.reannotation
+  ```
   </details>
 
 + <details>
