@@ -639,6 +639,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   The four columns represent information of dataset origin, original author annotation, reannotated low- and high-hierarchy annotation, respectively. For the last column, it contains grouping (high-hierarchy) information, and each group corresponds to a subset of the harmonisation table. You can check this correspondence by coupling the table (`alignment.relation`) with the grouping (`alignment.groups`) (see `2.1.`).  
     
+  Of note, due to several reasons including the clustering impurity of homogeneous cell populations, not all cells can be reannotated into low-hierarchy cell types, leading to `UNASSIGNED` cells within the `reannotation` column. The `group` column, however, is always populated with meaningful groups as this column is directly based on the harmonisation table.
   </details>
 
 + <details>
