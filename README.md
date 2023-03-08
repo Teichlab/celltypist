@@ -644,6 +644,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.3. Distance and membership</strong></summary>
+
+  A distance matrix-like instance, which is from the class `Distance` as defined by CellTypist, is also stashed in `alignment` as the attribute `.base_distance`.
+  ```python
+  #Access the distance object.
+  alignment.base_distance
+  ```
   </details>
 </details>
 
