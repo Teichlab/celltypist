@@ -682,6 +682,16 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   Along the order of datasets, optimal choices of `minimum_unique_percents` and `minimum_divide_percents` (see `1.4.`) in each iteration can be found in `alignment.minimum_unique_percents` and `alignment.minimum_divide_percents`. For instance, harmonising five datasets requires four iterations, and thus both `.minimum_unique_percents` and `.minimum_divide_percents` have a length of four.  
     
+  CellTypist provides a method `.best_align()` to change the order of datasets post-harmonisation. Through this, datasets will be reharmonised in a different order (this post-harmonisation adjustment is more efficient than re-running `celltypist.harmonize` with a new order).
+  ```python
+  #Reharmonise cell types across datasets with a different dataset order.
+  alignment.best_align(dataset_order = a_list_of_new_dataset_order)
+  ```
+  As in `celltypist.harmonize`, the combinations of `minimum_unique_percents` and `minimum_divide_percents` will be tested to find the best alignment in each iteration. Importantly, as well as a full dataset list, you can provide a subset of datasets for reharmonisation. This is useful in terms of focusing on part of the data for inspection or visualisation (see `4.`).
+  ```python
+  #Reharmonise cell types across datasets with part of datasets.
+  alignment.best_align(dataset_order = a_subset_of_dataset_names)
+  ```
   </details>
 
 + <details>
