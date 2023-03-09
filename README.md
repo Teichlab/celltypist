@@ -659,6 +659,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Each column (corresponding to one dataset) of the assignment matrix can be thought as a unified naming schema when all cells are named by this given dataset.  
     
+  CellTypist provides a quick way to summarise the above information including cells' distances and assignments into meta-analysis at the cell type level. Specifically, a distance matrix among all cell types can be obtained by:
+  ```python
+  #Get the cell-type-to-cell-type distance matrix.
+  alignment.base_distance.to_meta()
+  ```
   </details>
 </details>
 
