@@ -705,6 +705,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>3.2. Reannotation</strong></summary>
+
+  After changing the dataset order and reharmonising cell types, cells need to be reannotated based on the newly generated harmonisation table using the method `reannotate`.
+  ```python
+  #Reannotate cells based on the new harmonisation table.
+  alignment.reannotate()
+  ```
+  Similarly, information of reannotated cells is stored in `alignment.reannotation`.
   </details>
 </details>
 
