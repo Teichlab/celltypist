@@ -726,6 +726,18 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Visualise the harmonisation result with a tree plot.
   celltypist.treeplot(alignment)
   ```
+  Alternatively, since only the harmonisation table (`alignment.relation`) is used when plotting this tree, `celltypist.treeplot` also accepts the input directly from the table. This is more convenient as a table is easier to manipulate, such as writing it out as a csv file and loading it later for tree plot.
+  ```python
+  #Write out the harmonisation table as a csv file.
+  #Note - if cell type names contain commas, set a different `sep` here.
+  alignment.relation.to_csv('/path/to/local/folder/HT.csv', sep = ',', index = False)
+  ```
+  ```python
+  #Read the harmonisation table.
+  HT = pd.read_csv('/path/to/local/folder/HT.csv', sep = ',')
+  #Visualise the harmonisation result with a tree plot.
+  celltypist.treeplot(HT)
+  ```
   </details>
 
 + <details>
