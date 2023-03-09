@@ -664,6 +664,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Get the cell-type-to-cell-type distance matrix.
   alignment.base_distance.to_meta()
   ```
+  An optional `turn_binary = True` (default to `False`) can be added to turn the distance matrix into a cell membership matrix before meta-analysis, showing how cell types are assigned across datasets.
+  ```python
+  #Get the cell-type-to-cell-type membership matrix.
+  alignment.base_distance.to_meta(turn_binary = True)
+  ```
   </details>
 </details>
 
