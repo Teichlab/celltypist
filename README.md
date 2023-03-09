@@ -717,6 +717,20 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>4. Visualisation</strong></summary>
+
++ <details>
+  <summary><strong>4.1. Tree plot</strong></summary>
+
+  The most intuitive way to visualise the harmonised cell types is the tree plot using the function [celltypist.treeplot](https://celltypist.readthedocs.io/en/latest/celltypist.treeplot.html).
+  ```python
+  #Visualise the harmonisation result with a tree plot.
+  celltypist.treeplot(alignment)
+  ```
+  </details>
+
++ <details>
+  <summary><strong>4.2. Sankey plot</strong></summary>
+  </details>
 </details>
 
 # Usage (integration)
