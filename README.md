@@ -643,7 +643,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 
 + <details>
-  <summary><strong>2.3. Distance and membership</strong></summary>
+  <summary><strong>2.3. Meta-analysis</strong></summary>
 
   A distance matrix-like instance, which is from the class `Distance` as defined by CellTypist, is also stashed in `alignment` as the attribute `.base_distance`.
   ```python
@@ -673,7 +673,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 <details>
-<summary><strong>3. Reharmonisation and reannotation</strong></summary>
+<summary><strong>3. Reharmonisation</strong></summary>
+
++ <details>
+  <summary><strong>3.1. Change the dataset order</strong></summary>
+  </details>
+
++ <details>
+  <summary><strong>3.2. Reannotation</strong></summary>
+  </details>
 </details>
 
 <details>
