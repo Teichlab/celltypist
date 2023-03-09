@@ -89,7 +89,7 @@ conda install -c bioconda -c conda-forge celltypist
 + <details>
   <summary><strong>1.4. Inspect the model of interest</strong></summary>
 
-  To take a look at a given model, load the model as an instance of the `Model` class as defined in CellTypist.
+  To take a look at a given model, load the model as an instance of the [Model](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html) class as defined in CellTypist.
   ```python
   #Select the model from the above list. If the `model` argument is not provided, will default to `Immune_All_Low.pkl`.
   model = models.Model.load(model = 'Immune_All_Low.pkl')
