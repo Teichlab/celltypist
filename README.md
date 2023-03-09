@@ -692,6 +692,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Reharmonise cell types across datasets with part of datasets.
   alignment.best_align(dataset_order = a_subset_of_dataset_names)
   ```
+  A new harmonisation table will be generated in `alignment.relation`, which only includes datasets specified in `.best_align`. `minimum_unique_percents` and `minimum_divide_percents` are also overridden by new values used during reharmonisation.
   </details>
 
 + <details>
