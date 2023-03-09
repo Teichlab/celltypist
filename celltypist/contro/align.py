@@ -417,7 +417,7 @@ class DistanceAlignment():
         Parameters
         ----------
         dataset_order
-            Order of datasets to be aligned.
+            Order of datasets to be aligned. This can also be a subset of datasets.
             Default to the dataset order in the `DistanceAlignment` object.
         minimum_unique_percents
             The minimum cell assignment fraction(s) to claim a cell type as uniquely matched to a cell type from the other dataset.

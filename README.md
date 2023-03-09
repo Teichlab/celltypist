@@ -126,7 +126,7 @@ conda install -c bioconda -c conda-forge celltypist
   ```
   Again, if the `model` argument is not specified, CellTypist will by default use the `Immune_All_Low.pkl` model.  
   
-  The `annotate` function will return an instance of the `AnnotationResult` class as defined in CellTypist.
+  The `annotate` function will return an instance of the [AnnotationResult](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html) class as defined in CellTypist.
   ```python
   #Summary information for the prediction result.
   predictions
