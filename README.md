@@ -680,6 +680,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   The order of datasets used by `celltypist.harmonize` can be found in the attribute `.dataset_order` (`alignment.dataset_order`), which is either auto-determined by CellTypist or specified by the user (via the `dataset_order` parameter in `celltypist.harmonize`). This order is also reflected by the column order of the harmonisation table.  
     
+  Along the order of datasets, optimal choices of `minimum_unique_percents` and `minimum_divide_percents` (see `1.4.`) in each iteration can be found in `alignment.minimum_unique_percents` and `alignment.minimum_divide_percents`. For instance, harmonising five datasets requires four iterations, and thus both `.minimum_unique_percents` and `.minimum_divide_percents` have a length of four.  
+    
   </details>
 
 + <details>
