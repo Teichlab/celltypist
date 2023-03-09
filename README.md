@@ -677,6 +677,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>3.1. Change the dataset order</strong></summary>
+
+  The order of datasets used by `celltypist.harmonize` can be found in the attribute `.dataset_order` (`alignment.dataset_order`), which is either auto-determined by CellTypist or specified by the user (via the `dataset_order` parameter in `celltypist.harmonize`). This order is also reflected by the column order of the harmonisation table.  
+    
   </details>
 
 + <details>
