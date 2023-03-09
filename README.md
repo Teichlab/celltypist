@@ -539,7 +539,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #`use_rep` can be omitted here as it defaults to 'X_pca'.
   alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca')
   ```
-  If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).
+  If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).  
+    
+  The resulting `alignment` is an instance of the class `DistanceAlignment` as defined by CellTypist, and can be written out as follows.
+  ```python
+  #Save the harmonisation output.
+  alignment.write('/path/to/local/folder/some_name.pkl')
+  ```
   </details>
 
 + <details>
@@ -572,10 +578,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
      3) One-to-many (or many-to-one) aligned cell types as determined by `minimum_unique_percents` and `minimum_divide_percents`. If one cell type has more than two cell types aligned in the other dataset with a match proportion greater than `minimum_divide_percents`, and these matched cell types have a back-match proportion greater than `minimum_unique_percents`, this will be an 1:N (`∋`) or N:1 (`∈`) match. Dynamic thresholds of `minimum_unique_percents` (default to 0.4, 0.5, 0.6, 0.7, 0.8) and `minimum_divide_percents` (default to 0.1, 0.15, 0.2) are exhaustively tested until the least number of alignments is found between datasets.
      4) Unharmonised cell types. If after the above categorisation, a cell type remains unharmonised, then this cell type will be an unharmonised cell type (`UNRESOLVED`).  
     
-  The resulting `alignment` is an instance of the class `DistanceAlignment` as defined by CellTypist, and can be written out as follows.
+  |If there are many datasets to harmonise and each dataset has many cell types, harmonisation may take longer time. You can restrict the test scope of `minimum_unique_percents` and `minimum_divide_percents` to reduce runtime. The default is a 15 (5X3) combo test; setting the two parameters to, for example a 3X2 combo, can decrease 60% of the runtime.|
+  |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
   ```python
-  #Save the harmonisation output.
-  alignment.write('/path/to/local/folder/some_name.pkl')
+  #`minimum_unique_percents` is set to three values (default is 0.4, 0.5, 0.6, 0.7, 0.8).
+  #`minimum_divide_percents` is set to two values (default is 0.1, 0.15, 0.2).
+  alignment = celltypist.harmonize(adata, dataset = 'dataset_column', cell_type = 'celltype_column', use_rep = 'X_pca', minimum_unique_percents = [0.5, 0.6, 0.7], minimum_divide_percents = [0.1, 0.15])
   ```
   </details>
 </details>
