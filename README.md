@@ -754,6 +754,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #`node_shape` should be the same length as no. datasets in the harmonisation table.
   celltypist.treeplot(alignment, order_dataset = True, node_shape = list_of_shapes)
   ```
+  Export the plot if needed.
+  ```python
+  celltypist.treeplot(alignment, show = False, save = '/path/to/local/folder/some_name.pdf') 
+  ```
   </details>
 
 + <details>
