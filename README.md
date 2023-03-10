@@ -742,7 +742,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   In a tree plot, each column is a dataset and cell types are connected across datasets. By default, cell types belonging to one low hierarchy (one row in the harmonisation table) are in the same color. You can change the color scheme by providing a data frame to the `node_color` parameter, with three consecutive columns representing dataset, cell type, and color (in hex code), respectively. `node_color` can also be a data frame with columns of dataset, cell type, and numeric value (for mapping color gradient in combination with `cmap`). Other parameters controlling the appearance of the tree plot (node shape, line width, label size, figure size, etc.) are detailed in [celltypist.treeplot](https://celltypist.readthedocs.io/en/latest/celltypist.treeplot.html).  
     
-  By changing the dataset (column) order in each high-hierarchy cell type, broader (more divisible) cell types can be positioned to the left, followed by fine-grained cell types to the right. The resulting plot shows how different authors group these cell types, thereby being more characteristic of potential underlying biological hierarchy. This hierarchy can be generated and visualised by adding `order_dataset = True`.
+  By changing the dataset (column) order in each high-hierarchy cell type, broader (more divisible) cell types can be positioned to the left, followed by fine-grained cell types to the right. The resulting plot shows how different authors group these cell types, thereby being more characteristic of the potential underlying biological hierarchy. This hierarchy can be generated and visualised by adding `order_dataset = True`.
   ```python
   #Visualise the cell type hierarchy.
   #Again, input can also be a harmonisation table.
@@ -751,7 +751,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Because each high-hierarchy cell type is independent of each other, the new orders of datasets will be different across groups. To recognise the dataset origin of each cell type within the hierarchy, you can assign the same color or shape to cell types from the same dataset using the parameter `node_color` or `node_shape`. An example is:
   ```python
   #Cell types from the same dataset are in the same shape.
-  #`node_shape` should be the same length as no. of datasets in the table.
+  #`node_shape` should be the same length as no. datasets in the harmonisation table.
   celltypist.treeplot(alignment, order_dataset = True, node_shape = list_of_shapes)
   ```
   </details>
