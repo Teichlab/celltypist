@@ -737,6 +737,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   HT = pd.read_csv('/path/to/local/folder/HT.csv', sep = ',')
   #Visualise the harmonisation result with a tree plot.
   celltypist.treeplot(HT)
+  #Visualise the harmonisation result only for cell types (rows) of interest.
+  celltypist.treeplot(HT[row_flag])
   ```
   In a tree plot, each column is a dataset and cell types are connected across datasets. By default, cell types belonging to one low hierarchy (one row in the harmonisation table) are in the same color. You can change the color scheme by providing a data frame to the `node_color` parameter, with three consecutive columns representing dataset, cell type, and color (in hex code), respectively. `node_color` can also be a data frame with columns of dataset, cell type, and numeric value (for mapping color gradient in combination with `cmap`). Other parameters controlling the appearance of the tree plot (node shape, line width, label size, figure size, etc.) are detailed in [celltypist.treeplot](https://celltypist.readthedocs.io/en/latest/celltypist.treeplot.html).  
     
