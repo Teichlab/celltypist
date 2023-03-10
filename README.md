@@ -756,7 +756,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Export the plot if needed.
   ```python
-  celltypist.treeplot(alignment, show = False, save = '/path/to/local/folder/some_name.pdf') 
+  celltypist.treeplot(alignment, show = False, save = '/path/to/local/folder/some_name.pdf')
   ```
   </details>
 
@@ -773,6 +773,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   Different from the tree plot where novel (`NONE`) and unharmonised (`UNRESOLVED`) cell types are blank, in the Sankey plot they are colored in white and light grey, respectively. You can adjust these by changing the values of `novel_node_color` and `remain_node_color`.  
     
+  Export the plot if needed.
+  ```python
+  #Export the image into html.
+  celltypist.sankeyplot(alignment, show = False, save = '/path/to/local/folder/some_name.html')
+  #Export the image into pdf.
+  celltypist.sankeyplot(alignment, show = False, save = '/path/to/local/folder/some_name.pdf')
+  ```
   </details>
 </details>
 
