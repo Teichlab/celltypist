@@ -771,6 +771,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Similar to the tree plot, this diagram shows how cell types are connected across datasets. Parameters controlling the appearance of the Sankey plot (node color, link color, figure size, etc.) are detailed in [celltypist.sankeyplot](https://celltypist.readthedocs.io/en/latest/celltypist.sankeyplot.html).  
     
+  Different from the tree plot where novel (`NONE`) and unharmonised (`UNRESOLVED`) cell types are blank, in the Sankey plot they are colored in white and light grey, respectively. You can adjust these by changing the values of `novel_node_color` and `remain_node_color`.  
+    
   </details>
 </details>
 
