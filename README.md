@@ -769,6 +769,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #As with the tree plot, the input can also be a harmonisation table.
   celltypist.sankeyplot(alignment)
   ```
+  Similar to the tree plot, this diagram shows how cell types are connected across datasets. Parameters controlling the appearance of the Sankey plot (node color, link color, figure size, etc.) are detailed in [celltypist.sankeyplot](https://celltypist.readthedocs.io/en/latest/celltypist.sankeyplot.html).  
+    
   </details>
 </details>
 
