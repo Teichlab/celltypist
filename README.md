@@ -787,6 +787,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>1. Supervised data integration</strong></summary>
+
++ <details>
+  <summary><strong>1.1. Specify batch and biological covariates</strong></summary>
+  </details>
+
++ <details>
+  <summary><strong>1.2. Adjust the influence of annotation on integration</strong></summary>
+  </details>
 </details>
 
 <details>
