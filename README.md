@@ -745,7 +745,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   By changing the dataset (column) order in each high-hierarchy cell type, broader (more divisible) cell types can be positioned to the left, followed by fine-grained cell types to the right. The resulting plot shows how different authors group these cell types, thereby being more characteristic of the potential underlying biological hierarchy. This hierarchy can be generated and visualised by adding `order_dataset = True`.
   ```python
   #Visualise the cell type hierarchy.
-  #Again, input can also be a harmonisation table.
+  #Again, the input can also be a harmonisation table.
   celltypist.treeplot(alignment, order_dataset = True)
   ```
   Because each high-hierarchy cell type is independent of each other, the new orders of datasets will be different across groups. To recognise the dataset origin of each cell type within the hierarchy, you can assign the same color or shape to cell types from the same dataset using the parameter `node_color` or `node_shape`. An example is:
@@ -762,6 +762,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>4.2. Sankey plot</strong></summary>
+
+  The other way to visualise harmonised cell types is the Sankey plot by [celltypist.sankeyplot](https://celltypist.readthedocs.io/en/latest/celltypist.sankeyplot.html). CellTypist builds this plot on the [plotly](https://pypi.org/project/plotly) package. `plotly` is not mandatory when installing CellTypist, so you need to install it first if you want a visualisation form of Sankey diagram (and engines for exporting images such as [kaleido](https://pypi.org/project/kaleido)).
+  ```python
+  #Visualise the harmonisation result with a Sankey plot.
+  #As with the tree plot, the input can also be a harmonisation table.
+  celltypist.sankeyplot(alignment)
+  ```
   </details>
 </details>
 
