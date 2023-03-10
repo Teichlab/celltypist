@@ -813,6 +813,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Not run; integrate cells using the reannotated low-hierarchy cell annotation.
   #celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'harmonized_low')
   ```
+  Finally, generate a UMAP based on the reconstructed neighborhood graph.
+  ```python
+  sc.tl.umap(adata)
+  ```
   </details>
 
 + <details>
