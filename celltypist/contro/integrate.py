@@ -125,7 +125,7 @@ def _get_graph(pca, batch_list, celltype_list, computation, n_neighbors, n_meta_
 
 def integrate(
           #input adata
-          adata: AnnData, batch: str, cell_type: Optional[str] = None, use_rep: str = 'X_pca', n_latent: int = 50,
+          adata: AnnData, batch: str, cell_type: Optional[str] = None, use_rep: Optional[str] = None, n_latent: int = 50,
           #neighbors global setting
           n_neighbors: Optional[int] = None, n_meta_neighbors: int = 3, approx: bool = True, metric: Union[str, types.FunctionType, DistanceMetric] = 'euclidean',
           #if approx = True, annoy or pyNNDescent
@@ -224,6 +224,9 @@ def integrate(
     if len(few_batches) > 0:
         logger.warn(f"⚠️ The following batch(es) have too few cells (<= 10), please remove them before running `celltypist.integrate`: {few_batches}")
         return
+    if use_rep is None:
+        logger.info(f"👀 `use_rep` is not specified, will use `'X_pca'` as the search space")
+        use_rep = 'X_pca'
     if use_rep not in adata.obsm.keys():
         raise KeyError(
                 f"🛑 '{use_rep}' is not found in `.obsm`")
