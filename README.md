@@ -823,6 +823,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>1.2. Adjust the influence of annotation on integration</strong></summary>
+
+  Influence of cell annotation on the data structure can range from forcibly merging the same cell types to a more lenient cell grouping. This is achieved by adjusting the parameter `n_meta_neighbors`.
+  ```python
+  #Actually the default value of `n_meta_neighbors` is 3.
+  celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'a_celltype_key', n_meta_neighbors = 3)
+  ```
   </details>
 </details>
 
