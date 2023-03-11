@@ -829,6 +829,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Actually the default value of `n_meta_neighbors` is 3.
   celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'a_celltype_key', n_meta_neighbors = 3)
   ```
+  With `n_meta_neighbors` of 1, each cell type only has one neighboring cell type, that is, itself. This will result in strongly separated cell types in the final UMAP. Increasing `n_meta_neighbors` will loosen this restriction. For example, a `n_meta_neighbors` of 2 allows each cell type to have, in addition to itself, one nearest neighboring cell type based on the transcriptomic distances calculated by CellTypist. This parameter defaults to 3, meaning that a linear spectrum of transcriptomic structure can possibly exist for each cell type.
   </details>
 </details>
 
