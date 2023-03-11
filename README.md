@@ -838,6 +838,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.1. Partial annotation</strong></summary>
+
+  Partial annotation (an `.obs` column combining annotated and unannotated cells) is allowed as the `cell_type` parameter of `celltypist.integrate`. You need to explicitly name unannotated cells as `'UNASSIGNED'` for use in CellTypist (definition of symbols can be found [here](https://github.com/Teichlab/celltypist/blob/main/celltypist/contro/symbols.py)).  
+    
+  If low-hierarchy cell reannotation is used as input, it naturally contains `'UNASSIGNED'` cells (see the harmonisation section `2.2.`). These unannotated cells will be added to the search space of other cell types, and meanwhile will search neighbors against all cell types, resulting in less supervised integration and a prolonged runtime. Thus it is recommended to start with high-hierarchy cell types where all cells are fully annotated if you would like to feed the upstream harmonised cell types as input for the downstream integration.
   </details>
 
 + <details>
