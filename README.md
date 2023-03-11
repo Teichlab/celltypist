@@ -846,6 +846,17 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.2. Rare cell types</strong></summary>
+
+  When an abundant cell type is annotated/distributed across multiple batches (e.g., datasets), sometimes not all batches can harbour adequate numbers. This leads to a rare cell type defined within the context of a specific batch. During neighborhood construction, if this batch cannot provide enough neighboring cells for this cell type, search space will be expanded to all cells in this batch.  
+    
+  Although this represents a safe solution in CellTypist to anchor nearest neighbors for rare cell types, runtime of the algorithm will be increased and cells from this cell type may not be robustly clustered. You can remove such rare cell types in associated batches before running `celltypist.integrate` (a cell type with only a few number in a given batch naturally means that this batch may not be qualified for hosting this cell type). Example code is:
+  ```python
+  #Remove cells from cell types which have <=5 cells in a batch.
+  combined = adata.obs['a_batch_key'].astype(str) + adata.obs['a_celltype_key'].astype(str)
+  combined_counts = combined.value_counts()
+  remove_combn = combined_counts.index[combined_counts <= 5]
+  adata = adata[~combined.isin(remove_combn)].copy()
+  ```
   </details>
 
 + <details>
