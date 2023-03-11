@@ -803,7 +803,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #`use_rep` can be omitted here as it defaults to 'X_pca'.
   celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'a_celltype_key', use_rep = 'X_pca')
   ```
-  The batch confounder can be the dataset origin, donor ID, or any relevant covariate. For the biological factor, it is the consistent annotation across cells, such as manual annotations of all cells, transferred cell type labels from a single reference model, and as an example here, the harmonised cell types from the CellTypist harmonisation pipeline (see the above section). Specifically, you can add two extra columns in the `.obs` of the input AnnData using the reannotation information from `alignment.reannotation`.
+  The batch confounder can be the dataset origin, donor ID, or any relevant covariate. For the biological factor, it is the consistent annotation across cells, such as manual annotations of all cells, transferred cell type labels from a single reference model, and as an example here, the harmonised cell types from the CellTypist harmonisation pipeline (see the harmonisation section). Specifically, you can add two extra columns in the `.obs` of the input AnnData using the reannotation information from `alignment.reannotation`.
   ```python
   #Insert low- and high-hierarchy annotations into the AnnData.
   adata.obs[['harmonized_low', 'harmonized_high']] = alignment.reannotation.loc[adata.obs_names, ['reannotation', 'group']]
