@@ -835,6 +835,18 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>2. Tips for data integration</strong></summary>
+
++ <details>
+  <summary><strong>2.1. Partial annotation</strong></summary>
+  </details>
+
++ <details>
+  <summary><strong>2.2. Rare cell types</strong></summary>
+  </details>
+
++ <details>
+  <summary><strong>2.3. Dataset without annotation information</strong></summary>
+  </details>
 </details>
 
 # Citation
