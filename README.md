@@ -861,6 +861,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 + <details>
   <summary><strong>2.3. Use CellTypist models for annotation and integration</strong></summary>
+
+  `celltypist.integrate` requires cell annotation to be stored in the AnnData. This information can be obtained by different means. One quick way is to use available CellTypist models to annotate the data of interest.
+  ```python
+  #Annotate the data with a relevant model (immune model as an example here).
+  adata = celltypist.annotate(adata, model = 'Immune_All_Low.pkl', majority_voting = True).to_adata()
+  ```
   </details>
 </details>
 
