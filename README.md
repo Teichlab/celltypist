@@ -860,7 +860,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 
 + <details>
-  <summary><strong>2.3. Dataset without annotation information</strong></summary>
+  <summary><strong>2.3. Use CellTypist models for annotation and integration</strong></summary>
   </details>
 </details>
 
