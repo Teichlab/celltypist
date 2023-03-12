@@ -867,6 +867,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Annotate the data with a relevant model (immune model as an example here).
   adata = celltypist.annotate(adata, model = 'Immune_All_Low.pkl', majority_voting = True).to_adata()
   ```
+  Then integrate cells on the basis of the predicted cell types.
+  ```python
+  #`cell_type` can also be 'majority_voting'.
+  celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'predicted_labels')
+  ```
   </details>
 </details>
 
