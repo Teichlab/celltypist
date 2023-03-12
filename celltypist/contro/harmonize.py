@@ -135,3 +135,5 @@ def harmonize(adata: AnnData,
     logger.info(f"✅ Harmonization done!")
     #return
     return alignment
+
+harmonise = harmonize
