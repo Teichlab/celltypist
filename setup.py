@@ -21,7 +21,7 @@ setuptools.setup(
     version=get_version(),
     author="Chuan Xu",
     author_email="cx1@sanger.ac.uk",
-    description="A tool for semi-automatic cell type annotation",
+    description="A tool for semi-automatic cell type classification, harmonization and integration",
     long_description=get_readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/Teichlab/celltypist",
