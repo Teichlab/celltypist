@@ -862,7 +862,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>2.3. Use CellTypist models for annotation and integration</strong></summary>
 
-  `celltypist.integrate` requires cell annotation to be stored in the AnnData. This information can be obtained by different means. One quick way is to use available CellTypist models to annotate the data of interest.
+  `celltypist.integrate` requires cell annotation to be stored in the AnnData. This information can be obtained by different means. One quick way is to use available CellTypist models to annotate the data of interest (see the CellTypist model list [here](https://www.celltypist.org/models)).
   ```python
   #Annotate the data with a relevant model (immune model as an example here).
   adata = celltypist.annotate(adata, model = 'Immune_All_Low.pkl', majority_voting = True).to_adata()
@@ -872,6 +872,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #`cell_type` can also be 'majority_voting'.
   celltypist.integrate(adata, batch = 'a_batch_key', cell_type = 'predicted_labels')
   ```
+  Even the model does not exactly match the data (e.g., using an immune model to annotate a lung data), this approach can be still useful as cells from the same cell type will probably be assigned the same identity by the model, therefore containing information with respect to which cells should be placed together in the neighborhood graph.
   </details>
 </details>
 
