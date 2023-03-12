@@ -70,5 +70,6 @@ intersphinx_mapping = dict(
     pandas=('https://pandas.pydata.org/pandas-docs/stable/', None),
     anndata=('https://anndata.readthedocs.io/en/stable/', None),
     sklearn=('https://scikit-learn.org/stable/', None),
-    scanpy=('https://scanpy.readthedocs.io/en/stable/', None)
+    scanpy=('https://scanpy.readthedocs.io/en/stable/', None),
+    plotly=('https://plotly.com/python/', None)
 )
