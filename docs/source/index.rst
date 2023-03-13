@@ -63,3 +63,6 @@ Welcome to CellTypist's documentation!
    celltypist.classifier.AnnotationResult
    celltypist.classifier.Classifier
    celltypist.models.Model
+   celltypist.contro.align.DistanceAlignment
+   celltypist.contro.distance.Distance
+   celltypist.contro.pct.PredictiveClusteringTree
