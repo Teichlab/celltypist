@@ -17,7 +17,7 @@ import celltypist
 
 # -- Project information -----------------------------------------------------
 project = 'celltypist'
-author = 'Chuan Xu, Martin Prete'
+author = 'Chuan Xu'
 copyright = f'{datetime.now():%Y}, {author}'
 release = celltypist.__version__
 

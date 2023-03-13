@@ -331,10 +331,10 @@ def sankeyplot(alignment,
         Figure height in pixels.
         Default to 450 in a canonical Plotly setting.
     layout_dict
-        A dict passed to :func:`plotly.graph_objects.Figure.update_layout` for setting the figure layout.
+        A dict passed to the method `.update_layout` of :class:`plotly.graph_objects.Figure` for setting the figure layout.
         Example keys include `plot_bgcolor` which sets the plot area color, `font_color` which sets the text color, `font_size` which sets the text size, etc.
     trace_dict
-        A dict passed to :func:`plotly.graph_objects.Figure.update_traces` for setting the Sankey plot.
+        A dict passed to the method `.update_traces` of :class:`plotly.graph_objects.Figure` for setting the Sankey plot.
         Example keys include `note_pad` which sets the padding between nodes, `link_line_color` which sets the link border color, `orientation` which sets the plot orientation, etc.
     expand_label
         Ignored. Whether to show the unique expanded labels. Only for developer use.
