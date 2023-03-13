@@ -66,10 +66,11 @@ napoleon_numpy_docstring = True
 # Referring to doctrees in other projects
 intersphinx_mapping = dict(
     python=('https://docs.python.org/3/', None),
-    numpy=('https://docs.scipy.org/doc/numpy/', None),
+    numpy=('https://numpy.org/doc/stable/', None),
     pandas=('https://pandas.pydata.org/pandas-docs/stable/', None),
     anndata=('https://anndata.readthedocs.io/en/stable/', None),
     sklearn=('https://scikit-learn.org/stable/', None),
     scanpy=('https://scanpy.readthedocs.io/en/stable/', None),
-    plotly=('https://plotly.com/python-api-reference/', None)
+    plotly=('https://plotly.com/python-api-reference/', None),
+    matplotlib=('https://matplotlib.org/stable/', None)
 )
