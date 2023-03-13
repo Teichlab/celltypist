@@ -1,4 +1,4 @@
-Dotplot function
+Dot plot function
 -----------------------
 
 .. autofunction:: celltypist.dotplot
