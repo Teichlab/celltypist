@@ -41,6 +41,22 @@ Welcome to CellTypist's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :caption: API (harmonisation):
+   :hidden:
+
+   celltypist.harmonize
+   celltypist.treeplot
+   celltypist.sankeyplot
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API (integration):
+   :hidden:
+
+   celltypist.integrate
+
+.. toctree::
+   :maxdepth: 2
    :caption: Package organization:
    :hidden:
 
