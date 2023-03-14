@@ -463,7 +463,7 @@ def treeplot(alignment, group_celltype: bool = True, order_dataset: bool = False
         An :class:`~matplotlib.axes.Axes` where the tree will be drawn. Default to draw the tree on a new axes.
     figsize
         Tuple of figure width and height in inches.
-        Default to 6.4 and 4.8 in a canonical Matplotlib setting.
+        Default to auto-adjusting the figure size based on the numbers of datasets and cell types.
     show
         Whether to show the plot.
         (Default: `True`)
@@ -505,6 +505,7 @@ def treeplot(alignment, group_celltype: bool = True, order_dataset: bool = False
     link_pairs = np.row_stack([new_relation.iloc[:, [i, i+1]].drop_duplicates().values for i in range(n_col - 1)])
     #ax
     if ax is None:
+        figsize = [3.5*n_col, n_row/3.5] if figsize is None else figsize
         _, ax = plt.subplots(figsize = figsize)
     #links
     for start, end in link_pairs:
