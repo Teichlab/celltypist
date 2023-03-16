@@ -598,7 +598,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   alignment = celltypist.DistanceAlignment.load('/path/to/local/folder/some_name.pkl')
   ```
-  In `alignment`, the harmonisation table, which summarizes cell types across datasets into semantically connected ones, is stored as the attribute `.relation` (`alignment.relation`). One illustrative example is:
+  In `alignment`, the harmonisation table, which summarises cell types across datasets into semantically connected ones, is stored as the attribute `.relation` (`alignment.relation`). One illustrative example is:
   <div align="center">
 
   |D1   |relation|D2   |relation|D3        |
