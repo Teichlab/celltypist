@@ -27,6 +27,7 @@ Welcome to CellTypist's documentation!
    notebook/celltypist_tutorial
    notebook/celltypist_tutorial_ml
    notebook/celltypist_tutorial_cv
+   notebook/celltypist_tutorial_harmonisation
 
 .. toctree::
    :maxdepth: 2
