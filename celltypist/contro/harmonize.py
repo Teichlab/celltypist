@@ -107,6 +107,9 @@ def harmonize(adata: AnnData,
     if use_pct and adata.X.min() >= 0 and float(adata.X.max()).is_integer():
         raise ValueError(
                 f"🛑 `.X` of the AnnData is detected to be raw counts, which is not suitable for building PCT")
+    #build PCT using all genes is not realistic
+    if use_pct and adata.n_vars > 15000:
+        logger.warn(f"⚠️ Warning: {adata.n_vars} features are used and may take long time for building PCT. Subsetting the AnnData into HVGs is recommended")
     #generate a combined `Distance`
     if use_pct:
         separate_distances = Distances(adata, dataset = dataset, cell_type = cell_type, use_rep = use_rep, metric = metric, n_jobs = -1)
