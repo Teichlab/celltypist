@@ -64,6 +64,8 @@ class Distances():
         elif (use_rep not in adata.obsm.keys()) and (use_rep != 'X'):
             raise KeyError(
                     f"🛑 '{use_rep}' is not found in `.obsm`")
+        if use_rep == 'X' and adata.n_vars > 15000:
+            logger.warn(f"⚠️ Warning: {adata.n_vars} features are used for calculating distances. Subsetting the AnnData into HVGs is recommended")
         if metric is None:
             metric = 'correlation' if use_rep == 'X' else 'euclidean'
         self.datasets = np.unique(adata.obs[dataset])
