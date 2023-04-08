@@ -92,7 +92,10 @@ class PredictiveClusteringTree(DecisionTreeRegressor):
         None
             Fitted and (possibly) pruned tree.
         """
-        super().fit(X, y, sample_weight = sample_weight, check_input = True)
+        if isinstance(X, spmatrix) and ((X.indices.dtype == 'int64') or (X.indptr.dtype == 'int64')):
+            super().fit(X.toarray(), y, sample_weight = sample_weight, check_input = True)
+        else:
+            super().fit(X, y, sample_weight = sample_weight, check_input = True)
         if self.F_test_prune:
             self.F_test()
             self.prune_tree(p_thres = self.p_thres)
