@@ -37,7 +37,7 @@ def _to_array(_array_like) -> np.ndarray:
     elif isinstance(_array_like, np.ndarray):
         return _array_like
     else:
-        raise ValueError(
+        raise TypeError(
                 f"🛑 Please provide a valid array-like object as input")
 
 def _prepare_data(X, labels, genes, transpose) -> tuple:
