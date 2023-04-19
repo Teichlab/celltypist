@@ -276,7 +276,7 @@ def _new_relation_to_color(new_relation, node_color, novel_node_color, remain_no
         node_color['_combination'] = node_color.iloc[:, 0].astype(str) + SEP1 + node_color.iloc[:, 1].astype(str)
         map_color.update(dict(zip(node_color['_combination'].values, map_values)))
     else:
-        raise ValueError(
+        raise TypeError(
                 f"🛑 Please provide `node_color` as a data frame")
     return map_color
 
@@ -352,7 +352,7 @@ def sankeyplot(alignment,
     elif hasattr(alignment, 'relation'):
         relation = alignment.relation
     else:
-        raise ValueError(
+        raise TypeError(
                 f"🛑 Please provide correct input - either a DistanceAlignment or a data frame")
     trace = _relation_to_data(relation, return_sankey = True)[1]
     #relation2new_relation is run twice actually, but time cost is negligible; this new relation is row ordered
@@ -489,7 +489,7 @@ def treeplot(alignment, group_celltype: bool = True, order_dataset: bool = False
     elif hasattr(alignment, 'relation'):
         relation = alignment.relation
     else:
-        raise ValueError(
+        raise TypeError(
                 f"🛑 Please provide correct input - either a DistanceAlignment or a data frame")
     new_relation = _identify_relation_groups(relation, group_prefix = 'Group', order_row = group_celltype, order_column = order_dataset)[1]
     n_col = new_relation.shape[1]
