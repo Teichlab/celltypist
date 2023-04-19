@@ -215,7 +215,7 @@ class PredictiveClusteringTree(DecisionTreeRegressor):
             raise ValueError(
                     f"🛑 Please provide `X` with {self.n_features_in_} columns")
         if not isinstance(y, np.ndarray):
-            raise ValueError(
+            raise TypeError(
                     f"🛑 Please provide `y` as a numpy 2D array")
         if (X.shape[0] != y.shape[0]) or (self.n_outputs_ != y.shape[1]):
             raise ValueError(
