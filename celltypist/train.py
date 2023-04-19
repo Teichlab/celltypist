@@ -306,6 +306,8 @@ def train(X = None,
         logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
         #indata = indata[:, ~flag]
         genes = genes[~flag]
+    #report data stats
+    logger.info(f"🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
     #scaler
     logger.info(f"⚖️ Scaling input data")
     scaler = StandardScaler(with_mean = with_mean)
