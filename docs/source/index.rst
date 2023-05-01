@@ -9,12 +9,12 @@ Welcome to CellTypist's documentation!
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
    :start-line: 2
-   :end-line: 8
+   :end-line: 11
 
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
-   :start-line: 14
-   :end-line: 24
+   :start-line: 22
+   :end-line: 32
 
 .. include:: ../../CHANGELOG.md
    :parser: myst_parser.sphinx_
@@ -27,10 +27,12 @@ Welcome to CellTypist's documentation!
    notebook/celltypist_tutorial
    notebook/celltypist_tutorial_ml
    notebook/celltypist_tutorial_cv
+   notebook/celltypist_tutorial_harmonisation
+   notebook/celltypist_tutorial_integration
 
 .. toctree::
    :maxdepth: 2
-   :caption: API:
+   :caption: API (classification):
    :hidden:
 
    celltypist.train
@@ -41,9 +43,28 @@ Welcome to CellTypist's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :caption: API (harmonisation):
+   :hidden:
+
+   celltypist.harmonize
+   celltypist.treeplot
+   celltypist.sankeyplot
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API (integration):
+   :hidden:
+
+   celltypist.integrate
+
+.. toctree::
+   :maxdepth: 2
    :caption: Package organization:
    :hidden:
 
    celltypist.classifier.AnnotationResult
    celltypist.classifier.Classifier
    celltypist.models.Model
+   celltypist.contro.align.DistanceAlignment
+   celltypist.contro.distance.Distance
+   celltypist.contro.pct.PredictiveClusteringTree

@@ -6,3 +6,4 @@ click>=7.1.2
 requests>=2.23.0
 scanpy>=1.7.0
 leidenalg>=0.8.3
+annoy>=1.17.0
