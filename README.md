@@ -541,7 +541,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   If `X_pca` is not detected in `.obsm` and no other latent representations are provided via `use_rep`, gene expression matrix in `.X` will be used to calculate the distances. In such case, subsetting the AnnData to informative genes (e.g. highly variable genes) is suggested and `.X` should be log-normalised (to a constant total count per cell).  
     
-  The resulting `alignment` is an instance of the class `DistanceAlignment` as defined by CellTypist, and can be written out as follows.
+  The resulting `alignment` is an instance of the class [DistanceAlignment](https://celltypist.readthedocs.io/en/latest/celltypist.contro.align.DistanceAlignment.html) as defined by CellTypist, and can be written out as follows.
   ```python
   #Save the harmonisation output.
   alignment.write('/path/to/local/folder/some_name.pkl')
@@ -653,7 +653,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>2.3. Meta-analysis</strong></summary>
 
-  A distance matrix-like instance, which is from the class `Distance` as defined by CellTypist, is also stashed in `alignment` as the attribute `.base_distance`.
+  A distance matrix-like instance, which is from the class [Distance](https://celltypist.readthedocs.io/en/latest/celltypist.contro.distance.Distance.html) as defined by CellTypist, is also stashed in `alignment` as the attribute `.base_distance`.
   ```python
   #Access the distance object.
   alignment.base_distance
@@ -690,7 +690,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   Along the order of datasets, optimal choices of `minimum_unique_percents` and `minimum_divide_percents` (see `1.4.`) in each iteration can be found in `alignment.minimum_unique_percents` and `alignment.minimum_divide_percents`. For instance, harmonising five datasets requires four iterations, and thus both `.minimum_unique_percents` and `.minimum_divide_percents` have a length of four.  
     
-  CellTypist provides a method `.best_align()` to change the order of datasets post-harmonisation. Through this, datasets will be reharmonised in a different order (this post-harmonisation adjustment is more efficient than re-running `celltypist.harmonize` with a new order).
+  CellTypist provides a method [best_align](https://celltypist.readthedocs.io/en/latest/celltypist.contro.align.DistanceAlignment.html#celltypist.contro.align.DistanceAlignment.best_align) to change the order of datasets post-harmonisation. Through this, datasets will be reharmonised in a different order (this post-harmonisation adjustment is more efficient than re-running `celltypist.harmonize` with a new order).
   ```python
   #Reharmonise cell types across datasets with a different dataset order.
   alignment.best_align(dataset_order = a_list_of_new_dataset_order)
@@ -706,7 +706,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>3.2. Reannotation</strong></summary>
 
-  After changing the dataset order and reharmonising cell types, cells need to be reannotated based on the newly generated harmonisation table using the method `reannotate`.
+  After changing the dataset order and reharmonising cell types, cells need to be reannotated based on the newly generated harmonisation table using the method [reannotate](https://celltypist.readthedocs.io/en/latest/celltypist.contro.align.DistanceAlignment.html#celltypist.contro.align.DistanceAlignment.reannotate).
   ```python
   #Reannotate cells based on the new harmonisation table.
   alignment.reannotate()
