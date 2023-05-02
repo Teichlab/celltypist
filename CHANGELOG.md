@@ -1,7 +1,7 @@
 # Changelog
 *********************************
-## CellTypist 1.4.0 (March 31, 2023)
-- Add modules of cell type harmonisation and integration
+## CellTypist 1.4.0 (May 2, 2023)
+- Add modules of cell type harmonisation and integration (a release before the formal CellTypist v2)
 ## CellTypist 1.3.0 (December 14, 2022)
 - Transfer numpy matrix to array during prediction for compatibility with sklearn >= 1.0 [#50](https://github.com/Teichlab/celltypist/issues/50)
 ## CellTypist 1.2.0 (August 22, 2022)
