@@ -539,6 +539,52 @@ class DistanceAlignment():
     #            reannotation.drop(columns = [f"{prefix}round{x}" for x in range(1, lend-1)], inplace = True)
     #    self.reannotation = reannotation
 
+    def reannotate(self, prefix: str = '') -> None:
+        """
+        Reannotate each cell into the harmonized cell type.
+
+        Parameters
+        ----------
+        prefix
+            Prefix of the harmonization columns for all iterations. Default to no prefix.
+
+        Returns
+        ----------
+        None
+            A :class:`~pandas.DataFrame` with multiple columns added as the attribute `.reannotation`:
+            1) **dataset**, datasets where the cells are from.
+            2) **cell_type**, cell types annotated by the original studies/datasets.
+            3) **reannotation**, prefixed with `prefix`; cell types reannotated by the harmonization process.
+            4) **group**, prefixed with `prefix`; annotated cell type groups.
+        """
+        if not hasattr(self, 'relation'):
+            raise AttributeError(
+                    f"🛑 No harmonization result (`.relation`) exists")
+        reannotation = self.base_distance.cell.set_index('ID', inplace = False, drop = True)
+        reannotation[f"{prefix}reannotation"] = UNASSIGN
+        assignment = self.base_distance.assignment[self.aligned_datasets]
+        for dataset in self.aligned_datasets:
+            for celltype in np.setdiff1d(np.unique(self.relation[dataset]), [NOVEL, REMAIN]):
+                flag = (reannotation.dataset == dataset) & (reannotation.cell_type == celltype)
+                sub_relation = self.relation[self.relation[dataset] == celltype]
+                if sub_relation.shape[0] == 1:
+                    reannotation.loc[flag, f"{prefix}reannotation"] = ' '.join(sub_relation.iloc[0].values)
+                else:
+                    sub_assignment = assignment[flag]
+                    sums = pd.DataFrame()
+                    for _, s in sub_relation.iterrows():
+                        celltypes = s.values[0::2]
+                        per_s_flag = (sub_assignment == celltypes) | np.isin(celltypes, [NOVEL, REMAIN])
+                        sums[' '.join(s.values)] = per_s_flag.sum(axis = 1).values
+                    reannotation.loc[flag, f"{prefix}reannotation"] = sums.idxmax(axis = 1).values
+        groups, new_relation = _identify_relation_groups(self.relation, order_row = False, order_column = False)
+        group_mapping = dict()
+        for i in range(len(groups)):
+            group_mapping.update({j: groups[i] for j in new_relation.iloc[i].values})
+        reannotation[f"{prefix}group"] = (reannotation.dataset + SEP1 + reannotation.cell_type).replace(group_mapping)
+        reannotation.loc[reannotation[f"{prefix}group"].str.contains(SEP1), f"{prefix}group"] = UNASSIGN
+        self.reannotation = reannotation
+
     @staticmethod
     def load(alignment_file: str):
         """Load the DistanceAlignment file."""
