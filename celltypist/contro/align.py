@@ -482,62 +482,62 @@ class DistanceAlignment():
         self.minimum_divide_percent = original_mdp
         self.relation = relation
 
-    def reannotate(self, show_iteration: bool = False, add_group: bool = True, prefix: str = '') -> None:
-        """
-        Reannotate each cell into the harmonized cell type.
+    #def reannotate(self, show_iteration: bool = False, add_group: bool = True, prefix: str = '') -> None:
+    #    """
+    #    Reannotate each cell into the harmonized cell type.
 
-        Parameters
-        ----------
-        show_iteration
-            Whether to store the cell type reannotation result for each harmonization iteration.
-            (Default: `False`)
-        add_group
-            Whether to annotate out cell type group information.
-            (Default: `True`)
-        prefix
-            Prefix of the harmonization columns for all iterations. Default to no prefix.
+    #    Parameters
+    #    ----------
+    #    show_iteration
+    #        Whether to store the cell type reannotation result for each harmonization iteration.
+    #        (Default: `False`)
+    #    add_group
+    #        Whether to annotate out cell type group information.
+    #        (Default: `True`)
+    #    prefix
+    #        Prefix of the harmonization columns for all iterations. Default to no prefix.
 
-        Returns
-        ----------
-        None
-            A :class:`~pandas.DataFrame` with multiple columns added as the attribute `.reannotation`:
-            1) **dataset**, datasets where the cells are from.
-            2) **cell_type**, cell types annotated by the original studies/datasets.
-            3) **roundN** or **reannotation**, prefixed with `prefix`; cell types reannotated by the harmonization process.
-            4) **group**, prefixed with `prefix`; annotated cell type groups.
-        """
-        if not hasattr(self, 'relation'):
-            raise AttributeError(
-                    f"🛑 No harmonization result (`.relation`) exists")
-        reannotation = self.base_distance.cell.set_index('ID', inplace = False, drop = True)
-        lend = len(self.aligned_datasets)
-        reannotation[[f"{prefix}round{x}" for x in range(1, lend)]] = UNASSIGN
-        assignment = self.base_distance.assignment[self.aligned_datasets]
-        for _, s in self.relation.iterrows():
-            celltypes = s.values[0::2]
-            flags = (assignment == celltypes) | np.isin(celltypes, [NOVEL, REMAIN])
-            non_existing_datasets = self.aligned_datasets[np.isin(celltypes, [NOVEL, REMAIN])]
-            flags.loc[reannotation.dataset.isin(non_existing_datasets).values, :] = False
-            for N in range(1, lend):
-                if (not show_iteration) and (N != lend - 1):
-                    continue
-                sub_s = s.values[:2*N+1]
-                sub_celltypes = sub_s[0::2]
-                if np.all(sub_celltypes == NOVEL) or np.all(sub_celltypes == REMAIN):
-                    continue
-                reannotation.loc[np.all(flags[self.aligned_datasets[:N+1]], axis = 1).values, f"{prefix}round{N}"] = ' '.join(sub_s)
-        if add_group:
-            groups, new_relation = _identify_relation_groups(self.relation, order_row = False, order_column = False)
-            group_mapping = dict()
-            for i in range(len(groups)):
-                group_mapping.update({j: groups[i] for j in new_relation.iloc[i].values})
-            reannotation[f"{prefix}group"] = (reannotation.dataset + SEP1 + reannotation.cell_type).replace(group_mapping)
-            reannotation.loc[reannotation[f"{prefix}group"].str.contains(SEP1), f"{prefix}group"] = UNASSIGN
-        if not show_iteration:
-            reannotation.rename(columns = {f"{prefix}round{lend-1}": f"{prefix}reannotation"}, inplace = True)
-            if lend >= 3:
-                reannotation.drop(columns = [f"{prefix}round{x}" for x in range(1, lend-1)], inplace = True)
-        self.reannotation = reannotation
+    #    Returns
+    #    ----------
+    #    None
+    #        A :class:`~pandas.DataFrame` with multiple columns added as the attribute `.reannotation`:
+    #        1) **dataset**, datasets where the cells are from.
+    #        2) **cell_type**, cell types annotated by the original studies/datasets.
+    #        3) **roundN** or **reannotation**, prefixed with `prefix`; cell types reannotated by the harmonization process.
+    #        4) **group**, prefixed with `prefix`; annotated cell type groups.
+    #    """
+    #    if not hasattr(self, 'relation'):
+    #        raise AttributeError(
+    #                f"🛑 No harmonization result (`.relation`) exists")
+    #    reannotation = self.base_distance.cell.set_index('ID', inplace = False, drop = True)
+    #    lend = len(self.aligned_datasets)
+    #    reannotation[[f"{prefix}round{x}" for x in range(1, lend)]] = UNASSIGN
+    #    assignment = self.base_distance.assignment[self.aligned_datasets]
+    #    for _, s in self.relation.iterrows():
+    #        celltypes = s.values[0::2]
+    #        flags = (assignment == celltypes) | np.isin(celltypes, [NOVEL, REMAIN])
+    #        non_existing_datasets = self.aligned_datasets[np.isin(celltypes, [NOVEL, REMAIN])]
+    #        flags.loc[reannotation.dataset.isin(non_existing_datasets).values, :] = False
+    #        for N in range(1, lend):
+    #            if (not show_iteration) and (N != lend - 1):
+    #                continue
+    #            sub_s = s.values[:2*N+1]
+    #            sub_celltypes = sub_s[0::2]
+    #            if np.all(sub_celltypes == NOVEL) or np.all(sub_celltypes == REMAIN):
+    #                continue
+    #            reannotation.loc[np.all(flags[self.aligned_datasets[:N+1]], axis = 1).values, f"{prefix}round{N}"] = ' '.join(sub_s)
+    #    if add_group:
+    #        groups, new_relation = _identify_relation_groups(self.relation, order_row = False, order_column = False)
+    #        group_mapping = dict()
+    #        for i in range(len(groups)):
+    #            group_mapping.update({j: groups[i] for j in new_relation.iloc[i].values})
+    #        reannotation[f"{prefix}group"] = (reannotation.dataset + SEP1 + reannotation.cell_type).replace(group_mapping)
+    #        reannotation.loc[reannotation[f"{prefix}group"].str.contains(SEP1), f"{prefix}group"] = UNASSIGN
+    #    if not show_iteration:
+    #        reannotation.rename(columns = {f"{prefix}round{lend-1}": f"{prefix}reannotation"}, inplace = True)
+    #        if lend >= 3:
+    #            reannotation.drop(columns = [f"{prefix}round{x}" for x in range(1, lend-1)], inplace = True)
+    #    self.reannotation = reannotation
 
     @staticmethod
     def load(alignment_file: str):
