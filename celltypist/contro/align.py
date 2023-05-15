@@ -546,7 +546,7 @@ class DistanceAlignment():
         Parameters
         ----------
         prefix
-            Prefix of the harmonization columns for all iterations. Default to no prefix.
+            Prefix of the harmonization columns. Default to no prefix.
 
         Returns
         ----------
@@ -565,7 +565,7 @@ class DistanceAlignment():
         assignment = self.base_distance.assignment[self.aligned_datasets]
         for dataset in self.aligned_datasets:
             for celltype in np.setdiff1d(np.unique(self.relation[dataset]), [NOVEL, REMAIN]):
-                flag = (reannotation.dataset == dataset) & (reannotation.cell_type == celltype)
+                flag = ((reannotation.dataset == dataset) & (reannotation.cell_type == celltype)).values
                 sub_relation = self.relation[self.relation[dataset] == celltype]
                 if sub_relation.shape[0] == 1:
                     reannotation.loc[flag, f"{prefix}reannotation"] = ' '.join(sub_relation.iloc[0].values)
