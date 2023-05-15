@@ -23,7 +23,7 @@ def harmonize(adata: AnnData,
               minimum_divide_percents: Union[list, tuple, np.ndarray, pd.Series, pd.Index, float] = (0.1, 0.15, 0.2),
               maximum_novel_percent: float = 0.05,
               #reannotate
-              reannotate: bool = True, add_group: bool = True, prefix: str = '',
+              reannotate: bool = True, prefix: str = '',
               #to PCT train
               **kwargs) -> DistanceAlignment:
     """
@@ -86,9 +86,6 @@ def harmonize(adata: AnnData,
     reannotate
         Whether to reannotate cells into harmonized cell types.
         (Default: `True`)
-    add_group
-        Whether to annotate out cell type group information as well during reannotation.
-        (Default: `True`)
     prefix
         Column prefix for the reannotation data frame.
     **kwargs
@@ -134,7 +131,7 @@ def harmonize(adata: AnnData,
     #reannotate
     if reannotate:
         logger.info(f"🖋️ Reannotating cells")
-        alignment.reannotate(show_iteration = False, add_group = add_group, prefix = prefix)
+        alignment.reannotate(prefix = prefix)
     logger.info(f"✅ Harmonization done!")
     #return
     return alignment
