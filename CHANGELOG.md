@@ -1,5 +1,7 @@
 # Changelog
 *********************************
+## CellTypist 1.5.0 (May 16, 2023)
+A more mature release before the formal CellTypist v2
 ## CellTypist 1.4.0 (May 2, 2023)
 - Add modules of cell type harmonisation and integration (a release before the formal CellTypist v2)
 ## CellTypist 1.3.0 (December 14, 2022)
