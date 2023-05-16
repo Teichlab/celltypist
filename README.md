@@ -645,9 +645,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |cell6|D3     |M        |J = K ∋ M            |Group4|
   </div>
 
-  The four columns represent information of dataset origin, original author annotation, reannotated low- and high-hierarchy annotation, respectively. For the last column, it contains grouping (high-hierarchy) information, and each group corresponds to a subset of the harmonisation table. You can check this correspondence by coupling the table (`alignment.relation`) with the grouping (`alignment.groups`) (see `2.1.`).  
-    
-  Of note, due to several reasons including the clustering impurity of homogeneous cell populations, not all cells can be reannotated into low-hierarchy cell types, leading to `UNASSIGNED` cells within the `reannotation` column. The `group` column, however, is always populated with meaningful groups as this column is directly based on the harmonisation table.
+  The four columns represent information of dataset origin, original author annotation, reannotated low- and high-hierarchy annotation, respectively. For the last column, it contains grouping (high-hierarchy) information, and each group corresponds to a subset of the harmonisation table. You can check this correspondence by coupling the table (`alignment.relation`) with the grouping (`alignment.groups`) (see `2.1.`).
   </details>
 
 + <details>
@@ -839,9 +837,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>2.1. Partial annotation</strong></summary>
 
-  Partial annotation (an `.obs` column combining annotated and unannotated cells) is allowed as the `cell_type` parameter of `celltypist.integrate`. You need to explicitly name unannotated cells as `'UNASSIGNED'` for use in CellTypist (definition of symbols can be found [here](https://github.com/Teichlab/celltypist/blob/main/celltypist/contro/symbols.py)).  
-    
-  If low-hierarchy cell reannotation is used as input, it naturally contains `'UNASSIGNED'` cells (see the harmonisation section `2.2.`). These unannotated cells will be added to the search space of other cell types, and meanwhile will search neighbors against all cell types, resulting in less supervised integration and a prolonged runtime. Thus it is recommended to start with high-hierarchy cell types where all cells are fully annotated if you would like to feed the upstream harmonised cell types as input for the downstream integration.
+  Partial annotation (an `.obs` column combining annotated and unannotated cells) is allowed as the `cell_type` parameter of `celltypist.integrate`. You need to explicitly name unannotated cells as `'UNASSIGNED'` for use in CellTypist (definition of symbols can be found [here](https://github.com/Teichlab/celltypist/blob/main/celltypist/contro/symbols.py)).
   </details>
 
 + <details>
