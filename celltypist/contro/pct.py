@@ -3,6 +3,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn import __version__ as skv
 import numpy as np
 from scipy.stats import f
+from scipy.sparse import spmatrix
 from typing import Optional, Union
 from .. import logger
 
