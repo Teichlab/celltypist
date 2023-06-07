@@ -385,6 +385,11 @@ class Classifier():
     @staticmethod
     def _construct_neighbor_graph(adata: AnnData) -> tuple:
         """Construct a neighborhood graph. This function is for internal use."""
+        # fix for adata.uns['log1p']['base'] error
+        if 'log1p' in adata.uns.keys():
+            if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
+                adata.uns['log1p']['base'] = None
+
         if 'X_pca' not in adata.obsm.keys():
             if adata.X.min() < 0:
                 adata = adata.raw.to_adata()
