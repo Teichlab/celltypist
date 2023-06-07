@@ -406,9 +406,10 @@ def download_model_index(only_model: bool = True) -> None:
     """
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
     logger.info(f"📜 Retrieving model list from server {url}")
+    response = _requests_get(url)
     with open(get_model_path("models.json"), "wb") as f:
-        f.write(_requests_get(url).content)
-    model_count = len(_requests_get(url).json()["models"])
+        f.write(response.content)
+    model_count = len(response.json()["models"])
     logger.info(f"📚 Total models in list: {model_count}")
     if not only_model:
         download_models()
@@ -452,8 +453,9 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
             continue
         logger.info(f"💾 Downloading model [{idx+1}/{model_count}]: {model['filename']}")
         try:
+            response = _requests_get(model["url"])
             with open(model_path, "wb") as f:
-                f.write(_requests_get(model["url"]).content)
+                f.write(response.content)
         except Exception as exception:
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
