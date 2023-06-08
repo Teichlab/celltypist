@@ -8,4 +8,4 @@ from .contro.harmonize import harmonize, harmonise, DistanceAlignment
 from .contro.integrate import integrate
 from .contro.plot import treeplot, sankeyplot
 
-__version__ = "1.5.1"
+__version__ = "1.5.2"

@@ -1,5 +1,7 @@
 # Changelog
 *********************************
+## CellTypist 1.5.2 (June 8, 2023)
+Patch log1p serialization issue and model download error
 ## CellTypist 1.5.1 (May 26, 2023)
 Fix error in not importing spmatrix in pct
 ## CellTypist 1.5.0 (May 16, 2023)
