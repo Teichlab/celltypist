@@ -4,7 +4,10 @@ from anndata import AnnData
 from typing import Optional, Union
 import types
 import sys
-from sklearn.neighbors import DistanceMetric
+try:
+    from sklearn.neighbors import DistanceMetric
+except ImportError:
+    from sklearn.metrics import DistanceMetric
 from sklearn.neighbors import KDTree
 from sklearn.metrics import pairwise_distances
 from .. import logger
