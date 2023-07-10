@@ -14,6 +14,9 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
     For internal use. Get the fraction and avg. probability data frames (predictions * truths) from AnnotationResult.
     """
     #prediction
+    if not isinstance(predictions, AnnotationResult):
+        raise TypeError(
+                f"🛑 Please provide a correct input - an `AnnotationResult` derived from `celltypist.annotate`")
     if use_as_prediction not in predictions.predicted_labels:
         if use_as_prediction == 'majority_voting':
             raise KeyError(
