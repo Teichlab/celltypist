@@ -1,9 +1,13 @@
 # Changelog
 *********************************
+## CellTypist 1.5.3 (July 10, 2023)
+- Fix DistanceMetric import for sklearn >= 1.3.0 [#73](https://github.com/Teichlab/celltypist/issues/73)
+- Detect input format for [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html)
+- Require leidenalg >= 0.9.0
 ## CellTypist 1.5.2 (June 8, 2023)
-Patch log1p serialization issue and model download error
+- Patch log1p serialization issue and model download error
 ## CellTypist 1.5.1 (May 26, 2023)
-Fix error in not importing spmatrix in pct
+- Fix error in not importing spmatrix in pct
 ## CellTypist 1.5.0 (May 16, 2023)
 A more mature release before the formal CellTypist v2
 ## CellTypist 1.4.0 (May 2, 2023)
