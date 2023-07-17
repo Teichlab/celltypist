@@ -5,6 +5,7 @@ from anndata import AnnData
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
+from sklearn import __version__ as skv
 from typing import Optional, Union
 from .models import Model
 from . import logger
@@ -127,7 +128,8 @@ def _SGDClassifier(indata, labels,
     """
     For internal use. Get the SGDClassifier.
     """
-    classifier = SGDClassifier(loss = 'log', alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+    loss_mode = 'log_loss' if float(skv[:3]) >= 1.3 else 'log'
+    classifier = SGDClassifier(loss = loss_mode, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
         logger.info(f"🏋️ Training data using SGD logistic regression")
         if (len(labels) > 100000) and (indata.shape[1] > 10000):
