@@ -2,7 +2,7 @@
 *********************************
 ## CellTypist 1.5.3 (July 10, 2023)
 - Fix DistanceMetric import for sklearn >= 1.3.0 [#73](https://github.com/Teichlab/celltypist/issues/73)
-- Detect input format for [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html)
+- Detect input format for [celltypist.dotplot](https://celltypist.readthedocs.io/en/latest/celltypist.dotplot.html)
 - Require leidenalg >= 0.9.0
 ## CellTypist 1.5.2 (June 8, 2023)
 - Patch log1p serialization issue and model download error
