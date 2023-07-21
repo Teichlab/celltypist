@@ -236,8 +236,11 @@ class Model():
         """
         map_file = _get_sample_data('Ensembl105_Human2Mouse_Genes.csv') if map_file is None else map_file
         if not os.path.isfile(map_file):
-            raise FileNotFoundError(
-                    f"🛑 No such file: {map_file}")
+            try_file = _get_sample_data(map_file)
+            if not os.path.isfile(try_file):
+                raise FileNotFoundError(
+                        f"🛑 No such file: {map_file}")
+            map_file = try_file
         #with and without headers are both ok -> real headers become fake genes and are removed afterwards
         map_content = pd.read_csv(map_file, sep = sep, header = None)
         map_content.dropna(axis = 0, inplace = True)
