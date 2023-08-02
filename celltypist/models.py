@@ -268,8 +268,8 @@ class Model():
         #filter
         map_content = map_content[map_content[convert_from].isin(self.features)]
         if unique_only:
-            map_content.drop_duplicates([0],inplace=True)
-            map_content.drop_duplicates([1],inplace=True)
+            map_content.drop_duplicates([0], inplace=True, keep=False)
+            map_content.drop_duplicates([1], inplace=True, keep=False)
         map_content['index_from'] = pd.DataFrame(self.features, columns=['features']).reset_index().set_index('features').loc[map_content[convert_from], 'index'].values
         #main
         logger.info(f"🧬 Number of genes in the original model: {len(self.features)}")
