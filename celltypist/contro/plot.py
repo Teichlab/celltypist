@@ -165,8 +165,9 @@ def _relation_to_data(relation, return_sankey: bool = True) -> Union[pd.DataFram
     link = pd.DataFrame(columns = ['source', 'target', 'value'])
     for k in range(len(datasets) - 1):
         vc = (relation[datasets[k]] + SEP2 + relation[datasets[k+1]]).value_counts().reset_index()
+        count_column = vc.columns[1]
         vc[['source', 'target']] = vc['index'].str.split(SEP2, expand=True).values
-        vc.rename(columns = {0: 'value'}, inplace = True)
+        vc.rename(columns = {count_column: 'value'}, inplace = True)
         link = pd.concat([link, vc[['source', 'target', 'value']]])
     source = refer.loc[link.source.values, 'index'].values
     target = refer.loc[link.target.values, 'index'].values
