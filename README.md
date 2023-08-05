@@ -873,6 +873,4 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 # Citation
-Xu et al., Automatic cell type harmonization and integration across Human Cell Atlas datasets. bioRxiv (2023). [Preprint](https://doi.org/10.1101/2023.05.01.538994)  
-  
 Dominguez Conde et al., Cross-tissue immune cell analysis reveals tissue-specific features in humans. Science 376, eabl5197 (2022). [Link](https://doi.org/10.1126/science.abl5197)
