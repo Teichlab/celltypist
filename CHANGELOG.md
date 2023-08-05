@@ -1,5 +1,10 @@
 # Changelog
 *********************************
+## CellTypist 1.6.0 (August 5, 2023)
+- Separate [CellHint](https://github.com/Teichlab/cellhint) from CellTypist
+- Keep strict one-to-one orthologs during species model conversion
+- Auto-fetch feature transfer files for model conversion
+- Adapt code to sklearn>=1.3.0 [#75](https://github.com/Teichlab/celltypist/issues/75)
 ## CellTypist 1.5.3 (July 10, 2023)
 - Fix DistanceMetric import for sklearn >= 1.3.0 [#73](https://github.com/Teichlab/celltypist/issues/73)
 - Detect input format for [celltypist.dotplot](https://celltypist.readthedocs.io/en/latest/celltypist.dotplot.html)
