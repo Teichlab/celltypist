@@ -124,30 +124,24 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
 
 def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRegression:
     """
-    For internal use. Get the logistic Classifier.
+    For internal use. Get the cuml logistic Classifier.
     """
     solver = 'qn' if solver is None else solver
     if solver != 'qn':
         raise ValueError(
                 f"🛑 Invalid `solver`, should be `'qn'` to run on GPU")
-    try:
-        from cuml import LogisticRegression as cuLogisticRegression
-    except ImportError:
-        print('Install cuml to use GPU version of logistic regression.')
-        raise ImportError
-    no_cells = len(labels)
-    logger.info(f"🏋️ Training data using logistic regression on GPU")
-    if (no_cells > 100000) and (indata.shape[1] > 10000):
-        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     le = LabelEncoder()
     labels_ = le.fit_transform(labels)
+    logger.info(f"🏋️ Training data using logistic regression on GPU")
+    no_cells = len(labels)
+    if (no_cells > 100000) and (indata.shape[1] > 10000):
+        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
-    classifier = LogisticRegression()
-    classifier.coef_ = classifier_.coef_
-    classifier.intercept_ = classifier_.intercept_
+    classifier = LogisticRegression(multi_class = 'ovr', n_jobs = n_jobs)
+    for attr in ['C', 'class_weight', 'fit_intercept', 'l1_ratio', 'max_iter', 'penalty', 'tol', 'solver', 'n_iter_']:
+        setattr(classifier, attr) = getattr(classifier_, attr)
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
-    classifier.max_iter = max_iter
     return classifier
 
 def _SGDClassifier(indata, labels,
@@ -311,6 +305,13 @@ def train(X = None,
     :class:`~celltypist.models.Model`
         An instance of the :class:`~celltypist.models.Model` trained by celltypist.
     """
+    #Test GPU
+    if use_GPU:
+        try:
+            from cuml import LogisticRegression as cuLogisticRegression
+        except ImportError:
+            logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
+            return
     #prepare
     logger.info("🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
