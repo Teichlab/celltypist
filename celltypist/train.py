@@ -140,7 +140,7 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRe
     classifier_.fit(indata, labels_)
     classifier = LogisticRegression(multi_class = 'ovr')
     for attr in ['C', 'class_weight', 'fit_intercept', 'l1_ratio', 'max_iter', 'penalty', 'tol', 'solver', 'n_iter_']:
-        setattr(classifier, attr) = getattr(classifier_, attr)
+        setattr(classifier, attr, getattr(classifier_, attr))
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
     return classifier
 
@@ -247,7 +247,7 @@ def train(X = None,
         Default to 200, 500, and 1000 for large (>500k cells), medium (50-500k), and small (<50k) datasets, respectively.
     n_jobs
         Number of CPUs used. Default to one CPU. `-1` means all CPUs are used.
-        This argument is for both traditional and SGD logistic classifiers, and will be ignored is GPU is enabled.
+        This argument is for both traditional and SGD logistic classifiers.
     use_SGD
         Whether to implement SGD learning for the logistic classifier.
         (Default: `False`)
