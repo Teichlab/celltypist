@@ -2,10 +2,9 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 from anndata import AnnData
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler,LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
-from sklearn import preprocessing
 from sklearn import __version__ as skv
 from typing import Optional, Union
 from .models import Model
@@ -138,7 +137,7 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, n_jobs, kwargs_cuml, **
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, **kwargs_cuml)
     
-    le = preprocessing.LabelEncoder()
+    le = LabelEncoder()
     le.fit(labels)
     labels_ = le.transform(labels)
     classifier_.fit(indata, labels_)
@@ -369,7 +368,7 @@ def train(X = None,
     if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
     elif use_GPU:
-        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, kwargs_cuml={}, **kwargs)
+        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
     else:
         classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     #feature selection -> new classifier and scaler
@@ -387,7 +386,7 @@ def train(X = None,
         if use_SGD:
             classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
         elif use_GPU:
-            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, kwargs_cuml={}, **kwargs)
+            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
         else:
             classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
         scaler.mean_ = scaler.mean_[gene_index]
