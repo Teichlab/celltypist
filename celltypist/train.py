@@ -355,9 +355,7 @@ def train(X = None,
         indata = indata.toarray()
     #max_iter
     if max_iter is None:
-        if use_GPU:
-            max_iter = 1000
-        elif indata.shape[0] < 50000:
+        if indata.shape[0] < 50000:
             max_iter = 1000
         elif indata.shape[0] < 500000:
             max_iter = 500
