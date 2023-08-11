@@ -72,5 +72,6 @@ intersphinx_mapping = dict(
     sklearn=('https://scikit-learn.org/stable/', None),
     scanpy=('https://scanpy.readthedocs.io/en/stable/', None),
     plotly=('https://plotly.com/python-api-reference/', None),
-    matplotlib=('https://matplotlib.org/stable/', None)
+    matplotlib=('https://matplotlib.org/stable/', None),
+    cuml=('https://docs.rapids.ai/api/cuml/stable/', None)
 )
