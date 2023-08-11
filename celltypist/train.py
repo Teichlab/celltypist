@@ -122,10 +122,14 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
     classifier.fit(indata, labels)
     return classifier
 
-def _cuLRClassifier(indata, labels, C, solver, max_iter, n_jobs, kwargs_cuml, **kwargs) -> LogisticRegression:
+def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the logistic Classifier.
     """
+    solver = 'qn' if solver is None else solver
+    if solver != 'qn':
+        raise ValueError(
+                f"🛑 Invalid `solver`, should be `'qn'` to run on GPU")
     try:
         from cuml import LogisticRegression as cuLogisticRegression
     except ImportError:
@@ -135,25 +139,15 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, n_jobs, kwargs_cuml, **
     logger.info(f"🏋️ Training data using logistic regression on GPU")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
-    classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, **kwargs_cuml)
-    
     le = LabelEncoder()
-    le.fit(labels)
-    labels_ = le.transform(labels)
+    labels_ = le.fit_transform(labels)
+    classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
-    
-    if solver is None:
-        solver = 'sag' if no_cells>50000 else 'lbfgs'
-    elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
-        raise ValueError(
-                f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, and `'saga'`")
-    # Hacky solution to allow upload. Copy parameters to sklearn function.
-    classifier = LogisticRegression(C = C, solver = solver, max_iter = 1, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
+    classifier = LogisticRegression()
     classifier.coef_ = classifier_.coef_
     classifier.intercept_ = classifier_.intercept_
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
-    classifier.n_iter_ = max_iter
-    
+    classifier.max_iter = max_iter
     return classifier
 
 def _SGDClassifier(indata, labels,
