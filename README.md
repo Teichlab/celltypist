@@ -484,7 +484,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   `with_mean`: when the training data is a sparse matrix, setting `with_mean = False` will preserve sparsity by skipping the step of subtraction by the mean during scaling, and thus lower the RAM usage at the cost of a suboptimal model.  
     
-  `n_jobs`: Number of CPUs used. This argument is not applicable to mini-batch training.
+  `n_jobs`: Number of CPUs used. This argument is not applicable to mini-batch training.  
+    
+  `use_GPU`: GPU acceleration by using logistic regression from [cuml](https://docs.rapids.ai/api/cuml/stable). You need to install RAPIDS and cuml first. This argument is ignored if SGD learning is enabled.
   </details>
 
 + <details>
