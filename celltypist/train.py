@@ -138,7 +138,7 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRe
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
-    classifier = LogisticRegression(multi_class = 'ovr', n_jobs = n_jobs)
+    classifier = LogisticRegression(multi_class = 'ovr')
     for attr in ['C', 'class_weight', 'fit_intercept', 'l1_ratio', 'max_iter', 'penalty', 'tol', 'solver', 'n_iter_']:
         setattr(classifier, attr) = getattr(classifier_, attr)
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
@@ -247,7 +247,7 @@ def train(X = None,
         Default to 200, 500, and 1000 for large (>500k cells), medium (50-500k), and small (<50k) datasets, respectively.
     n_jobs
         Number of CPUs used. Default to one CPU. `-1` means all CPUs are used.
-        This argument is for both traditional and SGD logistic classifiers.
+        This argument is for both traditional and SGD logistic classifiers, and will be ignored is GPU is enabled.
     use_SGD
         Whether to implement SGD learning for the logistic classifier.
         (Default: `False`)
@@ -255,6 +255,10 @@ def train(X = None,
         L2 regularization strength for SGD logistic classifier. A larger value can possibly improve model generalization while at the cost of decreased accuracy.
         This argument is ignored if SGD learning is disabled (`use_SGD = False`).
         (Default: 0.0001)
+    use_GPU
+        Whether to use GPU for logistic classifier.
+        This argument is ignored if SGD learning is enabled (`use_SGD = True`).
+        (Default: `False`)
     mini_batch
         Whether to implement mini-batch training for the SGD logistic classifier.
         Setting to `True` may improve the training efficiency for large datasets (for example, >100k cells).
@@ -298,7 +302,7 @@ def train(X = None,
     version
         Free text of the version of the model.
     **kwargs
-        Other keyword arguments passed to :class:`~sklearn.linear_model.LogisticRegression` (`use_SGD = False`) or :class:`~sklearn.linear_model.SGDClassifier` (`use_SGD = True`).
+        Other keyword arguments passed to :class:`~sklearn.linear_model.LogisticRegression` (`use_SGD = False` and `use_GPU = False`), :class:`cuml.LogisticRegression` (`use_SGD = False` and `use_GPU = True`), or :class:`~sklearn.linear_model.SGDClassifier` (`use_SGD = True`).
 
     Returns
     ----------
@@ -306,7 +310,7 @@ def train(X = None,
         An instance of the :class:`~celltypist.models.Model` trained by celltypist.
     """
     #Test GPU
-    if use_GPU:
+    if not use_SGD and use_GPU:
         try:
             from cuml import LogisticRegression as cuLogisticRegression
         except ImportError:
