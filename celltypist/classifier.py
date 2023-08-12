@@ -287,7 +287,7 @@ class Classifier():
                             f"🛑 The number of cells in {cell_file} does not match the number of cells in {self.filename}")
                 self.adata.var_names = genes_mtx
                 self.adata.obs_names = cells_mtx
-            if not float(self.adata.X.max()).is_integer():
+            if not float(self.adata.X[:1000].max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may not be accurate")
             if (self.adata.n_vars >= 100000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(['GAPDH', 'ACTB', 'CALM1', 'PTPRC', 'MALAT1'])) >= 1):
                 logger.warn(f"⚠️ The input matrix is detected to be a gene-by-cell matrix, will transpose it")
@@ -301,7 +301,7 @@ class Classifier():
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
             self.adata.var_names_make_unique()
-            if (self.adata.X.min() < 0) or (self.adata.X.max() > np.log1p(10000)):
+            if (self.adata.X[:1000].min() < 0) or (self.adata.X[:1000].max() > np.log1p(10000)):
                 logger.info("👀 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell; will try the `.raw` attribute")
                 try:
                     self.indata = self.adata.raw.X
@@ -310,7 +310,7 @@ class Classifier():
                 except Exception as e:
                     raise Exception(
                             f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
-                if (self.indata.min() < 0) or (self.indata.max() > np.log1p(10000)):
+                if (self.indata[:1000].min() < 0) or (self.indata[:1000].max() > np.log1p(10000)):
                     raise ValueError(
                             "🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
             else:
@@ -391,7 +391,7 @@ class Classifier():
                 adata.uns['log1p']['base'] = None
 
         if 'X_pca' not in adata.obsm.keys():
-            if adata.X.min() < 0:
+            if adata.X[:1000].min() < 0:
                 adata = adata.raw.to_adata()
             if 'highly_variable' not in adata.var:
                 sc.pp.filter_genes(adata, min_cells=5)

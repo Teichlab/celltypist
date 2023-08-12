@@ -51,7 +51,7 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X) if isinstance(X, str) else X
         adata.var_names_make_unique()
-        if adata.X.min() < 0:
+        if adata.X[:1000].min() < 0:
             logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
             try:
                 indata = adata.raw.X
@@ -80,7 +80,7 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
                         f"🛑 The number of genes provided does not match the number of genes in {X}")
             adata.var_names = np.array(genes)
         adata.var_names_make_unique()
-        if not float(adata.X.max()).is_integer():
+        if not float(adata.X[:1000].max()).is_integer():
             logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
         sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
