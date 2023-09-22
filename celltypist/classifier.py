@@ -301,7 +301,7 @@ class Classifier():
         elif isinstance(filename, AnnData) or (isinstance(filename, str) and filename.endswith('.h5ad')):
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
             self.adata.var_names_make_unique()
-            if (self.adata.X[:1000].min() < 0) or (self.adata.X[:1000].max() > np.log1p(10000)):
+            if (self.adata.X[:1000].min() < 0) or (self.adata.X[:1000].max() > 9.22):
                 logger.info("👀 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell; will try the `.raw` attribute")
                 try:
                     self.indata = self.adata.raw.X
@@ -310,7 +310,7 @@ class Classifier():
                 except Exception as e:
                     raise Exception(
                             f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
-                if (self.indata[:1000].min() < 0) or (self.indata[:1000].max() > np.log1p(10000)):
+                if (self.indata[:1000].min() < 0) or (self.indata[:1000].max() > 9.22):
                     raise ValueError(
                             "🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
             else:
