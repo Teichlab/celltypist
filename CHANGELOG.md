@@ -1,5 +1,10 @@
 # Changelog
 *********************************
+## CellTypist 1.6.1 (September 25, 2023)
+- Add cuML-based GPU support for model training [#80](https://github.com/Teichlab/celltypist/pull/80)
+- Detect data input format only for the first 1000 cells
+- Fix KeyError in [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_adata) when setting `mode = 'prob match'` in [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.annotate.html)
+- Add gene symbol to ID conversion file and expand README [#87](https://github.com/Teichlab/celltypist/issues/87)
 ## CellTypist 1.6.0 (August 5, 2023)
 - Separate [CellHint](https://github.com/Teichlab/cellhint) from CellTypist
 - Keep strict one-to-one orthologs during species model conversion
