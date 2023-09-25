@@ -516,6 +516,29 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   This model can be used as with other CellTypist models.
   </details>
+
++ <details>
+  <summary><strong>Model conversion from gene symbols to Ensembl IDs</strong></summary>
+
+  CellTypist models are usually trained based on gene symbols. When genes of a query dataset are formatted as Ensembl IDs, you can convert gene symbols in the model to Ensembl ID for matching the query dataset. The [convert](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html#celltypist.models.Model.convert) method will be utilised as in the above section.  
+    
+  Specifically, you need to provide a gene-symbol-to-Ensembl-ID file, such that gene symbols in the model will be converted to IDs (or vice versa). A built-in [file](https://github.com/Teichlab/celltypist/blob/main/celltypist/data/samples/GENCODEv44_Gene_id2name.csv) is provided in CellTypist (GENCODE v44). Parameters and details during model conversion can be found in the previous section `Cross-species model conversion`.  
+    
+  Load a human immune model.
+  ```python
+  model = models.Model.load('Immune_All_Low.pkl')
+  ```
+  Convert gene symbols to Ensembl IDs using the built-in file. You can also provide a path to your own ID mapping file.
+  ```python
+  #Note `model` is modified in-place.
+  model.convert('GENCODEv44_Gene_id2name.csv')
+  ```
+  Lastly, write out the converted model locally.
+  ```python
+  model.write('/path/to/local/folder/some_model_name.pkl')
+  ```
+  This model can be used as with other CellTypist models.
+  </details>
 </details>
 
 # Citation
