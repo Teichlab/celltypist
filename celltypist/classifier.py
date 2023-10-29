@@ -302,23 +302,23 @@ class Classifier():
             self.adata = sc.read(filename) if isinstance(filename, str) else filename
             self.adata.var_names_make_unique()
             if (self.adata.X[:1000].min() < 0) or (self.adata.X[:1000].max() > 9.22):
-                logger.info("👀 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell; will try the `.raw` attribute")
-                try:
+                if not self.adata.raw:
+                    raise ValueError(
+                            "🛑 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell")
+                elif (self.adata.raw.X[:1000].min() < 0) or (self.adata.raw.X[:1000].max() > 9.22):
+                    raise ValueError(
+                            "🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
+                else:
+                    logger.info("👀 Invalid expression matrix in `.X`, expect log1p normalized expression to 10000 counts per cell; will use `.raw.X` instead")
                     self.indata = self.adata.raw.X
                     self.indata_genes = self.adata.raw.var_names
                     self.indata_names = self.adata.raw.obs_names
-                except Exception as e:
-                    raise Exception(
-                            f"🛑 Fail to use the `.raw` attribute in the input object. {e}")
-                if (self.indata[:1000].min() < 0) or (self.indata[:1000].max() > 9.22):
-                    raise ValueError(
-                            "🛑 Invalid expression matrix in both `.X` and `.raw.X`, expect log1p normalized expression to 10000 counts per cell")
             else:
                 self.indata = self.adata.X
                 self.indata_genes = self.adata.var_names
                 self.indata_names = self.adata.obs_names
             if np.abs(np.expm1(self.indata[0]).sum()-10000) > 1:
-                logger.warn(f"⚠️ Warning: invalid expression matrix, expect all genes and log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
+                logger.warn(f"⚠️ Warning: invalid expression matrix, expect ALL genes and log1p normalized expression to 10000 counts per cell. The prediction result may not be accurate")
         else:
             raise ValueError(
                     "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad, or AnnData loaded in memory")
