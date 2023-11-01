@@ -11,6 +11,11 @@ from .models import Model
 from . import logger
 from scipy.sparse import spmatrix
 from datetime import datetime
+import sys
+try:
+    from cuml import LogisticRegression as cuLogisticRegression
+except ImportError:
+    pass
 
 def _to_vector(_vector_or_file):
     """
@@ -310,12 +315,9 @@ def train(X = None,
         An instance of the :class:`~celltypist.models.Model` trained by celltypist.
     """
     #Test GPU
-    if not use_SGD and use_GPU:
-        try:
-            from cuml import LogisticRegression as cuLogisticRegression
-        except ImportError:
-            logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
-            return
+    if not use_SGD and use_GPU and 'cuml' not in sys.modules:
+        logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
+        return
     #prepare
     logger.info("🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
