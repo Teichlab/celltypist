@@ -468,7 +468,7 @@ class Classifier():
             over_clustering = np.array(over_clustering)
         logger.info("🗳️ Majority voting the predictions")
         votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
-        majority = votes.idxmax(axis=0)
+        majority = votes.idxmax(axis=0).astype(str)
         freqs = (votes / votes.sum(axis=0).values).max(axis=0)
         majority[freqs < min_prop] = 'Heterogeneous'
         majority = majority[over_clustering].reset_index()
