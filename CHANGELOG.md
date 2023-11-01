@@ -1,5 +1,9 @@
 # Changelog
 *********************************
+## CellTypist 1.6.2 (November 1, 2023)
+- Reformat error and warning messages during prediction [#89](https://github.com/Teichlab/celltypist/issues/89)
+- Fix cuml import during model training
+- Fix categorical output from new versions of pandas during majority voting [#96](https://github.com/Teichlab/celltypist/issues/96)
 ## CellTypist 1.6.1 (September 25, 2023)
 - Add cuML-based GPU support for model training [#80](https://github.com/Teichlab/celltypist/pull/80)
 - Detect data input format only for the first 1000 cells
