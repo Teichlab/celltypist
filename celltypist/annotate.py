@@ -1,6 +1,6 @@
 from . import classifier
 from .models import Model
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 import numpy as np
 import pandas as pd
 from anndata import AnnData
@@ -15,7 +15,8 @@ def annotate(filename: Union[AnnData,str] = "",
              p_thres: float = 0.5,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
-             min_prop: float = 0) -> classifier.AnnotationResult:
+             min_prop: float = 0,
+             device: Literal["cpu","gpu"] = "cpu") -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
@@ -63,6 +64,9 @@ def annotate(filename: Union[AnnData,str] = "",
         Ignored if `majority_voting` is set to `False`.
         Subcluster that fails to pass this proportion threshold will be assigned `'Heterogeneous'`.
         (Default: 0)
+    device
+        Device to run the `overclustering` on. Choose from `'cpu'` for `scanpy` or `'gpu'` for `rapids-singlecell`.
+        (Default: `'cpu'`)
 
     Returns
     ----------
@@ -76,7 +80,7 @@ def annotate(filename: Union[AnnData,str] = "",
     #load model
     lr_classifier = model if isinstance(model, Model) else Model.load(model)
     #construct Classifier class
-    clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
+    clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file, device=device)
     #predict
     predictions = clf.celltype(mode = mode, p_thres = p_thres)
     if not majority_voting:
