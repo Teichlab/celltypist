@@ -411,7 +411,7 @@ class Classifier():
             import rapids_singlecell as rsc
         except ImportError:
             raise ImportError(
-                    "🛑 rapids_singlecell is required for the construction of the neighborhood graph on the GPU. Please install rsc by running `pip install rapids_singlecell`")
+                    "🛑 rapids_singlecell is required for the construction of the neighborhood graph on the GPU. Please install rsc by running `pip install rapids-singlecell`")
         if 'log1p' in adata.uns.keys():
             if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
                 adata.uns['log1p']['base'] = None
