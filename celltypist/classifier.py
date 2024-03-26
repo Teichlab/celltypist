@@ -425,8 +425,7 @@ class Classifier():
                 rsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
             adata = adata[:, adata.var.highly_variable].copy()
             rsc.pp.scale(adata, max_value=10)
-            rsc.tl.pca(adata, n_comps=50)
-            rsc.get.anndata_to_CPU(adata)
+            rsc.pp.pca(adata, n_comps=50)
         rsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
         return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
