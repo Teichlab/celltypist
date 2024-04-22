@@ -87,7 +87,7 @@ class Model():
         """
         if not model:
             model = get_default_model()
-        if model in get_all_models():
+        if '/' not in model and model in get_all_models():
             model = get_model_path(model)
         if not os.path.isfile(model):
             raise FileNotFoundError(
