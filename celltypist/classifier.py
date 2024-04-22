@@ -1,5 +1,6 @@
 import os
-from typing import Optional, Union, Literal
+import sys
+from typing import Optional, Union
 import scanpy as sc
 from anndata import AnnData
 import numpy as np
@@ -11,6 +12,10 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 warnings.simplefilter(action='ignore', category=RuntimeWarning)
+try:
+    import rapids_singlecell as rsc
+except ImportError:
+    pass
 
 
 class AnnotationResult():
@@ -258,11 +263,10 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler.
     """
-    def __init__(self, filename: Union[AnnData,str] = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None, device: Literal["cpu", "gpu"] = "cpu"):
+    def __init__(self, filename: Union[AnnData,str] = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         if isinstance(model, str):
             model = Model.load(model)
         self.model = model
-        self.device = device
         if not filename:
             logger.warn(f"📭 No input file provided to the classifier")
             return
@@ -429,7 +433,7 @@ class Classifier():
         rsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
         return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
-    def over_cluster(self, resolution: Optional[float] = None) -> pd.Series:
+    def over_cluster(self, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
         """
         Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
 
@@ -438,23 +442,22 @@ class Classifier():
         resolution
             Resolution parameter for leiden clustering which controls the coarseness of the clustering.
             Default to 5, 10, 15, 20, 25 and 30 for datasets with cell numbers less than 5k, 20k, 40k, 100k, 200k and above, respectively.
+        use_GPU
+            Whether to use GPU for over clustering on the basis of `rapids-singlecell`.
+            (Default: `False`)
 
         Returns
         ----------
         :class:`~pandas.Series`
             A :class:`~pandas.Series` object showing the over-clustering result.
         """
-        if self.device == "gpu":
-            try:
-                import rapids_singlecell as rsc
-            except ImportError:
-                logger.info(
-                    "🛑 rapids_singlecell is required for running on the GPU. Please install rsc. Defaulting back to CPU")
-                self.device = "cpu"
+        if use_GPU and 'rapids_singlecell' not in sys.modules:
+            logger.warn("⚠️ Warning: rapids_singlecell is not installed but required for GPU running, will switch back to CPU")
+            use_GPU = False
         if 'connectivities' not in self.adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
             adata = self.adata.copy()
-            if self.device == "gpu":
+            if use_GPU:
                 self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph_rsc(adata)
             else:
                 self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
@@ -474,7 +477,7 @@ class Classifier():
             else:
                 resolution = 30
         logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
-        if self.device == "gpu":
+        if use_GPU:
             rsc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         else:
             sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
