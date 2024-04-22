@@ -1,6 +1,6 @@
 from . import classifier
 from .models import Model
-from typing import Optional, Union, Literal
+from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from anndata import AnnData
@@ -15,8 +15,8 @@ def annotate(filename: Union[AnnData,str] = "",
              p_thres: float = 0.5,
              majority_voting: bool = False,
              over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
-             min_prop: float = 0,
-             device: Literal["cpu","gpu"] = "cpu") -> classifier.AnnotationResult:
+             use_GPU: bool = False,
+             min_prop: float = 0) -> classifier.AnnotationResult:
     """
     Run the prediction and (optional) majority voting to annotate the input dataset.
 
@@ -59,14 +59,14 @@ def annotate(filename: Union[AnnData,str] = "",
         3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
         4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
         Ignored if `majority_voting` is set to `False`.
+    use_GPU
+        Whether to use GPU for over clustering on the basis of `rapids-singlecell`. This argument is only relevant when `majority_voting = True`.
+        (Default: `False`)
     min_prop
         For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
         Ignored if `majority_voting` is set to `False`.
         Subcluster that fails to pass this proportion threshold will be assigned `'Heterogeneous'`.
         (Default: 0)
-    device
-        Device to run the `overclustering` on. Choose from `'cpu'` for `scanpy` or `'gpu'` for `rapids-singlecell`.
-        (Default: `'cpu'`)
 
     Returns
     ----------
@@ -80,7 +80,7 @@ def annotate(filename: Union[AnnData,str] = "",
     #load model
     lr_classifier = model if isinstance(model, Model) else Model.load(model)
     #construct Classifier class
-    clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file, device=device)
+    clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
     predictions = clf.celltype(mode = mode, p_thres = p_thres)
     if not majority_voting:
@@ -90,7 +90,7 @@ def annotate(filename: Union[AnnData,str] = "",
         return predictions
     #over clustering
     if over_clustering is None:
-        over_clustering = clf.over_cluster()
+        over_clustering = clf.over_cluster(use_GPU = use_GPU)
         predictions.adata = clf.adata
     elif isinstance(over_clustering, str):
         if over_clustering in clf.adata.obs:
