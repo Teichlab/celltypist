@@ -407,32 +407,6 @@ class Classifier():
         sc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
         return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
-    @staticmethod
-    def _construct_neighbor_graph_rsc(adata: AnnData) -> tuple:
-        """Construct a neighborhood graph. This function is for internal use."""
-        # fix for adata.uns['log1p']['base'] error
-        try:
-            import rapids_singlecell as rsc
-        except ImportError:
-            raise ImportError(
-                    "🛑 rapids_singlecell is required for the construction of the neighborhood graph on the GPU. Please install rsc by running `pip install rapids-singlecell`")
-        if 'log1p' in adata.uns.keys():
-            if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
-                adata.uns['log1p']['base'] = None
-
-        if 'X_pca' not in adata.obsm.keys():
-            if adata.X[:1000].min() < 0:
-                adata = adata.raw.to_adata()
-            rsc.get.anndata_to_GPU(adata)
-            if 'highly_variable' not in adata.var:
-                rsc.pp.filter_genes(adata, min_count=5, verbose=False)
-                rsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
-            adata = adata[:, adata.var.highly_variable].copy()
-            rsc.pp.scale(adata, max_value=10)
-            rsc.pp.pca(adata, n_comps=50)
-        rsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
-        return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
-
     def over_cluster(self, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
         """
         Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
@@ -457,10 +431,7 @@ class Classifier():
         if 'connectivities' not in self.adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
             adata = self.adata.copy()
-            if use_GPU:
-                self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph_rsc(adata)
-            else:
-                self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata, use_GPU)
         else:
             logger.info("👀 Detected a neighborhood graph in the input object, will run over-clustering on the basis of it")
         if resolution is None:
