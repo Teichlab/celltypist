@@ -388,8 +388,9 @@ class Classifier():
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
     @staticmethod
-    def _construct_neighbor_graph(adata: AnnData) -> tuple:
+    def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
         """Construct a neighborhood graph. This function is for internal use."""
+        fsc = rsc if use_GPU else sc
         # fix for adata.uns['log1p']['base'] error
         if 'log1p' in adata.uns.keys():
             if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
@@ -398,13 +399,15 @@ class Classifier():
         if 'X_pca' not in adata.obsm.keys():
             if adata.X[:1000].min() < 0:
                 adata = adata.raw.to_adata()
+            if use_GPU:
+                fsc.get.anndata_to_GPU(adata)
             if 'highly_variable' not in adata.var:
                 sc.pp.filter_genes(adata, min_cells=5)
-                sc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
+                fsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
             adata = adata[:, adata.var.highly_variable]
-            sc.pp.scale(adata, max_value=10)
-            sc.tl.pca(adata, n_comps=50)
-        sc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
+            fsc.pp.scale(adata, max_value=10)
+            fsc.pp.pca(adata, n_comps=50)
+        fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
         return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
     def over_cluster(self, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
