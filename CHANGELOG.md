@@ -1,5 +1,8 @@
 # Changelog
 *********************************
+## CellTypist 1.6.3 (June 6, 2024)
+- GPU support based on rapids-singlecell during the over-clustering step [#110](https://github.com/Teichlab/celltypist/issues/110)
+- Load custom model directly [#60](https://github.com/Teichlab/celltypist/issues/60)
 ## CellTypist 1.6.2 (November 1, 2023)
 - Reformat error and warning messages during prediction [#89](https://github.com/Teichlab/celltypist/issues/89)
 - Fix cuml import during model training
