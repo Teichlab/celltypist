@@ -43,9 +43,14 @@ def _get_fraction_prob_df(predictions: AnnotationResult,
     dot_size_df = df.pivot_table(values = 'score', index = 'pred', columns = 'refer', aggfunc = len, fill_value = 0, dropna = False, observed = True)
     dot_size_df = dot_size_df / dot_size_df.sum(axis = 0).values
     dot_color_df = df.pivot_table(values = 'score', index = 'pred', columns = 'refer', aggfunc = 'mean', fill_value = 0, dropna = False, observed = True)
+
+    #remove unused categories
+    dot_size_df.index = dot_size_df.index.remove_unused_categories()
+    dot_color_df.index = dot_color_df.index.remove_unused_categories()    
+    
     #reorder
     if prediction_order is None:
-        prediction_order = pred.cat.categories
+        prediction_order = pred.cat.categories.intersection(dot_color_df.index)
     else:
         if not np.array_equal(np.sort(prediction_order), np.sort(dot_size_df.index)):
             raise ValueError(
