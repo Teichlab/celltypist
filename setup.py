@@ -17,14 +17,14 @@ def get_version():
     raise RuntimeError("Unable to find version string in celltypist/__init__.py")
 
 setuptools.setup(
-    name="celltypist",
-    version=get_version(),
-    author="Chuan Xu",
-    author_email="cx1@sanger.ac.uk",
-    description="A tool for semi-automatic cell type classification",
+    name="celltypist-SO",
+    version="1.6.3",
+    author="Mena Kamel",
+    author_email="mena.kamel@sanofi.com",
+    description="A tool for semi-automatic cell type classification. This is a fork that removes leidenalg from the requirements.txt file to remove any GPL dependencies (igraph). All credit goes to original CellTypist authors (Chuan Xu et al.: cx1@sanger.ac.uk)",
     long_description=get_readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/Teichlab/celltypist",
+    url="https://github.com/Mena-SA-Kamel/celltypist-SO",
     packages=setuptools.find_packages(),
     install_requires=get_requirements(),
     include_package_data=True,
