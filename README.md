@@ -1,3 +1,6 @@
+>[!NOTE]
+>This is a fork of the original [CellTypist implementation](https://github.com/Teichlab/celltypist) that removes leidenalg from the requirements.txt file to remove any GPL dependencies (igraph). All credit goes to original CellTypist authors (Chuan Xu et al.: cx1@sanger.ac.uk)
+>
 <p align="left"><img src="https://github.com/Teichlab/celltypist/blob/main/docs/source/_static/img/logo_celltypist.png" width="250" height="85"></p>
 
 [![Python Versions](https://img.shields.io/badge/python-3.6+-brightgreen.svg)](https://pypi.org/project/celltypist) [![Documentation Status](https://readthedocs.org/projects/celltypist/badge/?version=latest)](https://celltypist.readthedocs.io/en/latest/?badge=latest)
@@ -15,12 +18,7 @@ Information of CellTypist can be also found in our CellTypist portal. [![Website
 # Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
 ```console
-pip install celltypist
-```
-
-### Using conda [![install with bioconda](https://img.shields.io/conda/vn/bioconda/celltypist.svg?color=brightgreen&style=flat)](https://anaconda.org/bioconda/celltypist)
-```console
-conda install -c bioconda -c conda-forge celltypist
+pip install celltypist-SO
 ```
 
 # Usage (classification)
