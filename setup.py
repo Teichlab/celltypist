@@ -18,7 +18,7 @@ def get_version():
 
 setuptools.setup(
     name="celltypist-SO",
-    version="1.6.4",
+    version="1.6.5",
     author="Mena Kamel",
     author_email="mena.kamel@sanofi.com",
     description="A tool for semi-automatic cell type classification. This is a fork that removes leidenalg from the requirements.txt file to remove any GPL dependencies (igraph). All credit goes to original CellTypist authors (Chuan Xu et al.: cx1@sanger.ac.uk)",

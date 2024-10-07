@@ -13,8 +13,6 @@ def annotate(filename: Union[AnnData,str] = "",
              cell_file: Optional[str] = None,
              mode: str = 'best match',
              p_thres: float = 0.5,
-             majority_voting: bool = False,
-             over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
              use_GPU: bool = False,
              min_prop: float = 0) -> classifier.AnnotationResult:
     """
@@ -49,16 +47,6 @@ def annotate(filename: Union[AnnData,str] = "",
     p_thres
         Probability threshold for the multi-label classification. Ignored if `mode` is `'best match'`.
         (Default: 0.5)
-    majority_voting
-        Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
-        (Default: `False`)
-    over_clustering
-        This argument can be provided in several ways:
-        1) an input plain file with the over-clustering result of one cell per line.
-        2) a string key specifying an existing metadata column in the AnnData (pre-created by the user).
-        3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
-        4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
-        Ignored if `majority_voting` is set to `False`.
     use_GPU
         Whether to use GPU for over clustering on the basis of `rapids-singlecell`. This argument is only relevant when `majority_voting = True`.
         (Default: `False`)
@@ -83,28 +71,4 @@ def annotate(filename: Union[AnnData,str] = "",
     clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
     predictions = clf.celltype(mode = mode, p_thres = p_thres)
-    if not majority_voting:
-        return predictions
-    if predictions.cell_count <= 50:
-        logger.warn(f"⚠️ Warning: the input number of cells ({predictions.cell_count}) is too few to conduct proper over-clustering; no majority voting is performed")
-        return predictions
-    #over clustering
-    if over_clustering is None:
-        over_clustering = clf.over_cluster(use_GPU = use_GPU)
-        predictions.adata = clf.adata
-    elif isinstance(over_clustering, str):
-        if over_clustering in clf.adata.obs:
-            over_clustering = clf.adata.obs[over_clustering]
-        else:
-            logger.info(f"👀 Did not identify '{over_clustering}' as a cell metadata column, assume it to be a plain text file")
-            try:
-                with open(over_clustering, 'rt') as f:
-                    over_clustering = [x.strip() for x in f.readlines()]
-            except Exception as e:
-                raise Exception(
-                        f"🛑 {e}")
-    if len(over_clustering) != clf.adata.n_obs:
-        raise ValueError(
-                f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
-    #majority voting
-    return classifier.Classifier.majority_vote(predictions, over_clustering, min_prop = min_prop)
+    return predictions
