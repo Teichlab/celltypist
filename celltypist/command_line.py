@@ -39,6 +39,7 @@ def show_help_and_exit(message: str):
 @click.option("-ps", "--p-thres", default=0.5, help="Probability threshold for the multi-label classification. Ignored if `--mode` is `best_match`.", type=float, show_default=True)
 @click.option("--majority-voting", is_flag=True, default=False, help="Refine the predicted labels by running the majority voting classifier after over-clustering.")
 @click.option("-oc", "--over-clustering", default='auto', help="Input file with the over-clustering result of one cell per line, or a string key specifying an existing metadata column in the AnnData object. If not provided, default to using a heuristic over-clustering approach according to the size of input data. Ignored if `--majority-voting` is not set.", type=str, show_default=True)
+@click.option("--use-GPU", is_flag=True, default=False, help="Whether to use GPU for over clustering on the basis of `rapids-singlecell`. Ignored if `--majority-voting` is not set.")
 @click.option("-mp", "--min-prop", default=0, help="For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type. Ignored if `--majority-voting` is not set.", type=float, show_default=True)
 @click.option("-o", "--outdir", default=None, help="Directory to store the output files and (if `--plot-results` is set) figures. Default to the current working directory.", type=click.Path(exists=False))
 @click.option("-p", "--prefix", default="", help="Prefix for the output files and (if `--plot-results` is set) figures. Default to no prefix used.", type=str)
@@ -47,7 +48,7 @@ def show_help_and_exit(message: str):
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configuration information during the run.")
-def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, mode: str, p_thres: float, majority_voting: bool, over_clustering: str, min_prop: float,
+def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, mode: str, p_thres: float, majority_voting: bool, over_clustering: str, use_GPU: bool, min_prop: float,
          outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
 
@@ -96,6 +97,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
              }
     if majority_voting:
         config["over-clustering"] = over_clustering
+        config["use-GPU"] = use_GPU
         config["min-prop"] = min_prop
 
     #quiet or not
@@ -116,6 +118,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         p_thres = p_thres,
         majority_voting=majority_voting,
         over_clustering=over_clustering,
+        use_GPU = use_GPU,
         min_prop = min_prop)
 
     #write output
