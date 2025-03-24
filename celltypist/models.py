@@ -312,6 +312,54 @@ class Model():
         self.scaler.n_features_in_ = len(features_to)
         logger.info(f"✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
 
+    def subset(self, keep_cell_types: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None, exclude_cell_types: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> None:
+        """
+        Subset the model by retaining or discarding a designated set of cell types.
+        This method is suboptimal for subsetting a model. A more accurate approach is to retrain the original reference data using only the desired subset of cell types.
+
+        Parameters
+        ----------
+        keep_cell_types
+            Cell types to include for the sub-model.
+        exclude_cell_types
+            Cell types to exclude for the sub-model.
+
+        Returns
+        ----------
+        None
+            The original model is modified by keeping only a subset of cell types.
+        """
+        #kept cell types
+        if keep_cell_types is None and exclude_cell_types is None:
+            logger.warn(f"⚠️ Warning: please provide cell types to include and/or exclude")
+            return
+        if keep_cell_types is not None:
+            keep_cell_types = set(keep_cell_types)
+            if len(keep_cell_types) == 1:
+                raise ValueError(
+                        f"🛑 Please provide at least two cell types in `keep_cell_types`")
+            if not keep_cell_types.issubset(self.classifier.classes_):
+                raise ValueError(
+                        f"🛑 The following cell types are not found: {keep_cell_types.difference(self.classifier.classes_)}")
+        if exclude_cell_types is not None:
+            exclude_cell_types = set(exclude_cell_types)
+            if not exclude_cell_types.issubset(self.classifier.classes_):
+                raise ValueError(
+                        f"🛑 The following cell types are not found: {exclude_cell_types.difference(self.classifier.classes_)}")
+            if len(set(self.classifier.classes_).difference(exclude_cell_types)) <= 1:
+                raise ValueError(
+                        f"🛑 Too many cell types to exclude, at least two should be retained")
+        if keep_cell_types is not None and exclude_cell_types is not None and len(keep_cell_types.intersection(exclude_cell_types)) > 0:
+            raise ValueError(
+                        f"🛑 Cell types in `keep_cell_types` should not overlap with those in `exclude_cell_types`")
+        kept_cell_types = set(self.classifier.classes_).difference(exclude_cell_types) if keep_cell_types is None else keep_cell_types
+        kept_index = np.isin(self.classifier.classes_, list(kept_cell_types))
+        #subset
+        self.classifier.classes_ = self.classifier.classes_[kept_index]
+        self.classifier.coef_ = self.classifier.coef_[kept_index]
+        self.classifier.intercept_ = self.classifier.intercept_[kept_index]
+        logger.info(f"✅ Subset done! Number of cell types in the sub-model: {len(kept_cell_types)}")
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
