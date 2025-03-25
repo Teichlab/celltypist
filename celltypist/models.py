@@ -150,7 +150,7 @@ class Model():
             scores = self.classifier.decision_function(np.asarray(indata))
         else:
             scores = self.classifier.decision_function(indata)
-        if len(self.cell_types) == 2:
+        if scores.ndim == 1:
             scores = np.column_stack([-scores, scores])
         probs = expit(scores)
         if mode == 'best match':
