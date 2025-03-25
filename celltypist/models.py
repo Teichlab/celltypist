@@ -311,6 +311,7 @@ class Model():
         self.classifier.n_features_in_ = len(features_to)
         self.classifier.features = features_to
         self.scaler.n_features_in_ = len(features_to)
+        self.description['date'] = str(datetime.now())
         logger.info(f"✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
 
     def subset(self, keep_cell_types: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None, exclude_cell_types: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> None:
