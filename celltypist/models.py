@@ -8,6 +8,7 @@ import pandas as pd
 from typing import Optional, Union
 from scipy.special import expit
 from sklearn import __version__ as skv
+from datetime import datetime
 from . import logger
 from .samples import _get_sample_data
 
@@ -358,6 +359,8 @@ class Model():
         self.classifier.classes_ = self.classifier.classes_[kept_index]
         self.classifier.coef_ = self.classifier.coef_[kept_index]
         self.classifier.intercept_ = self.classifier.intercept_[kept_index]
+        self.description['number_celltypes'] = len(kept_cell_types)
+        self.description['date'] = str(datetime.now())
         logger.info(f"✅ Subset done! Number of cell types in the sub-model: {len(kept_cell_types)}")
 
 def get_model_path(file: str) -> str:
