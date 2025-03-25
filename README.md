@@ -539,6 +539,33 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   This model can be used as with other CellTypist models.
   </details>
+
++ <details>
+  <summary><strong>Subset a model</strong></summary>
+
+  A CellTypist model can be restricted to a specified subset of cell types, allowing you to limit the search space and exclude cell types unlikely to be present in your query data. This is achieved by the [subset](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html#celltypist.models.Model.subset) method.  
+    
+  Note that this strategy is suboptimal/not recommended for subsetting a model. A more accurate approach is to retrain the original reference data using only the desired subset of cell types by [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html).  
+    
+  Load a human immune model.
+  ```python
+  model = models.Model.load('Immune_All_Low.pkl')
+  ```
+  Keep only T cells in the model.
+  ```python
+  #Note `model` is modified in-place.
+  model.subset(keep_cell_types = [x for x in model.cell_types if 'T cells' in x])
+  ```
+  Or alternatively, you can choose to exclude T cells from the model.
+  ```python
+  model.subset(exclude_cell_types = [x for x in model.cell_types if 'T cells' in x])
+  ```
+  Lastly, write out the sub-model locally.
+  ```python
+  model.write('/path/to/local/folder/some_model_name.pkl')
+  ```
+  This sub-model can be used as with other CellTypist models.
+  </details>
 </details>
 
 # Citation
