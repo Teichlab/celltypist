@@ -336,6 +336,7 @@ class Model():
             logger.warn(f"⚠️ Warning: please provide cell types to include and/or exclude")
             return
         if keep_cell_types is not None:
+            keep_cell_types = [keep_cell_types] if isinstance(keep_cell_types, str) else keep_cell_types
             keep_cell_types = set(keep_cell_types)
             if len(keep_cell_types) == 1:
                 raise ValueError(
@@ -344,6 +345,7 @@ class Model():
                 raise ValueError(
                         f"🛑 The following cell types are not found: {keep_cell_types.difference(self.classifier.classes_)}")
         if exclude_cell_types is not None:
+            exclude_cell_types = [exclude_cell_types] if isinstance(exclude_cell_types, str) else exclude_cell_types
             exclude_cell_types = set(exclude_cell_types)
             if not exclude_cell_types.issubset(self.classifier.classes_):
                 raise ValueError(
