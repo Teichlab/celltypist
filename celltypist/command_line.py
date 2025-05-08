@@ -69,7 +69,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
     if model is None:
         model = models.get_default_model()
         logger.info(f"🔖 No model provided. Using the deault: '{model}'")
-    if model not in models.get_all_models() and not os.path.exists(model):
+    if not os.path.isfile(model) and model not in models.get_all_models():
         show_help_and_exit(f"🛑 Invalid model name: '{model}'. Available models are: {', '.join(models.get_all_models())}")
 
     #output dir
