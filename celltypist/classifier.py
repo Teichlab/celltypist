@@ -8,6 +8,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from .models import Model
 from . import logger
+from scanpy import __version__ as scv
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -454,7 +455,8 @@ class Classifier():
         if use_GPU:
             rsc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         else:
-            sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
+            flavor = 'igraph' if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10) else 'leidenalg'
+            sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering', flavor = flavor, n_iterations = 2)
         return self.adata.obs.pop('over_clustering')
 
     @staticmethod
