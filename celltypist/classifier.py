@@ -455,8 +455,10 @@ class Classifier():
         if use_GPU:
             rsc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         else:
-            flavor = 'igraph' if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10) else 'leidenalg'
-            sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering', flavor = flavor, n_iterations = 2)
+            if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10):
+                sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering', flavor = 'igraph', n_iterations = 2)
+            else:
+                sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         return self.adata.obs.pop('over_clustering')
 
     @staticmethod
