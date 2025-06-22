@@ -1,5 +1,10 @@
 # Changelog
 *********************************
+## CellTypist 1.7.0 (June 22, 2025)
+- Add GPU option for the command line [#141](https://github.com/Teichlab/celltypist/issues/141)
+- Add model subset function [#147](https://github.com/Teichlab/celltypist/issues/147)
+- Avoid checking built-in models when model path is provided in command line [#151](https://github.com/Teichlab/celltypist/issues/151)
+- Adjust leiden params to parallel scanpy
 ## CellTypist 1.6.3 (June 6, 2024)
 - GPU support based on rapids-singlecell during the over-clustering step [#110](https://github.com/Teichlab/celltypist/issues/110)
 - Load custom model directly [#60](https://github.com/Teichlab/celltypist/issues/60)
