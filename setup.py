@@ -4,8 +4,8 @@ def get_readme():
     with open("README.md", "rt", encoding="utf-8") as fh:
         return fh.read()
 
-def get_requirements():
-    with open("requirements.txt", "rt", encoding="utf-8") as fh:
+def get_requirements(requirements_file: str):
+    with open(requirements_file, "rt", encoding="utf-8") as fh:
         return [line.strip() for line in fh.readlines()]
 
 def get_version():
@@ -26,7 +26,10 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Teichlab/celltypist",
     packages=setuptools.find_packages(),
-    install_requires=get_requirements(),
+    install_requires=get_requirements("requirements.txt"),
+    extras_require={
+        "doc": get_requirements("requirements-doc.txt"),
+    },
     include_package_data=True,
     entry_points={
         'console_scripts': ['celltypist=celltypist.command_line:main'],
