@@ -1,5 +1,7 @@
 # Changelog
 *********************************
+## CellTypist 1.7.1 (June 25, 2025)
+- Fix command param error for GPU [#154](https://github.com/Teichlab/celltypist/issues/154)
 ## CellTypist 1.7.0 (June 22, 2025)
 - Add GPU option for the command line [#141](https://github.com/Teichlab/celltypist/issues/141)
 - Add model subset function [#147](https://github.com/Teichlab/celltypist/issues/147)
