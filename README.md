@@ -14,8 +14,14 @@ Information of CellTypist can be also found in our CellTypist portal. [![Website
 
 # Install CellTypist
 ### Using pip [![PyPI](https://img.shields.io/pypi/v/celltypist.svg?color=brightgreen&style=flat)](https://pypi.org/project/celltypist)
+Install the core package:
 ```console
 pip install celltypist
+```
+
+To include additional dependencies for tutorials and documentation, install with the [doc] extras:
+```console
+pip install celltypist[doc]
 ```
 
 ### Using conda [![install with bioconda](https://img.shields.io/conda/vn/bioconda/celltypist.svg?color=brightgreen&style=flat)](https://anaconda.org/bioconda/celltypist)
