@@ -120,7 +120,7 @@ class TreeNode():
             return any(child.original_name == child_node for child in self.children)
         else:
             raise TypeError(
-                    f"🛑 The query for '{self.original_name}' must be a `TreeNode` object or its original name")
+                    f"🛑 The query for '{self.original_name}' must be a `TreeNode` object or its original name (str)")
 
     def find_child(self, name: str):
         """
@@ -164,7 +164,7 @@ class TreeNode():
         child_nodes = child_nodes[0] if isinstance(child_nodes[0], (list, tuple, set)) else child_nodes
         if not all(isinstance(x, (TreeNode, str)) for x in child_nodes):
             raise TypeError(
-                    f"🛑 All child nodes to be removed from '{self.original_name}' must be `TreeNode` instances or original names (str)")
+                    f"🛑 All child nodes to be removed from '{self.original_name}' must be `TreeNode` instances or their original names (str)")
         for child_node in child_nodes:
             if not self.has_child(child_node):
                 raise ValueError(
