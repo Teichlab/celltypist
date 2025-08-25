@@ -4,7 +4,9 @@ from typing import Union
 from . import logger
 
 def _to_internal_name(name: str) -> str:
-    """Convert a name to its internal (underscore-based) form."""
+    """
+    For internal use. Convert a name to its internal (underscore-based) form.
+    """
     return name.replace(" ", "_").replace("/", "_").replace("-", "_")
 
 class TreeNode():
