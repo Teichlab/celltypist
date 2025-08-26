@@ -47,6 +47,8 @@ class TreeNode():
 
     def __init__(self, original_name: str, **kwargs):
         self.original_name = original_name
+        if "internal_name" in kwargs:
+            logger.warn("⚠️ The `internal_name` argument will be ignored because it is always derived from `original_name`")
         self.internal_name = _to_internal_name(original_name)
         self.cell_ontology_id = kwargs.get("cell_ontology_id", "")
         self.node_description = kwargs.get("node_description", "")
@@ -58,7 +60,7 @@ class TreeNode():
         self.children = []
         self.model = kwargs.get("model", "")
         for key, val in kwargs.items():
-            if key not in self._STANDARD_FIELDS:
+            if key not in self._STANDARD_FIELDS and key != "internal_name":
                 setattr(self, key, val)
 
     def add_children(self, *child_nodes) -> None:
