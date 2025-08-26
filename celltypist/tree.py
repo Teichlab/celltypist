@@ -273,7 +273,7 @@ class TreeNode():
     def from_dict(cls, node_dict: dict):
         """Build a :class:`~celltypist.tree.TreeNode` instance from a dictionary."""
         if "original_name" not in node_dict:
-            raise ValueError(
+            raise KeyError(
                     f"🛑 Each node must have an 'original_name'")
         original_name = node_dict["original_name"]
         node_data = {k: v for k, v in node_dict.items() if k != "children"}
