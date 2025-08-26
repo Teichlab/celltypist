@@ -190,7 +190,7 @@ class TreeNode():
             Attributes get updated.
         """
         for key, value in kwargs.items():
-            if key in ['original_name', 'internal_name']:
+            if key in ('original_name', 'internal_name'):
                 raise AttributeError(
                         f"🛑 '{key}' is read-only and cannot be updated for '{self.original_name}'")
             if hasattr(self, key):
@@ -216,11 +216,11 @@ class TreeNode():
             The given node is checked.
         """
         if check_type:
-            for attr in ["original_name", "cell_ontology_id", "node_description", "model"]:
+            for attr in ("original_name", "cell_ontology_id", "node_description", "model"):
                 if not isinstance(getattr(self, attr), str):
                     raise TypeError(
                             f"🛑 `{attr}` of the node '{self.original_name}' must be a string")
-            for attr in ["tissue_origin", "markers"]:
+            for attr in ("tissue_origin", "markers"):
                 val = getattr(self, attr)
                 if not isinstance(val, list) or not all(isinstance(x, str) for x in val):
                     raise TypeError(
@@ -278,7 +278,7 @@ class TreeNode():
             raise KeyError(
                     f"🛑 Each node must have an 'original_name'")
         original_name = node_dict["original_name"]
-        node_data = {k: v for k, v in node_dict.items() if k != "children"}
+        node_data = {k: v for k, v in node_dict.items() if k not in ("original_name", "internal_name", "children")}
         node = cls(original_name, **node_data)
         node.children = [cls.from_dict(child) for child in node_dict.get("children", [])]
         node.validate(check_type = True)
