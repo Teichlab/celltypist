@@ -118,7 +118,7 @@ class TreeNode():
             `True` if the child exists in the current node, otherwise `False`.
         """
         if isinstance(child_node, TreeNode):
-            return child_node in self.children
+            return any(child.original_name == child_node.original_name for child in self.children)
         elif isinstance(child_node, str):
             return any(child.original_name == child_node for child in self.children)
         else:
