@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 from typing import Union
 from . import logger
 
@@ -175,12 +176,15 @@ class TreeNode():
         for child in to_remove:
             self.children.remove(child)
 
-    def update(self, **kwargs) -> None:
+    def update(self, validate: bool = False, **kwargs) -> None:
         """
         Update attributes of the node with provided keyword arguments.
 
         Parameters
         ----------
+        validate
+            Whether to validate `kwargs` (keyword arguments) before updating.
+            (Default: `False`)
         **kwargs
             Key-value pairs representing attribute names and their new values.
 
@@ -189,16 +193,22 @@ class TreeNode():
         None
             Attributes get updated.
         """
-        for key, value in kwargs.items():
-            if key in ('original_name', 'internal_name'):
+        for key in kwargs:
+            if key == 'internal_name':
                 raise AttributeError(
-                        f"🛑 '{key}' is read-only and cannot be updated for '{self.original_name}'")
-            if hasattr(self, key):
-                setattr(self, key, value)
-            else:
+                        f"🛑 '{key}' cannot be updated for '{self.original_name}' as it will always be derived")
+            if not hasattr(self, key):
                 raise AttributeError(
                         f"🛑 '{key}' is not a valid attribute for updating '{self.original_name}'")
-        self.validate(check_type = True)
+        if validate:
+            proposed = copy.copy(self)
+            for key, value in kwargs.items():
+                setattr(proposed, key, value)
+            proposed.validate(check_type = True)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+            if key == 'original_name':
+                self.internal_name = _to_internal_name(value)
 
     def validate(self, check_type: bool = True) -> None:
         """
