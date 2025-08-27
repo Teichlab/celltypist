@@ -319,7 +319,7 @@ class TreeNode():
 
     def __repr__(self):
         """String representation of the :class:`~celltypist.tree.TreeNode` object."""
-        base = f"A tree node '{self.original_name}' with {len(self.children)} child nodes"
+        base = f"A tree node '{self.original_name}' with {len(self.children)} child {'node' if len(self.children) == 1 else 'nodes'}"
         for x in self._STANDARD_FIELDS:
             val = getattr(self, x)
             if val not in ('', [], 0):
