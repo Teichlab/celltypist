@@ -329,7 +329,7 @@ class TreeNode():
             if val not in ('', [], 0):
                 if x == 'children':
                     val = self.child_names
-                if x in ['tissue_origin', 'markers', 'children']:
+                if x in ('tissue_origin', 'markers', 'children'):
                     if len(val) == 1:
                         val = val[0]
                     elif len(val) == 2:
