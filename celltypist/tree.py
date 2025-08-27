@@ -284,6 +284,9 @@ class TreeNode():
     @classmethod
     def from_dict(cls, node_dict: dict):
         """Build a :class:`~celltypist.tree.TreeNode` instance from a dictionary."""
+        if not isinstance(node_dict, dict):
+            raise TypeError(
+                    f"🛑 Please provide a top-level JSON object (dict) for `from_dict`")
         if "original_name" not in node_dict:
             raise KeyError(
                     f"🛑 Each node must have an 'original_name'")
