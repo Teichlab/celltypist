@@ -39,8 +39,8 @@ class TreeNode():
         Number of cells contained in this node (cell type), typically populated/replaced during hierarchical model training. 0 if not provided.
     children
         A list of :class:`~celltypist.tree.TreeNode` instances representing child nodes (cell types). An empty list is initialized (thus a leaf node).
-        For internal nodes, child nodes can be further added by :meth:`~celltypist.tree.TreeNode.add_children` after initialization, or directly from a json-like input (dict or json file).
-        For leaf nodes, simply initialize them, or directly from a child-free json-like input (dict or json file).
+        For internal nodes, child nodes can be further added by :meth:`~celltypist.tree.TreeNode.add_children` after initialization, or directly from a JSON-like input (dict or JSON file).
+        For leaf nodes, simply initialize them, or directly from a child-free JSON-like input (dict or JSON file).
     model
         The path to the CellTypist model used for classifying child cell types of the given internal node, typically populated/replaced during hierarchical model training. Empty string if not provided.
     """
