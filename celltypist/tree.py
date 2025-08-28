@@ -350,9 +350,9 @@ class Tree():
     Parameters
     ----------
     handle
-        Machine-friendly unique identifier/name of this tree.
+        Machine-friendly unique identifier/name of this cell type tree/hierarchy.
     root
-        A :class:`~celltypist.tree.TreeNode` root of the cell type tree/hierarchy.
+        A :class:`~celltypist.tree.TreeNode` root of the tree.
     **kwargs
         Additional keyword arguments for describing the tree.
 
