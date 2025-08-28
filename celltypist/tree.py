@@ -349,6 +349,8 @@ class Tree():
 
     Parameters
     ----------
+    handle
+        Machine-friendly unique identifier/name of this tree.
     root
         A :class:`~celltypist.tree.TreeNode` root of the cell type tree/hierarchy.
     **kwargs
@@ -356,13 +358,19 @@ class Tree():
 
     Attributes
     ----------
+    handle
+        Unique programmatic identifier/name of this tree.
     root
         The root node (a :class:`~celltypist.tree.TreeNode` instance) of the tree.
     """
-    def __init__(self, root, **kwargs):
+    def __init__(self, handle: str, root, **kwargs):
+        if not isinstance(handle, str) or handle == '':
+            raise TypeError(
+                    f"🛑 `handle` must be a non-empty string")
         if not isinstance(root, TreeNode):
             raise TypeError(
                     f"🛑 `root` must be a `TreeNode` instance")
+        self.handle = handle
         self.root = root
         for key, value in kwargs.items():
             setattr(self, key, value)
