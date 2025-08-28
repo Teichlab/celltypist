@@ -43,6 +43,8 @@ class TreeNode():
         For leaf nodes, simply initialize them, or directly from a child-free JSON-like input (dict or JSON file).
     model
         The path to the CellTypist model used for classifying child cell types of the given internal node, typically populated/replaced during hierarchical model training. Empty string if not provided.
+    child_names
+        A list of child original names for the node. Empty list for a leaf node.
     """
     _STANDARD_FIELDS = ["cell_ontology_id", "node_description", "tissue_origin", "markers", "size", "children", "model"]
 
@@ -340,3 +342,33 @@ class TreeNode():
                         val = f"{val[0]}, {val[1]}, ..., {val[-1]}"
                 base += f"\n    {x}: {val}"
         return base
+
+class Tree():
+    """
+    Tree-level wrapper around a :class:`~celltypist.tree.TreeNode` root.
+
+    Parameters
+    ----------
+    root
+        A :class:`~celltypist.tree.TreeNode` root of the cell type tree/hierarchy.
+    **kwargs
+        Additional keyword arguments for describing the tree.
+
+    Attributes
+    ----------
+    root
+        The root node (a :class:`~celltypist.tree.TreeNode` instance) of the tree.
+    """
+    def __init__(self, root, **kwargs):
+        if not isinstance(root, TreeNode):
+            raise TypeError(
+                    f"🛑 `root` must be a `TreeNode` instance")
+        self.root = root
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __getattr__(self, name):
+        """
+        Delegate unknown attribute/method lookups to the root node after standard MRO.
+        """
+        return getattr(self.root, name)
