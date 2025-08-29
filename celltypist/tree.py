@@ -427,5 +427,11 @@ class Tree():
         data["root"] = self.root.to_dict()
         return data
 
+    def write(self, file_path: str) -> None:
+        """Write the tree to a JSON file."""
+        file_path = os.path.splitext(file_path)[0] + '.json'
+        with open(file_path, "w") as f:
+            json.dump(self.to_dict(), f, indent = 2)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
