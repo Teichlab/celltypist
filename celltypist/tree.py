@@ -364,8 +364,11 @@ class Tree():
         The root node (a :class:`~celltypist.tree.TreeNode` instance) of the tree.
     """
     def __init__(self, handle: str, root: TreeNode, **kwargs):
-        if not isinstance(handle, str) or handle == '':
+        if not isinstance(handle, str):
             raise TypeError(
+                    f"🛑 `handle` must be a string")
+        if handle.strip() == '':
+            raise ValueError(
                     f"🛑 `handle` must be a non-empty string")
         if not isinstance(root, TreeNode):
             raise TypeError(
