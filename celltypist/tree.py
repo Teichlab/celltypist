@@ -45,6 +45,8 @@ class TreeNode():
         The path to the CellTypist model used for classifying child cell types of the given internal node, typically populated/replaced during hierarchical model training. Empty string if not provided.
     child_names
         A list of child original names for the node. Empty list for a leaf node.
+    depth
+        The depth of the node. For example, a node with three leaf children has a depth of 2.
     """
     _STANDARD_FIELDS = ["cell_ontology_id", "node_description", "tissue_origin", "markers", "size", "children", "model"]
 
@@ -147,6 +149,13 @@ class TreeNode():
     def child_names(self) -> list:
         """A list of original names of all immediate child nodes of the given node."""
         return [child.original_name for child in self.children]
+
+    @property
+    def depth(self) -> int:
+        """The depth of the node."""
+        if self.is_leaf():
+            return 1
+        return 1 + max(child.depth for child in self.children)
 
     def remove_children(self, *child_nodes) -> None:
         """
