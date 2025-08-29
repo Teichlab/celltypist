@@ -371,6 +371,8 @@ class Tree():
         Unique programmatic identifier/name of this tree.
     root
         The root node (a :class:`~celltypist.tree.TreeNode` instance) of the tree.
+    depth
+        The depth of the tree.
     """
     def __init__(self, handle: str, root: TreeNode, **kwargs):
         if not isinstance(handle, str):
@@ -387,11 +389,11 @@ class Tree():
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def __getattr__(self, name):
-        """
-        Delegate unknown attribute/method lookups to the root node after standard MRO.
-        """
-        return getattr(self.root, name)
+    #def __getattr__(self, name):
+    #    """
+    #    Delegate unknown attribute/method lookups to the root node after standard MRO.
+    #    """
+    #    return getattr(self.root, name)
 
     def validate(self, check_type: bool = True) -> None:
         if not isinstance(self.handle, str):
@@ -405,4 +407,9 @@ class Tree():
                     f"🛑 `root` must be a `TreeNode` instance")
         self.root.validate(check_type = check_type)
 
+    @property
+    def depth(self) -> int:
+        return self.root.depth
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
+Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
