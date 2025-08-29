@@ -411,5 +411,21 @@ class Tree():
     def depth(self) -> int:
         return self.root.depth
 
+    def to_dict(self) -> dict:
+        """
+        Convert the tree into a dictionary representation.
+
+        Returns
+        ----------
+        dict
+            Dictionary containing `handle` (unique identifier), `root` (serialized root node), and any custom attributes of the tree.
+        """
+        data = {"handle": self.handle}
+        for key, value in self.__dict__.items():
+            if key not in ("handle", "root"):
+                data[key] = value
+        data["root"] = self.root.to_dict()
+        return data
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
