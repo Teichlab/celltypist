@@ -383,3 +383,17 @@ class Tree():
         Delegate unknown attribute/method lookups to the root node after standard MRO.
         """
         return getattr(self.root, name)
+
+    def validate(self, check_type: bool = True) -> None:
+        if not isinstance(self.handle, str):
+            raise TypeError(
+                    f"🛑 `handle` must be a string")
+        if self.handle.strip() == '':
+            raise ValueError(
+                    f"🛑 `handle` must be a non-empty string")
+        if not isinstance(self.root, TreeNode):
+            raise TypeError(
+                    f"🛑 `root` must be a `TreeNode` instance")
+        self.root.validate(check_type = check_type)
+
+Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
