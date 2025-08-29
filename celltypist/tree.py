@@ -433,5 +433,20 @@ class Tree():
         with open(file_path, "w") as f:
             json.dump(self.to_dict(), f, indent = 2)
 
+    @classmethod
+    def from_dict(cls, tree_dict: dict):
+        """Build a :class:`~celltypist.tree.Tree` instance from a dictionary."""
+        if not isinstance(tree_dict, dict):
+            raise TypeError(
+                    f"🛑 Please provide a top-level JSON object (dict) for `from_dict`")
+        if "handle" not in tree_dict:
+            raise KeyError(
+                    f"🛑 Each tree must have a 'handle'")
+        if "root" not in tree_dict:
+            raise KeyError(
+                    f"🛑 Each tree must have a 'root'")
+        extras = {k: v for k, v in tree_dict.items() if k not in ("handle", "root")}
+        return cls(handle = tree_dict["handle"], root = TreeNode.from_dict(tree_dict["root"]), **extras)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
