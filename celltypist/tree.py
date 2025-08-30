@@ -448,5 +448,13 @@ class Tree():
         extras = {k: v for k, v in tree_dict.items() if k not in ("handle", "root")}
         return cls(handle = tree_dict["handle"], root = TreeNode.from_dict(tree_dict["root"]), **extras)
 
+    @classmethod
+    def from_json(cls, json_data: Union[dict, str]):
+        if isinstance(json_data, str):
+            with open(json_data, "r") as f:
+                json_data = json.load(f)
+        return cls.from_dict(json_data)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
+Tree.from_json.__doc__ = TreeNode.from_json.__doc__.replace("TreeNode", "Tree")
