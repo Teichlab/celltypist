@@ -170,7 +170,7 @@ class TreeNode():
 
     @property
     def n_nodes(self) -> int:
-        """Number of internal nodes contained."""
+        """Number of total nodes contained."""
         return 1 + sum(child.n_nodes for child in self.children)
 
     def remove_children(self, *child_nodes) -> None:
