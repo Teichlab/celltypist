@@ -259,7 +259,7 @@ class TreeNode():
             if key == 'original_name':
                 self.internal_name = _to_internal_name(value)
 
-    def validate(self, check_type: bool = True) -> None:
+    def validate(self, check_type: bool = True, check_unique: bool = True) -> None:
         """
         Sanity check the node.
 
@@ -267,6 +267,9 @@ class TreeNode():
         ----------
         check_type
             Whether to validate types of the node's attributes.
+            (Default: `True`)
+        check_unique
+            Whether to check uniqueness of node names recursively contained in the node.
             (Default: `True`)
 
         Returns
@@ -302,7 +305,12 @@ class TreeNode():
             raise ValueError(
                     f"🛑 Node '{self.original_name}' cannot have a child with the same name")
         for child in self.children:
-            child.validate(check_type = check_type)
+            child.validate(check_type = check_type, check_unique = False)
+        if check_unique:
+            names = self.cell_types(leaf_only = False)
+            if len(names) != len(set(names)):
+                raise ValueError(
+                        f"🛑 Duplicate node names found")
 
     def to_dict(self) -> dict:
         """
