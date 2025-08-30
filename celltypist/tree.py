@@ -173,6 +173,28 @@ class TreeNode():
         """Number of total nodes contained."""
         return 1 + sum(child.n_nodes for child in self.children)
 
+    def cell_types(self, leaf_only: bool = True) -> list:
+        """
+        Return cell types in this node.
+
+        Parameters
+        ----------
+        leaf_only
+            Whether to return only leaf (finest-grained) or all (internal + leaf) cell types.
+            (Default: `True`)
+
+        Returns
+        ----------
+        list
+            List of cell type names from this node.
+        """
+        names = []
+        if not leaf_only or self.is_leaf():
+            names.append(self.original_name)
+        for child in self.children:
+            names.extend(child.cell_types(leaf_only = leaf_only))
+        return names
+
     def remove_children(self, *child_nodes) -> None:
         """
         Remove one or more child nodes from the node's child list.
