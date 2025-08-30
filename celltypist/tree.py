@@ -163,19 +163,19 @@ class TreeNode():
 
     @property
     def n_leaves(self) -> int:
-        """Number of leaves contained."""
+        """Number of leaves recursively contained."""
         if self.is_leaf():
             return 1
         return sum(child.n_leaves for child in self.children)
 
     @property
     def n_nodes(self) -> int:
-        """Number of total nodes contained."""
+        """Number of total nodes recursively contained."""
         return 1 + sum(child.n_nodes for child in self.children)
 
     def cell_types(self, leaf_only: bool = True) -> list:
         """
-        Return cell types in this node.
+        Return cell types recursively contained in this node.
 
         Parameters
         ----------
