@@ -457,4 +457,4 @@ class Tree():
 
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
-Tree.from_json.__doc__ = TreeNode.from_json.__doc__.replace("TreeNode", "Tree")
+Tree.from_json.__func__.__doc__ = TreeNode.from_json.__func__.__doc__.replace("TreeNode", "Tree")
