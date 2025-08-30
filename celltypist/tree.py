@@ -461,6 +461,9 @@ class Tree():
     def n_nodes(self) -> int:
         return self.root.n_nodes
 
+    def cell_types(self, leaf_only: bool = True) -> list:
+        return self.root.cell_types(leaf_only = leaf_only)
+
     def to_dict(self) -> dict:
         """
         Convert the tree into a dictionary representation.
@@ -519,4 +522,5 @@ Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
 Tree.n_nodes.__doc__ = TreeNode.n_nodes.__doc__
+Tree.cell_types.__doc__ = TreeNode.cell_types.__doc__.replace("node", "tree")
 Tree.from_json.__func__.__doc__ = TreeNode.from_json.__func__.__doc__.replace("TreeNode", "Tree")
