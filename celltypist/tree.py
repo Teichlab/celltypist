@@ -483,6 +483,16 @@ class Tree():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    def __repr__(self):
+        """String representation of the :class:`~celltypist.tree.Tree` object."""
+        base = f"A cell type tree with {self.n_nodes} total nodes and {self.n_leaves} leaves"
+        base += f"\n    handle: {self.handle}"
+        for key, value in self.__dict__.items():
+            if key not in ("handle", "root"):
+                base += f"\n    {key}: {value}"
+        base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
+        return base
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
