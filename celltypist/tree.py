@@ -389,6 +389,10 @@ class Tree():
         The root node (a :class:`~celltypist.tree.TreeNode` instance) of the tree.
     depth
         The depth of the tree.
+    n_leaves
+        The number of leaf nodes contained.
+    n_nodes
+        The number of total nodes contained.
     """
     def __init__(self, handle: str, root: TreeNode, **kwargs):
         if not isinstance(handle, str):
@@ -426,6 +430,14 @@ class Tree():
     @property
     def depth(self) -> int:
         return self.root.depth
+
+    @property
+    def n_leaves(self) -> int:
+        return self.root.n_leaves
+
+    @property
+    def n_nodes(self) -> int:
+        return self.root.n_nodes
 
     def to_dict(self) -> dict:
         """
@@ -473,4 +485,6 @@ class Tree():
 
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
+Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
+Tree.n_nodes.__doc__ = TreeNode.n_nodes.__doc__
 Tree.from_json.__func__.__doc__ = TreeNode.from_json.__func__.__doc__.replace("TreeNode", "Tree")
