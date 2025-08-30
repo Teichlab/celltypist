@@ -48,7 +48,9 @@ class TreeNode():
     depth
         The depth of the node. For example, a node with three leaf children has a depth of 2.
     n_leaves
-        The number of leaf nodes of the node.
+        The number of leaf nodes contained.
+    n_nodes
+        The number of total nodes contained.
     """
     _STANDARD_FIELDS = ["cell_ontology_id", "node_description", "tissue_origin", "markers", "size", "children", "model"]
 
@@ -161,10 +163,15 @@ class TreeNode():
 
     @property
     def n_leaves(self) -> int:
-        """Number of leaves contained in the node."""
+        """Number of leaves contained."""
         if self.is_leaf():
             return 1
         return sum(child.n_leaves for child in self.children)
+
+    @property
+    def n_nodes(self) -> int:
+        """Number of internal nodes contained."""
+        return 1 + sum(child.n_nodes for child in self.children)
 
     def remove_children(self, *child_nodes) -> None:
         """
