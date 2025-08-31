@@ -1,7 +1,7 @@
 import json
 import os
 import copy
-from typing import Union
+from typing import Union, Optional
 from . import logger
 
 def _to_internal_name(name: str) -> str:
@@ -253,7 +253,7 @@ class TreeNode():
             proposed = copy.copy(self)
             for key, value in kwargs.items():
                 setattr(proposed, key, value)
-            proposed.validate(check_type = True)
+            proposed.validate(check_type = True, check_unique = True)
         for key, value in kwargs.items():
             setattr(self, key, value)
             if key == 'original_name':
@@ -352,7 +352,7 @@ class TreeNode():
         node_data = {k: v for k, v in node_dict.items() if k not in ("original_name", "internal_name", "children")}
         node = cls(original_name, **node_data)
         node.children = [cls.from_dict(child) for child in node_dict.get("children", [])]
-        node.validate(check_type = True)
+        node.validate(check_type = True, check_unique = True)
         return node
 
     @classmethod
@@ -538,11 +538,16 @@ class Tree():
         base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
         return base
 
-    def _traverse(self, node: TreeNode, parent = None):
+    @staticmethod
+    def _traverse(node: TreeNode, parent: Optional[TreeNode] = None):
         """Yield (node, parent) pairs in a DFS traversal. For internal use."""
+        if isinstance(parent, TreeNode):
+            if not parent.has_child(node):
+                raise ValueError(
+                        f"🛑 Please provide matched `node` and `parent`")
         yield node, parent
         for child in node.children:
-            yield from self._traverse(child, parent = node)
+            yield from Tree._traverse(child, parent = node)
 
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
