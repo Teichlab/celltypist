@@ -524,6 +524,9 @@ class Tree():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    def __contains__(self, name: str):
+        return name in self.root
+
     def __repr__(self):
         """String representation of the :class:`~celltypist.tree.Tree` object."""
         base = f"A cell type tree with {self.n_nodes} total nodes and {self.n_leaves} leaves"
