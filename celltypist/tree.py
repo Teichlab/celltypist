@@ -269,7 +269,7 @@ class TreeNode():
             Whether to validate types of the node's attributes.
             (Default: `True`)
         check_unique
-            Whether to check uniqueness of node names recursively contained in the node.
+            Whether to check uniqueness of cell type names recursively contained in the node.
             (Default: `True`)
 
         Returns
@@ -445,7 +445,7 @@ class Tree():
     #    """
     #    return getattr(self.root, name)
 
-    def validate(self, check_type: bool = True) -> None:
+    def validate(self, check_type: bool = True, check_unique: bool = True) -> None:
         if not isinstance(self.handle, str):
             raise TypeError(
                     f"🛑 `handle` must be a string")
@@ -455,7 +455,7 @@ class Tree():
         if not isinstance(self.root, TreeNode):
             raise TypeError(
                     f"🛑 `root` must be a `TreeNode` instance")
-        self.root.validate(check_type = check_type)
+        self.root.validate(check_type = check_type, check_unique = check_unique)
 
     @property
     def depth(self) -> int:
