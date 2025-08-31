@@ -525,6 +525,7 @@ class Tree():
         return cls.from_dict(json_data)
 
     def __contains__(self, name: str):
+        """Return True if a node with the given name exists."""
         return name in self.root
 
     def __repr__(self):
