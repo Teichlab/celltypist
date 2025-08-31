@@ -538,6 +538,12 @@ class Tree():
         base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
         return base
 
+    def _traverse(self, node: TreeNode, parent = None):
+        """Yield (node, parent) pairs in a DFS traversal. For internal use."""
+        yield node, parent
+        for child in node.children:
+            yield from self._traverse(child, parent = node)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
