@@ -375,6 +375,13 @@ class TreeNode():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    def __contains__(self, name: str):
+        """Return True if a node with the given name exists."""
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 Membership check requires a string name.")
+        return name in self.cell_types(leaf_only = False)
+
     def __repr__(self):
         """String representation of the :class:`~celltypist.tree.TreeNode` object."""
         n = len(self.children)
