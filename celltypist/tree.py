@@ -308,9 +308,10 @@ class TreeNode():
             child.validate(check_type = check_type, check_unique = False)
         if check_unique:
             names = self.cell_types(leaf_only = False)
-            if len(names) != len(set(names)):
+            duplicates = [n for i, n in enumerate(names) if n in names[:i]]
+            if duplicates:
                 raise ValueError(
-                        f"🛑 Duplicate node names found")
+                        f"🛑 Duplicate node names found: {sorted(set(duplicates))}")
 
     def to_dict(self) -> dict:
         """
