@@ -573,7 +573,7 @@ class Tree():
 
     def find_parent(self, name: str) -> TreeNode:
         """
-        Find the parent of a node in the tree by its name.
+        Find the parent of a node in the tree by the node's name.
 
         Parameters
         ----------
