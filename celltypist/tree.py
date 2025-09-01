@@ -293,10 +293,9 @@ class TreeNode():
             if not isinstance(self.children, list) or not all(isinstance(c, TreeNode) for c in self.children):
                 raise TypeError(
                         f"🛑 `children` of the node '{self.original_name}' must be a list of `TreeNode` instances")
-        if self.is_leaf():
-            if self.model:
-                raise ValueError(
-                        f"🛑 Leaf node '{self.original_name}' should not have a model")
+        if self.is_leaf() and self.model:
+            raise ValueError(
+                    f"🛑 Leaf node '{self.original_name}' should not have a model")
             return
         if len(set(self.child_names)) != len(self.child_names):
             raise ValueError(
@@ -541,10 +540,10 @@ class Tree():
     @staticmethod
     def _traverse(node: TreeNode, parent: Optional[TreeNode] = None):
         """Yield (node, parent) pairs in a DFS traversal. For internal use."""
-        if isinstance(parent, TreeNode):
-            if not parent.has_child(node):
-                raise ValueError(
-                        f"🛑 Please provide matched `node` and `parent`")
+        #if isinstance(parent, TreeNode):
+        #    if not parent.has_child(node):
+        #        raise ValueError(
+        #                f"🛑 Please provide matched `node` and `parent`")
         yield node, parent
         for child in node.children:
             yield from Tree._traverse(child, parent = node)
