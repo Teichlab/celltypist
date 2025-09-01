@@ -571,6 +571,32 @@ class Tree():
         raise ValueError(
                 f"🛑 No node named '{name}' exists in this tree")
 
+    def find_parent(self, name: str) -> TreeNode:
+        """
+        Find the parent of a node in the tree by its name.
+
+        Parameters
+        ----------
+        name
+            The name of the node whose parent is queried.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            A :class:`~celltypist.tree.TreeNode` instance representing the parent of the specified node.
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        for node, parent in Tree._traverse(self.root):
+            if node.original_name == name:
+                if parent is None:
+                    raise ValueError(
+                            f"🛑 Node '{name}' is the root and has no parent")
+                return parent
+        raise ValueError(
+                f"🛑 No node named '{name}' exists in this tree")
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
