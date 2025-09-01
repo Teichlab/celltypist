@@ -549,6 +549,29 @@ class Tree():
         for child in node.children:
             yield from Tree._traverse(child, parent = node)
 
+    def find_node(self, name: str) -> TreeNode:
+        """
+        Find a node in the tree by its name.
+
+        Parameters
+        ----------
+        name
+            The node name to search.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            A :class:`~celltypist.tree.TreeNode` instance with the given name.
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        for node, _ in Tree._traverse(self.root):
+            if node.original_name == name:
+                return node
+        raise ValueError(
+                f"🛑 No node named '{name}' exists in this tree")
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
