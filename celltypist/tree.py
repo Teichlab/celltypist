@@ -618,6 +618,26 @@ class Tree():
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
 
+    def add_children(self, name: str, *child_nodes) -> None:
+        """
+        Add one or more children to a node in the tree by the node's name.
+
+        Parameters
+        ----------
+        name
+            The name of the node to which children are added.
+        *child_nodes
+            One or more :class:`~celltypist.tree.TreeNode` instances.
+            Can be passed individually or as a list/tuple/set.
+
+        Returns
+        ----------
+        None
+            Child node(s) are appended to the child list of the given node.
+        """
+        node = self.find_node(name)
+        node.add_children(*child_nodes)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
