@@ -614,9 +614,6 @@ class Tree():
         list
             A list of child names (if `return_names = True`) or :class:`~celltypist.tree.TreeNode` objects (if `return_names = False`).
         """
-        if not isinstance(name, str):
-            raise TypeError(
-                    f"🛑 `name` must be a string")
         node = self.find_node(name)
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
