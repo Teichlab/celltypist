@@ -72,7 +72,7 @@ class TreeNode():
             if key not in self._STANDARD_FIELDS and key != "internal_name":
                 setattr(self, key, val)
 
-    def add_children(self, *child_nodes) -> None:
+    def add_children(self, *child_nodes) -> list:
         """
         Add/append child node(s) to the node's child list.
 
@@ -84,8 +84,8 @@ class TreeNode():
 
         Returns
         ----------
-        None
-            Child node(s) are appended to the child list of the given node.
+        list
+            A list of child node(s) that were appended to the child list of the given node.
         """
         if not child_nodes:
             raise ValueError(
@@ -99,6 +99,7 @@ class TreeNode():
                 raise ValueError(
                         f"🛑 Duplicate child '{child_node.original_name}' should not be added to '{self.original_name}'")
         self.children.extend(child_nodes)
+        return list(child_nodes)
 
     def is_leaf(self) -> bool:
         """
@@ -618,7 +619,7 @@ class Tree():
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
 
-    def add_children(self, name: str, *child_nodes) -> None:
+    def add_children(self, name: str, *child_nodes) -> list:
         """
         Add one or more children to a node in the tree by the node's name.
 
@@ -632,11 +633,11 @@ class Tree():
 
         Returns
         ----------
-        None
-            Child node(s) are appended to the child list of the given node.
+        list
+            A list of child node(s) that were appended to the child list of the given node.
         """
         node = self.find_node(name)
-        node.add_children(*child_nodes)
+        return node.add_children(*child_nodes)
 
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
