@@ -597,6 +597,30 @@ class Tree():
         raise ValueError(
                 f"🛑 No node named '{name}' exists in this tree")
 
+    def find_children(self, name: str, return_names: bool = True) -> list:
+        """
+        Find the children of a node in the tree by the node's name.
+
+        Parameters
+        ----------
+        name
+            The name of the node whose children are queried.
+        return_names
+            Whether to return a list of child names (rather than a list of :class:`~celltypist.tree.TreeNode` objects).
+            (Default: `True`)
+
+        Returns
+        ----------
+        list
+            A list of child names (if `return_names = True`) or :class:`~celltypist.tree.TreeNode` objects (if `return_names = False`).
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        node = self.find_node(name)
+        #node.children is not protected; any modification is MIP.
+        return node.child_names if return_names else node.children
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
