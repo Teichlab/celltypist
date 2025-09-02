@@ -196,7 +196,7 @@ class TreeNode():
             names.extend(child.cell_types(leaf_only = leaf_only))
         return names
 
-    def remove_children(self, *child_nodes) -> None:
+    def remove_children(self, *child_nodes) -> list:
         """
         Remove one or more child nodes from the node's child list.
 
@@ -208,8 +208,8 @@ class TreeNode():
 
         Returns
         ----------
-        None
-            Child node(s) are removed from the child list of the given node.
+        list
+            A list of child node(s) that were removed from the child list of the given node.
         """
         if not child_nodes:
             raise ValueError(
@@ -225,6 +225,7 @@ class TreeNode():
         to_remove = [x if isinstance(x, TreeNode) else next(child for child in self.children if child.original_name == x) for x in child_nodes]
         for child in to_remove:
             self.children.remove(child)
+        return to_remove
 
     def update(self, validate: bool = False, **kwargs) -> None:
         """
