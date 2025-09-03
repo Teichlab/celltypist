@@ -640,6 +640,26 @@ class Tree():
         node = self.find_node(name)
         return node.add_children(*child_nodes)
 
+    def remove_children(self, name: str, *child_nodes) -> list:
+        """
+        Remove one or more children from a node in the tree by the node's name.
+
+        Parameters
+        ----------
+        name
+            The name of the node whose children are to be removed.
+        child_nodes
+            One or more :class:`~celltypist.tree.TreeNode` instances, their `original_name`s as strings, or a mix of both.
+            Can be passed individually or as a list/tuple/set.
+
+        Returns
+        ----------
+        list
+            A list of child node(s) that were removed from the child list of the given node.
+        """
+        node = self.find_node(name)
+        return node.remove_children(*child_nodes)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
