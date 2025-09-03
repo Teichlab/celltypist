@@ -703,6 +703,31 @@ class Tree():
         added = self.add_children(parent, node)
         return added[0]
 
+    def move_node(self, name: str, to: str) -> TreeNode:
+        """
+        Move a node (and its subtree) from its current parent to a new parent.
+
+        Parameters
+        ----------
+        name
+            The name of the node to move.
+        to
+            The name of the new parent node.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            The moved :class:`~celltypist.tree.TreeNode` instance.
+        """
+        if not isinstance(name, str) or not isinstance(to, str):
+            raise TypeError(
+                    f"🛑 Both `name` and `to` must be strings")
+        if self.root.original_name == name:
+            raise ValueError(
+                    f"🛑 Cannot move the root node")
+        removed = self.remove_node(name)
+        return self.add_node(to, removed)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
