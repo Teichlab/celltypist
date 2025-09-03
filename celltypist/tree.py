@@ -684,6 +684,25 @@ class Tree():
         removed = parent.remove_children(name)
         return removed[0]
 
+    def add_node(self, parent: str, node: TreeNode) -> TreeNode:
+        """
+        Add a node under a given parent node in the tree.
+
+        Parameters
+        ----------
+        parent
+            The name of the parent node to which the new node will be added.
+        node
+            The :class:`~celltypist.tree.TreeNode` instance to add.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            The :class:`~celltypist.tree.TreeNode` instance that was added.
+        """
+        added = self.add_children(parent, node)
+        return added[0]
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
