@@ -703,7 +703,7 @@ class Tree():
         added = self.add_children(parent, node)
         return added[0]
 
-    def move_node(self, name: str, to: str) -> TreeNode:
+    def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
         """
         Move a node (and its subtree) from its current parent to a new parent.
 
@@ -713,6 +713,9 @@ class Tree():
             The name of the node to move.
         to
             The name of the new parent node.
+        validate
+            Whether to validate `name` and `to`.
+            (Default: `True`)
 
         Returns
         ----------
@@ -725,6 +728,14 @@ class Tree():
         if self.root.original_name == name:
             raise ValueError(
                     f"🛑 Cannot move the root node")
+        if validate:
+            cell_types = self.cell_types(leaf_only = False)
+            if name not in cell_types:
+                raise ValueError(
+                        f"🛑 No node named '{name}' exists in this tree")
+            if to not in cell_types:
+                raise ValueError(
+                        f"🛑 No node named '{to}' exists in this tree")
         removed = self.remove_node(name)
         return self.add_node(to, removed)
 
