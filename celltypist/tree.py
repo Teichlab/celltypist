@@ -660,6 +660,30 @@ class Tree():
         node = self.find_node(name)
         return node.remove_children(*child_nodes)
 
+    def remove_node(self, name: str) -> TreeNode:
+        """
+        Remove a node from the tree by its name.
+
+        Parameters
+        ----------
+        name
+            The name of the node to remove.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            The removed :class:`~celltypist.tree.TreeNode` instance.
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        if self.root.original_name == name:
+            raise ValueError(
+                    f"🛑 Cannot remove the root node from the tree")
+        parent = self.find_parent(name)
+        removed = parent.remove_children(name)
+        return removed[0]
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
