@@ -620,13 +620,13 @@ class Tree():
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
 
-    def add_children(self, name: str, *child_nodes) -> list:
+    def add_children(self, parent: str, *child_nodes) -> list:
         """
         Add one or more children to a node in the tree by the node's name.
 
         Parameters
         ----------
-        name
+        parent
             The name of the node to which children are added.
         *child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances.
@@ -637,16 +637,16 @@ class Tree():
         list
             A list of child node(s) that were appended to the child list of the given node.
         """
-        node = self.find_node(name)
+        node = self.find_node(parent)
         return node.add_children(*child_nodes)
 
-    def remove_children(self, name: str, *child_nodes) -> list:
+    def remove_children(self, parent: str, *child_nodes) -> list:
         """
         Remove one or more children from a node in the tree by the node's name.
 
         Parameters
         ----------
-        name
+        parent
             The name of the node whose children are to be removed.
         child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances, their `original_name`s as strings, or a mix of both.
@@ -657,7 +657,7 @@ class Tree():
         list
             A list of child node(s) that were removed from the child list of the given node.
         """
-        node = self.find_node(name)
+        node = self.find_node(parent)
         return node.remove_children(*child_nodes)
 
     def remove_node(self, name: str) -> TreeNode:
