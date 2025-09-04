@@ -811,4 +811,4 @@ Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
 Tree.n_nodes.__doc__ = TreeNode.n_nodes.__doc__
 Tree.cell_types.__doc__ = TreeNode.cell_types.__doc__.replace("node", "tree")
 Tree.from_json.__func__.__doc__ = TreeNode.from_json.__func__.__doc__.replace("TreeNode", "Tree")
-Tree.copy.__doc__ = TreeNode.copy.__doc__.replace("node", "tree")
+Tree.copy.__doc__ = TreeNode.copy.__doc__.replace("node", "tree").replace("TreeNode", "Tree")
