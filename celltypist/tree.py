@@ -627,7 +627,7 @@ class Tree():
         Parameters
         ----------
         parent
-            The name of the node to which children are added.
+            The name of the parent node to which children are added.
         *child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances.
             Can be passed individually or as a list/tuple/set.
@@ -647,7 +647,7 @@ class Tree():
         Parameters
         ----------
         parent
-            The name of the node whose children are to be removed.
+            The name of the parent node whose children are to be removed.
         child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances, their `original_name`s as strings, or a mix of both.
             Can be passed individually or as a list/tuple/set.
