@@ -739,6 +739,28 @@ class Tree():
         removed = self.remove_node(name)
         return self.add_node(to, removed)
 
+    def update(self, name: str, validate: bool = False, **kwargs) -> None:
+        """
+        Update attributes of a node in the tree by the node's name.
+
+        Parameters
+        ----------
+        name
+            The name of the node to update.
+        validate
+            Whether to validate the updated node and its descendants after applying the update.
+            (Default: `False`)
+        **kwargs
+            Key-value pairs of attributes to update on the node.
+
+        Returns
+        ----------
+        None
+            Attributes of the given node get updated.
+        """
+        node = self.find_node(name)
+        node.update(validate = validate, **kwargs)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
