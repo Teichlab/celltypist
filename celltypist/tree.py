@@ -681,8 +681,7 @@ class Tree():
             raise ValueError(
                     f"🛑 Cannot remove the root node from the tree")
         parent = self.find_parent(name)
-        removed = parent.remove_children(name)
-        return removed[0]
+        return parent.remove_children(name)[0]
 
     def add_node(self, parent: str, node: TreeNode) -> TreeNode:
         """
@@ -700,8 +699,7 @@ class Tree():
         :class:`~celltypist.tree.TreeNode`
             The :class:`~celltypist.tree.TreeNode` instance that was added.
         """
-        added = self.add_children(parent, node)
-        return added[0]
+        return self.add_children(parent, node)[0]
 
     def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
         """
