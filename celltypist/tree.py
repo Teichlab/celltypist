@@ -376,6 +376,17 @@ class TreeNode():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    def copy(self):
+        """
+        Create a deep copy of the node.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            A deep-copied :class:`~celltypist.tree.TreeNode` instance.
+        """
+        return TreeNode.from_dict(self.to_dict())
+
     def __contains__(self, name: str):
         """Return True if a node with the given name exists."""
         if not isinstance(name, str):
