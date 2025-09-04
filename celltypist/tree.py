@@ -536,6 +536,9 @@ class Tree():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    def copy(self):
+        return Tree.from_dict(self.to_dict())
+
     def __contains__(self, name: str):
         """Return True if a node with the given name exists."""
         return name in self.root
@@ -808,3 +811,4 @@ Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
 Tree.n_nodes.__doc__ = TreeNode.n_nodes.__doc__
 Tree.cell_types.__doc__ = TreeNode.cell_types.__doc__.replace("node", "tree")
 Tree.from_json.__func__.__doc__ = TreeNode.from_json.__func__.__doc__.replace("TreeNode", "Tree")
+Tree.copy.__doc__ = TreeNode.copy.__doc__.replace("node", "tree")
