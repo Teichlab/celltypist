@@ -761,6 +761,38 @@ class Tree():
         node = self.find_node(name)
         node.update(validate = validate, **kwargs)
 
+    def replace_node(self, name: str, by: TreeNode) -> TreeNode:
+        """
+        Replace a node in the tree (and its subtree) with a new node.
+
+        Parameters
+        ----------
+        name
+            The name of the node to replace.
+        by
+            The new :class:`~celltypist.tree.TreeNode` to replace.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            The old :class:`~celltypist.tree.TreeNode` that was replaced.
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        if self.root.original_name == name:
+            raise ValueError(
+                    f"🛑 Cannot replace the root node")
+        if name not in self:
+            raise ValueError(
+                    f"🛑 '{name}' does not exist in the tree")
+        if not isinstance(by, TreeNode):
+            raise TypeError(
+                    f"🛑 `by` must be a `TreeNode`")
+        parent = self.find_parent(name)
+        parent.add_children(by)
+        return parent.remove_children(name)[0]
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
