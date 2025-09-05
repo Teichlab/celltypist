@@ -566,9 +566,9 @@ class Tree():
         for child in node.children:
             yield from Tree._traverse(child, parent = node)
 
-    def iter_nodes(self, leaf_only: str = False):
+    def iter_nodes(self, leaf_only: bool = False):
         """A generator iterating through the tree."""
-        for node, _ in Tree._traverse():
+        for node, _ in Tree._traverse(self.root):
             if leaf_only:
                 if node.is_leaf():
                     yield node
