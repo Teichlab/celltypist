@@ -837,6 +837,39 @@ class Tree():
         proposed.handle = handle or f"subtree_of_{name}"
         return proposed
 
+    def extract_path(self, name: str) -> list:
+        """
+        Extract the path from the root to a given node.
+
+        Parameters
+        ----------
+        name
+            The name of the target node.
+
+        Returns
+        ----------
+        list
+            A list of nodes along the path from root to the target.
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        if name not in self:
+            raise ValueError(
+                    f"🛑 '{name}' does not exist in the tree")
+        parent_map = {}
+        for node, parent in Tree._traverse(self.root):
+            parent_map[node] = parent
+            if node.original_name == name:
+                break
+        path = []
+        while node is not None:
+            path.append(node)
+            node = parent_map[node]
+        path.reverse()
+        print(" -> ".join(n.original_name for n in path))
+        return path
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
