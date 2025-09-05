@@ -897,6 +897,31 @@ class Tree():
         print(" -> ".join(n.original_name for n in path))
         return path
 
+    def lowest_common_ancestor(self, name1: str, name2: str) -> TreeNode:
+        """
+        Find the lowest common ancestor of two nodes in the tree.
+
+        Parameters
+        ----------
+        name1
+            The name of the first node.
+        name2
+            The name of the second node.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.TreeNode`
+            The lowest common ancestor node of the two nodes.
+        """
+        path1 = self.extract_path(name1)
+        path2 = self.extract_path(name2)
+        for n1, n2 in zip(path1, path2):
+            if n1 == n2:
+                lca = n1
+            else:
+                break
+        return lca
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
