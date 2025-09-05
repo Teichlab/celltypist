@@ -816,6 +816,27 @@ class Tree():
         parent.add_children(by)
         return parent.remove_children(name)[0]
 
+    def extract_subtree(self, name: str, handle: Optional[str] = None):
+        """
+        Extract a subtree rooted at a given node, returning it as a new tree.
+
+        Parameters
+        ----------
+        name
+            The name of the node to use as the root of the new subtree.
+        handle
+            Handle for the new tree. Defaults to `f"subtree_of_{name}"`.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.Tree`
+            A new :class:`~celltypist.tree.Tree` instance rooted at the specified node.
+        """
+        proposed = self.copy()
+        proposed.root = proposed.find_node(name)
+        proposed.handle = handle or f"subtree_of_{name}"
+        return proposed
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
