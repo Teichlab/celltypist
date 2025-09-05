@@ -555,7 +555,9 @@ class Tree():
 
     @staticmethod
     def _traverse(node: TreeNode, parent: Optional[TreeNode] = None):
-        """Yield (node, parent) pairs in a DFS traversal. For internal use."""
+        """
+        For internal use. Yield (node, parent) pairs in a DFS traversal.
+        """
         #if isinstance(parent, TreeNode):
         #    if not parent.has_child(node):
         #        raise ValueError(
@@ -563,6 +565,15 @@ class Tree():
         yield node, parent
         for child in node.children:
             yield from Tree._traverse(child, parent = node)
+
+    def iter_nodes(self, leaf_only: str = False):
+        """A generator iterating through the tree."""
+        for node, _ in Tree._traverse():
+            if leaf_only:
+                if node.is_leaf():
+                    yield node
+            else:
+                yield node
 
     def find_node(self, name: str) -> TreeNode:
         """
