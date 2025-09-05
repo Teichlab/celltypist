@@ -1,7 +1,7 @@
 import json
 import os
 import copy
-from typing import Union, Optional
+from typing import Union, Optional, Iterator
 from . import logger
 
 def _to_internal_name(name: str) -> str:
@@ -554,7 +554,7 @@ class Tree():
         return base
 
     @staticmethod
-    def _traverse(node: TreeNode, parent: Optional[TreeNode] = None):
+    def _traverse(node: TreeNode, parent: Optional[TreeNode] = None) -> Iterator:
         """
         For internal use. Yield (node, parent) pairs in a DFS traversal.
         """
@@ -566,7 +566,7 @@ class Tree():
         for child in node.children:
             yield from Tree._traverse(child, parent = node)
 
-    def iter_nodes(self, leaf_only: bool = False):
+    def iter_nodes(self, leaf_only: bool = False) -> Iterator:
         """A generator iterating through the tree."""
         for node, _ in Tree._traverse(self.root):
             if leaf_only:
