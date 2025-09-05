@@ -624,6 +624,33 @@ class Tree():
         raise ValueError(
                 f"🛑 No node named '{name}' exists in this tree")
 
+    def find_siblings(self, name: str, return_names: bool = True) -> list:
+        """
+        Return siblings of a node (nodes with the same parent), excluding the node itself.
+
+        Parameters
+        ----------
+        name
+            The name of the node whose siblings are queried.
+        return_names
+            Whether to return a list of child names (rather than a list of :class:`~celltypist.tree.TreeNode` objects).
+            (Default: `True`)
+
+        Returns
+        ----------
+        list
+            A list of child names (if `return_names = True`) or :class:`~celltypist.tree.TreeNode` objects (if `return_names = False`).
+        """
+        if not isinstance(name, str):
+            raise TypeError(
+                    f"🛑 `name` must be a string")
+        if self.root.original_name == name:
+            raise ValueError(
+                    f"🛑 Node '{name}' is the root and has no siblings")
+        parent = self.find_parent(name)
+        nodes = [c for c in parent.children if c.original_name != name]
+        return [n.original_name for n in nodes] if return_names else nodes
+
     def find_children(self, name: str, return_names: bool = True) -> list:
         """
         Find the children of a node in the tree by the node's name.
