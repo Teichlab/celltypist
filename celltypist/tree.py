@@ -633,13 +633,13 @@ class Tree():
         name
             The name of the node whose siblings are queried.
         return_names
-            Whether to return a list of child names (rather than a list of :class:`~celltypist.tree.TreeNode` objects).
+            Whether to return a list of sibling names (rather than a list of :class:`~celltypist.tree.TreeNode` objects).
             (Default: `True`)
 
         Returns
         ----------
         list
-            A list of child names (if `return_names = True`) or :class:`~celltypist.tree.TreeNode` objects (if `return_names = False`).
+            A list of sibling names (if `return_names = True`) or :class:`~celltypist.tree.TreeNode` objects (if `return_names = False`).
         """
         if not isinstance(name, str):
             raise TypeError(
