@@ -227,6 +227,30 @@ class TreeNode():
             self.children.remove(child)
         return to_remove
 
+    def reorder_children(self, new_order: Union[list, tuple]) -> list:
+        """
+        Reorder the direct children of the node to match `new_order`.
+
+        Parameters
+        ----------
+        new_order
+            List of child names specifying the desired order.
+
+        Returns
+        ----------
+        list
+            The reordered list of child names.
+        """
+        current = self.child_names
+        if not current:
+            return current
+        if set(current) != set(new_order) or len(current) != len(new_order):
+            raise ValueError(
+                    f"🛑 `new_order` must be a permutation of the current child names for '{self.original_name}'")
+        name_to_node = {c.original_name: c for c in self.children}
+        self.children = [name_to_node[n] for n in new_order]
+        return self.child_names
+
     def update(self, validate: bool = False, **kwargs) -> None:
         """
         Update attributes of the node with provided keyword arguments.
