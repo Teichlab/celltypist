@@ -736,6 +736,25 @@ class Tree():
         node = self.find_node(parent)
         return node.remove_children(*child_nodes)
 
+    def reorder_children(self, parent: str, new_order: Union[list, tuple]) -> list:
+        """
+        Reorder the direct children of a parent node to match `new_order`.
+
+        Parameters
+        ----------
+        parent
+            The name of the parent node whose children will be reordered.
+        new_order
+            List of child names specifying the desired order.
+
+        Returns
+        ----------
+        list
+            The reordered list of child names.
+        """
+        parent = self.find_node(parent)
+        return parent.reorder_children(new_order)
+
     def remove_node(self, name: str) -> TreeNode:
         """
         Remove a node from the tree by its name.
