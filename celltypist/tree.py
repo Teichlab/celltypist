@@ -251,6 +251,30 @@ class TreeNode():
         self.children = [name_to_node[n] for n in new_order]
         return self.children
 
+    def sort_children(self, recursive: bool = True, descending: bool = True) -> list:
+        """
+        Reorder this node's children by the number of leaves they contain.
+
+        Parameters
+        ----------
+        recursive
+            Sort by the total number of leaves recursively contained (`recursive = True`), or by the number of direct children (`recursive = False`).
+            (Default: `True`)
+        descending
+            Whether to sort in descending order.
+            (Default: `True`)
+
+        Returns
+        ----------
+        list
+            The reordered list of child nodes.
+        """
+        if self.is_leaf():
+            return []
+        key_fn = (lambda c: c.n_leaves) if recursive else (lambda c: len(c.children))
+        self.children.sort(key = key_fn, reverse = descending)
+        return self.children
+
     def update(self, validate: bool = False, **kwargs) -> None:
         """
         Update attributes of the node with provided keyword arguments.
