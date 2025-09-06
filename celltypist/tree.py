@@ -713,6 +713,9 @@ class Tree():
         list
             A list of child node(s) that were appended to the child list of the given node.
         """
+        if not isinstance(parent, str):
+            raise TypeError(
+                    f"🛑 `parent` must be a string")
         node = self.find_node(parent)
         return node.add_children(*child_nodes)
 
@@ -733,6 +736,9 @@ class Tree():
         list
             A list of child node(s) that were removed from the child list of the given node.
         """
+        if not isinstance(parent, str):
+            raise TypeError(
+                    f"🛑 `parent` must be a string")
         node = self.find_node(parent)
         return node.remove_children(*child_nodes)
 
