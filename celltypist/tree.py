@@ -758,6 +758,9 @@ class Tree():
         list
             The reordered list of child nodes.
         """
+        if not isinstance(parent, str):
+            raise TypeError(
+                    f"🛑 `parent` must be a string")
         node = self.find_node(parent)
         return node.reorder_children(new_order)
 
