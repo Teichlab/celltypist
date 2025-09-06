@@ -267,7 +267,7 @@ class TreeNode():
         Returns
         ----------
         list
-            The reordered list of child nodes.
+            The sorted list of child nodes.
         """
         if self.is_leaf():
             return []
@@ -787,6 +787,32 @@ class Tree():
                     f"🛑 `parent` must be a string")
         node = self.find_node(parent)
         return node.reorder_children(new_order)
+
+    def sort_children(self, parent: str, recursive: bool = True, descending: bool = True) -> list:
+        """
+        Sort the direct children of a parent node by the number of leaves they contain.
+
+        Parameters
+        ----------
+        parent
+            The name of the parent node whose children will be sorted.
+        recursive
+            Sort by the total number of leaves recursively contained (`recursive = True`), or by the number of direct children (`recursive = False`).
+            (Default: `True`)
+        descending
+            Whether to sort in descending order.
+            (Default: `True`)
+
+        Returns
+        ----------
+        list
+            The sorted list of child nodes.
+        """
+        if not isinstance(parent, str):
+            raise TypeError(
+                    f"🛑 `parent` must be a string")
+        node = self.find_node(parent)
+        return node.sort_children(recursive = recursive, descending = descending)
 
     def remove_node(self, name: str) -> TreeNode:
         """
