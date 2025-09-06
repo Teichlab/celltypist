@@ -253,7 +253,7 @@ class TreeNode():
 
     def sort_children(self, recursive: bool = True, descending: bool = True) -> list:
         """
-        Reorder this node's children by the number of leaves they contain.
+        Sort this node's children by the number of leaves they contain.
 
         Parameters
         ----------
