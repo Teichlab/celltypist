@@ -752,8 +752,8 @@ class Tree():
         list
             The reordered list of child names.
         """
-        parent = self.find_node(parent)
-        return parent.reorder_children(new_order)
+        node = self.find_node(parent)
+        return node.reorder_children(new_order)
 
     def remove_node(self, name: str) -> TreeNode:
         """
