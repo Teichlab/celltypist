@@ -239,7 +239,7 @@ class TreeNode():
         Returns
         ----------
         list
-            The reordered list of child names.
+            The reordered list of child nodes.
         """
         current = self.child_names
         if not current:
@@ -249,7 +249,7 @@ class TreeNode():
                     f"🛑 `new_order` must be a permutation of the current child names for '{self.original_name}'")
         name_to_node = {c.original_name: c for c in self.children}
         self.children = [name_to_node[n] for n in new_order]
-        return self.child_names
+        return self.children
 
     def update(self, validate: bool = False, **kwargs) -> None:
         """
@@ -756,7 +756,7 @@ class Tree():
         Returns
         ----------
         list
-            The reordered list of child names.
+            The reordered list of child nodes.
         """
         node = self.find_node(parent)
         return node.reorder_children(new_order)
