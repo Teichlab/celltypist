@@ -343,9 +343,10 @@ class TreeNode():
             if not isinstance(self.children, list) or not all(isinstance(c, TreeNode) for c in self.children):
                 raise TypeError(
                         f"🛑 `children` of the node '{self.original_name}' must be a list of `TreeNode` instances")
-        if self.is_leaf() and self.model:
-            raise ValueError(
-                    f"🛑 Leaf node '{self.original_name}' should not have a model")
+        if self.is_leaf():
+            if self.model:
+                raise ValueError(
+                        f"🛑 Leaf node '{self.original_name}' should not have a model")
             return
         if len(set(self.child_names)) != len(self.child_names):
             raise ValueError(
