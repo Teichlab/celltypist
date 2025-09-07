@@ -814,6 +814,24 @@ class Tree():
         node = self.find_node(parent)
         return node.sort_children(recursive = recursive, descending = descending)
 
+    @staticmethod
+    def _compute_n_leaves(node: TreeNode, counts: dict) -> int:
+        """
+        For internal use. Recursively compute the number of leaves for each node.
+        """
+        if node.is_leaf():
+            counts[node.original_name] = 1
+        else:
+            counts[node.original_name] = sum(Tree._compute_n_leaves(c, counts) for c in node.children)
+        return counts[node.original_name]
+
+    @property
+    def n_leaves_by_node(self) -> dict:
+        """Return a mapping from node names to the number of leaves recursively contained."""
+        counts = {}
+        Tree._compute_n_leaves(self.root, counts)
+        return counts
+
     def remove_node(self, name: str) -> TreeNode:
         """
         Remove a node from the tree by its name.
