@@ -817,7 +817,7 @@ class Tree():
     @staticmethod
     def _compute_n_leaves(node: TreeNode, counts: dict) -> int:
         """
-        For internal use. Recursively compute the number of leaves for each node.
+        For internal use. Populate `counts` with entries for each node and returns the leaf count of the current node.
         """
         if node.is_leaf():
             counts[node.original_name] = 1
@@ -827,7 +827,7 @@ class Tree():
 
     @property
     def n_leaves_by_node(self) -> dict:
-        """Return a mapping from node names to the number of leaves recursively contained."""
+        """Return a mapping. Keys are node names, values are total leaf counts recursively contained under that node."""
         counts = {}
         Tree._compute_n_leaves(self.root, counts)
         return counts
