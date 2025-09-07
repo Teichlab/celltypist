@@ -832,6 +832,34 @@ class Tree():
         Tree._compute_n_leaves(self.root, counts)
         return counts
 
+    def sort_tree(self, recursive: bool = True, descending: bool = True) -> None:
+        """
+        Sort the children of every node in the tree by the number of leaves they contain.
+
+        Parameters
+        ----------
+        recursive
+            Sort by the total number of leaves recursively contained (`recursive = True`), or by the number of direct children (`recursive = False`).
+            (Default: `True`)
+        descending
+            Whether to sort in descending order.
+            (Default: `True`)
+
+        Returns
+        ----------
+        None
+            Each node's children get sorted according to their numbers of leaves.
+        """
+        if recursive:
+            leaf_counts = self.n_leaves_by_node
+            key_fn = lambda c: leaf_counts[c.original_name]
+        else:
+            key_fn = lambda c: len(c.children)
+        node_list = list(self.iter_nodes(leaf_only = False))
+        for node in node_list:
+            if not node.is_leaf():
+                node.children.sort(key = key_fn, reverse = descending)
+
     def remove_node(self, name: str) -> TreeNode:
         """
         Remove a node from the tree by its name.
