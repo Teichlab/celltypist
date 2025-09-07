@@ -817,7 +817,7 @@ class Tree():
     @staticmethod
     def _compute_n_leaves(node: TreeNode, counts: dict) -> int:
         """
-        For internal use. Populate `counts` with entries for each node and returns the leaf count of the current node.
+        For internal use. Populates `counts` with entries for each node and returns the leaf count of the current node.
         """
         if node.is_leaf():
             counts[node.original_name] = 1
