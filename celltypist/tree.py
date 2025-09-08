@@ -1073,6 +1073,38 @@ class Tree():
                 break
         return lca
 
+    def get_multilevel_anno(self, leaf_anno: Union[list, tuple, np.ndarray, pd.Series, pd.Index], prefix: str = "") -> pd.DataFrame:
+        """
+        Generate multi-level annotations from leaf-level input.
+
+        Parameters
+        ----------
+        leaf_anno
+            A sequence of leaf-level annotations. Elements must be contained by the tree leaves.
+        prefix
+            Optional prefix for column names of the returned :class:`~pandas.DataFrame` instance.
+
+        Returns
+        ----------
+        :class:`~pandas.DataFrame`
+            A :class:`~pandas.DataFrame` object with columns for each annotation level.
+            If input is a :class:`~pandas.Series`, its index is preserved; otherwise index is a RangeIndex.
+        """
+        annotations_series = pd.Series(leaf_anno)
+        leaf_labels = set(self.cell_types(leaf_only = True))
+        unique_labels = set(annotations_series.unique())
+        invalid = unique_labels - leaf_labels
+        if invalid:
+            raise ValueError(
+                    f"🛑 The following labels are not valid leaf cell types in this tree: {sorted(invalid)}")
+        label_to_path = {label: self.extract_path(label) for label in unique_labels}
+        results = {}
+        for level in range(1, self.depth + 1):
+            col_name = f"{prefix}level_{level}_anno"
+            mapping = {label: path[min(level - 1, len(path) - 1)].original_name for label, path in label_to_path.items()}
+            results[col_name] = annotations_series.map(mapping)
+        return pd.DataFrame(results, index = annotations_series.index)
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
