@@ -3,6 +3,8 @@ import os
 import copy
 from typing import Union, Optional, Iterator
 from . import logger
+import numpy as np
+import pandas as pd
 
 def _to_internal_name(name: str) -> str:
     """
