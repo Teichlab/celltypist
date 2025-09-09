@@ -1015,7 +1015,7 @@ class Tree():
         proposed.handle = handle or f"subtree_of_{name}"
         return proposed
 
-    def extract_path(self, name: str) -> list:
+    def extract_path(self, name: str, print_path: bool = True) -> list:
         """
         Extract the path from the root to a given node.
 
@@ -1023,6 +1023,9 @@ class Tree():
         ----------
         name
             The name of the target node.
+        print_path
+            Whether to print out the full path.
+            (Default: `True`)
 
         Returns
         ----------
@@ -1045,7 +1048,8 @@ class Tree():
             path.append(node)
             node = parent_map[node]
         path.reverse()
-        print(" -> ".join(n.original_name for n in path))
+        if print_path:
+            print(" -> ".join(n.original_name for n in path))
         return path
 
     def lowest_common_ancestor(self, name1: str, name2: str) -> TreeNode:
@@ -1064,8 +1068,8 @@ class Tree():
         :class:`~celltypist.tree.TreeNode`
             The lowest common ancestor node of the two nodes.
         """
-        path1 = self.extract_path(name1)
-        path2 = self.extract_path(name2)
+        path1 = self.extract_path(name1, print_path = False)
+        path2 = self.extract_path(name2, print_path = False)
         for n1, n2 in zip(path1, path2):
             if n1 == n2:
                 lca = n1
@@ -1097,7 +1101,7 @@ class Tree():
         if invalid:
             raise ValueError(
                     f"🛑 The following labels are not valid leaf cell types in this tree: {sorted(invalid)}")
-        label_to_path = {label: self.extract_path(label) for label in unique_labels}
+        label_to_path = {label: self.extract_path(label, print_path = False) for label in unique_labels}
         results = {}
         for level in range(1, self.depth + 1):
             col_name = f"{prefix}level_{level}_anno"
