@@ -1015,6 +1015,42 @@ class Tree():
         proposed.handle = handle or f"subtree_of_{name}"
         return proposed
 
+    def prune_by_depth(self, max_depth: int, handle: Optional[str] = None):
+        """
+        Prune the tree to a specified depth, removing all nodes below.
+
+        Parameters
+        ----------
+        max_depth
+            Maximum allowed depth of the pruned tree (root has depth 1).
+        handle
+            Handle for the new tree. Defaults to `f"{self.handle}_at_depth_{max_depth}"`.
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.Tree`
+            A new :class:`~celltypist.tree.Tree` instance in which all nodes at depth `max_depth` have no children.
+        """
+        if not isinstance(max_depth, int):
+            raise TypeError(
+                    f"🛑 `max_depth` must be an integer")
+        if max_depth < 1:
+            raise ValueError(
+                    f"🛑 `max_depth` must be a positive integer >= 1")
+        if max_depth > self.depth:
+            raise ValueError(
+                    f"🛑 `max_depth` ({max_depth}) cannot be greater than the tree depth ({self.depth})" )
+        pruned_tree = self.copy()
+        to_prune = []
+        for node, _ in Tree._traverse(pruned_tree.root):
+            abs_depth = len(pruned_tree.extract_path(node.original_name, print_path = False))
+            if abs_depth == max_depth:
+                to_prune.append(node)
+        for node in to_prune:
+            node.children = []
+        pruned_tree.handle = handle or f"{self.handle}_at_depth_{max_depth}"
+        return pruned_tree
+
     def extract_path(self, name: str, print_path: bool = True) -> list:
         """
         Extract the path from the root to a given node.
