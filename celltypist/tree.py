@@ -1003,7 +1003,7 @@ class Tree():
         name
             The name of the node to use as the root of the new subtree.
         handle
-            Handle for the new tree. Defaults to `f"subtree_of_{name}"`.
+            Handle for the new tree. Defaults to `f"subtree_of_{self.handle}"`.
 
         Returns
         ----------
@@ -1012,7 +1012,7 @@ class Tree():
         """
         proposed = self.copy()
         proposed.root = proposed.find_node(name)
-        proposed.handle = handle or f"subtree_of_{name}"
+        proposed.handle = handle or f"subtree_of_{self.handle}"
         return proposed
 
     def prune_by_depth(self, max_depth: int, handle: Optional[str] = None):
@@ -1039,10 +1039,12 @@ class Tree():
                     f"🛑 `max_depth` must be a positive integer >= 1")
         if max_depth > self.depth:
             raise ValueError(
-                    f"🛑 `max_depth` ({max_depth}) cannot be greater than the tree depth ({self.depth})" )
+                    f"🛑 `max_depth` ({max_depth}) cannot be greater than the tree depth ({self.depth})")
         pruned_tree = self.copy()
         to_prune = []
         for node, _ in Tree._traverse(pruned_tree.root):
+            if node.is_leaf():
+                continue
             abs_depth = len(pruned_tree.extract_path(node.original_name, print_path = False))
             if abs_depth == max_depth:
                 to_prune.append(node)
