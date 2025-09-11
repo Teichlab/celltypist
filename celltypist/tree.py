@@ -494,6 +494,8 @@ class Tree():
         The number of leaf nodes contained.
     n_nodes
         The number of total nodes contained.
+    n_leaves_by_node
+        Dictionary mapping each node name to its total leaf counts.
     """
     def __init__(self, handle: str, root: TreeNode, **kwargs):
         if not isinstance(handle, str):
