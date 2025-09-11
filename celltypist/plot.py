@@ -1,4 +1,6 @@
 from .classifier import AnnotationResult
+from .tree import TreeNode, Tree
+from matplotlib import pyplot as plt
 from typing import Union, Optional
 import numpy as np
 import pandas as pd

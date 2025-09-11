@@ -596,7 +596,10 @@ class Tree():
 
     def __repr__(self):
         """String representation of the :class:`~celltypist.tree.Tree` object."""
-        base = f"A cell type tree with {self.n_nodes} total nodes and {self.n_leaves} leaves"
+        if self.n_nodes == 1:
+            base = f"A cell type tree with a single node"
+        else:
+            base = f"A cell type tree with {self.n_nodes} total nodes and {self.n_leaves} leaves"
         base += f"\n    handle: {self.handle}"
         for key, value in self.__dict__.items():
             if key not in ("handle", "root"):
@@ -649,7 +652,7 @@ class Tree():
         raise ValueError(
                 f"🛑 No node named '{name}' exists in this tree")
 
-    def find_parent(self, name: str) -> TreeNode:
+    def find_parent(self, name: str) -> Union[TreeNode, None]:
         """
         Find the parent of a node in the tree by the node's name.
 
@@ -660,17 +663,17 @@ class Tree():
 
         Returns
         ----------
-        :class:`~celltypist.tree.TreeNode`
-            A :class:`~celltypist.tree.TreeNode` instance representing the parent of the specified node.
+        :class:`~celltypist.tree.TreeNode` or None
+            A :class:`~celltypist.tree.TreeNode` instance (or None for root) representing the parent of the specified node.
         """
         if not isinstance(name, str):
             raise TypeError(
                     f"🛑 `name` must be a string")
         for node, parent in Tree._traverse(self.root):
             if node.original_name == name:
-                if parent is None:
-                    raise ValueError(
-                            f"🛑 Node '{name}' is the root and has no parent")
+                #if parent is None:
+                #    raise ValueError(
+                #            f"🛑 Node '{name}' is the root and has no parent")
                 return parent
         raise ValueError(
                 f"🛑 No node named '{name}' exists in this tree")
