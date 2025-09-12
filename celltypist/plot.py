@@ -222,7 +222,7 @@ def treeviz(tree: Tree,
         #show
         show_node_label: bool = False, show_leaf_label: bool = True,
         #node label
-        node_label_color: str = '#000000', node_label_size: float = Optional[Union[float, str]] = None, node_label_ha: str = "center", node_label_va: str = "bottom", node_label_rotation: Optional[Union[float, str]] = None,
+        node_label_color: str = '#000000', node_label_size: Optional[Union[float, str]] = None, node_label_ha: str = "center", node_label_va: str = "bottom", node_label_rotation: Optional[Union[float, str]] = None,
         #leaf label
         leaf_label_color: Optional[str] = None, leaf_label_size: Optional[Union[float, str]] = None, leaf_label_ha: Optional[str] = None, leaf_label_va: Optional[str] = None, leaf_label_rotation: Optional[Union[float, str]] = None,
         #figure elements
