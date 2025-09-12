@@ -234,5 +234,101 @@ def treeviz(tree: Tree,
         ) -> None:
     """
     Visualize a cell type hierarchical tree.
+
+    Parameters
+    ----------
+    tree
+        A :class:`~celltypist.tree.Tree` object to visualize.
+    type
+        Layout style of the tree, either `'cladogram'` or `'phylogram'`.
+        (Default: `'cladogram'`)
+    direction
+        Direction of tree growth, either `'right'` or `'down'`.
+        (Default: `'right'`)
+    sort
+        Whether to sort children using :meth:`~celltypist.tree.Tree.sort_tree` before plotting.
+        (Default: `False`)
+    recursive
+        If `sort = True`, whether to sort by the total number of leaves recursively contained.
+        (Default: `True`)
+    descending
+        If sorting, whether to sort in descending order.
+        (Default: `True`)
+    edge_color
+        Color of edges/branches.
+        (Default: `'#0000007B'`)
+    edge_width
+        Width of edges/branches in points.
+        Default to 1.5 in a canonical Matplotlib setting.
+    node_shape
+        Shape of internal nodes.
+        (Default: `'o'`)
+    node_color
+        Color of internal nodes
+        (Default: `'#2E91E5'`)
+    node_size
+        Size of internal nodes in points.
+        Default to 6.0 in a canonical Matplotlib setting.
+    leaf_shape
+        Shape of leaf nodes. Default to `node_shape`.
+    leaf_color
+        Color of leaf nodes. Default to `node_color`.
+    leaf_size
+        Size of leaf nodes in points. Default to `node_size`.
+    show_node_label
+        Whether to show labels for internal nodes.
+        (Default: `False`)
+    show_leaf_label
+        Whether to show labels for leaf nodes.
+        (Default: `True`)
+    node_label_color
+        Color of internal node labels.
+        (Default: `'#000000'`)
+    node_label_size
+        Size of internal node labels.
+        Default to 10.0 in a canonical Matplotlib setting.
+    node_label_ha
+        Horizontal alignment of internal node labels.
+        (Default: `'center'`)
+    node_label_va
+        Vertical alignment of internal node labels.
+        (Default: `'bottom'`)
+    node_label_rotation
+        Rotation angle of internal node labels.
+        Default to 0.0 (no rotation) in a canonical Matplotlib setting.
+    leaf_label_color
+        Color of leaf labels. Default to `node_label_color`.
+    leaf_label_size
+        Size of leaf labels. Default to `node_label_size`.
+    leaf_label_ha
+        Horizontal alignment of leaf labels. Auto-set by `direction` if `None`.
+    leaf_label_va
+        Vertical alignment of leaf labels. Auto-set by `direction` if `None`.
+    leaf_label_rotation
+        Rotation angle of leaf labels. Auto-set by `direction` if `None`.
+    title
+        Figure title. Default to `"Cell type tree: {tree.handle}"`.
+    ax
+        An :class:`~matplotlib.axes.Axes` where the tree will be drawn.
+        Default to draw on a new axes.
+    figsize
+        Tuple of figure width and height in inches.
+        Default to auto-adjust based on tree depth and number of leaves.
+    show
+        Whether to display the figure.
+        (Default: `True`)
+    save
+        Whether to save the figure. This can also be a figure filename.
+        (Default: `False`)
+    edge_dict
+        Extra keyword arguments passed to :class:`~matplotlib.lines.Line2D` for edges/branches.
+    node_dict
+        Extra keyword arguments passed to :class:`~matplotlib.lines.Line2D` for internal nodes.
+    leaf_dict
+        Extra keyword arguments passed to :class:`~matplotlib.lines.Line2D` for leaf nodes.
+    node_label_dict
+        Extra keyword arguments passed to :class:`~matplotlib.text.Text` for internal node labels.
+    leaf_label_dict
+        Extra keyword arguments passed to :class:`~matplotlib.text.Text` for leaf labels.
     """
     return
