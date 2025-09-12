@@ -330,5 +330,9 @@ def treeviz(tree: Tree,
         Extra keyword arguments passed to :class:`~matplotlib.text.Text` for internal node labels.
     leaf_label_dict
         Extra keyword arguments passed to :class:`~matplotlib.text.Text` for leaf labels.
+
+    Returns
+    ----------
+    None
     """
     return
