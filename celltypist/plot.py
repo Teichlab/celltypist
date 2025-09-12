@@ -1,5 +1,6 @@
 from .classifier import AnnotationResult
 from .tree import TreeNode, Tree
+import matplotlib
 from matplotlib import pyplot as plt
 from typing import Union, Optional
 import numpy as np
@@ -208,3 +209,30 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
             ordinate = sum(leaf_ordinates) / len(leaf_ordinates)
         coords[node.original_name] = (depth - 1, ordinate, False)
     return coords
+
+def treeviz(tree: Tree,
+        #design
+        type: str = "cladogram", direction: str = "right", sort: bool = False, recursive: bool = True, descending: bool = True,
+        #branch
+        edge_color: str = '#0000007B', edge_width: Optional[float] = None,
+        #node
+        node_shape: str = "o", node_color: str = '#2E91E5', node_size: Optional[float] = None,
+        #leaf
+        leaf_shape: Optional[str] = None, leaf_color: Optional[str] = None, leaf_size: Optional[float] = None,
+        #show
+        show_node_label: bool = False, show_leaf_label: bool = True,
+        #node label
+        node_label_color: str = '#000000', node_label_size: float = Optional[Union[float, str]] = None, node_label_ha: str = "center", node_label_va: str = "bottom", node_label_rotation: Optional[Union[float, str]] = None,
+        #leaf label
+        leaf_label_color: Optional[str] = None, leaf_label_size: Optional[Union[float, str]] = None, leaf_label_ha: Optional[str] = None, leaf_label_va: Optional[str] = None, leaf_label_rotation: Optional[Union[float, str]] = None,
+        #figure elements
+        title: Optional[str] = None,
+        #show and/or save figure
+        ax: Optional[matplotlib.axes.Axes] = None, figsize: Optional[Union[list, tuple]] = None, show: bool = True, save: Union[str, bool] = False,
+        #others
+        edge_dict = {}, node_dict = {}, leaf_dict = {}, node_label_dict = {}, leaf_label_dict = {},
+        ) -> None:
+    """
+    Visualize a cell type hierarchical tree.
+    """
+    return
