@@ -252,7 +252,7 @@ def treeviz(tree: Tree,
         If `sort = True`, whether to sort by the total number of leaves recursively contained.
         (Default: `True`)
     descending
-        If sorting, whether to sort in descending order.
+        If `sort = True`, whether to sort in descending order.
         (Default: `True`)
     edge_color
         Color of edges/branches.
@@ -264,7 +264,7 @@ def treeviz(tree: Tree,
         Shape of internal nodes.
         (Default: `'o'`)
     node_color
-        Color of internal nodes
+        Color of internal nodes.
         (Default: `'#2E91E5'`)
     node_size
         Size of internal nodes in points.
@@ -301,11 +301,11 @@ def treeviz(tree: Tree,
     leaf_label_size
         Size of leaf labels. Default to `node_label_size`.
     leaf_label_ha
-        Horizontal alignment of leaf labels. Auto-set by `direction` if `None`.
+        Horizontal alignment of leaf labels. Auto-set by `direction` if not provided.
     leaf_label_va
-        Vertical alignment of leaf labels. Auto-set by `direction` if `None`.
+        Vertical alignment of leaf labels. Auto-set by `direction` if not provided.
     leaf_label_rotation
-        Rotation angle of leaf labels. Auto-set by `direction` if `None`.
+        Rotation angle of leaf labels. Auto-set by `direction` if not provided.
     title
         Figure title. Default to `"Cell type tree: {tree.handle}"`.
     ax
