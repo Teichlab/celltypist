@@ -383,7 +383,7 @@ def treeviz(tree: Tree,
             parent = tree.find_parent(node)
             if parent is not None:
                 xp, yp, _ = oriented_coords[parent.original_name]
-                ax.plot([xp, x], [yp, y], color = edge_color, lw = edge_width, **edge_dict)
+                ax.plot([xp, x], [yp, y], color = edge_color, lw = edge_width, marker = 'None', **edge_dict)
     else:
         def draw_phylo(node):
             if node.is_leaf():
@@ -393,13 +393,13 @@ def treeviz(tree: Tree,
             child_xs = [cx for cx, _, _ in child_coords]
             child_ys = [cy for _, cy, _ in child_coords]
             if direction == "right":
-                ax.plot([x, x], [min(child_ys), max(child_ys)], color = edge_color, lw = edge_width, **edge_dict)
+                ax.plot([x, x], [min(child_ys), max(child_ys)], color = edge_color, lw = edge_width, marker = 'None', **edge_dict)
                 for (cx, cy, _) in child_coords:
-                    ax.plot([x, cx], [cy, cy], color = edge_color, lw = edge_width, **edge_dict)
+                    ax.plot([x, cx], [cy, cy], color = edge_color, lw = edge_width, marker = 'None', **edge_dict)
             else:
-                ax.plot([min(child_xs), max(child_xs)], [y, y], color = edge_color, lw = edge_width, **edge_dict)
+                ax.plot([min(child_xs), max(child_xs)], [y, y], color = edge_color, lw = edge_width, marker = 'None', **edge_dict)
                 for (cx, cy, _) in child_coords:
-                    ax.plot([cx, cx], [y, cy], color = edge_color, lw = edge_width, **edge_dict)
+                    ax.plot([cx, cx], [y, cy], color = edge_color, lw = edge_width, marker = 'None', **edge_dict)
             for c in node.children:
                 draw_phylo(c)
         draw_phylo(tree.root)
@@ -422,7 +422,7 @@ def treeviz(tree: Tree,
     ax.set_axis_off()
     #show and save
     if save:
-        plt.savefig(save) if isinstance(save, str) else plt.savefig('treeviz.pdf')
+        plt.savefig(save) if isinstance(save, str) else plt.savefig('CellTypist_treeviz.pdf')
     if show:
         plt.show()
     if save:
