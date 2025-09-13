@@ -363,19 +363,18 @@ def treeviz(tree: Tree,
         tree = tree.copy()
         tree.sort_tree(recursive = recursive, descending = descending)
     coords = _assign_coords(tree.root, type = type)
+    tree_dpeth = tree.depth
     oriented_coords = {}
     if direction == "right":
         for name, (x, y, is_leaf) in coords.items():
             oriented_coords[name] = (x, y, is_leaf)
     else:
-        max_new_y = tree.depth - 1
         for name, (x, y, is_leaf) in coords.items():
-            new_y = max_new_y - x
-            oriented_coords[name] = (y, new_y, is_leaf)
+            oriented_coords[name] = (y, tree_depth - 1 - x, is_leaf)
     #axes
     if ax is None:
         if figsize is None:
-            figsize = (tree.depth * 2.5, tree.n_leaves * 0.6) if direction == "right" else (tree.n_leaves * 0.6, tree.depth * 2.5)
+            figsize = (tree_depth * 2.5, tree.n_leaves * 0.6) if direction == "right" else (tree.n_leaves * 0.6, tree_depth * 2.5)
         _, ax = plt.subplots(figsize = figsize)
     #edges
     if type == "cladogram":
@@ -416,9 +415,9 @@ def treeviz(tree: Tree,
     #frame
     title = f"Cell type tree: {tree.handle}" if title is None else title
     if direction == "right":
-        ax.set(xlim = [-0.5, tree.depth], ylim = [-0.5, tree.n_leaves - 0.5], title = title)
+        ax.set(xlim = [-0.5, tree_depth], ylim = [-0.5, tree.n_leaves - 0.5], title = title)
     else:
-        ax.set(xlim = [-0.5, tree.n_leaves - 0.5], ylim = [-1, tree.depth - 0.5], title = title)
+        ax.set(xlim = [-0.5, tree.n_leaves - 0.5], ylim = [-1, tree_depth - 0.5], title = title)
     ax.set_axis_off()
     #show and save
     if save:
