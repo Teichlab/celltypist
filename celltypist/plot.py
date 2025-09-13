@@ -372,9 +372,10 @@ def treeviz(tree: Tree,
         for name, (x, y, is_leaf) in coords.items():
             oriented_coords[name] = (y, tree_depth - 1 - x, is_leaf)
     #axes
+    tree_n_leaves = tree.n_leaves
     if ax is None:
         if figsize is None:
-            figsize = (tree_depth * 2.5, tree.n_leaves * 0.6) if direction == "right" else (tree.n_leaves * 0.6, tree_depth * 2.5)
+            figsize = (tree_depth * 2.5, tree_n_leaves * 0.6) if direction == "right" else (tree_n_leaves * 0.6, tree_depth * 2.5)
         _, ax = plt.subplots(figsize = figsize)
     #edges
     if type == "cladogram":
@@ -415,9 +416,9 @@ def treeviz(tree: Tree,
     #frame
     title = f"Cell type tree: {tree.handle}" if title is None else title
     if direction == "right":
-        ax.set(xlim = [-0.5, tree_depth], ylim = [-0.5, tree.n_leaves - 0.5], title = title)
+        ax.set(xlim = [-0.5, tree_depth], ylim = [-0.5, tree_n_leaves - 0.5], title = title)
     else:
-        ax.set(xlim = [-0.5, tree.n_leaves - 0.5], ylim = [-1, tree_depth - 0.5], title = title)
+        ax.set(xlim = [-0.5, tree_n_leaves - 0.5], ylim = [-1, tree_depth - 0.5], title = title)
     ax.set_axis_off()
     #show and save
     if save:
