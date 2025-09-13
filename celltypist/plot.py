@@ -335,4 +335,95 @@ def treeviz(tree: Tree,
     ----------
     None
     """
-    return
+    #params
+    if not isinstance(tree, Tree):
+        raise TypeError(
+                f"🛑 Please provide a `Tree` instance")
+    if type not in ("cladogram", "phylogram"):
+        raise ValueError(
+                f"🛑 `type` must be 'cladogram' or 'phylogram'")
+    if direction == "right":
+        leaf_label_ha = "left" if leaf_label_ha is None else leaf_label_ha
+        leaf_label_va = "center" if leaf_label_va is None else leaf_label_va
+        leaf_label_rotation = 0 if leaf_label_rotation is None else leaf_label_rotation
+    elif direction == "down":
+        leaf_label_ha = "center" if leaf_label_ha is None else leaf_label_ha
+        leaf_label_va = "top" if leaf_label_va is None else leaf_label_va
+        leaf_label_rotation = 90 if leaf_label_rotation is None else leaf_label_rotation
+    else:
+        raise ValueError(
+                f"🛑 `direction` must be 'right' or 'down'")
+    leaf_shape = node_shape if leaf_shape is None else leaf_shape
+    leaf_color = node_color if leaf_color is None else leaf_color
+    leaf_size = node_size if leaf_size is None else leaf_size
+    leaf_label_color =  node_label_color if leaf_label_color is None else leaf_label_color
+    leaf_label_size = node_label_size if leaf_label_size is None else leaf_label_size
+    #coords
+    if sort:
+        tree = tree.copy()
+        tree.sort_tree(recursive = recursive, descending = descending)
+    coords = _assign_coords(tree.root, type = type)
+    oriented_coords = {}
+    if direction == "right":
+        for name, (x, y, is_leaf) in coords.items():
+            oriented_coords[name] = (x, y, is_leaf)
+    else:
+        max_new_y = tree.depth - 1
+        for name, (x, y, is_leaf) in coords.items():
+            new_y = max_new_y - x
+            oriented_coords[name] = (y, new_y, is_leaf)
+    #axes
+    if ax is None:
+        if figsize is None:
+            figsize = (tree.depth * 2.5, tree.n_leaves * 0.6) if direction == "right" else (tree.n_leaves * 0.6, tree.depth * 2.5)
+        _, ax = plt.subplots(figsize = figsize)
+    #edges
+    if type == "cladogram":
+        for node, (x, y, _) in oriented_coords.items():
+            parent = tree.find_parent(node)
+            if parent is not None:
+                xp, yp, _ = oriented_coords[parent.original_name]
+                ax.plot([xp, x], [yp, y], color = edge_color, lw = edge_width, **edge_dict)
+    else:
+        def draw_phylo(node):
+            if node.is_leaf():
+                return
+            x, y, _ = oriented_coords[node.original_name]
+            child_coords = [oriented_coords[c.original_name] for c in node.children]
+            child_xs = [cx for cx, _, _ in child_coords]
+            child_ys = [cy for _, cy, _ in child_coords]
+            if direction == "right":
+                ax.plot([x, x], [min(child_ys), max(child_ys)], color = edge_color, lw = edge_width, **edge_dict)
+                for (cx, cy, _) in child_coords:
+                    ax.plot([x, cx], [cy, cy], color = edge_color, lw = edge_width, **edge_dict)
+            else:
+                ax.plot([min(child_xs), max(child_xs)], [y, y], color = edge_color, lw = edge_width, **edge_dict)
+                for (cx, cy, _) in child_coords:
+                    ax.plot([cx, cx], [y, cy], color = edge_color, lw = edge_width, **edge_dict)
+            for c in node.children:
+                draw_phylo(c)
+        draw_phylo(tree.root)
+    #nodes & labels
+    for name, (x, y, is_leaf) in oriented_coords.items():
+        if is_leaf:
+            ax.plot(x, y, marker = leaf_shape, ms = leaf_size, color = leaf_color, ls = 'None', **leaf_dict)
+            if show_leaf_label:
+                ax.text(x + 0.05 if direction == "right" else x, y - 0.05 if direction == "down" else y, name, color = leaf_label_color, size = leaf_label_size, ha = leaf_label_ha, va = leaf_label_va, rotation = leaf_label_rotation, **leaf_label_dict)
+        else:
+            ax.plot(x, y, marker = node_shape, ms = node_size, color = node_color, ls = 'None', **node_dict)
+            if show_node_label:
+                ax.text(x, y + 0.05, name, color = node_label_color, size = node_label_size, ha = node_label_ha, va = node_label_va, rotation = node_label_rotation, **node_label_dict)
+    #frame
+    title = f"Cell type tree: {tree.handle}" if title is None else title
+    if direction == "right":
+        ax.set(xlim = [-0.5, tree.depth], ylim = [-0.5, tree.n_leaves - 0.5], title = title)
+    else:
+        ax.set(xlim = [-0.5, tree.n_leaves - 0.5], ylim = [-1, tree.depth - 0.5], title = title)
+    ax.set_axis_off()
+    #show and save
+    if save:
+        plt.savefig(save) if isinstance(save, str) else plt.savefig('treeviz.pdf')
+    if show:
+        plt.show()
+    if save:
+        plt.close()
