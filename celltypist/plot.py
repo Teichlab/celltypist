@@ -363,7 +363,7 @@ def treeviz(tree: Tree,
         tree = tree.copy()
         tree.sort_tree(recursive = recursive, descending = descending)
     coords = _assign_coords(tree.root, type = type)
-    tree_dpeth = tree.depth
+    tree_depth = tree.depth
     oriented_coords = {}
     if direction == "right":
         for name, (x, y, is_leaf) in coords.items():
