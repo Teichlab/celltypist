@@ -568,5 +568,31 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 </details>
 
+# Usage (hierarchical classification)
+
+<details>
+<summary><strong>1. Use in the Python environment</strong></summary>
+</details>
+
+<details>
+<summary><strong>2. Use as the command line</strong></summary>
+</details>
+
+<details>
+<summary><strong>3. Use as Docker/Singularity container</strong></summary>
+</details>
+
+<details>
+<summary><strong>4. Construct, modify, and visualise a cell type hierarchy</strong></summary>
+</details>
+
+<details>
+<summary><strong>5. Train a hierarchical model</strong></summary>
+</details>
+
+<details>
+<summary><strong>Supplemental guidance</strong></summary>
+</details>
+
 # Citation
 Dominguez Conde et al., Cross-tissue immune cell analysis reveals tissue-specific features in humans. Science 376, eabl5197 (2022). [Link](https://doi.org/10.1126/science.abl5197)
