@@ -584,6 +584,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>4. Construct, modify, and visualise a cell type hierarchy</strong></summary>
+
++ <details>
+  <summary><strong>4.1. Structure of the cell type hierarchical tree</strong></summary>
+
+  The cell type hierarchical tree in CellTypist is.
+  </details>
 </details>
 
 <details>
