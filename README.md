@@ -588,7 +588,30 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>4.1. Structure of the cell type hierarchical tree</strong></summary>
 
-  The cell type hierarchical tree in CellTypist is.
+  The basic unit of a cell type hierarchical tree is a node. In CellTypist, a node is represented by the [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) class, which contains information of a given cell type, including the mandatory attribute `original_name` (a unique cell type name), as well as optional attributes such as `cell_ontology_id`, `node_description`, `tissue_origin`, `markers`, `size`, `model`, and `children`. A JSON-like schematic looks like this:
+  ```json
+  {
+    "original_name": "T cell",
+    "cell_ontology_id": "CL:0000084",
+    "node_description": "A type of lymphocyte responsible for cell-mediated immunity",
+    "tissue_origin": ["blood", "lymphoid tissue"],
+    "markers": ["CD3D"],
+    "children": [
+      {
+        "original_name": "CD4+ T cell",
+        "cell_ontology_id": "CL:0000624",
+        "node_description": "Helper T cell subtype",
+        "markers": ["CD3D", "CD4"]
+      },
+      {
+        "original_name": "CD8+ T cell",
+        "cell_ontology_id": "CL:0000625",
+        "node_description": "Cytotoxic T cell subtype",
+        "markers": ["CD3D","CD8A"]
+      }
+    ]
+  }
+  ```
   </details>
 </details>
 
