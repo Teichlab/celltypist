@@ -593,21 +593,21 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   {
     "original_name": "T cell",
     "cell_ontology_id": "CL:0000084",
-    "node_description": "A type of lymphocyte responsible for cell-mediated immunity",
+    "node_description": "a type of lymphocyte responsible for cell-mediated immunity",
     "tissue_origin": ["blood", "lymphoid tissue"],
     "markers": ["CD3D"],
     "children": [
       {
         "original_name": "CD4+ T cell",
         "cell_ontology_id": "CL:0000624",
-        "node_description": "Helper T cell subtype",
+        "node_description": "helper T cell subtype",
         "markers": ["CD3D", "CD4"]
       },
       {
         "original_name": "CD8+ T cell",
         "cell_ontology_id": "CL:0000625",
-        "node_description": "Cytotoxic T cell subtype",
-        "markers": ["CD3D","CD8A"]
+        "node_description": "cytotoxic T cell subtype",
+        "markers": ["CD3D", "CD8A"]
       }
     ]
   }
