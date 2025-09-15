@@ -614,7 +614,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Each node has a `children` attribute, which is either an empty list (`[]`) for leaf nodes or a list of [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instances for internal nodes. In the above example, "CD4+ T cell" has no children (`children = []`), so the field is simply omitted in the JSON. Note that any child (e.g., "CD4+ T cell") may itself have children further, recursively extending the hierarchy.  
 
-  Built upon [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html), a cell type hierarchical tree in CellTypist is represented by the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) class: a `Tree` is a wrapper around a single `TreeNode` (the `root` node) and a unique identifier/name (`handle`), as well as other optional fields for describing the tree.
+  Built upon [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html), a cell type hierarchical tree in CellTypist is represented by the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) class: a `Tree` is a wrapper around a single `TreeNode` (the `root` node) together with a unique identifier (`handle`), plus optional fields for describing the tree.
   ```json
   {
     "handle": "T_Cell_Tree",
