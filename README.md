@@ -643,6 +643,27 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Note that the value of `root` is exactly the "T cell" node shown earlier.
   </details>
+
++ <details>
+  <summary><strong>4.2. Construct a cell type hierarchical tree</strong></summary>
+
+  A simple way to construct a tree is to load it from an existing JSON file (see the second JSON schematic in `4.1.`).
+  ```python
+  from celltypist.tree import TreeNode, Tree
+  tree = Tree.from_json('some_name.json')
+  ```
+  In principle, one could write the JSON file from scratch to capture the full hierarchy. However, for complex trees with deeply nested children, it is more practical to start from the root node (or ancestor clade) and gradually expand the structure by adding descendants. Below shows the content of a starting JSON file (`root_only_tree.json`).
+  ```json
+  {
+    "handle": "T_Cell_Tree",
+	"root": {
+      "original_name": "T cell",
+      "node_description": "a type of lymphocyte responsible for cell-mediated immunity",
+      "tissue_origin": ["blood", "lymphoid tissue"],
+    }
+  }
+  ```
+  </details>
 </details>
 
 <details>
