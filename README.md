@@ -612,6 +612,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     ]
   }
   ```
+  Each node has a `children` attribute, which is either an empty list (`[]`) for leaf nodes or a list of [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instances for internal nodes. In the above example, "CD4+ T cell" has no children (`children = []`), so the field is simply omitted in the JSON. Note that any child (e.g., "CD4+ T cell") may itself have children further, recursively extending the hierarchy.  
+
+  A tree is
   </details>
 </details>
 
