@@ -659,11 +659,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 	"root": {
       "original_name": "T cell",
       "node_description": "a type of lymphocyte responsible for cell-mediated immunity",
-      "tissue_origin": ["blood", "lymphoid tissue"],
+      "tissue_origin": ["blood", "lymphoid tissue"]
     }
   }
   ```
-  In this file, you can omit any keys without values, except for the tree-level `handle` and `root`, and the node-level `original_name`. Next, load this file as a [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) object.
+  In this file, you may omit any keys without values, except for the tree-level `handle` and `root`, and the node-level `original_name`. Next, load this file as a [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) object.
   ```python
   #A tree with a single (root) node.
   tree = Tree.from_json('root_only_tree.json')
