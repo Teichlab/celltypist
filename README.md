@@ -641,6 +641,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     }
   }
   ```
+  Note that the value of `root` is exactly the "T cell" node shown earlier.
   </details>
 </details>
 
