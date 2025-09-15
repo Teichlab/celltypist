@@ -675,7 +675,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Use this node as `root` to initialise a tree.
   tree = Tree(handle = "T_Cell_Tree", root = root_node)
   ```
-  The resulting `tree` is equivalent to the one created with `Tree.from_json('root_only_tree.json')`.  
+  The resulting `tree` is equivalent to the one created with `Tree.from_json('root_only_tree.json')`. Note that in addition to `node_description` and `tissue_origin`, the `TreeNode` constructor also accepts other optional parameters such as `cell_ontology_id`, `markers`, `size`, and `model` (each explained in `4.3.`), as well as any other custom fields. The `Tree` constructor likewise accepts custom fields besides the mandatory `handle` and `root`.  
   </details>
 </details>
 
