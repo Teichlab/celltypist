@@ -647,7 +647,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>4.2. Construct a cell type hierarchical tree</strong></summary>
 
-  A simple way to construct a tree is to load it from an existing JSON file (see the second JSON schematic in `4.1.`).
+  A simple way to construct a tree is to load it from an existing JSON file (see the second JSON schematic in `4.1.`) using [Tree.from_json](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.from_json).
   ```python
   from celltypist.tree import TreeNode, Tree
   tree = Tree.from_json('some_name.json')
@@ -662,6 +662,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
       "tissue_origin": ["blood", "lymphoid tissue"],
     }
   }
+  ```
+  In this file, you can omit any keys without values, except for the tree-level `handle` and `root`, and the node-level `original_name`. Next, load this file as a [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) object.
+  ```python
+  #A tree with a single (root) node.
+  tree = Tree.from_json('root_only_tree.json')
   ```
   </details>
 </details>
