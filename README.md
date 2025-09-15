@@ -614,7 +614,33 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Each node has a `children` attribute, which is either an empty list (`[]`) for leaf nodes or a list of [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instances for internal nodes. In the above example, "CD4+ T cell" has no children (`children = []`), so the field is simply omitted in the JSON. Note that any child (e.g., "CD4+ T cell") may itself have children further, recursively extending the hierarchy.  
 
-  A tree is
+  Built upon [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html), a cell type hierarchical tree in CellTypist is represented by the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) class: a `Tree` is a wrapper around a single `TreeNode` (the `root` node) and a unique identifier/name (`handle`), as well as other optional fields for describing the tree.
+  ```json
+  {
+    "handle": "T_Cell_Tree",
+	"root": {
+      "original_name": "T cell",
+      "cell_ontology_id": "CL:0000084",
+      "node_description": "a type of lymphocyte responsible for cell-mediated immunity",
+      "tissue_origin": ["blood", "lymphoid tissue"],
+      "markers": ["CD3D"],
+      "children": [
+        {
+          "original_name": "CD4+ T cell",
+          "cell_ontology_id": "CL:0000624",
+          "node_description": "helper T cell subtype",
+          "markers": ["CD3D", "CD4"]
+        },
+        {
+          "original_name": "CD8+ T cell",
+          "cell_ontology_id": "CL:0000625",
+          "node_description": "cytotoxic T cell subtype",
+          "markers": ["CD3D", "CD8A"]
+        }
+      ]
+    }
+  }
+  ```
   </details>
 </details>
 
