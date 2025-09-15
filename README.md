@@ -652,7 +652,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   from celltypist.tree import TreeNode, Tree
   tree = Tree.from_json('some_name.json')
   ```
-  In principle, one could write the JSON file from scratch to capture the full hierarchy. However, for complex trees with deeply nested children, it is more practical to start from the root node (or ancestor clade) and gradually expand the structure by adding descendants. Below shows the content of a starting JSON file (`root_only_tree.json`).
+  In principle, one could write the JSON file from scratch to capture the full hierarchy. However, for complex trees with deeply nested children, it is more practical to start from the root node (or ancestor clade) and gradually expand the structure by adding descendants. The example below shows the content of a starting JSON file (`root_only_tree.json`).
   ```json
   {
     "handle": "T_Cell_Tree",
