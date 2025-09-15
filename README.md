@@ -668,6 +668,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #A tree with a single (root) node.
   tree = Tree.from_json('root_only_tree.json')
   ```
+  An alternative way to initialize a `Tree` object, without relying on an external JSON file, is to use the [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) and [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) constructors. This involves first creating a `TreeNode`, then initializing a `Tree`:
+  ```python
+  #Initialize a node.
+  root_node = TreeNode(original_name = "T cell", node_description = "a type of lymphocyte responsible for cell-mediated immunity", tissue_origin = ["blood", "lymphoid tissue"])
+  #Use this node as `root` to construct a tree.
+  tree = Tree(handle = "T_Cell_Tree", root = root_node)
+  ```
+  The resulting `tree` is equivalent to the one created with `Tree.from_json('root_only_tree.json')`.  
   </details>
 </details>
 
