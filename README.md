@@ -702,6 +702,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   This file can later be loaded back as the starting point for further tree extensions.
   ```python
+  #Load the tree as a `Tree` instance.
   tree = Tree.from_json('T_cell_tree.json')
   ```
   Lastly, we create two nodes ("Naive CD4+ T cell" and "Memory CD4+ T cell") and add them as children of the "CD4+ T cell" node.
