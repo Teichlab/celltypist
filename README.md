@@ -704,6 +704,16 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   tree = Tree.from_json('T_cell_tree.json')
   ```
+  Lastly, we create two nodes ("Naive CD4+ T cell" and "Memory CD4+ T cell") and add them as children of the "CD4+ T cell" node.
+  ```python
+  naive_cd4_node = TreeNode(original_name = "Naive CD4+ T cell", markers = ["CCR7", "SELL"])
+  memory_cd4_node = TreeNode(original_name = "Memory CD4+ T cell")
+  tree.add_children(naive_cd4_node, memory_cd4_node, parent = "CD4+ T cell")
+  ```
+  (Over)write the tree.
+  ```python
+  tree.write('T_cell_tree.json')
+  ```
   </details>
 </details>
 
