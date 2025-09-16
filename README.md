@@ -586,7 +586,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 <summary><strong>4. Construct, modify, and visualise a cell type hierarchy</strong></summary>
 
 + <details>
-  <summary><strong>4.1. Structure of the cell type hierarchical tree</strong></summary>
+  <summary><strong>4.1. Structure of a cell type hierarchical tree</strong></summary>
 
   The basic unit of a cell type hierarchical tree is a node. In CellTypist, a node is represented by the [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) class, which contains information of a given cell type, including the mandatory attribute `original_name` (a unique cell type name), as well as optional attributes such as `cell_ontology_id`, `node_description`, `tissue_origin`, `markers`, `size`, `model`, and `children`. A JSON-like schematic looks like this:
   ```json
@@ -715,6 +715,30 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   tree.write('T_cell_tree.json')
   ```
+  </details>
+
++ <details>
+  <summary><strong>4.3. Attributes and properties of a tree and its nodes</strong></summary>
+
+  Load the tree built in `4.2.`.
+  ```python
+  tree = Tree.from_json('T_cell_tree.json')
+  ```
+  A schematic of its hierarchy looks like this:
+  ```text
+  T cell
+  ├── CD4+ T cell
+  │   ├── Naive CD4+ T cell
+  │   └── Memory CD4+ T cell
+  ├── CD8+ T cell
+  └── γδ T cell
+  ```
+  This tree contains six nodes (four internal and two leaf nodes). You can retrieve any node, returned as a [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instance, using the method [find_node](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.find_node).
+  ```python
+  #Retrieve the "CD4+ T cell" node.
+  cd4_node = tree.find_node('CD4+ T cell')
+  ```
+  Each node has the following attributes, which can be accessed directly (e.g., `cd4_node.original_name`).
   </details>
 </details>
 
