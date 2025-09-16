@@ -738,7 +738,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Retrieve the "CD4+ T cell" node.
   cd4_node = tree.find_node('CD4+ T cell')
   ```
-  Each node has the following attributes, which can be accessed directly (e.g., `cd4_node.original_name`).
+  Each [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) has the following attributes, which can be accessed directly (e.g., `cd4_node.original_name`).
   <div align="center">
 
   |Attrbute name   |Description                                                                                |Mandatory during [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) construction|Note     |
