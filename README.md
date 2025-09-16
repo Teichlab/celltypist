@@ -676,6 +676,16 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   tree = Tree(handle = "T_Cell_Tree", root = root_node)
   ```
   The resulting `tree` is equivalent to the one created with `Tree.from_json('root_only_tree.json')`. Note that in addition to `node_description` and `tissue_origin`, the `TreeNode` constructor also accepts other optional parameters such as `cell_ontology_id`, `markers`, `size`, and `model` (each explained in `4.3.`), as well as any custom fields. The `Tree` constructor likewise accepts custom fields besides the mandatory `handle` and `root`.  
+
+  Next we create a "CD4+ T cell" node and a "CD8+ T cell" node, and add them as children of the root node "T cell".
+  ```python
+  #Create a "CD4+ T cell" node.
+  CD4_node = TreeNode(original_name = "CD4+ T cell", cell_ontology_id = "CL:0000624", node_description = "helper T cell subtype", markers = ["CD3D", "CD4"])
+  #Create a "CD8+ T cell" node.
+  CD8_node = TreeNode(original_name = "CD8+ T cell", cell_ontology_id = "CL:0000625", node_description = "cytotoxic T cell subtype", markers = ["CD3D", "CD8A"])
+  #Add both nodes as children of the root node "T cell".
+  tree.add_children(parent = "T cell", CD4_node, CD8_node)
+  ```
   </details>
 </details>
 
