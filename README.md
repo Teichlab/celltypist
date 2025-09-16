@@ -686,6 +686,22 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Add both nodes as children of the root node "T cell".
   tree.add_children(CD4_node, CD8_node, parent = "T cell")
   ```
+  Here the [add_children](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.add_children) method attaches the two new nodes as children of the designated parent node "T cell". We can further create a new "γδ T cell" node and append it to the child list of "T cell" using the same method.
+  ```python
+  #Create a "γδ T cell" node.
+  gamma_delta_node = TreeNode(original_name = "γδ T cell", node_description = "gamma-delta T cell subtype")
+  #Append this node to the child list of "T cell".
+  tree.add_children(gamma_delta_node, parent = "T cell")
+  ```
+  Now the root node "T cell" has three children. To preserve this structure, we can write the tree out as a JSON file so that our progress is not lost.
+  ```python
+  #Write out the tree locally.
+  tree.write('T_cell_tree.json')
+  ```
+  This file can later be loaded back as the starting point for further tree extensions.
+  ```python
+  tree = Tree.from_json('T_cell_tree.json')
+  ```
   </details>
 </details>
 
