@@ -684,7 +684,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Create a "CD8+ T cell" node.
   CD8_node = TreeNode(original_name = "CD8+ T cell", cell_ontology_id = "CL:0000625", node_description = "cytotoxic T cell subtype", markers = ["CD3D", "CD8A"])
   #Add both nodes as children of the root node "T cell".
-  tree.add_children(parent = "T cell", CD4_node, CD8_node)
+  tree.add_children(CD4_node, CD8_node, parent = "T cell")
   ```
   </details>
 </details>
