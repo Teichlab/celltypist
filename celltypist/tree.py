@@ -891,16 +891,16 @@ class Tree():
         parent = self.find_parent(name)
         return parent.remove_children(name)[0]
 
-    def add_node(self, parent: str, node: TreeNode) -> TreeNode:
+    def add_node(self, node: TreeNode, parent: str) -> TreeNode:
         """
         Add a node under a given parent node in the tree.
 
         Parameters
         ----------
-        parent
-            The name of the parent node to which the new node will be added.
         node
             The :class:`~celltypist.tree.TreeNode` instance to add.
+        parent
+            The name of the parent node to which the new node will be added.
 
         Returns
         ----------
