@@ -728,17 +728,17 @@ class Tree():
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
 
-    def add_children(self, parent: str, *child_nodes) -> list:
+    def add_children(self, *child_nodes, parent: str) -> list:
         """
         Add one or more children to a node in the tree by the node's name.
 
         Parameters
         ----------
-        parent
-            The name of the parent node to which children are added.
         *child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances.
             Can be passed individually or as a list/tuple/set.
+        parent
+            The name of the parent node to which children are added.
 
         Returns
         ----------
@@ -751,17 +751,17 @@ class Tree():
         node = self.find_node(parent)
         return node.add_children(*child_nodes)
 
-    def remove_children(self, parent: str, *child_nodes) -> list:
+    def remove_children(self, *child_nodes, parent: str) -> list:
         """
         Remove one or more children from a node in the tree by the node's name.
 
         Parameters
         ----------
-        parent
-            The name of the parent node whose children are to be removed.
         child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances, their `original_name`s as strings, or a mix of both.
             Can be passed individually or as a list/tuple/set.
+        parent
+            The name of the parent node whose children are to be removed.
 
         Returns
         ----------
@@ -907,7 +907,7 @@ class Tree():
         :class:`~celltypist.tree.TreeNode`
             The :class:`~celltypist.tree.TreeNode` instance that was added.
         """
-        return self.add_children(parent, node)[0]
+        return self.add_children(node, parent = parent)[0]
 
     def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
         """
