@@ -739,6 +739,21 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   cd4_node = tree.find_node('CD4+ T cell')
   ```
   Each node has the following attributes, which can be accessed directly (e.g., `cd4_node.original_name`).
+  <div align="center">
+
+  |Attrbute name   |Description                                                                                |Mandatory during `TreeNode` construction|Note                                                                                |
+  |:---:           |:---:                                                                                      |:---:                                   |:---:                                                                               |
+  |original_name   |The original and display name of the node (cell type)                                      |Yes                                     |                                                                                    |
+  |internal_name   |A programmatic version of the original name with special characters replaced by underscores|No                                      |Ignored for users                                                                   |
+  |cell_ontology_id|Reference ID of the node (cell type) from the controlled Cell Ontology                     |No                                      |Empty string if not provided                                                        |
+  |node_description|Description of the node (cell type)                                                        |No                                      |Empty string if not provided                                                        |
+  |tissue_origin   |A list of tissue sources of the node (cell type)                                           |No                                      |Empty list if not provided                                                          |
+  |markers         |A list of marker genes of the node (cell type)                                             |No                                      |Empty list if not provided                                                          |
+  |size            |Number of cells contained in this node (cell type)                                         |No                                      |Typically populated during hierarchical model training. 0 if not provided           |
+  |children        |A list of `TreeNode` instances representing child nodes (cell types) of the node           |No                                      |Typically added by `add_children` after initialisation. Empty list for leaf nodes   |
+  |model           |Path to a CellTypist model used for classifying child cell types of the given internal node|No                                      |Typically populated during hierarchical model training. Empty string if not provided|
+  |any custom attr |N/A                                                                                        |No                                      |Do not overlap with above attributes                                                |
+  </div>
   </details>
 </details>
 
