@@ -773,6 +773,25 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |n_leaves_by_node|Dictionary mapping each node name to its total leaf count|Useful for reordering the tree      |
   </div>
   </details>
+
++ <details>
+  <summary><strong>4.4. Query and manipulate a cell type hierarchical tree</strong></summary>
+
+  Load the tree built in `4.2.`.
+  ```python
+  tree = Tree.from_json('T_cell_tree.json')
+  ```
+  A schematic of its hierarchy looks like this:
+  ```text
+  T cell
+  ├── CD4+ T cell
+  │   ├── Naive CD4+ T cell
+  │   └── Memory CD4+ T cell
+  ├── CD8+ T cell
+  └── γδ T cell
+  ```
+  Although a `Tree` is just a wrapper around a `TreeNode`, it provides convenient methods to query elements within the hierarchy:
+  </details>
 </details>
 
 <details>
