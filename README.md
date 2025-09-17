@@ -755,7 +755,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |any custom attr |N/A                                                                                        |No                                      |Do not overlap with above attributes                                                |
   </div>
 
-  Note that the names of a parent node's immediate children can be accessed with `[child.original_name for child in some_parent_node.children]`, or equivalently through the shortcut property `some_parent_node.child_names`.  
+  Note that the names of a parent node's immediate children can be accessed with `[child.original_name for child in cd4_node.children]`, or equivalently through the shortcut property `cd4_node.child_names`.  
+
+  A [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) defines three types of attributes:
+  1. `handle` - a machine-friendly unique identifier for the tree
+  2. `root` - a `TreeNode` serving as the root of the tree
+  3. any custom attributes provided when using the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) constructor  
+
+  Moreover, a `Tree` exposes several properties that can be accessed directly (e.g., `tree.depth`).
   </details>
 </details>
 
