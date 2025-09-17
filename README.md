@@ -757,7 +757,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Note that the names of a parent node's immediate children can be accessed with `[child.original_name for child in cd4_node.children]`, or equivalently through the shortcut property `cd4_node.child_names`.  
 
-  Built on `TreeNode`, a [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) defines three types of attributes:
+  Built on [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html), a [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) defines three types of attributes:
   1. `handle` - a machine-friendly unique identifier for the tree
   2. `root` - a `TreeNode` serving as the root of the tree (N.B. a root is not necessarily a single terminal node, it can itself have recursive descendants)
   3. any custom attributes provided when using the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) constructor  
