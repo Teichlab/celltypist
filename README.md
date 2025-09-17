@@ -741,7 +741,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Each [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) has the following attributes, which can be accessed directly (e.g., `cd4_node.original_name`).
   <div align="center">
 
-  |Attrbute name   |Description                                                                                |Mandatory during [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) construction|Note     |
+  |Attribute name  |Description                                                                                |Mandatory during [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) construction|Note     |
   |:---:           |:---:                                                                                      |:---:                                   |:---:                                                                               |
   |original_name   |The original and display name of the node (cell type)                                      |Yes                                     |Must be unique across all nodes within a tree                                       |
   |internal_name   |A programmatic version of the original name with special characters replaced by underscores|No                                      |Ignored for users                                                                   |
@@ -750,10 +750,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |tissue_origin   |A list of tissue sources of the node (cell type)                                           |No                                      |Empty list if not provided                                                          |
   |markers         |A list of marker genes of the node (cell type)                                             |No                                      |Empty list if not provided                                                          |
   |size            |Number of cells contained in this node (cell type)                                         |No                                      |Typically populated during hierarchical model training. 0 if not provided           |
-  |children        |A list of `TreeNode` instances representing child nodes (cell types) of the node           |No                                      |Typically added by [add_children](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.add_children) after initialisation. Empty list for leaf nodes|
+  |children        |A list of `TreeNode` instances representing *direct* child nodes (cell types) of the node  |No                                      |Typically added by [add_children](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.add_children) after initialisation. Empty list for leaf nodes|
   |model           |Path to a CellTypist model used for classifying child cell types of the given internal node|No                                      |Typically populated during hierarchical model training. Empty string if not provided|
   |any custom attr |N/A                                                                                        |No                                      |Do not overlap with above attributes                                                |
   </div>
+
+  Note that the names of a parent node's immediate children can be accessed with `[child.original_name for child in some_parent_node.children]`, or equivalently through the shortcut property `some_parent_node.child_names`.  
   </details>
 </details>
 
