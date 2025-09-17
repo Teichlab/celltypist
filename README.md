@@ -761,6 +761,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   1. `handle` - a machine-friendly unique identifier for the tree
   2. `root` - a `TreeNode` serving as the root of the tree (N.B. a root is not necessarily a single terminal node, it can itself have recursive descendants)
   3. any custom attributes provided when using the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) constructor  
+
   <br>
   Moreover, a `Tree` exposes several properties that can be accessed directly (e.g., `tree.depth`).
   </details>
