@@ -763,6 +763,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   3. any custom attributes provided when using the [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) constructor  
 
   Moreover, a `Tree` exposes several properties that can be accessed directly (e.g., `tree.depth`).
+  <div align="center">
+
+  |Property name   |Description                                              |Note                                |
+  |:---:           |:---:                                                    |:---:                               |
+  |depth           |The depth of the tree                                    |The root has depth 1 (not 0)        |
+  |n_leaves        |The number of leaf nodes contained in the tree           |Number of finest-grained cell types |
+  |n_nodes         |The number of total nodes contained in the tree          |Include both leaf and internal nodes|
+  |n_leaves_by_node|Dictionary mapping each node name to its total leaf count|Useful for reordering the tree      |
+  </div>
   </details>
 </details>
 
