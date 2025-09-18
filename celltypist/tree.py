@@ -943,7 +943,7 @@ class Tree():
                 raise ValueError(
                         f"🛑 No node named '{to}' exists in this tree")
         removed = self.remove_node(name)
-        return self.add_node(to, removed)
+        return self.add_node(removed, to)
 
     def update(self, name: str, validate: bool = False, **kwargs) -> None:
         """
