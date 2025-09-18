@@ -829,7 +829,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Note that except for `copy`, the above methods modify the structure of the original tree in place. Given this, it is good practice to run the [validate](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.validate) method *regularly* to sanity-check the entire tree (e.g., ensuring updated attributes have the correct type and names of newly added nodes do not duplicate existing ones in the tree). This is particularly useful as a health check before saving the tree as a JSON file.
   ```python
-  #Sanity-check the entire tree. A corresponding error will be raised if found.
+  #Sanity-check the entire tree. Raises a corresponding error if found.
   tree.validate()
   #Write out the tree locally.
   tree.write('T_cell_tree.json')
