@@ -791,6 +791,21 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   └── γδ T cell
   ```
   Although a `Tree` is just a wrapper around a `TreeNode`, it provides convenient methods to query elements within the hierarchy:
+  <div align="center">
+
+  |Method name                                                                                                                                |Description                                       |Usage example                                              |Note                                                            |
+  |:---:                                                                                                                                      |:---:                                             |:---:                                                      |:---:                                                           |
+  |[cell_types](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.cell_types)                        |Return cell type names contained in this tree     |`tree.cell_types(leaf_only = True)`                        |Setting `leaf_only = False` will return all cell type names     |
+  |in                                                                                                                                         |Check whether a given cell type exists in the tree|`'CD4+ T cell' in tree`                                    |Check through all nodes in the tree, not just the leaf nodes    |
+  |[iter_nodes](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.iter_nodes)                        |Iterate nodes through the tree                    |`for node in tree.iter_nodes(leaf_only = False):`          |Setting `leaf_only = True` will iterate through only leaf nodes |
+  |[find_node](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.find_node)                          |Find a node in the tree                           |`tree.find_node('CD4+ T cell')`                            |Return a `TreeNode` if found                                    |
+  |[find_siblings](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.find_siblings)                  |Find a node's siblings which have the same parent |`tree.find_siblings('CD4+ T cell', return_names = True)`   |Setting `return_names = False` will return a list of `TreeNode`s|
+  |[find_parent](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.find_parent)                      |Find the parent of a node in the tree             |`tree.find_parent('CD4+ T cell')`                          |Return `None` for the root node which has no parent             |
+  |[find_children](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.find_children)                  |Find the children of a node in the tree           |`tree.find_children('CD4+ T cell', return_names = True)`   |Setting `return_names = False` will return a list of `TreeNode`s|
+  |[extract_subtree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.extract_subtree)              |Extract a subtree rooted at a given node          |`tree.extract_subtree('CD4+ T cell')`                      |A new tree is returned and the original tree is unmodified      |
+  |[extract_path](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.extract_path)                    |Extract the path from the root to a given node    |`tree.extract_path('CD4+ T cell')`                         |Return a list of `TreeNode`s from the root to a given node      |
+  |[lowest_common_ancestor](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.lowest_common_ancestor)|Find the lowest common ancestor of two nodes      |`tree.lowest_common_ancestor('CD4+ T cell', 'CD8+ T cell')`|Return a `TreeNode`                                             |
+  </div>
   </details>
 </details>
 
