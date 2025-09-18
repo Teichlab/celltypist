@@ -730,7 +730,7 @@ class Tree():
 
     def add_children(self, *child_nodes, parent: str) -> list:
         """
-        Add one or more children to a node in the tree by the node's name.
+        Add one or more nodes under a given parent node in the tree.
 
         Parameters
         ----------
@@ -911,7 +911,7 @@ class Tree():
 
     def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
         """
-        Move a node (and its subtree) from its current parent to a new parent.
+        Move a node (and its descendants) from its current parent to a new parent.
 
         Parameters
         ----------
@@ -969,7 +969,7 @@ class Tree():
 
     def replace_node(self, name: str, by: TreeNode) -> TreeNode:
         """
-        Replace a node in the tree (and its subtree) with a new node.
+        Replace a node in the tree (and its descendants) with a new node.
 
         Parameters
         ----------
