@@ -790,7 +790,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ├── CD8+ T cell
   └── γδ T cell
   ```
-  Although a `Tree` is just a wrapper around a `TreeNode`, it provides convenient methods to query elements within the hierarchy:
+  Although a `Tree` is just a wrapper around a `TreeNode`, it provides convenient methods for **querying** elements within the hierarchy:
   <div align="center">
 
   |Method name                                                                                                                                |Description                                       |Usage example                                              |Note                                                            |
@@ -807,7 +807,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |[lowest_common_ancestor](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.lowest_common_ancestor)|Find the lowest common ancestor of two nodes      |`tree.lowest_common_ancestor('CD4+ T cell', 'CD8+ T cell')`|Return the lowest common ancestor as a `TreeNode`               |
   </div>
 
-  The most important methods are arguably those for manipulating a tree, since a tree is continually subject to change and expansion. A full list of these methods is: 
+  The most important methods are arguably those for **manipulating** a tree, since a tree is continually subject to change and expansion. A full list of these methods is: 
   </details>
 </details>
 
