@@ -826,6 +826,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |[sort_tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.sort_tree)              |Sort the children of each node in the tree by the number of leaves they contain|`tree.sort_tree(recursive = True, descending = True)`                                                   |Setting `recursive = False` will sort by the number of direct children|
   |[copy](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.copy)                        |Create a deep copy of the tree                                                 |`copied_tree = tree.copy()`                                                                             |Changes made to `copied_tree` will not impact the original `tree`     |
   </div>
+
+  Note that except for `copy`, the above methods modify the structure of the original tree in place. Given this, it is good practice to run the [validate](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.validate) method *regularly* to sanity-check the entire tree (e.g., ensuring updated attributes have the correct type and names of newly added nodes do not duplicate existing ones in the tree). This is particularly useful as a health check before saving the tree as a JSON file.
+  ```python
+  #Sanity-check the entire tree. A corresponding error will be raised if found.
+  tree.validate()
+  #Write out the tree locally.
+  tree.write('T_cell_tree.json')
+  ```
   </details>
 </details>
 
