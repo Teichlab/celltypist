@@ -853,9 +853,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   This tree has a total depth of three, corresponding to three levels of cell type annotations. At level 3 (the leaf level), if five cells are annotated as `A1 A3a A3a A2 A3b`, their corresponding level 2 and level 1 annotations are as follows:
   ```text
-  Level 3: A1 A3a A3a A2 A3b
-  Level 2: A1 A3  A3  A2 A3
-  Level 1: A  A   A   A  A
+  Level 3: A1  A3a  A3a  A2  A3b
+  Level 2: A1  A3   A3   A2  A3
+  Level 1: A   A    A    A   A
   ```
   </details>
 </details>
