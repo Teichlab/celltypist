@@ -857,6 +857,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Level 2: A1  A3   A3   A2  A3
   Level 1: A   A    A    A   A
   ```
+  At level 2, all level 3 annotations are converted into their level 2 ancestors. This process continues until all three levels of annotations are obtained.
   </details>
 </details>
 
