@@ -846,10 +846,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 		┌──────┼──────┐
 		│      │      │
 	  A1     A2     A3
-              		│
-              	 ┌──┴──┐
-              	 │     │
-              	A2a   A2b
+             		│
+             	 ┌──┴──┐
+             	 │     │
+             	A2a   A2b
   ```
   </details>
 </details>
