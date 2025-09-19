@@ -841,15 +841,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   In single-cell datasets, the cell metadata table often contains a column of fine-grained annotations (i.e., leaf-level labels). By coupling these labels with a predefined cell type hierarchy, they can be mapped to broader categories at different levels. For example, consider the tree below:
   ```text
-  	       A
-      	   │
-    	┌──────┼──────┐
-    	│      │      │
-      A1     A2     A3
-   	│
- ┌──┴──┐
- │     │
-A1a   A1b
+			   A
+			   │
+			┌──────┼──────┐
+			│      │      │
+		  A1     A2     A3
+		│
+	 ┌──┴──┐
+	 │     │
+	A1a   A1b
   ```
   </details>
 </details>
