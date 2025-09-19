@@ -858,6 +858,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Level 1: A   A    A    A   A
   ```
   At level 2, all level 3 annotations are converted into their level 2 ancestors. This process continues until all three levels of annotations are obtained.
+  ### why do this?
+  > This multi-level mapping is a prerequisite for hierarchical training (detailed in `5.`). As a preview, we can either 1) train a global level-2 classifier based on the level-2 annotation vector, or 2) train a local classifier to distinguish A3a vs. A3b cells within A3 (using the level-2 vector to locate A3 cells and the level-3 vector to locate A3a/A3b cells).
   </details>
 </details>
 
