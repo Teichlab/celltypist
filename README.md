@@ -849,7 +849,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
              		  │
              	   ┌──┴──┐
              	   │     │
-             	  A2a   A2b
+             	  A3a   A3b
   ```
   </details>
 </details>
