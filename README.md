@@ -839,14 +839,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>4.5. Generate multi-level cell type annotations from leaf labels</strong></summary>
 
-  In single-cell datasets, the cell metadata table often contains a column of fine-grained annotations (e.g., leaf-level labels). By coupling these labels with a predefined cell type hierarchy, they can be mapped to broader categories at different levels. For example, consider the tree below:
+  In single-cell datasets, the cell metadata table often contains a column of fine-grained annotations (i.e., leaf-level labels). By coupling these labels with a predefined cell type hierarchy, they can be mapped to broader categories at different levels. For example, consider the tree below:
   ```text
-  		       A
-  	    	   │
+  	       A
+      	   │
     	┌──────┼──────┐
     	│      │      │
-       A1     A2     A3
-    	│
+      A1     A2     A3
+      	│
      ┌──┴──┐
      │     │
     A1a   A1b
