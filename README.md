@@ -859,7 +859,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   At level 2, all level 3 annotations are converted into their level 2 ancestors. This process continues until all three levels of annotations are obtained.
   ### Why do this?
-  > This multi-level mapping is a prerequisite for hierarchical training (detailed in `5.`). As a preview, we can either 1) train a global level-2 classifier based on the level-2 annotation vector, or 2) train a local classifier to distinguish A3a vs. A3b cells within A3 (using the level-2 vector to locate A3 cells and the level-3 vector to locate A3a/A3b cells).
+  > This multi-level mapping is a prerequisite for hierarchical training (detailed in `5.`). As a preview, we can either 1) train a global level-2 classifier based on the level-2 annotation vector, or 2) train a local classifier to distinguish A3a vs. A3b cells within A3 (using the level-2 vector to locate A3 cells and the level-3 vector to locate A3a/A3b cells).  
+
   CellTypist provides this functionality through the [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) method, which takes a vector of leaf-level annotations (e.g., a `list`, `tuple`, or `Series`) as input. Using the example `tree` above:
   ```python
   leaf_anno = ["A1", "A3a", "A3b", "A2", "A3a"]
