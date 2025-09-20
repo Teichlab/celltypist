@@ -400,8 +400,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ### Inputs for data training
   The inputs for CellTypist training comprise the gene expression data, the cell annotation details (i.e., cell type labels), and in some scenarios the genes used. To facilitate the training process, the `train` function (see below) has been designed to accommodate different kinds of input formats:
      1) The gene expression data can be provided as a path to the expression table (such as `.csv` and `.mtx`), or a path to the `AnnData` (`.h5ad`), with the former containing raw counts (in order to reduce the file size) while the latter containing log1p normalised expression (to 10,000 counts per cell) stored in `.X` or `.raw.X`. In addition to specifying the paths, you can provide any array-like objects (e.g., `csr_matrix`) or `AnnData` which are already loaded in memory (both should be in the log1p format). A cell-by-gene format (cells as rows and genes as columns) is required.
-     2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
-     3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `series`) are also acceptable.
+     2) The cell type labels can be supplied as a path to the file containing cell type label per line corresponding to the cells in gene expression data. Any list-like objects (such as a `tuple` or `Series`) are also acceptable. If the gene expression data is input as an `AnnData`, you can also provide a column name from its cell metadata (`.obs`) which represents information of cell type labels.
+     3) The genes will be automatically extracted if the gene expression data is provided as a table file, an `AnnData` or a `DataFrame`. Otherwise, you need to specify a path to the file containing one gene per line corresponding to the genes in the gene expression data. Any list-like objects (such as a `tuple` or `Series`) are also acceptable.
   
   ### One-pass data training
   Derive a new model by training the data using the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) function:
@@ -858,8 +858,26 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Level 1: A   A    A    A   A
   ```
   At level 2, all level 3 annotations are converted into their level 2 ancestors. This process continues until all three levels of annotations are obtained.
-  ### why do this?
+  ### Why do this?
   > This multi-level mapping is a prerequisite for hierarchical training (detailed in `5.`). As a preview, we can either 1) train a global level-2 classifier based on the level-2 annotation vector, or 2) train a local classifier to distinguish A3a vs. A3b cells within A3 (using the level-2 vector to locate A3 cells and the level-3 vector to locate A3a/A3b cells).
+  CellTypist provides this functionality through the [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) method, which takes a vector of leaf-level annotations (e.g., a `list`, `tuple`, or `Series`) as input. Using the example `tree` above:
+  ```python
+  leaf_anno = ["A1", "A3a", "A3b", "A2", "A3a"]
+  multi_anno = tree.get_multilevel_anno(leaf_anno)
+  ```
+  The output is a `DataFrame` with one column per annotation level.
+  <div align="center">
+
+  | level_1_anno | level_2_anno | level_3_anno |
+  |:------------:|:------------:|:------------:|
+  | A            | A1           | A1           |
+  | A            | A3           | A3a          |
+  | A            | A3           | A3b          |
+  | A            | A2           | A2           |
+  | A            | A3           | A3a          |
+  </div>
+
+  Note that if the input is a `Series`, this output `DataFrame` preserves its index (i.e., cell names). Also, there is a `prefix` parameter for [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) by which you can add a custom string to the beginning of each column name.
   </details>
 </details>
 
