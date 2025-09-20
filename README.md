@@ -880,6 +880,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Note that if the input is a `Series`, this output `DataFrame` preserves its index (i.e., cell names). Also, there is a `prefix` parameter for [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) by which you can add a custom string to the beginning of each column name.
   </details>
+
++ <details>
+  <summary><strong>4.6. Visualise a cell type hierarchical tree</strong></summary>
+
+  A [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) can be visualised using the [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html) function:
+  ```python
+  celltypist.treeviz(tree)
+  ```
+  </details>
 </details>
 
 <details>
