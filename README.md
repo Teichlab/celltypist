@@ -888,6 +888,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   celltypist.treeviz(tree)
   ```
+  By default, this plot uses a diagonal layout (`layout = "diagonal"`). Setting `layout = "rectangular"` will instead draw the tree with a rectangular layout.
   </details>
 </details>
 
