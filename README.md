@@ -866,7 +866,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   leaf_anno = ["A1", "A3a", "A3a", "A2", "A3b"]
   multi_anno = tree.get_multilevel_anno(leaf_anno)
   ```
-  The output is a `DataFrame` with one column per annotation level.
+  The output (`multi_anno`) is a `DataFrame` with one column per annotation level.
   <div align="center">
 
   | level_1_anno | level_2_anno | level_3_anno |
