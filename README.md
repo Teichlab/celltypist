@@ -863,7 +863,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   CellTypist provides this functionality through the [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) method, which takes a vector of leaf-level annotations (e.g., a `list`, `tuple`, or `Series`) as input. Using the example `tree` above:
   ```python
-  leaf_anno = ["A1", "A3a", "A3b", "A2", "A3a"]
+  leaf_anno = ["A1", "A3a", "A3a", "A2", "A3b"]
   multi_anno = tree.get_multilevel_anno(leaf_anno)
   ```
   The output is a `DataFrame` with one column per annotation level.
@@ -873,9 +873,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |:------------:|:------------:|:------------:|
   | A            | A1           | A1           |
   | A            | A3           | A3a          |
-  | A            | A3           | A3b          |
-  | A            | A2           | A2           |
   | A            | A3           | A3a          |
+  | A            | A2           | A2           |
+  | A            | A3           | A3b          |
   </div>
 
   Note that if the input is a `Series`, this output `DataFrame` preserves its index (i.e., cell names). Also, there is a `prefix` parameter for [get_multilevel_anno](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.get_multilevel_anno) by which you can add a custom string to the beginning of each column name.
