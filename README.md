@@ -909,6 +909,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
           ╲                    ●   ●   ●
            ●                      
   ```
+  Since the order of children for a given parent node can be rearranged without affecting the tree, you can freely adjust the order of children (for example, using the method [reorder_children](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.reorder_children) as described in `4.4.`). To quickly organise the entire tree, one option is to order the children by their complexity. Specifically, when `sort = True` (the default is `sort = False` as we expect an already-ordered tree in most cases), each internal node’s children are arranged from most to least complex.
+  ```python
+  #Reorder the children of every internal node and visualise the tree.
+  celltypist.treeviz(tree, sort = True)
+  #Node complexity = total descendant leaves (`recursive = True`, the default) or number of direct children (`recursive = False`).
+  celltypist.treeviz(tree, sort = True, recursive = False)
+  #Reorder children of each internal node from least to most complex with `descending = False` (default to `descending = True`).
+  celltypist.treeviz(tree, sort = True, descending = False)
+  ```
   </details>
 </details>
 
