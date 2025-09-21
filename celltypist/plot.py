@@ -189,7 +189,7 @@ def dotplot(
         if not show:
             return dp.get_axes()
 
-def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coords: Optional[dict] = None, type: str = "cladogram") -> dict:
+def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coords: Optional[dict] = None, layout: str = "diagonal") -> dict:
     """
     For internal use. Assign coordinates (x, y, is_leaf) to a node and its descendants.
     """
@@ -200,8 +200,8 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
         y[0] += 1
     else:
         for child in node.children:
-            _assign_coords(child, depth + 1, y, coords, type)
-        if type == "phylogram":
+            _assign_coords(child, depth + 1, y, coords, layout)
+        if layout == "diagonal":
             child_ordinates = [coords[child.original_name][1] for child in node.children]
             ordinate = sum(child_ordinates) / len(child_ordinates)
         else:
@@ -212,7 +212,7 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
 
 def treeviz(tree: Tree,
         #design
-        type: str = "cladogram", direction: str = "right", sort: bool = False, recursive: bool = True, descending: bool = True,
+        layout: str = "diagonal", direction: str = "right", sort: bool = False, recursive: bool = True, descending: bool = True,
         #branch
         edge_color: str = '#0000007B', edge_width: Optional[float] = None,
         #node
@@ -239,9 +239,9 @@ def treeviz(tree: Tree,
     ----------
     tree
         A :class:`~celltypist.tree.Tree` object to visualize.
-    type
-        Layout style of the tree, either `'cladogram'` or `'phylogram'`.
-        (Default: `'cladogram'`)
+    layout
+        Layout style of the tree, either `'diagonal'` or `'rectangular'`.
+        (Default: `'diagonal'`)
     direction
         Direction of tree growth, either `'right'` or `'down'`.
         (Default: `'right'`)
@@ -339,9 +339,9 @@ def treeviz(tree: Tree,
     if not isinstance(tree, Tree):
         raise TypeError(
                 f"🛑 Please provide a `Tree` instance")
-    if type not in ("cladogram", "phylogram"):
+    if layout not in ("diagonal", "rectangular"):
         raise ValueError(
-                f"🛑 `type` must be 'cladogram' or 'phylogram'")
+                f"🛑 `layout` must be 'diagonal' or 'rectangular'")
     if direction == "right":
         leaf_label_ha = "left" if leaf_label_ha is None else leaf_label_ha
         leaf_label_va = "center" if leaf_label_va is None else leaf_label_va
@@ -362,7 +362,7 @@ def treeviz(tree: Tree,
     if sort:
         tree = tree.copy()
         tree.sort_tree(recursive = recursive, descending = descending)
-    coords = _assign_coords(tree.root, type = type)
+    coords = _assign_coords(tree.root, layout = layout)
     tree_depth = tree.depth
     oriented_coords = {}
     if direction == "right":
@@ -378,7 +378,7 @@ def treeviz(tree: Tree,
             figsize = (tree_depth * 2.5, tree_n_leaves * 0.6) if direction == "right" else (tree_n_leaves * 0.6, tree_depth * 2.5)
         _, ax = plt.subplots(figsize = figsize)
     #edges
-    if type == "cladogram":
+    if layout == "diagonal":
         for node, (x, y, _) in oriented_coords.items():
             parent = tree.find_parent(node)
             if parent is not None:
