@@ -886,7 +886,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   A [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) can be visualised using the [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html) function:
   ```python
+  #Visualise a tree directly.
   celltypist.treeviz(tree)
+  #Or alternatively, save the tree plot.
+  celltypist.treeviz(tree, show = False, save = 'tree.pdf')
   ```
   By default, this plot uses a diagonal layout (`layout = "diagonal"`). Setting `layout = "rectangular"` will instead draw the tree with a rectangular layout.
   </details>
