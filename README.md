@@ -900,6 +900,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
           ╲                        |
            ●                        ───●
   ```
+  With the default `direction = "right"`, the tree grows towards the right. Setting `direction = "down"` will make the tree grow downwards.
+  ```text
+  direction = "right"      direction = "down"
+           ●       
+          ╱                     ───●───
+         ●───●                 |   |   |
+          ╲                    ●   ●   ●
+           ●                      
+  ```
   </details>
 </details>
 
