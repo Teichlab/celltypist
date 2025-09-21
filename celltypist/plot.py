@@ -427,3 +427,5 @@ def treeviz(tree: Tree,
         plt.show()
     if save:
         plt.close()
+
+treevis = treeviz
