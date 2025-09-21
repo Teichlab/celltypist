@@ -201,7 +201,7 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
     else:
         for child in node.children:
             _assign_coords(child, depth + 1, y, coords, layout)
-        if layout == "diagonal":
+        if layout == "rectangular":
             child_ordinates = [coords[child.original_name][1] for child in node.children]
             ordinate = sum(child_ordinates) / len(child_ordinates)
         else:
