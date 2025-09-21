@@ -918,6 +918,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Reorder children of each internal node from least to most complex with `descending = False` (default to `descending = True`).
   celltypist.treeviz(tree, sort = True, descending = False)
   ```
+  Other parameters for controlling the shapes, colors, sizes, and alignments of branches, nodes, and labels can be found in [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html).
   </details>
 </details>
 
