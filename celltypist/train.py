@@ -199,6 +199,43 @@ def _SGDClassifier(indata, labels,
                 classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = np.unique(labels))
     return classifier
 
+def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter) -> tuple:
+    """
+    For internal use. Wrapper code before the actual classifer.
+    """
+    #prepare
+    logger.info("🍳 Preparing data before training")
+    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression)
+    if with_mean and isinstance(indata, spmatrix):
+        indata = indata.toarray()
+    #filter
+    flag = indata.sum(axis = 0) == 0
+    if isinstance(flag, np.matrix):
+        flag = flag.A1
+    if flag.sum() > 0:
+        logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
+        #indata = indata[:, ~flag]
+        genes = genes[~flag]
+    #report data stats
+    logger.info(f"🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
+    #scaler
+    logger.info(f"⚖️ Scaling input data")
+    scaler = StandardScaler(with_mean = with_mean)
+    indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
+    indata[indata > 10] = 10
+    #sklearn (Cython) does not support very large sparse matrices for the time being
+    if isinstance(indata, spmatrix) and ((indata.indices.dtype == 'int64') or (indata.indptr.dtype == 'int64')):
+        indata = indata.toarray()
+    #max_iter
+    if max_iter is None:
+        if indata.shape[0] < 50000:
+            max_iter = 1000
+        elif indata.shape[0] < 500000:
+            max_iter = 500
+        else:
+            max_iter = 200
+    return indata, labels, genes, max_iter, scaler
+
 def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
@@ -330,37 +367,8 @@ def train(X = None,
     if not use_SGD and use_GPU and 'cuml' not in sys.modules:
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
-    #prepare
-    logger.info("🍳 Preparing data before training")
-    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression)
-    if with_mean and isinstance(indata, spmatrix):
-        indata = indata.toarray()
-    #filter
-    flag = indata.sum(axis = 0) == 0
-    if isinstance(flag, np.matrix):
-        flag = flag.A1
-    if flag.sum() > 0:
-        logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
-        #indata = indata[:, ~flag]
-        genes = genes[~flag]
-    #report data stats
-    logger.info(f"🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
-    #scaler
-    logger.info(f"⚖️ Scaling input data")
-    scaler = StandardScaler(with_mean = with_mean)
-    indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
-    indata[indata > 10] = 10
-    #sklearn (Cython) does not support very large sparse matrices for the time being
-    if isinstance(indata, spmatrix) and ((indata.indices.dtype == 'int64') or (indata.indptr.dtype == 'int64')):
-        indata = indata.toarray()
-    #max_iter
-    if max_iter is None:
-        if indata.shape[0] < 50000:
-            max_iter = 1000
-        elif indata.shape[0] < 500000:
-            max_iter = 500
-        else:
-            max_iter = 200
+    #prepare params
+    indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter)
     #classifier
     if use_SGD or feature_selection:
         classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
