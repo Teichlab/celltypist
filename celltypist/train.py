@@ -46,7 +46,7 @@ def _to_array(_array_like) -> np.ndarray:
         raise TypeError(
                 f"🛑 Please provide a valid array-like object as input")
 
-def _prepare_data(X, labels, genes, transpose) -> tuple:
+def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
     """
     For internal use. Prepare data for celltypist training.
     """
@@ -109,7 +109,18 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
                         "🛑 Missing `genes`. Please provide this argument together with the input training data")
             genes = _to_vector(genes)
         labels = _to_vector(labels)
-    return indata, np.array(labels), np.array(genes)
+    labels = np.array(labels)
+    genes = np.array(genes)
+    if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
+        raise ValueError(
+                "🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
+    if len(labels) != indata.shape[0]:
+        raise ValueError(
+                f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
+    if len(genes) != indata.shape[1]:
+        raise ValueError(
+                f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
+    return indata, labels, genes
 
 def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> LogisticRegression:
     """
@@ -321,19 +332,9 @@ def train(X = None,
         return
     #prepare
     logger.info("🍳 Preparing data before training")
-    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
+    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression)
     if with_mean and isinstance(indata, spmatrix):
         indata = indata.toarray()
-    #check
-    if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
-        raise ValueError(
-                "🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
-    if len(labels) != indata.shape[0]:
-        raise ValueError(
-                f"🛑 Length of training labels ({len(labels)}) does not match the number of input cells ({indata.shape[0]})")
-    if len(genes) != indata.shape[1]:
-        raise ValueError(
-                f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
     #filter
     flag = indata.sum(axis = 0) == 0
     if isinstance(flag, np.matrix):
