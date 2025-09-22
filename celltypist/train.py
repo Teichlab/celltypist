@@ -102,13 +102,14 @@ def _prepare_data(X, labels, genes, transpose) -> tuple:
             indata = indata.transpose()
         if isinstance(indata, pd.DataFrame):
             genes = indata.columns
+            indata = indata.values
         else:
             if genes is None:
                 raise Exception(
                         "🛑 Missing `genes`. Please provide this argument together with the input training data")
             genes = _to_vector(genes)
         labels = _to_vector(labels)
-    return indata, labels, genes
+    return indata, np.array(labels), np.array(genes)
 
 def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> LogisticRegression:
     """
@@ -321,12 +322,8 @@ def train(X = None,
     #prepare
     logger.info("🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input)
-    if isinstance(indata, pd.DataFrame):
-        indata = indata.values
-    elif with_mean and isinstance(indata, spmatrix):
+    if with_mean and isinstance(indata, spmatrix):
         indata = indata.toarray()
-    labels = np.array(labels)
-    genes = np.array(genes)
     #check
     if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
         raise ValueError(
