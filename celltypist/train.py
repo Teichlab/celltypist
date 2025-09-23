@@ -9,6 +9,7 @@ from sklearn import __version__ as skv
 from typing import Optional, Union
 from .models import Model
 from . import logger
+from .tree import Tree
 from scipy.sparse import spmatrix
 from datetime import datetime
 import sys

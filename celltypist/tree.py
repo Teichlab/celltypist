@@ -996,8 +996,12 @@ class Tree():
             raise TypeError(
                     f"🛑 `by` must be a `TreeNode`")
         parent = self.find_parent(name)
+        new_order = np.array(parent.child_names)
         parent.add_children(by)
-        return parent.remove_children(name)[0]
+        removed_node = parent.remove_children(name)[0]
+        new_order[new_order == name] = by.original_name
+        parent.reorder_children(new_order)
+        return removed_node
 
     def extract_subtree(self, name: str, handle: Optional[str] = None):
         """
