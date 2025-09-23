@@ -598,10 +598,12 @@ class Tree():
 
     def __repr__(self):
         """String representation of the :class:`~celltypist.tree.Tree` object."""
-        if self.n_nodes == 1:
+        n_nodes = self.n_nodes
+        n_leaves = self.n_leaves
+        if n_nodes == 1:
             base = f"A cell type tree with a single node"
         else:
-            base = f"A cell type tree with {self.n_nodes} total nodes and {self.n_leaves} leaves"
+            base = f"A cell type tree with {n_nodes} total nodes and {n_leaves} {'leaf' if n_leaves == 1 else 'leaves'}"
         base += f"\n    handle: {self.handle}"
         for key, value in self.__dict__.items():
             if key not in ("handle", "root"):
