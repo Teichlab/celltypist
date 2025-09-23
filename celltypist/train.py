@@ -236,6 +236,49 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
             max_iter = 200
     return indata, labels, genes, max_iter, scaler
 
+def _actual_classifier(indata, labels, genes, max_iter, scaler,
+        C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, **kwargs) -> Model:
+    """
+    For internal use. The actual classifier.
+    """
+    #classifier
+    if use_SGD or feature_selection:
+        classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+    elif use_GPU:
+        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
+    else:
+        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+    #feature selection -> new classifier and scaler
+    if feature_selection:
+        logger.info(f"🔎 Selecting features")
+        if len(genes) <= top_genes:
+            raise ValueError(
+                    f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
+        gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
+        gene_index = np.unique(gene_index)
+        logger.info(f"🧬 {len(gene_index)} features are selected")
+        genes = genes[gene_index]
+        #indata = indata[:, gene_index]
+        logger.info(f"🏋️ Starting the second round of training")
+        if use_SGD:
+            classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+        elif use_GPU:
+            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
+        else:
+            classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+        scaler.mean_ = scaler.mean_[gene_index]
+        scaler.var_ = scaler.var_[gene_index]
+        scaler.scale_ = scaler.scale_[gene_index]
+        scaler.n_features_in_ = len(gene_index)
+    #model finalization
+    classifier.features = genes
+    classifier.n_features_in_ = len(genes)
+    if not date:
+        date = str(datetime.now())
+    description = {'date': date, 'details': details, 'url': url, 'source': source, 'version': version, 'number_celltypes': len(classifier.classes_)}
+    logger.info(f"✅ Model training done!")
+    return Model(classifier, scaler, description)
+
 def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
@@ -369,40 +412,6 @@ def train(X = None,
         return
     #prepare params
     indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter)
-    #classifier
-    if use_SGD or feature_selection:
-        classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
-    elif use_GPU:
-        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
-    else:
-        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
-    #feature selection -> new classifier and scaler
-    if feature_selection:
-        logger.info(f"🔎 Selecting features")
-        if len(genes) <= top_genes:
-            raise ValueError(
-                    f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
-        gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
-        gene_index = np.unique(gene_index)
-        logger.info(f"🧬 {len(gene_index)} features are selected")
-        genes = genes[gene_index]
-        #indata = indata[:, gene_index]
-        logger.info(f"🏋️ Starting the second round of training")
-        if use_SGD:
-            classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
-        elif use_GPU:
-            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
-        else:
-            classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
-        scaler.mean_ = scaler.mean_[gene_index]
-        scaler.var_ = scaler.var_[gene_index]
-        scaler.scale_ = scaler.scale_[gene_index]
-        scaler.n_features_in_ = len(gene_index)
-    #model finalization
-    classifier.features = genes
-    classifier.n_features_in_ = len(genes)
-    if not date:
-        date = str(datetime.now())
-    description = {'date': date, 'details': details, 'url': url, 'source': source, 'version': version, 'number_celltypes': len(classifier.classes_)}
-    logger.info(f"✅ Model training done!")
-    return Model(classifier, scaler, description)
+    #actual classifier
+    model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, **kwargs)
+    return model
