@@ -1005,6 +1005,8 @@ class Tree():
         new_order = np.array(parent.child_names)
         parent.add_children(by)
         removed_node = parent.remove_children(name)[0]
+        if len(new_order) == 1:
+            return removed_node
         new_order[new_order == name] = by.original_name
         parent.reorder_children(new_order)
         return removed_node
