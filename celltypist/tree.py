@@ -245,7 +245,7 @@ class TreeNode():
         """
         current = self.child_names
         if len(current) <= 1:
-            return current
+            return self.children
         if set(current) != set(new_order) or len(current) != len(new_order):
             raise ValueError(
                     f"🛑 `new_order` must be a permutation of the current child names for '{self.original_name}'")
@@ -271,9 +271,8 @@ class TreeNode():
         list
             The sorted list of child nodes.
         """
-        current = self.child_names
-        if len(current) <= 1:
-            return current
+        if len(self.children) <= 1:
+            return self.children
         key_fn = (lambda c: c.n_leaves) if recursive else (lambda c: len(c.children))
         self.children.sort(key = key_fn, reverse = descending)
         return self.children
