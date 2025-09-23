@@ -245,7 +245,7 @@ class TreeNode():
         """
         current = self.child_names
         if len(current) <= 1:
-            logger.warn(f"⚠️ '{self.original_name}' is a leaf node or single-child node. No need to reorder its children")
+            logger.warn(f"⚠️ '{self.original_name}' has <=1 child. No need to reorder")
             return self.children
         if set(current) != set(new_order) or len(current) != len(new_order):
             raise ValueError(
