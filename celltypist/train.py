@@ -201,7 +201,7 @@ def _SGDClassifier(indata, labels,
 
 def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter) -> tuple:
     """
-    For internal use. Wrapper code before the actual classifer.
+    For internal use. Wrapper code before the actual classifier.
     """
     #prepare
     logger.info("🍳 Preparing data before training")
