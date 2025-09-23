@@ -350,6 +350,9 @@ class TreeNode():
                 raise ValueError(
                         f"🛑 Leaf node '{self.original_name}' should not have a model")
             return
+        if len(self.children) == 1 and self.model:
+            raise ValueError(
+                    f"🛑 Single-child node '{self.original_name}' should not have a model")
         if len(set(self.child_names)) != len(self.child_names):
             raise ValueError(
                     f"🛑 Duplicate child names found under the node '{self.original_name}'")
