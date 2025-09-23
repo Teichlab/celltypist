@@ -244,7 +244,7 @@ class TreeNode():
             The reordered list of child nodes.
         """
         current = self.child_names
-        if not current:
+        if len(current) <= 1:
             return current
         if set(current) != set(new_order) or len(current) != len(new_order):
             raise ValueError(
@@ -271,8 +271,9 @@ class TreeNode():
         list
             The sorted list of child nodes.
         """
-        if self.is_leaf():
-            return []
+        current = self.child_names
+        if len(current) <= 1:
+            return current
         key_fn = (lambda c: c.n_leaves) if recursive else (lambda c: len(c.children))
         self.children.sort(key = key_fn, reverse = descending)
         return self.children
@@ -870,7 +871,7 @@ class Tree():
             key_fn = lambda c: len(c.children)
         node_list = list(self.iter_nodes(leaf_only = False))
         for node in node_list:
-            if not node.is_leaf():
+            if len(node.children) >= 2:
                 node.children.sort(key = key_fn, reverse = descending)
 
     def remove_node(self, name: str) -> TreeNode:
