@@ -229,7 +229,7 @@ class TreeNode():
             self.children.remove(child)
         return to_remove
 
-    def reorder_children(self, new_order: Union[list, tuple]) -> list:
+    def reorder_children(self, new_order: Union[list, tuple, np.ndarray]) -> list:
         """
         Reorder the direct children of the node to match `new_order`.
 
@@ -774,7 +774,7 @@ class Tree():
         node = self.find_node(parent)
         return node.remove_children(*child_nodes)
 
-    def reorder_children(self, parent: str, new_order: Union[list, tuple]) -> list:
+    def reorder_children(self, parent: str, new_order: Union[list, tuple, np.ndarray]) -> list:
         """
         Reorder the direct children of a parent node to match `new_order`.
 
