@@ -418,7 +418,7 @@ def train(X = None,
     return model
 
 def hier_train(X = None,
-               tree: Optional[Union[Tree, str]] = None,
+               tree: Optional[Union[Tree, str, dict]] = None,
                labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
                genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
                transpose_input: bool = False,
