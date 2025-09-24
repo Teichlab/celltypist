@@ -416,3 +416,24 @@ def train(X = None,
     #actual classifier
     model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, **kwargs)
     return model
+
+def hier_train(X = None,
+               tree: Optional[Tree, str] = None,
+               labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+               genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+               transpose_input: bool = False,
+               with_mean: bool = True,
+               check_expression: bool = True,
+               mode:  str = 'LCPN',
+               C: float = 1.0, solver: Optional[str] = None, max_iter: Optional[int] = None, n_jobs: Optional[int] = None,
+               use_SGD: bool = False, alpha: float = 0.0001,
+               use_GPU: bool = False,
+               mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
+               feature_selection: bool = False, top_genes: int = 300,
+               date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
+               out_dir: Optional[str] = None, resume: bool = True,
+               **kwargs) -> None:
+    """
+    Train a hierarchical cell type model using Local Classifier per Parent Node (LCPN) or Local Classifier per Level (LCL).
+    """
+    pass
