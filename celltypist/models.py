@@ -11,6 +11,7 @@ from sklearn import __version__ as skv
 from datetime import datetime
 from . import logger
 from .samples import _get_sample_data
+from .tree import Tree
 
 #create ~/.celltypist (or folder specified by the environment variable $CELLTYPIST_FOLDER) and subdirs
 celltypist_path = os.getenv('CELLTYPIST_FOLDER', default = os.path.join(str(pathlib.Path.home()), '.celltypist'))
@@ -365,6 +366,63 @@ class Model():
         self.description['number_celltypes'] = len(kept_cell_types)
         self.description['date'] = str(datetime.now())
         logger.info(f"✅ Subset done! Number of cell types in the sub-model: {len(kept_cell_types)}")
+
+class HierModel(Tree):
+    """
+    Class extension of :class:`~celltypist.tree.Tree` that supports storing local classifiers for hierarchical modeling.
+
+    Parameters
+    ----------
+    model_tree
+        A modified :class:`~celltypist.tree.Tree` where local classifiers have already been populated.
+        Typically, this object is prepared by :func:`~celltypist.train.hier_train`, so almost all required structure and classifiers are in place.
+    date
+        Free text of the date of the hierarchical model.
+    details
+        Free text of the description of the hierarchical model.
+    url
+        Free text of the (possible) download url of the hierarchical model.
+    source
+        Free text of the source (publication, database, etc.) of the hierarchical model.
+    version
+        Free text of the version of the hierarchical model.
+
+    Attributes
+    ----------
+    handle
+        Unique programmatic identifier/name of the model.
+    root
+        The root node of the tree in the model.
+    mode
+        The type of the local classifiers (`'LCPN'` or `LCL`) in the model.
+    date
+        Free text of the date of the hierarchical model.
+    details
+        Free text of the description of the hierarchical model.
+    url
+        Free text of the (possible) download url of the hierarchical model.
+    source
+        Free text of the source (publication, database, etc.) of the hierarchical model.
+    version
+        Free text of the version of the hierarchical model.
+    depth
+        The depth of the tree in the model.
+    n_leaves
+        The number of leaf nodes contained in the tree of the model.
+    n_nodes
+        The number of total nodes contained in the tree of the model.
+    n_leaves_by_node
+        Dictionary mapping each node name to its total leaf count in the tree of the model.
+    level2_classifier, level3_classifier, ..., level{depth}_classifier
+        Local classifiers at successive levels of the hierarchy, each represented by a :class:`~celltypist.models.Model` instance.
+        Present only when `mode = 'LCL'`.
+    """
+    def __init__(self, model_tree, *, date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
+        model_tree.__class__ = HierModel
+        for attr, val in [("date", date), ("details", details), ("url", url), ("source", source), ("version", version)]:
+            if not val and hasattr(model_tree, attr):
+                continue
+            setattr(model_tree, attr, val)
 
 def get_model_path(file: str) -> str:
     """
