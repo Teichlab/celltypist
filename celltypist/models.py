@@ -394,7 +394,7 @@ class HierModel(Tree):
     root
         The root node of the tree in the model.
     mode
-        The type of the local classifiers (`'LCPN'` or `LCL`) in the model.
+        The type of the local classifiers (`'LCPN'` or `'LCL'`) in the model.
     date
         Free text of the date of the hierarchical model.
     details
