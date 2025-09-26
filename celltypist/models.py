@@ -426,6 +426,13 @@ class HierModel():
         """Information of the hierarchical model."""
         return dict(date = self.tree.date, details = self.tree.details, url = self.tree.url, source = self.tree.source, version = self.tree.version)
 
+    def write(self, file: str) -> None:
+        """Write out the model."""
+        obj = dict(tree = self.tree, model_mapping = self.model_mapping)
+        file = os.path.splitext(file)[0] + '.pkl'
+        with open(file, 'wb') as output:
+            pickle.dump(obj, output)
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
