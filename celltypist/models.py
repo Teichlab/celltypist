@@ -367,62 +367,64 @@ class Model():
         self.description['date'] = str(datetime.now())
         logger.info(f"✅ Subset done! Number of cell types in the sub-model: {len(kept_cell_types)}")
 
-class HierModel(Tree):
+class HierModel():
     """
-    Class extension of :class:`~celltypist.tree.Tree` that supports storing local classifiers for hierarchical modeling.
+    Class representing a hierarchical model trained using either LCPN (Local Classifier per Parent Node) or LCL (Local Classifier per Level).
 
     Parameters
     ----------
-    model_tree
-        A modified :class:`~celltypist.tree.Tree` where local classifiers have already been populated.
-        Typically, this object is prepared by :func:`~celltypist.train.hier_train`, so almost all required structure and classifiers are in place.
+    tree
+        A :class:`~celltypist.tree.Tree` prepared by :func:`~celltypist.train.hier_train`.
+        The `model` attribute of each internal node is modified during training.
+        Under LCPN, it stores classifier filenames (`{node.internal_name}.pkl`). Under LCL, it is cleared (empty string), and additional tree-level attributes (`level{n}_classifier`) are created/overwritten to store classifier filenames (`level{n}_classifier.pkl`).
+    model_mapping
+        Dictionary mapping string identifiers to :class:`~celltypist.models.Model` instances.
+        Keys are `{node.internal_name}.pkl` under LCPN, or `level{n}_classifier.pkl` under LCL.
+    mode
+        The training mode (either `'LCPN'` or `'LCL'`).
+        (Default: `'LCPN'`)
     date
-        Free text of the date of the hierarchical model.
+        Free text of the date of the hierarchical model. Default to an empty string.
     details
-        Free text of the description of the hierarchical model.
+        Free text of the description of the hierarchical model. Default to an empty string.
     url
-        Free text of the (possible) download url of the hierarchical model.
+        Free text of the (possible) download url of the hierarchical model. Default to an empty string.
     source
-        Free text of the source (publication, database, etc.) of the hierarchical model.
+        Free text of the source (publication, database, etc.) of the hierarchical model. Default to an empty string.
     version
-        Free text of the version of the hierarchical model.
+        Free text of the version of the hierarchical model. Default to an empty string.
 
     Attributes
     ----------
-    handle
-        Unique programmatic identifier/name of the model.
-    root
-        The root node of the tree in the model.
+    tree
+        The modified :class:`~celltypist.tree.Tree` with the following attributes added or overwritten: `mode`, `date`, `details`, `url`, `source`, and `version`.
     mode
-        The type of the local classifiers (`'LCPN'` or `'LCL'`) in the model.
-    date
-        Free text of the date of the hierarchical model.
-    details
-        Free text of the description of the hierarchical model.
-    url
-        Free text of the (possible) download url of the hierarchical model.
-    source
-        Free text of the source (publication, database, etc.) of the hierarchical model.
-    version
-        Free text of the version of the hierarchical model.
-    depth
-        The depth of the tree in the model.
-    n_leaves
-        The number of leaf nodes contained in the tree of the model.
-    n_nodes
-        The number of total nodes contained in the tree of the model.
-    n_leaves_by_node
-        Dictionary mapping each node name to its total leaf count in the tree of the model.
-    level2_classifier, level3_classifier, ..., level{depth}_classifier
-        Local classifiers at successive levels of the hierarchy, each represented by a :class:`~celltypist.models.Model` instance.
-        Present only when `mode = 'LCL'`.
+        The training mode (`'LCPN'` or `'LCL'`) of the hierarchical model.
+    model_mapping
+        Dictionary mapping string identifiers to :class:`~celltypist.models.Model` instances.
+        For LCPN, keys are `{node.internal_name}.pkl` (node-level mapping). For LCL, keys are `level{n}_classifier.pkl` (tree-level mapping).
+    description
+        A dictionary with keys: `date`, `details`, `url`, `source`, and `version`.
     """
-    def __init__(self, model_tree, *, date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
-        model_tree.__class__ = HierModel
-        for attr, val in [("date", date), ("details", details), ("url", url), ("source", source), ("version", version)]:
-            if not val and hasattr(model_tree, attr):
+    def __init__(self, tree, model_mapping, mode: str = 'LCPN', date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
+        tree.mode = mode
+        tree.date = date
+        for attr, val in [("details", details), ("url", url), ("source", source), ("version", version)]:
+            if not val and hasattr(tree, attr):
                 continue
-            setattr(model_tree, attr, val)
+            setattr(tree, attr, val)
+        self.tree = tree
+        self.model_mapping = model_mapping
+
+    @property
+    def mode(self) -> str:
+        """The training mode of the hierarchical model."""
+        return self.tree.mode
+
+    @property
+    def description(self) -> dict:
+        """Information of the hierarchical model."""
+        return dict(date = self.tree.date, details = self.tree.details, url = self.tree.url, source = self.tree.source, version = self.tree.version)
 
 def get_model_path(file: str) -> str:
     """
