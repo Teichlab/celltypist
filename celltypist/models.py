@@ -376,10 +376,10 @@ class HierModel():
     tree
         A :class:`~celltypist.tree.Tree` prepared by :func:`~celltypist.train.hier_train`.
         The `model` attribute of each internal node is modified during training.
-        Under LCPN, it stores classifier filenames (`{node.internal_name}.pkl`). Under LCL, it is cleared (empty string), and additional tree-level attributes (`level{n}_classifier`) are created/overwritten to store classifier filenames (`level{n}_classifier.pkl`).
+        Under LCPN, it stores classifier filenames (`{node.internal_name}.pkl`). Under LCL, it is cleared (empty string), and additional tree-level attributes (`level{n}_classifier`) are created/overwritten to store classifier filenames (`{tree.handle}_level{n}.pkl`).
     model_mapping
         Dictionary mapping string identifiers to :class:`~celltypist.models.Model` instances.
-        Keys are `{node.internal_name}.pkl` under LCPN, or `level{n}_classifier.pkl` under LCL.
+        Keys are `{node.internal_name}.pkl` under LCPN, or `{tree.handle}_level{n}.pkl` under LCL.
     mode
         The training mode (either `'LCPN'` or `'LCL'`).
         (Default: `'LCPN'`)
@@ -402,11 +402,11 @@ class HierModel():
         The training mode (`'LCPN'` or `'LCL'`) of the hierarchical model.
     model_mapping
         Dictionary mapping string identifiers to :class:`~celltypist.models.Model` instances.
-        For LCPN, keys are `{node.internal_name}.pkl` (node-level mapping). For LCL, keys are `level{n}_classifier.pkl` (tree-level mapping).
+        For LCPN, keys are `{node.internal_name}.pkl` (node-level mapping). For LCL, keys are `{tree.handle}_level{n}.pkl` (tree-level mapping).
     description
         A dictionary with keys: `date`, `details`, `url`, `source`, and `version`.
     """
-    def __init__(self, tree, model_mapping, mode: str = 'LCPN', date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
+    def __init__(self, tree: Tree, model_mapping: dict, mode: str = 'LCPN', date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
         tree.mode = mode
         tree.date = date
         for attr, val in [("details", details), ("url", url), ("source", source), ("version", version)]:
