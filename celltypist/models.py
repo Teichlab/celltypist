@@ -438,7 +438,7 @@ class HierModel():
         if not os.path.isdir(folder):
             logger.info(f"📁 folder {folder} does not exist, will create one")
             os.mkdir(folder)
-        elif not os.listdir(folder):
+        elif os.listdir(folder):
             raise FileExistsError(
                     f"🛑 Output folder {folder} is not empty, please remove its contents or specify an empty folder")
         self.tree.write(os.path.join(folder, 'tree.json'))
