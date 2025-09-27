@@ -433,6 +433,18 @@ class HierModel():
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
 
+    def export(self, folder: str) -> None:
+        """Export the model."""
+        if not os.path.isdir(folder):
+            logger.info(f"📁 folder {folder} does not exist, will create one")
+            os.mkdir(folder)
+        elif not os.listdir(folder):
+            raise FileExistsError(
+                    f"🛑 Output folder {folder} is not empty, please remove its contents or specify an empty folder")
+        self.tree.write(os.path.join(folder, 'tree.json'))
+        for filename, model in self.model_mapping.items():
+            model.write(os.path.join(folder, filename))
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
