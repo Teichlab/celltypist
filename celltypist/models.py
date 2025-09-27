@@ -404,7 +404,7 @@ class HierModel():
         Dictionary mapping string identifiers to :class:`~celltypist.models.Model` instances.
         For LCPN, keys are `{node.internal_name}.pkl` (node-level mapping). For LCL, keys are `{tree.handle}_level{n}.pkl` (tree-level mapping).
     description
-        A dictionary with keys: `date`, `details`, `url`, `source`, and `version`.
+        A dictionary with keys: `date`, `details`, `url`, `source`, `version`, and `number_celltypes`.
     """
     def __init__(self, tree: Tree, model_mapping: dict, mode: str = 'LCPN', date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
         tree.mode = mode
@@ -424,7 +424,7 @@ class HierModel():
     @property
     def description(self) -> dict:
         """Information of the hierarchical model."""
-        return dict(date = self.tree.date, details = self.tree.details, url = self.tree.url, source = self.tree.source, version = self.tree.version)
+        return dict(date = self.tree.date, details = self.tree.details, url = self.tree.url, source = self.tree.source, version = self.tree.version, number_celltypes = self.tree.n_leaves)
 
     def write(self, file: str) -> None:
         """Write out the model."""
