@@ -1020,7 +1020,7 @@ class Tree():
         name
             The name of the node to use as the root of the new subtree.
         handle
-            Handle for the new tree. Defaults to `f"subtree_of_{self.handle}"`.
+            Handle for the new tree. Defaults to `"subtree_of_{self.handle}"`.
 
         Returns
         ----------
@@ -1041,7 +1041,7 @@ class Tree():
         max_depth
             Maximum allowed depth of the pruned tree (root has depth 1).
         handle
-            Handle for the new tree. Defaults to `f"{self.handle}_at_depth_{max_depth}"`.
+            Handle for the new tree. Defaults to `"{self.handle}_at_depth_{max_depth}"`.
 
         Returns
         ----------
