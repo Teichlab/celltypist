@@ -464,7 +464,7 @@ def get_model_path(file: str) -> str:
 
 def get_default_model(model_type: str = "flat") -> str:
     """
-    Get the default model name.
+    Get the default model name of the specified type (flat or hierarchical).
 
     Parameters
     ----------
