@@ -462,17 +462,26 @@ def get_model_path(file: str) -> str:
     """
     return os.path.join(models_path, f"{file}")
 
-
-def get_default_model() -> str:
+def get_default_model(model_type: str = "flat") -> str:
     """
     Get the default model name.
+
+    Parameters
+    ----------
+    model_type
+        The type of model, either `'flat'` or `'hierarchical'`.
+        (Default: `'flat'`)
 
     Returns
     ----------
     str
-        A string showing the default model name (should be `'Immune_All_Low.pkl'`).
+        A string showing the default model name (should be `'Immune_All_Low.pkl'` if `model_type = 'flat'` or `'Human_Tissue_Immune_LCPN.pkl'` if `model_type = 'hierarchical'`).
     """
+    if model_type not in ("flat", "hierarchical"):
+        raise ValueError(
+                f"🛑 Unsupported model type `'{model_type}'`, should be one of `'flat'` or `'hierarchical'`")
     models_json = get_models_index()
+    models_json["models"] = [m for m in models_json["models"] if m["type"] == model_type]
     default_model = [m["filename"] for m in models_json["models"] if ("default" in m and m["default"])]
     if not default_model:
         first_model = models_json["models"][0]["filename"]
@@ -481,7 +490,6 @@ def get_default_model() -> str:
     if len(default_model) > 1:
         logger.warn(f"👀 More than one model marked as 'default', using {default_model[0]}")
     return default_model[0]
-
 
 def get_all_models() -> list:
     """
