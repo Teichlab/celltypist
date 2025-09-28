@@ -491,23 +491,35 @@ def get_default_model(model_type: str = "flat") -> str:
         logger.warn(f"👀 More than one model marked as 'default', using {default_model[0]}")
     return default_model[0]
 
-def get_all_models() -> list:
+def get_all_models(model_type: str = "flat") -> list:
     """
-    Get a list of all the available models.
+    Get a list of all available models of the specified type (flat or hierarchical).
+
+    Parameters
+    ----------
+    model_type
+        The type of model, either `'flat'` or `'hierarchical'`.
+        (Default: `'flat'`)
 
     Returns
     ----------
     list
-        A list of available models.
+        A list of available models belonging to the specified type (flat or hierarchical).
     """
     download_if_required()
+    if model_type not in ("flat", "hierarchical"):
+        raise ValueError(
+                f"🛑 Unsupported model type `'{model_type}'`, should be one of `'flat'` or `'hierarchical'`")
+    models_json = get_models_index()
+    exclude_model_names = [m["filename"] for m in models_json["models"] if m["type"] != model_type]
     available_models = []
     for model_filename in os.listdir(models_path):
         if model_filename.endswith(".pkl"):
             model_name = os.path.basename(model_filename)
+            if model_name in exclude_model_names:
+                continue
             available_models.append(model_name)
     return available_models
-
 
 def download_if_required() -> None:
     """Download models if there are none present in the `models` directory."""
