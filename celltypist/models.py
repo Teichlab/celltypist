@@ -613,7 +613,7 @@ def download_models(force_update: bool = False, model: Optional[Union[str, list,
         except Exception as exception:
             logger.error(f"🛑 {model['filename']} failed {exception}")
 
-def models_description(on_the_fly: bool=False) -> pd.DataFrame:
+def models_description(on_the_fly: bool = False) -> pd.DataFrame:
     """
     Get the descriptions of all available models.
 
@@ -632,11 +632,17 @@ def models_description(on_the_fly: bool=False) -> pd.DataFrame:
     """
     logger.info(f"👉 Detailed model information can be found at `https://www.celltypist.org/models`")
     if on_the_fly:
-        filenames = get_all_models()
-        descriptions = [Model.load(filename).description['details'] for filename in filenames]
+        filenames_flat = get_all_models(model_type = 'flat')
+        descriptions_flat = [Model.load(filename).description['details'] for filename in filenames_flat]
+        filenames_hier = get_all_models(model_type = 'hierarchical')
+        descriptions_hier = [HierModel.load(filename).description['details'] for filename in filenames_hier]
+        filenames = filenames_flat + filenames_hier
+        descriptions = descriptions_flat + descriptions_hier
+        types = ['flat'] * len(filenames_flat) + ['hierarchical'] * len(filenames_hier)
     else:
         models_json = get_models_index()
         models = models_json["models"]
         filenames = [model['filename'] for model in models]
         descriptions = [model['details'] for model in models]
-    return pd.DataFrame({'model': filenames, 'description': descriptions})
+        types = [model['type'] for model in models]
+    return pd.DataFrame({'model': filenames, 'type': types, 'description': descriptions})
