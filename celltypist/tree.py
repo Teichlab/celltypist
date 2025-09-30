@@ -385,7 +385,7 @@ class TreeNode():
                 continue
             if key == "children":
                 value = [child.to_dict() for child in self.children]
-            if value not in (None, '', []):
+            if value not in (None, '', [], (), {}):
                 data[key] = value
         return data
 
@@ -560,7 +560,7 @@ class Tree():
         """
         data = {"handle": self.handle}
         for key, value in self.__dict__.items():
-            if key not in ("handle", "root"):
+            if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 data[key] = value
         data["root"] = self.root.to_dict()
         return data

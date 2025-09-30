@@ -445,6 +445,37 @@ class HierModel():
         for filename, model in self.model_mapping.items():
             model.write(os.path.join(folder, filename))
 
+    @staticmethod
+    def load(model: Optional[str] = None):
+        """
+        Load the desired model.
+
+        Parameters
+        ----------
+        model
+            Model name specifying the model you want to load. Default to `'Human_Tissue_Immune_LCPN.pkl'` if not provided.
+            To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
+
+        Returns
+        ----------
+        :class:`~celltypist.models.HierModel`
+            A :class:`~celltypist.models.HierModel` object.
+        """
+        if not model:
+            model = get_default_model(model_type = 'hierarchical')
+        if '/' not in model and model in get_all_models(model_type = 'hierarchical'):
+            model = get_model_path(model)
+        if not os.path.isfile(model):
+            raise FileNotFoundError(
+                    f"🛑 No such file: {model}")
+        with open(model, "rb") as fh:
+            try:
+                pkl_obj = pickle.load(fh)
+                return HierModel(pkl_obj['tree'], pkl_obj['model_mapping'], mode = pkl_obj['tree'].mode, date = pkl_obj['tree'].date)
+            except Exception as exception:
+                raise Exception(
+                        f"🛑 Invalid model: {model}. {exception}")
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
