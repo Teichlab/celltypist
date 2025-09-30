@@ -568,7 +568,7 @@ def download_model_index(only_model: bool = True) -> None:
     if not only_model:
         download_models()
 
-def download_models(force_update: bool=False, model: Optional[Union[str, list, tuple]] = None) -> None:
+def download_models(force_update: bool = False, model: Optional[Union[str, list, tuple]] = None) -> None:
     """
     Download all the available or selected models.
 
@@ -612,7 +612,6 @@ def download_models(force_update: bool=False, model: Optional[Union[str, list, t
                 f.write(response.content)
         except Exception as exception:
             logger.error(f"🛑 {model['filename']} failed {exception}")
-
 
 def models_description(on_the_fly: bool=False) -> pd.DataFrame:
     """
