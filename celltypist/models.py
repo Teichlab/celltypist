@@ -640,7 +640,7 @@ def models_description(on_the_fly: bool = False) -> pd.DataFrame:
         descriptions = descriptions_flat + descriptions_hier
         types = ['flat'] * len(filenames_flat) + ['hierarchical'] * len(filenames_hier)
     else:
-        models_json = get_models_index()
+        models_json = get_models_index(force_update = False)
         models = models_json["models"]
         filenames = [model['filename'] for model in models]
         descriptions = [model['details'] for model in models]
