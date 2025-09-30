@@ -527,28 +527,26 @@ def download_if_required() -> None:
         logger.info(f"🔎 No available models. Downloading...")
         download_models()
 
-
-def get_models_index(force_update: bool=False) -> dict:
+def get_models_index(force_update: bool = False) -> dict:
     """
-    Get the model json object containing the model list.
+    Get the model JSON object containing the model list.
 
     Parameters
     ----------
     force_update
-        If set to `True`, will download the latest model json file from the remote.
+        If set to `True`, will download the latest model JSON file from the remote.
         (Default: `False`)
 
     Returns
     ----------
     dict
-        A dict object converted from the model json file.
+        A dict object converted from the model JSON file.
     """
     models_json_path = get_model_path("models.json")
     if not os.path.exists(models_json_path) or force_update:
         download_model_index()
     with open(models_json_path) as f:
         return json.load(f)
-
 
 def download_model_index(only_model: bool = True) -> None:
     """
@@ -557,7 +555,7 @@ def download_model_index(only_model: bool = True) -> None:
     Parameters
     ----------
     only_model
-        If set to `False`, will also download the models in addition to the json file.
+        If set to `False`, will also download the models in addition to the JSON file.
         (Default: `True`)
     """
     url = 'https://celltypist.cog.sanger.ac.uk/models/models.json'
