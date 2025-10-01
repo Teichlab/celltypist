@@ -476,6 +476,49 @@ class HierModel():
                 raise Exception(
                         f"🛑 Invalid model: {model}. {exception}")
 
+    @staticmethod
+    def import(folder: str):
+        """
+        Import a hierarchical model previously exported.
+
+        Parameters
+        ----------
+        folder
+            Path to the previously exported folder containing `tree.json` and model `.pkl` files.
+
+        Returns
+        ----------
+        :class:`~celltypist.models.HierModel`
+            A :class:`~celltypist.models.HierModel` object.
+        """
+        #tree
+        if not os.path.isdir(folder):
+            raise FileNotFoundError(
+                    f"🛑 No such folder: {folder}")
+        tree_file = os.path.join(folder, "tree.json")
+        if not os.path.isfile(tree_file):
+            raise FileNotFoundError(
+                    f"🛑 Missing `tree.json` in {folder}. Please provide a folder previously created/used by `HierModel.export`")
+        tree = Tree.from_json(tree_file)
+        #file list
+        model_files = []
+        if tree.mode == "LCPN":
+            for node in tree.iter_nodes(leaf_only = False):
+                if node.model:
+                    model_files.append(node.model)
+        else:
+            for attr, val in tree.__dict__.items():
+                if attr.startswith("level") and attr.endswith("_classifier"):
+                    model_files.append(val)
+        #mapping
+        model_mapping = {}
+        for fname in model_files:
+             model_path = fname
+             if not os.path.isabs(fname):
+                 model_path = os.path.join(folder, fname)
+            model_mapping[fname] = Model.load(model_path)
+        return HierModel(tree, model_mapping, mode = tree.mode, date = tree.date)
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
