@@ -441,15 +441,16 @@ class HierModel():
         elif os.listdir(folder):
             raise FileExistsError(
                     f"🛑 Output folder {folder} is not empty, please remove its contents or specify an empty folder")
-        if self.tree.mode == "LCPN":
-            for node in self.tree.iter_nodes(leaf_only = False):
+        proposed = self.tree.copy()
+        if proposed.mode == "LCPN":
+            for node in proposed.iter_nodes(leaf_only = False):
                 if node.model:
                     node.model = os.path.basename(node.model)
         else:
-            for attr, val in self.tree.__dict__.items():
+            for attr, val in proposed.__dict__.items():
                 if attr.startswith("level") and attr.endswith("_classifier"):
-                    setattr(self.tree, attr, os.path.basename(val))
-        self.tree.write(os.path.join(folder, 'tree.json'))
+                    setattr(proposed, attr, os.path.basename(val))
+        proposed.write(os.path.join(folder, 'tree.json'))
         for filename, model in self.model_mapping.items():
             model.write(os.path.join(folder, os.path.basename(filename)))
 
