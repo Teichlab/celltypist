@@ -480,6 +480,7 @@ class HierModel():
     def import(folder: str):
         """
         Import a hierarchical model previously exported.
+        Supports user-modified trees where node `.model` (LCPN) or tree-level `.level{n}_classifier` (LCL) point to external paths.
 
         Parameters
         ----------
@@ -513,9 +514,9 @@ class HierModel():
         #mapping
         model_mapping = {}
         for fname in model_files:
-             model_path = fname
-             if not os.path.isabs(fname):
-                 model_path = os.path.join(folder, fname)
+            model_path = fname
+            if not os.path.isabs(fname):
+                model_path = os.path.join(folder, fname)
             model_mapping[fname] = Model.load(model_path)
         return HierModel(tree, model_mapping, mode = tree.mode, date = tree.date)
 
