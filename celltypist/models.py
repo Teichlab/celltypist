@@ -567,7 +567,7 @@ class HierModel():
         """
         if cell_type not in self.tree.cell_types(leaf_only = False):
             raise ValueError(
-                    f"🛑 Cell type '{cell_type}' not found in the tree")
+                    f"🛑 Cell type '{cell_type}' not found in the model")
         if cell_type == self.tree.root.original_name:
             raise ValueError(
                     f"🛑 Cannot extract markers for root cell type '{cell_type}'")
@@ -575,7 +575,7 @@ class HierModel():
             parent = self.tree.find_parent(cell_type)
             if not parent.model:
                 raise ValueError(
-                        f"🛑 Parent of '{cell_type}' has no classifier")
+                        f"🛑 Parent of '{cell_type}' has no classifier available")
             model = self.model_mapping[parent.model]
             siblings = [c.original_name for c in parent.children if c.original_name != cell_type]
             logger.info(f"🧬 Top markers for '{cell_type}', distinguishing it from siblings: {', '.join(siblings)}")
