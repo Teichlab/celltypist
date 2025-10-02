@@ -529,6 +529,20 @@ class HierModel():
             model_mapping[fname] = Model.load(model_path)
         return HierModel(tree, model_mapping, mode = tree.mode, date = tree.date)
 
+    def __repr__(self):
+        base = f"CellTypist hierarchical model with {self.tree.n_nodes} cell types rooted at '{self.tree.root.original_name}', with tree depth {self.tree.depth}"
+        for x in ['mode', 'date', 'details', 'source', 'version']:
+            if getattr(self.tree, x) != '':
+                base += f"\n    {x}: {getattr(self.tree, x)}"
+        leaf_types = self.tree.cell_types(leaf_only = True)
+        if len(leaf_types) == 2:
+            base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}"
+        elif len(leaf_types) == 3:
+            base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, {leaf_types[2]}"
+        else:
+            base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, ..., {leaf_types[-1]}"
+        return base
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
