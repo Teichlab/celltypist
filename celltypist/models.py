@@ -508,7 +508,7 @@ class HierModel():
         tree_file = os.path.join(folder, "tree.json")
         if not os.path.isfile(tree_file):
             raise FileNotFoundError(
-                    f"🛑 Missing `tree.json` in {folder}. Please provide a folder previously created/used by `HierModel.export`")
+                    f"🛑 Missing `tree.json` in {folder}. Please provide a folder previously created/used by `HierModel.export` or `celltypist.train.hier_train`")
         tree = Tree.from_json(tree_file)
         #file list
         model_files = []
