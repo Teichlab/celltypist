@@ -563,7 +563,7 @@ class HierModel():
         Returns
         ----------
         :class:`~numpy.ndarray` or dict
-            For LCPN, returns a 1D numpy array of top markers. For LCL, returns a dict mapping level{n} to top markers at this level/depth.
+            For LCPN, returns a 1D numpy array of top markers. For LCL, returns a dict mapping `'level{n}'` to top markers at this level/depth.
         """
         if cell_type not in self.tree.cell_types(leaf_only = False):
             raise ValueError(
@@ -587,6 +587,7 @@ class HierModel():
                 model = self.model_mapping[getattr(self.tree, f"level{level}_classifier")]
                 if cell_type in model.cell_types:
                     results[f"level{level}"] = model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
+            logger.info(f"🧬 Top markers for '{cell_type}' found at classifiers: {', '.join(results.keys())}")
             return results
 
 def get_model_path(file: str) -> str:
