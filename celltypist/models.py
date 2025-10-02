@@ -535,11 +535,13 @@ class HierModel():
             if getattr(self.tree, x) != '':
                 base += f"\n    {x}: {getattr(self.tree, x)}"
         leaf_types = self.tree.cell_types(leaf_only = True)
-        if len(leaf_types) == 2:
+        if len(leaf_types) == 1:
+            base += f"\n    leaf cell type: {leaf_types[0]}"
+        elif len(leaf_types) == 2:
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}"
         elif len(leaf_types) == 3:
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, {leaf_types[2]}"
-        elif len(leaf_types) > 3:
+        else:
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, ..., {leaf_types[-1]}"
         return base
 
