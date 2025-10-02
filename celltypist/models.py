@@ -545,6 +545,50 @@ class HierModel():
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, ..., {leaf_types[-1]}"
         return base
 
+    def extract_top_markers(self, cell_type: str, top_n: int = 10, only_positive: bool = True) -> Union[np.ndarray, dict]:
+        """
+        Extract top marker genes for a given cell type from a hierarchical model.
+
+        Parameters
+        ----------
+        cell_type
+            The cell type to extract markers for.
+        top_n
+            Number of markers to extract for a given cell type.
+            (Default: 10)
+        only_positive
+            Whether to extract positive markers only. Set to `False` to include negative markers as well.
+            (Default: `True`)
+
+        Returns
+        ----------
+        :class:`~numpy.ndarray` or dict
+            For LCPN, returns a 1D numpy array of top markers. For LCL, returns a dict mapping level{n} to top markers at this level/depth.
+        """
+        if cell_type not in self.tree.cell_types(leaf_only = False):
+            raise ValueError(
+                    f"🛑 Cell type '{cell_type}' not found in the tree")
+        if cell_type == self.tree.root.original_name:
+            raise ValueError(
+                    f"🛑 Cannot extract markers for root cell type '{cell_type}'")
+        if self.mode == "LCPN":
+            parent = self.tree.find_parent(cell_type)
+            if not parent.model:
+                raise ValueError(
+                        f"🛑 Parent of '{cell_type}' has no classifier")
+            model = self.model_mapping[parent.model]
+            siblings = [c.original_name for c in parent.children if c.original_name != cell_type]
+            logger.info(f"🧬 Top markers for '{cell_type}', distinguishing it from siblings: {', '.join(siblings)}")
+            return model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
+        else:
+            results = {}
+            depth = self.tree.find_node(cell_type).depth
+            for level in range(depth, self.tree.depth + 1):
+                model = self.model_mapping[getattr(self.tree, f"level{level}_classifier")]
+                if cell_type in model.cell_types:
+                    results[f"level{level}"] = model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
+            return results
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
