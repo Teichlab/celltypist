@@ -539,7 +539,7 @@ class HierModel():
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}"
         elif len(leaf_types) == 3:
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, {leaf_types[2]}"
-        else:
+        elif len(leaf_types) > 3:
             base += f"\n    leaf cell types: {leaf_types[0]}, {leaf_types[1]}, ..., {leaf_types[-1]}"
         return base
 
