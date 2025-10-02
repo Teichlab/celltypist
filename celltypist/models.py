@@ -427,14 +427,14 @@ class HierModel():
         return dict(date = self.tree.date, details = self.tree.details, url = self.tree.url, source = self.tree.source, version = self.tree.version, number_celltypes = self.tree.n_leaves)
 
     def write(self, file: str) -> None:
-        """Write out the model."""
+        """Write out the hierarchical model as a `.pkl` file."""
         obj = dict(tree = self.tree, model_mapping = self.model_mapping)
         file = os.path.splitext(file)[0] + '.pkl'
         with open(file, 'wb') as output:
             pickle.dump(obj, output)
 
     def export(self, folder: str) -> None:
-        """Export the model."""
+        """Export the hierarchical model to a folder."""
         if not os.path.isdir(folder):
             logger.info(f"📁 folder {folder} does not exist, will create one")
             os.mkdir(folder)
@@ -457,7 +457,7 @@ class HierModel():
     @staticmethod
     def load(model: Optional[str] = None):
         """
-        Load the desired model.
+        Load the desired hierarchical model.
 
         Parameters
         ----------
