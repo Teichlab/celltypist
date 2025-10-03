@@ -432,7 +432,7 @@ def hier_train(X = None,
                feature_selection: bool = False, top_genes: int = 300,
                date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
                save_strategy: str = 'checkpointed', out_dir: Optional[str] = None, resume: bool = True,
-               **kwargs) -> None:
+               **kwargs) -> HierModel:
     """
     Train a hierarchical ensemble model for cell type classification, built from local classifiers using either LCPN (Local Classifier per Parent Node) or LCL (Local Classifier per Level).
 
@@ -543,7 +543,7 @@ def hier_train(X = None,
     out_dir
         Path to the model’s working directory where all local classifiers and the tree are written.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
-        Default to f"{tree.handle}_{mode}" if not provided.
+        Default to `{tree.handle}_{mode}` if not provided.
     resume
         Whether to resume from an existing run in `out_dir`.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
