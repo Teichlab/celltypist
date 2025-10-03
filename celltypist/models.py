@@ -592,13 +592,13 @@ class HierModel():
             logger.info(f"🧬 Top markers for '{cell_type}' found at classifiers: {', '.join(results.keys())}")
             return results
 
-    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0) -> None:
-        logger.info("🔄 Converting all models in the hierarchical model...")
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0, indent: str = "") -> None:
+        logger.info(f"{indent}🔄 Converting all models in the hierarchical model...")
         for fname, model in self.model_mapping.items():
-            logger.info(f"   ↪ Converting model `{fname}`")
-            model.convert(map_file = map_file, sep = sep, convert_from = convert_from, convert_to = convert_to, unique_only = unique_only, collapse = collapse, random_state = random_state, indent = "      ")
+            logger.info(f"{indent}   ↪ Converting model `{fname}`")
+            model.convert(map_file = map_file, sep = sep, convert_from = convert_from, convert_to = convert_to, unique_only = unique_only, collapse = collapse, random_state = random_state, indent = f"{indent}      ")
         self.tree.date = str(datetime.now())
-        logger.info("✅ Hierarchical model conversion completed")
+        logger.info(f"{indent}✅ Hierarchical model conversion completed")
 
 def get_model_path(file: str) -> str:
     """
