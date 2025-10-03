@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from sklearn import __version__ as skv
 from typing import Optional, Union
-from .models import Model
+from .models import Model, HierModel
 from . import logger
 from .tree import Tree
 from scipy.sparse import spmatrix
@@ -538,7 +538,7 @@ def hier_train(X = None,
     version
         Free text of the version of the model.
     save_strategy
-        Run to completion and then write a single model (`save_strategy = 'atomic'`) or save on-the-fly into `out_dir` (`save_strategy = 'checkpointed'`).
+        Run to completion and then write a single `.pkl` model (`save_strategy = 'atomic'`) or save on-the-fly into `out_dir` (`save_strategy = 'checkpointed'`).
         (Default: `'checkpointed'`)
     out_dir
         Path to the model’s working directory where all local classifiers and the tree are written.
@@ -553,7 +553,7 @@ def hier_train(X = None,
 
     Returns
     ----------
-    None
-        The model is saved to `out_dir`.
+    :class:`~celltypist.models.HierModel`
+        A :class:`~celltypist.models.HierModel` object.
     """
     pass
