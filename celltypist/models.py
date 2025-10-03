@@ -203,7 +203,7 @@ class Model():
             coef_vector = np.abs(coef_vector)
         return self.features[np.argsort(-coef_vector)][:top_n]
 
-    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0) -> None:
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0, indent: str = "") -> None:
         """
         Convert the model of one species to another species by mapping orthologous genes.
         Note that when provided with a custom map file, this method can be used to convert genes in the model to other formats (orthologous genes, Ensembl IDs, HGNC IDs, etc.).
@@ -230,6 +230,8 @@ class Model():
             (Default: `'average'`)
         random_state
             Random seed for reproducibility. This argument is only relevant if `unique_only = False` and `collapse = 'random'`.
+        indent
+            String prefix for log messages. Default to no prefix.
 
         Returns
         ----------
@@ -274,7 +276,7 @@ class Model():
             map_content.drop_duplicates([1], inplace=True, keep=False)
         map_content['index_from'] = pd.DataFrame(self.features, columns=['features']).reset_index().set_index('features').loc[map_content[convert_from], 'index'].values
         #main
-        logger.info(f"🧬 Number of genes in the original model: {len(self.features)}")
+        logger.info(f"{indent}🧬 Number of genes in the original model: {len(self.features)}")
         features_to = map_content[convert_to].values if unique_only else np.unique(map_content[convert_to])
         if unique_only:
             index_from = map_content['index_from'].values
@@ -313,7 +315,7 @@ class Model():
         self.classifier.features = features_to
         self.scaler.n_features_in_ = len(features_to)
         self.description['date'] = str(datetime.now())
-        logger.info(f"✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
+        logger.info(f"{indent}✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
 
     def subset(self, keep_cell_types: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None, exclude_cell_types: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> None:
         """
@@ -590,6 +592,14 @@ class HierModel():
             logger.info(f"🧬 Top markers for '{cell_type}' found at classifiers: {', '.join(results.keys())}")
             return results
 
+    def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0) -> None:
+        logger.info("🔄 Converting all models in the hierarchical model...")
+        for fname, model in self.model_mapping.items():
+            logger.info(f"   ↪ Converting model `{fname}`")
+            model.convert(map_file = map_file, sep = sep, convert_from = convert_from, convert_to = convert_to, unique_only = unique_only, collapse = collapse, random_state = random_state, indent = "      ")
+        self.tree.date = str(datetime.now())
+        logger.info("✅ Hierarchical model conversion completed")
+
 def get_model_path(file: str) -> str:
     """
     Get the full path to a file in the `models` folder.
@@ -791,3 +801,5 @@ def models_description(on_the_fly: bool = False) -> pd.DataFrame:
         descriptions = [model['details'] for model in models]
         types = [model['type'] for model in models]
     return pd.DataFrame({'model': filenames, 'type': types, 'description': descriptions})
+
+HierModel.convert.__doc__ = Model.convert.__doc__
