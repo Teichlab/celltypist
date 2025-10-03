@@ -543,7 +543,7 @@ def hier_train(X = None,
     out_dir
         Path to the model’s working directory where all local classifiers and the tree are written.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
-        Default to `{tree.handle}_{mode}` if not provided.
+        Default to `{tree.handle}_{mode}` in the current directory if not provided.
     resume
         Whether to resume from an existing run in `out_dir`.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
@@ -556,4 +556,34 @@ def hier_train(X = None,
     :class:`~celltypist.models.HierModel`
         A :class:`~celltypist.models.HierModel` object.
     """
-    pass
+    #Validate params
+    if not use_SGD and use_GPU and 'cuml' not in sys.modules:
+        logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
+        return
+    if mode not in ('LCPN', 'LCL'):
+        raise ValueError(
+                f"🛑 Unrecognized `mode` value, should be one of `'LCPN'` or `'LCL'`")
+    tree = tree if instance(tree, Tree) else Tree.from_json(tree)
+    multi_anno = tree.get_multilevel_anno(leaf_anno)
+    if save_strategy not in ('checkpointed', 'atomic'):
+        raise ValueError(
+                f"🛑 Unrecognized `save_strategy` value, should be one of `'checkpointed'` or `'atomic'`")
+    if save_strategy == 'checkpointed':
+        if out_dir is None:
+            out_dir = f"{tree.handle}_{mode}"
+            logger.info(f"📂 Output directory not specified by `out_dir`. Using default: {out_dir}")
+        if not os.path.isdir(out_dir):
+            logger.info(f"📁 Output directory {out_dir} does not exist, will create one")
+            os.mkdir(out_dir)
+        tree_file = os.path.join(out_dir, "tree.json")
+        continued = False
+        if resume:
+            if os.path.isfile(tree_file):
+                logger.info(f"📂 Detected an existing output directory {out_dir}, will resume from previous checkpoint")
+                continued = True
+            else:
+                logger.info(f"📂 Did not detect any previous checkpoints in {out_dir}. A new training job will be started")
+        else:
+            if os.listdir(out_dir):
+                raise FileExistsError(
+                        f"🛑 Output directory {out_dir} is not empty, please remove its contents or specify an empty folder to start a new training job")
