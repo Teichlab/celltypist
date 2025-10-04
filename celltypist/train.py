@@ -576,7 +576,7 @@ def hier_train(X = None,
         tree_file = os.path.join(out_dir, "tree.json")
         if resume:
             if os.path.isfile(tree_file):
-                logger.info(f"📂 Resuming the previous training job in `{out_dir}`")
+                logger.info(f"📂 Resuming previous training run in `{out_dir}`")
                 continued = True
             else:
                 raise ValueError(
@@ -585,9 +585,9 @@ def hier_train(X = None,
             if os.path.isdir(out_dir):
                 if os.listdir(out_dir):
                     raise ValueError(
-                            f"🛑 Invalid output directory `{out_dir}`. Please remove its contents or specify an empty folder to start a new training job")
+                            f"🛑 Invalid output directory `{out_dir}`. Please remove its contents or specify an empty folder to start a new training run")
                 else:
-                    logger.info(f"📂 Starting a new training job in `{out_dir}`")
+                    logger.info(f"📂 Starting a new training run in `{out_dir}`")
             else:
                 os.makedir(out_dir)
-                logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training job")
+                logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
