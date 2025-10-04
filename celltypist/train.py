@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scanpy as sc
+import os
 from anndata import AnnData
 from sklearn.preprocessing import StandardScaler,LabelEncoder
 from sklearn.linear_model import LogisticRegression
@@ -592,4 +593,4 @@ def hier_train(X = None,
                 os.mkdir(out_dir)
                 logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
     else:
-        logger.info("🧩 Using atomic save strategy — training will run to completion")
+        logger.info("🧩 Using atomic save strategy; training will run to completion")
