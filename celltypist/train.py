@@ -543,7 +543,7 @@ def hier_train(X = None,
     out_dir
         Path to the model’s working directory where all local classifiers and the tree are written.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
-        Default to `{tree.handle}_{mode}` in the current directory if not provided.
+        Default to `{tree.handle}_{mode}` in the current working directory if not provided.
     resume
         Whether to resume from an existing run in `out_dir`.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
@@ -589,5 +589,7 @@ def hier_train(X = None,
                 else:
                     logger.info(f"📂 Starting a new training run in `{out_dir}`")
             else:
-                os.makedir(out_dir)
+                os.mkdir(out_dir)
                 logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
+    else:
+        logger.info("🧩 Using atomic save strategy — training will run to completion")
