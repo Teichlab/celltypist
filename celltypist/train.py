@@ -431,7 +431,7 @@ def hier_train(X = None,
                mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
                feature_selection: bool = False, top_genes: int = 300,
                date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
-               save_strategy: str = 'checkpointed', out_dir: Optional[str] = None, resume: bool = True,
+               save_strategy: str = 'checkpointed', out_dir: Optional[str] = None, resume: bool = False,
                **kwargs) -> HierModel:
     """
     Train a hierarchical ensemble model for cell type classification, built from local classifiers using either LCPN (Local Classifier per Parent Node) or LCL (Local Classifier per Level).
@@ -547,7 +547,7 @@ def hier_train(X = None,
     resume
         Whether to resume from an existing run in `out_dir`.
         This argument is only relevant if saving the model on-the-fly (`save_strategy = 'checkpointed'`).
-        (Default: `True`)
+        (Default: `False`)
     **kwargs
         Other keyword arguments passed to :class:`~sklearn.linear_model.LogisticRegression` (`use_SGD = False` and `use_GPU = False`), :class:`cuml.LogisticRegression` (`use_SGD = False` and `use_GPU = True`), or :class:`~sklearn.linear_model.SGDClassifier` (`use_SGD = True`).
 
@@ -556,34 +556,38 @@ def hier_train(X = None,
     :class:`~celltypist.models.HierModel`
         A :class:`~celltypist.models.HierModel` object trained by celltypist.
     """
-    #Validate params
+    #validate params
     if not use_SGD and use_GPU and 'cuml' not in sys.modules:
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
     if mode not in ('LCPN', 'LCL'):
         raise ValueError(
                 f"🛑 Unrecognized `mode` value, should be one of `'LCPN'` or `'LCL'`")
-    tree = tree if instance(tree, Tree) else Tree.from_json(tree)
+    tree = tree if isinstance(tree, Tree) else Tree.from_json(tree)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
     if save_strategy not in ('checkpointed', 'atomic'):
         raise ValueError(
                 f"🛑 Unrecognized `save_strategy` value, should be one of `'checkpointed'` or `'atomic'`")
     if save_strategy == 'checkpointed':
+        continued = False
         if out_dir is None:
             out_dir = f"{tree.handle}_{mode}"
-            logger.info(f"📂 Output directory not specified by `out_dir`. Using default: {out_dir}")
-        if not os.path.isdir(out_dir):
-            logger.info(f"📁 Output directory {out_dir} does not exist, will create one")
-            os.mkdir(out_dir)
+            logger.info(f"📂 Output directory not specified. Using default: `{out_dir}`")
         tree_file = os.path.join(out_dir, "tree.json")
-        continued = False
         if resume:
             if os.path.isfile(tree_file):
-                logger.info(f"📂 Detected an existing output directory {out_dir}, will resume from previous checkpoint")
+                logger.info(f"📂 Resuming the previous training job in `{out_dir}`")
                 continued = True
             else:
-                logger.info(f"📂 Did not detect any previous checkpoints in {out_dir}. A new training job will be started")
+                raise ValueError(
+                        f"🛑 Cannot resume training. Make sure `out_dir` exists and contains a previous run")
         else:
-            if os.listdir(out_dir):
-                raise FileExistsError(
-                        f"🛑 Output directory {out_dir} is not empty, please remove its contents or specify an empty folder to start a new training job")
+            if os.path.isdir(out_dir):
+                if os.listdir(out_dir):
+                    raise ValueError(
+                            f"🛑 Invalid output directory `{out_dir}`. Please remove its contents or specify an empty folder to start a new training job")
+                else:
+                    logger.info(f"📂 Starting a new training job in `{out_dir}`")
+            else:
+                os.makedir(out_dir)
+                logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training job")
