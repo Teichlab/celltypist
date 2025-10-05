@@ -447,6 +447,7 @@ def hier_train(X = None,
     tree
         A :class:`~celltypist.tree.Tree` object representing the predefined cell type hierarchy.
         Also accepts the tree in dictionary form, or via a JSON file with that representation.
+        This argument is ignored if a previous run is resumed (`save_strategy = 'checkpointed'` and `resume = True`).
     leaf_anno
         Path to the file containing leaf cell type label per line corresponding to the cells in `X`.
         Also accepts any list-like objects already loaded in memory (such as an array).
@@ -564,19 +565,24 @@ def hier_train(X = None,
     if mode not in ('LCPN', 'LCL'):
         raise ValueError(
                 f"🛑 Unrecognized `mode` value, should be one of `'LCPN'` or `'LCL'`")
-    tree = tree if isinstance(tree, Tree) else Tree.from_json(tree)
-    multi_anno = tree.get_multilevel_anno(leaf_anno)
     if save_strategy not in ('checkpointed', 'atomic'):
         raise ValueError(
                 f"🛑 Unrecognized `save_strategy` value, should be one of `'checkpointed'` or `'atomic'`")
+    continued = False
     if save_strategy == 'checkpointed':
-        continued = False
         if out_dir is None:
             out_dir = f"{tree.handle}_{mode}"
             logger.info(f"📂 Output directory not specified. Using default: `{out_dir}`")
         tree_file = os.path.join(out_dir, "tree.json")
         if resume:
             if os.path.isfile(tree_file):
+                tree = Tree.from_json(tree_file)
+                if not hasattr(tree, 'mode'):
+                    raise ValueError(
+                            f"🛑 Cannot resume training. Make sure `out_dir` contains a previous run")
+                if tree.mode != mode:
+                    raise ValueError(
+                            f"🛑 The mode of previous run in `out_dir` ('{tree.mode}') does not match the current training mode ('{mode}'). Please ensure you are resuming with the same mode")
                 logger.info(f"📂 Resuming previous training run in `{out_dir}`")
                 continued = True
             else:
@@ -594,3 +600,12 @@ def hier_train(X = None,
                 logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
     else:
         logger.info("🧩 Using atomic save strategy; training will run to completion")
+    if not continued:
+        tree = tree if isinstance(tree, Tree) else Tree.from_json(tree)
+        for node in tree.iter_nodes(leaf_only = False):
+            node.model = ''
+        attr_list = list(tree.__dict__)
+        for attr in attr_list:
+            if attr.startswith('level') and attr.endswith('_classifier'):
+                delattr(tree, attr)
+    multi_anno = tree.get_multilevel_anno(leaf_anno)
