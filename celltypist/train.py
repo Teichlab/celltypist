@@ -579,10 +579,10 @@ def hier_train(X = None,
                 tree = Tree.from_json(tree_file)
                 if not hasattr(tree, 'mode'):
                     raise ValueError(
-                            f"🛑 Cannot resume training. Make sure `out_dir` contains a previous run")
+                            f"🛑 Cannot resume training: `{out_dir}` does not contain a previous run")
                 if tree.mode != mode:
                     raise ValueError(
-                            f"🛑 The mode of previous run in `out_dir` ('{tree.mode}') does not match the current training mode ('{mode}'). Please ensure you are resuming with the same mode")
+                            f"🛑 The mode of previous run in `{out_dir}` ('{tree.mode}') does not match the current training mode ('{mode}'). Please ensure you are resuming with the same mode")
                 logger.info(f"📂 Resuming previous training run in `{out_dir}`")
                 continued = True
             else:
@@ -601,7 +601,7 @@ def hier_train(X = None,
     else:
         logger.info("🧩 Using atomic save strategy; training will run to completion")
     if not continued:
-        tree = tree if isinstance(tree, Tree) else Tree.from_json(tree)
+        tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
             node.model = ''
         attr_list = list(tree.__dict__)
