@@ -573,8 +573,8 @@ def hier_train(X = None,
         if out_dir is None:
             out_dir = f"{tree.handle}_{mode}"
             logger.info(f"📂 Output directory not specified. Using default: `{out_dir}`")
-        tree_file = os.path.join(out_dir, "tree.json")
         if resume:
+            tree_file = os.path.join(out_dir, "tree.json")
             if os.path.isfile(tree_file):
                 tree = Tree.from_json(tree_file)
                 if not hasattr(tree, 'mode'):
@@ -608,4 +608,15 @@ def hier_train(X = None,
         for attr in attr_list:
             if attr.startswith('level') and attr.endswith('_classifier'):
                 delattr(tree, attr)
+        model_mapping = {}
+    else:
+        model_mapping = {}
+        if tree.mode == "LCPN":
+            for node in tree.iter_nodes(leaf_only = False):
+                if node.model:
+                    model_mapping[node.model] = Model.load(os.path.join(out_dir, node.model))
+        else:
+            for attr, val in tree.__dict__.items():
+                if attr.startswith("level") and attr.endswith("_classifier"):
+                    model_mapping[val] = Model.load(os.path.join(out_dir, val))
     multi_anno = tree.get_multilevel_anno(leaf_anno)
