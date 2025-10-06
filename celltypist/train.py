@@ -599,7 +599,7 @@ def hier_train(X = None,
                 os.mkdir(out_dir)
                 logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
     else:
-        logger.info("🧩 Using atomic save strategy; training will run to completion")
+        logger.info("⚛️ Using atomic save strategy; training will run to completion")
     if not continued:
         tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
@@ -611,6 +611,7 @@ def hier_train(X = None,
         model_mapping = {}
     else:
         model_mapping = {}
+        depth = tree.depth
         if tree.mode == "LCPN":
             for node in tree.iter_nodes(leaf_only = False):
                 if node.model:
@@ -619,4 +620,29 @@ def hier_train(X = None,
             for attr, val in tree.__dict__.items():
                 if attr.startswith("level") and attr.endswith("_classifier"):
                     model_mapping[val] = Model.load(os.path.join(out_dir, val))
+            if len(model_mapping) == depth - 1:
+                logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
+                return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
+    #LCL
+    if mode == 'LCL':
+        indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
+        logger.info(f"📚 Total models to train: {depth-1}")
+        sm, sv, ss, sn = scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_
+        for n in range(2, depth+1):
+            filename = f"{tree.handle}_level{n}.pkl"
+            if filename in model_mapping:
+                logger.info(f"⏩ Skipping level-{n} model [{n-1}/{depth-1}]: `{filename}` (model exists)")
+                continue
+            labels = np.array(multi_anno[f"level_{n}_anno"])
+            scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
+            logger.info(f"↪ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, '', f"cell types at level {n} of the tree '{tree.handle}'", 'N/A', source, version, **kwargs)
+            setattr(tree, f"level{n}_classifier", filename)
+            model_mapping[filename] = model
+            hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
+            hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
+            model.write(os.path.join(out_dir, filename))
+    else:
+        pass
+    return hier_model
