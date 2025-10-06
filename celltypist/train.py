@@ -638,7 +638,7 @@ def hier_train(X = None,
             labels = np.array(multi_anno[f"level_{n}_anno"])
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
             logger.info(f"🏋️ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})", 'N/A', source, version, **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
