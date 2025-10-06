@@ -386,7 +386,7 @@ class HierModel():
         The training mode (either `'LCPN'` or `'LCL'`).
         (Default: `'LCPN'`)
     date
-        Free text of the date of the hierarchical model. Default to an empty string.
+        Free text of the date of the hierarchical model. Default to current time.
     details
         Free text of the description of the hierarchical model. Default to an empty string.
     url
@@ -410,7 +410,7 @@ class HierModel():
     """
     def __init__(self, tree: Tree, model_mapping: dict, mode: str = 'LCPN', date: str = "", details: str = "", url: str = "", source: str = "", version: str = ""):
         tree.mode = mode
-        tree.date = date
+        tree.date = date if date else str(datetime.now())
         for attr, val in [("details", details), ("url", url), ("source", source), ("version", version)]:
             if not val and hasattr(tree, attr):
                 continue
