@@ -124,7 +124,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
                 f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
     return indata, labels, genes
 
-def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> LogisticRegression:
+def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the logistic Classifier.
     """
@@ -134,14 +134,14 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
     elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
         raise ValueError(
                 f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, and `'saga'`")
-    logger.info(f"🏋️ Training data using logistic regression")
+    logger.info(f"{indent}🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
-        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
+        logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
 
-def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRegression:
+def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the cuml logistic Classifier.
     """
@@ -151,10 +151,10 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRe
                 f"🛑 Invalid `solver`, should be `'qn'` to run on GPU")
     le = LabelEncoder()
     labels_ = le.fit_transform(labels)
-    logger.info(f"🏋️ Training data using logistic regression on GPU")
+    logger.info(f"{indent}🏋️ Training data using logistic regression on GPU")
     no_cells = len(labels)
     if (no_cells > 100000) and (indata.shape[1] > 10000):
-        logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
+        logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
     classifier = LogisticRegression(multi_class = 'ovr')
@@ -165,22 +165,22 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRe
 
 def _SGDClassifier(indata, labels,
                    alpha, max_iter, n_jobs,
-                   mini_batch, batch_number, batch_size, epochs, balance_cell_type, **kwargs) -> SGDClassifier:
+                   mini_batch, batch_number, batch_size, epochs, balance_cell_type, indent, **kwargs) -> SGDClassifier:
     """
     For internal use. Get the SGDClassifier.
     """
     loss_mode = 'log_loss' if float(skv[:3]) >= 1.1 else 'log'
     classifier = SGDClassifier(loss = loss_mode, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
-        logger.info(f"🏋️ Training data using SGD logistic regression")
+        logger.info(f"{indent}🏋️ Training data using SGD logistic regression")
         if (len(labels) > 100000) and (indata.shape[1] > 10000):
-            logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {len(labels)} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
+            logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {len(labels)} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
         classifier.fit(indata, labels)
     else:
-        logger.info(f"🏋️ Training data using mini-batch SGD logistic regression")
+        logger.info(f"{indent}🏋️ Training data using mini-batch SGD logistic regression")
         no_cells = len(labels)
         if no_cells < 10000:
-            logger.warn(f"⚠️ Warning: the number of cells ({no_cells}) is not big enough to conduct a proper mini-batch training. You may consider using traditional SGD classifier (mini_batch = False)")
+            logger.warn(f"{indent}⚠️ Warning: the number of cells ({no_cells}) is not big enough to conduct a proper mini-batch training. You may consider using traditional SGD classifier (mini_batch = False)")
         if no_cells <= batch_size:
             raise ValueError(
                     f"🛑 Number of cells ({no_cells}) is fewer than the batch size ({batch_size}). Decrease `batch_size`, or use SGD directly (mini_batch = False)")
@@ -192,7 +192,7 @@ def _SGDClassifier(indata, labels,
             mapping = pd.Series(1 / (celltype_freq[1]*len_celltype), index = celltype_freq[0])
             p = mapping[labels].values
         for epoch in range(1, (epochs+1)):
-            logger.info(f"⏳ Epochs: [{epoch}/{epochs}]")
+            logger.info(f"{indent}⏳ Epochs: [{epoch}/{epochs}]")
             if not balance_cell_type:
                 sampled_cell_index = np.random.choice(no_cells, no_cells_sample, replace = False)
             else:
@@ -239,35 +239,35 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     return indata, labels, genes, max_iter, scaler
 
 def _actual_classifier(indata, labels, genes, max_iter, scaler,
-        C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, **kwargs) -> Model:
+        C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, indent, **kwargs) -> Model:
     """
     For internal use. The actual classifier.
     """
     #classifier
     if use_SGD or feature_selection:
-        classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+        classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, indent = indent, **kwargs)
     elif use_GPU:
-        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
+        classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, indent = indent, **kwargs)
     else:
-        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+        classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, indent = indent, **kwargs)
     #feature selection -> new classifier and scaler
     if feature_selection:
-        logger.info(f"🔎 Selecting features")
+        logger.info(f"{indent}🔎 Selecting features")
         if len(genes) <= top_genes:
             raise ValueError(
                     f"🛑 The number of genes ({len(genes)}) is fewer than the `top_genes` ({top_genes}). Unable to perform feature selection")
         gene_index = np.argpartition(np.abs(classifier.coef_), -top_genes, axis = 1)[:, -top_genes:]
         gene_index = np.unique(gene_index)
-        logger.info(f"🧬 {len(gene_index)} features are selected")
+        logger.info(f"{indent}🧬 {len(gene_index)} features are selected")
         genes = genes[gene_index]
         #indata = indata[:, gene_index]
-        logger.info(f"🏋️ Starting the second round of training")
+        logger.info(f"{indent}🏋️ Starting the second round of training")
         if use_SGD:
-            classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, **kwargs)
+            classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, indent = indent, **kwargs)
         elif use_GPU:
-            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, **kwargs)
+            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, indent = indent, **kwargs)
         else:
-            classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
+            classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, indent = indent, **kwargs)
         scaler.mean_ = scaler.mean_[gene_index]
         scaler.var_ = scaler.var_[gene_index]
         scaler.scale_ = scaler.scale_[gene_index]
@@ -278,7 +278,7 @@ def _actual_classifier(indata, labels, genes, max_iter, scaler,
     if not date:
         date = str(datetime.now())
     description = {'date': date, 'details': details, 'url': url, 'source': source, 'version': version, 'number_celltypes': len(classifier.classes_)}
-    logger.info(f"✅ Model training done!")
+    logger.info(f"{indent}✅ Model training done!")
     return Model(classifier, scaler, description)
 
 def train(X = None,
@@ -415,7 +415,7 @@ def train(X = None,
     #prepare params
     indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter)
     #actual classifier
-    model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, **kwargs)
+    model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, '', **kwargs)
     return model
 
 def hier_train(X = None,
@@ -638,7 +638,7 @@ def hier_train(X = None,
             labels = np.array(multi_anno[f"level_{n}_anno"])
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
             logger.info(f"🏋️ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
