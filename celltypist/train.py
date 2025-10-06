@@ -609,6 +609,7 @@ def hier_train(X = None,
             if attr.startswith('level') and attr.endswith('_classifier'):
                 delattr(tree, attr)
         model_mapping = {}
+        depth = tree.depth
     else:
         model_mapping = {}
         depth = tree.depth
@@ -624,7 +625,7 @@ def hier_train(X = None,
                 logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
                 return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
-    #LCL
+    #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
         logger.info(f"📚 Total models to train: {depth-1}")
@@ -636,13 +637,14 @@ def hier_train(X = None,
                 continue
             labels = np.array(multi_anno[f"level_{n}_anno"])
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
-            logger.info(f"↪ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, '', f"cell types at level {n} of the tree '{tree.handle}'", 'N/A', source, version, **kwargs)
+            logger.info(f"🏋️ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})", 'N/A', source, version, **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
-            hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
-            hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
-            model.write(os.path.join(out_dir, filename))
+            if save_strategy == 'checkpointed':
+                hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
+                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
+                model.write(os.path.join(out_dir, filename))
     else:
         pass
-    return hier_model
+    return HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
