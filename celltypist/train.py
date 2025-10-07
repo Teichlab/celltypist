@@ -568,6 +568,8 @@ def hier_train(X = None,
     if save_strategy not in ('checkpointed', 'atomic'):
         raise ValueError(
                 f"🛑 Unrecognized `save_strategy` value, should be one of `'checkpointed'` or `'atomic'`")
+    #checkpointed: continued=True & loaded tree & out_dir (resume=True) vs. continued=False & empty out_dir (resume=False)
+    #atomic: only continued=False
     continued = False
     if save_strategy == 'checkpointed':
         if out_dir is None:
@@ -600,6 +602,8 @@ def hier_train(X = None,
                 logger.info(f"📂 Created new output directory `{out_dir}`. Starting a new training run")
     else:
         logger.info("⚛️ Using atomic save strategy; training will run to completion")
+    #now all have continued, loaded tree, and out_dir (if needed) & model_mapping (even empty)
+    #LCL early return
     if not continued:
         tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
@@ -624,6 +628,7 @@ def hier_train(X = None,
             if len(model_mapping) == depth - 1:
                 logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
                 return HierModel(tree, model_mapping, mode = mode, date = tree.date)
+    #set size
     multi_anno = tree.get_multilevel_anno(leaf_anno)
     tree.assign_size(leaf_anno)
     #main
@@ -648,5 +653,6 @@ def hier_train(X = None,
                 model.write(os.path.join(out_dir, filename))
     else:
         pass
+    #done
     logger.info(f"✅ Hierarchical training completed successfully (mode = {mode})")
     return HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
