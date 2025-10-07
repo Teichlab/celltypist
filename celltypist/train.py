@@ -645,23 +645,27 @@ def hier_train(X = None,
                 if len([child for child in node.children if child.size > 0]) >= 2:
                     n_needed_models += 1
         else:
-            n_needed_models = depth - 1:
+            n_needed_models = (multi_anno.apply(pd.Series.nunique, axis = 0) >= 2).sum()
         if len(model_mapping) == n_needed_models:
             logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
             return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
-        logger.info(f"📚 Total models to train: {depth-1}")
+        logger.info(f"📚 Total models to train: {n_needed_models}")
         sm, sv, ss, sn = scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_
+        ith = 0
         for n in range(2, depth+1):
+            labels = np.array(multi_anno[f"level_{n}_anno"])
+            if len(np.unique(labels)) < 2:
+                continue
+            ith += 1
             filename = f"{tree.handle}_level{n}.pkl"
             if filename in model_mapping:
-                logger.info(f"⏩ Skipping level-{n} model [{n-1}/{depth-1}]: `{filename}` (model exists)")
+                logger.info(f"⏩ Skipping level-{n} model [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
-            labels = np.array(multi_anno[f"level_{n}_anno"])
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
-            logger.info(f"🏋️ Training level-{n} model [{n-1}/{depth-1}]: `{filename}`")
+            logger.info(f"🏋️ Training level-{n} model [{ith}/{n_needed_models}]: `{filename}`")
             model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
