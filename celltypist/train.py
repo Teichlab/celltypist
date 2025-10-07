@@ -625,6 +625,7 @@ def hier_train(X = None,
                 logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
                 return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
+    tree.assign_size(leaf_anno)
     #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
@@ -647,4 +648,5 @@ def hier_train(X = None,
                 model.write(os.path.join(out_dir, filename))
     else:
         pass
+    logger.info(f"✅ Hierarchical training completed successfully (mode = {mode})")
     return HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
