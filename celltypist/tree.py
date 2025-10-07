@@ -1164,6 +1164,27 @@ class Tree():
             results[col_name] = annotations_series.replace(mapping)
         return pd.DataFrame(results, index = annotations_series.index)
 
+    def assign_size(self, leaf_anno: Union[list, tuple, np.ndarray, pd.Series, pd.Index]) -> None:
+        """
+        Assign cell counts (size) to each node in the tree based on the provided leaf-level annotations.
+
+        Parameters
+        ----------
+        leaf_anno
+            A sequence of leaf-level annotations. Elements must be contained by the tree leaves.
+
+        Returns
+        ----------
+        None
+            Updates each node in the tree with a `size` attribute representing the number of cells from `leaf_anno` that fall within its subtree.
+        """
+        multi_anno = self.get_multilevel_anno(leaf_anno)
+        all_nodes_per_cell = multi_anno.apply(lambda row: set(row.values), axis=1)
+        all_nodes = [node for cell_nodes in all_nodes_per_cell for node in cell_nodes]
+        node_counts = pd.Series(all_nodes).value_counts().to_dict()
+        for node in self.iter_nodes(leaf_only = False):
+            node.size = int(node_counts.get(node.original_name, 0))
+
 Tree.validate.__doc__ = TreeNode.validate.__doc__.replace("node", "tree")
 Tree.depth.__doc__ = TreeNode.depth.__doc__.replace("node", "tree")
 Tree.n_leaves.__doc__ = TreeNode.n_leaves.__doc__
