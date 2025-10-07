@@ -1179,7 +1179,7 @@ class Tree():
             Updates each node in the tree with a `size` attribute representing the number of cells from `leaf_anno` that fall within its subtree.
         """
         multi_anno = self.get_multilevel_anno(leaf_anno)
-        all_nodes_per_cell = multi_anno.apply(lambda row: set(row.values), axis=1)
+        all_nodes_per_cell = multi_anno.apply(lambda row: set(row.values), axis = 1)
         all_nodes = [node for cell_nodes in all_nodes_per_cell for node in cell_nodes]
         node_counts = pd.Series(all_nodes).value_counts().to_dict()
         for node in self.iter_nodes(leaf_only = False):
