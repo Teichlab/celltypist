@@ -603,7 +603,6 @@ def hier_train(X = None,
     else:
         logger.info("⚛️ Using atomic save strategy; training will run to completion")
     #now all have continued, loaded tree, and out_dir (if needed) & model_mapping (even empty)
-    #LCL early return
     if not continued:
         tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
@@ -625,9 +624,6 @@ def hier_train(X = None,
             for attr, val in tree.__dict__.items():
                 if attr.startswith("level") and attr.endswith("_classifier"):
                     model_mapping[val] = Model.load(os.path.join(out_dir, val))
-            if len(model_mapping) == depth - 1:
-                logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
-                return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #real leaf_anno -> multi_anno & set size
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X, backed = 'r') if isinstance(X, str) else X
@@ -641,6 +637,18 @@ def hier_train(X = None,
     multi_anno = tree.get_multilevel_anno(leaf_anno)
     if not continued:
         tree.assign_size(leaf_anno)
+    #early return
+    if continued:
+        if tree.mode == "LCPN":
+            n_needed_models = 0
+            for node in tree.iter_nodes(leaf_only = False):
+                if len([child for child in node.children if child.size > 0]) >= 2:
+                    n_needed_models += 1
+        else:
+            n_needed_models = depth - 1:
+        if len(model_mapping) == n_needed_models:
+            logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
+            return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
