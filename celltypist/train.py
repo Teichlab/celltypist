@@ -628,9 +628,19 @@ def hier_train(X = None,
             if len(model_mapping) == depth - 1:
                 logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
                 return HierModel(tree, model_mapping, mode = mode, date = tree.date)
-    #set size
+    #real leaf_anno -> multi_anno & set size
+    if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
+        adata = sc.read(X, backed = 'r') if isinstance(X, str) else X
+        if isinstance(leaf_anno, str) and (leaf_anno in adata.obs):
+            leaf_anno = adata.obs[leaf_anno]
+        else:
+            leaf_anno = _to_vector(leaf_anno)
+    else:
+        leaf_anno = _to_vector(leaf_anno)
+    leaf_anno = np.array(leaf_anno)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
-    tree.assign_size(leaf_anno)
+    if not continued:
+        tree.assign_size(leaf_anno)
     #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
