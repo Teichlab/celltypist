@@ -645,7 +645,7 @@ def hier_train(X = None,
                 if len([child for child in node.children if child.size > 0]) >= 2:
                     n_needed_models += 1
         else:
-            n_needed_models = (multi_anno.apply(pd.Series.nunique, axis = 0) >= 2).sum()
+            n_needed_models = (multi_anno.nunique(axis = 0) >= 2).sum()
         if len(model_mapping) == n_needed_models:
             logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
             return HierModel(tree, model_mapping, mode = mode, date = tree.date)
