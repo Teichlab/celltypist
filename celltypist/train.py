@@ -615,6 +615,7 @@ def hier_train(X = None,
         depth = tree.depth
     else:
         depth = tree.depth
+        logger.info(f"⏳ Loading previous run")
         if tree.mode == "LCPN":
             for node in tree.iter_nodes(leaf_only = False):
                 if node.model:
