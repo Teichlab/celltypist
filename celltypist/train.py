@@ -603,6 +603,7 @@ def hier_train(X = None,
     else:
         logger.info("⚛️ Using atomic save strategy; training will run to completion")
     #now all have continued, loaded tree, and out_dir (if needed) & model_mapping (even empty)
+    model_mapping = {}
     if not continued:
         tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
@@ -611,10 +612,8 @@ def hier_train(X = None,
         for attr in attr_list:
             if attr.startswith('level') and attr.endswith('_classifier'):
                 delattr(tree, attr)
-        model_mapping = {}
         depth = tree.depth
     else:
-        model_mapping = {}
         depth = tree.depth
         if tree.mode == "LCPN":
             for node in tree.iter_nodes(leaf_only = False):
