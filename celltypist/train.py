@@ -677,7 +677,7 @@ def hier_train(X = None,
         #Get subsettable X
         if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
             X = sc.read(X) if isinstance(X, str) else X
-        if isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
+        elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             X = sc.read(X)
             if transpose_input:
                 X = X.transpose()
@@ -688,7 +688,7 @@ def hier_train(X = None,
                 genes = _to_vector(genes)
                 if len(genes) != X.n_vars:
                     raise ValueError(
-                            f"🛑 The number of genes provided does not match the number of genes in {X}")
+                            f"🛑 The number of genes provided does not match the number of genes needed")
                 X.var_names = np.array(genes)
             if not float(X.X[:1000].max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
@@ -714,7 +714,7 @@ def hier_train(X = None,
             flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
             indata, labels, genes, max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(node, 'model', filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
