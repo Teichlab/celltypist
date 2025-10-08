@@ -612,9 +612,7 @@ def hier_train(X = None,
         for attr in attr_list:
             if attr.startswith('level') and attr.endswith('_classifier'):
                 delattr(tree, attr)
-        depth = tree.depth
     else:
-        depth = tree.depth
         logger.info(f"⏳ Loading previous run")
         if tree.mode == "LCPN":
             for node in tree.iter_nodes(leaf_only = False):
@@ -624,6 +622,7 @@ def hier_train(X = None,
             for attr, val in tree.__dict__.items():
                 if attr.startswith("level") and attr.endswith("_classifier"):
                     model_mapping[val] = Model.load(os.path.join(out_dir, val))
+    depth = tree.depth
     #real leaf_anno -> multi_anno & set size
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X, backed = 'r') if isinstance(X, str) else X
@@ -674,7 +673,54 @@ def hier_train(X = None,
                 hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
                 model.write(os.path.join(out_dir, filename))
     else:
-        pass
+        logger.info(f"📚 Total models to train: {n_needed_models}")
+        #Get subsettable X
+        if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
+            X = sc.read(X) if isinstance(X, str) else X
+        if isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
+            X = sc.read(X)
+            if transpose_input:
+                X = X.transpose()
+            if X.endswith(('.mtx', '.mtx.gz')):
+                if genes is None:
+                    raise Exception(
+                            "🛑 Missing `genes`. Please provide this argument together with the input mtx file")
+                genes = _to_vector(genes)
+                if len(genes) != X.n_vars:
+                    raise ValueError(
+                            f"🛑 The number of genes provided does not match the number of genes in {X}")
+                X.var_names = np.array(genes)
+            if not float(X.X[:1000].max()).is_integer():
+                logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
+            sc.pp.normalize_total(X, target_sum = 1e4)
+            sc.pp.log1p(X)
+        elif isinstance(X, str):
+            raise ValueError(
+                    "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
+        else:
+            if transpose_input:
+                X = X.transpose()
+                transpose_input = False
+        ith = 0
+        for node in tree.iter_nodes(leaf_only = False):
+            if len([child for child in node.children if child.size > 0]) < 2:
+                continue
+            ith += 1
+            filename = f"{node.internal_name}.pkl"
+            if filename in model_mapping:
+                logger.info(f"⏩ Skipping model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}` (model exists)")
+                continue
+            node_depth = node.depth
+            flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
+            logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
+            indata, labels, genes, max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
+            setattr(node, 'model', filename)
+            model_mapping[filename] = model
+            if save_strategy == 'checkpointed':
+                hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
+                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
+                model.write(os.path.join(out_dir, filename))
     #done
     logger.info(f"✅ Hierarchical training completed successfully (mode = {mode})")
     return HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
