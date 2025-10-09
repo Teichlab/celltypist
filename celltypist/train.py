@@ -646,7 +646,7 @@ def hier_train(X = None,
             raise ValueError(
                     f"🛑 The current `leaf_anno` does not match the one used in the previous run. Please resume with the same `leaf_anno`")
     #early return
-    if tree.mode == "LCPN":
+    if mode == "LCPN":
         n_needed_models = 0
         for node in tree.iter_nodes(leaf_only = False):
             if len([child for child in node.children if child.size > 0]) >= 2:
