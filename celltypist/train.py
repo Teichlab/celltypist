@@ -48,7 +48,7 @@ def _to_array(_array_like) -> np.ndarray:
         raise TypeError(
                 f"🛑 Please provide a valid array-like object as input")
 
-def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
+def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tuple:
     """
     For internal use. Prepare data for celltypist training.
     """
@@ -59,7 +59,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
         adata = sc.read(X) if isinstance(X, str) else X
         adata.var_names_make_unique()
         if adata.X[:1000].min() < 0:
-            logger.info("👀 Detected scaled expression in the input data, will try the .raw attribute")
+            logger.info(f"{indent}👀 Detected scaled expression in the input data, will try the .raw attribute")
             try:
                 indata = adata.raw.X
                 genes = adata.raw.var_names
@@ -88,7 +88,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
             adata.var_names = np.array(genes)
         adata.var_names_make_unique()
         if not float(adata.X[:1000].max()).is_integer():
-            logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
+            logger.warn(f"{indent}⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
         sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
         indata = adata.X
@@ -98,7 +98,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression) -> tuple:
         raise ValueError(
                 "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
     else:
-        logger.info("👀 The input training data is processed as an array-like object")
+        logger.info(f"{indent}👀 The input training data is processed as an array-like object")
         indata = X
         if transpose:
             indata = indata.transpose()
@@ -201,12 +201,12 @@ def _SGDClassifier(indata, labels,
                 classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = np.unique(labels))
     return classifier
 
-def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter) -> tuple:
+def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent) -> tuple:
     """
     For internal use. Wrapper code before the actual classifier.
     """
     #prepare
-    logger.info("🍳 Preparing data before training")
+    logger.info(f"{indent}🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression)
     if with_mean and isinstance(indata, spmatrix):
         indata = indata.toarray()
@@ -215,13 +215,13 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     if isinstance(flag, np.matrix):
         flag = flag.A1
     if flag.sum() > 0:
-        logger.info(f"✂️ {flag.sum()} non-expressed genes are filtered out")
+        logger.info(f"{indent}✂️ {flag.sum()} non-expressed genes are filtered out")
         #indata = indata[:, ~flag]
         genes = genes[~flag]
     #report data stats
-    logger.info(f"🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
+    logger.info(f"{indent}🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
     #scaler
-    logger.info(f"⚖️ Scaling input data")
+    logger.info(f"{indent}⚖️ Scaling input data")
     scaler = StandardScaler(with_mean = with_mean)
     indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
     indata[indata > 10] = 10
@@ -413,7 +413,7 @@ def train(X = None,
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
     #prepare params
-    indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter)
+    indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, '')
     #actual classifier
     model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, '', **kwargs)
     return model
@@ -650,7 +650,7 @@ def hier_train(X = None,
             return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #main
     if mode == 'LCL':
-        indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
+        indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter, '')
         logger.info(f"📚 Total models to train: {n_needed_models}")
         sm, sv, ss, sn = scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_
         #LCL
@@ -716,7 +716,7 @@ def hier_train(X = None,
             node_depth = len(tree.extract_path(node.original_name, print_path = False))
             flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
-            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
+            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter, '      ')
             model = _actual_classifier(indata, labels, out_genes, out_max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}", 'N/A', source, version, '      ', **kwargs)
             setattr(node, 'model', filename)
             model_mapping[filename] = model
