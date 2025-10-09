@@ -207,7 +207,7 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     """
     #prepare
     logger.info(f"{indent}🍳 Preparing data before training")
-    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression)
+    indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression, indent)
     if with_mean and isinstance(indata, spmatrix):
         indata = indata.toarray()
     #filter
