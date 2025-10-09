@@ -14,6 +14,7 @@ from .tree import Tree
 from scipy.sparse import spmatrix
 from datetime import datetime
 import sys
+import copy
 try:
     from cuml import LogisticRegression as cuLogisticRegression
 except ImportError:
@@ -645,22 +646,20 @@ def hier_train(X = None,
             raise ValueError(
                     f"🛑 The current `leaf_anno` does not match the one used in the previous run. Please resume with the same `leaf_anno`")
     #early return
-    if continued:
-        if tree.mode == "LCPN":
-            n_needed_models = 0
-            for node in tree.iter_nodes(leaf_only = False):
-                if len([child for child in node.children if child.size > 0]) >= 2:
-                    n_needed_models += 1
-        else:
-            n_needed_models = (multi_anno.nunique(axis = 0) >= 2).sum()
-        if len(model_mapping) == n_needed_models:
-            logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
-            return HierModel(tree, model_mapping, mode = mode, date = tree.date)
+    if tree.mode == "LCPN":
+        n_needed_models = 0
+        for node in tree.iter_nodes(leaf_only = False):
+            if len([child for child in node.children if child.size > 0]) >= 2:
+                n_needed_models += 1
+    else:
+        n_needed_models = (multi_anno.nunique(axis = 0) >= 2).sum()
+    if continued and len(model_mapping) == n_needed_models:
+        logger.info(f"✅ No need to resume, training in `{out_dir}` is already complete. The model is now loaded")
+        return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #main
     if mode == 'LCL':
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter, '')
         logger.info(f"📚 Total models to train: {n_needed_models}")
-        sm, sv, ss, sn = scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_
         #LCL
         ith = 0
         for n in range(2, depth+1):
@@ -672,15 +671,14 @@ def hier_train(X = None,
             if filename in model_mapping:
                 logger.info(f"⏩ Skipping level-{n} model training [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
-            scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
             logger.info(f"🏋️ Training level-{n} model [{ith}/{n_needed_models}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, copy.deepcopy(scaler), C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
                 hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
-                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
                 model.write(os.path.join(out_dir, filename))
+                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
     else:
         logger.info(f"📚 Total models to train: {n_needed_models}")
         #Get subsettable X
@@ -730,8 +728,8 @@ def hier_train(X = None,
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
                 hier_model = HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
-                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
                 model.write(os.path.join(out_dir, filename))
+                hier_model.tree.write(os.path.join(out_dir, 'tree.json'))
     #done
     logger.info(f"✅ Hierarchical training completed successfully (mode = {mode})")
     return HierModel(tree, model_mapping, mode = mode, date = date, details = details, url = url, source = source, version = version)
