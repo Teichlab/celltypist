@@ -653,6 +653,7 @@ def hier_train(X = None,
         indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter)
         logger.info(f"📚 Total models to train: {n_needed_models}")
         sm, sv, ss, sn = scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_
+        #LCL
         ith = 0
         for n in range(2, depth+1):
             labels = np.array(multi_anno[f"level_{n}_anno"])
@@ -661,7 +662,7 @@ def hier_train(X = None,
             ith += 1
             filename = f"{tree.handle}_level{n}.pkl"
             if filename in model_mapping:
-                logger.info(f"⏩ Skipping level-{n} model [{ith}/{n_needed_models}]: `{filename}` (model exists)")
+                logger.info(f"⏩ Skipping level-{n} model training [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
             logger.info(f"🏋️ Training level-{n} model [{ith}/{n_needed_models}]: `{filename}`")
@@ -678,17 +679,18 @@ def hier_train(X = None,
         if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
             X = sc.read(X) if isinstance(X, str) else X
         elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
+            X_old = X
             X = sc.read(X)
             if transpose_input:
                 X = X.transpose()
-            if X.endswith(('.mtx', '.mtx.gz')):
+            if X_old.endswith(('.mtx', '.mtx.gz')):
                 if genes is None:
                     raise Exception(
                             "🛑 Missing `genes`. Please provide this argument together with the input mtx file")
                 genes = _to_vector(genes)
                 if len(genes) != X.n_vars:
                     raise ValueError(
-                            f"🛑 The number of genes provided does not match the number of genes needed")
+                            f"🛑 The number of genes provided does not match the number of genes in {X_old}")
                 X.var_names = np.array(genes)
             if not float(X.X[:1000].max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
@@ -701,6 +703,7 @@ def hier_train(X = None,
             if transpose_input:
                 X = X.transpose()
                 transpose_input = False
+        #LCPN
         ith = 0
         for node in tree.iter_nodes(leaf_only = False):
             if len([child for child in node.children if child.size > 0]) < 2:
@@ -708,9 +711,9 @@ def hier_train(X = None,
             ith += 1
             filename = f"{node.internal_name}.pkl"
             if filename in model_mapping:
-                logger.info(f"⏩ Skipping model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}` (model exists)")
+                logger.info(f"⏩ Skipping model training for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
-            node_depth = node.depth
+            node_depth = len(tree.extract_path(node.original_name, print_path = False))
             flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
             indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
