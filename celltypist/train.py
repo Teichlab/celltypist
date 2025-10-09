@@ -665,7 +665,7 @@ def hier_train(X = None,
                 continue
             scaler.mean_, scaler.var_, scaler.scale_, scaler.n_features_in_ = sm, sv, ss, sn
             logger.info(f"🏋️ Training level-{n} model [{ith}/{n_needed_models}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes.copy(), max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
@@ -713,8 +713,8 @@ def hier_train(X = None,
             node_depth = node.depth
             flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
-            indata, labels, genes, max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
-            model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}" if details else '', 'N/A', source, version, '      ', **kwargs)
+            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter)
+            model = _actual_classifier(indata, labels, out_genes, out_max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}", 'N/A', source, version, '      ', **kwargs)
             setattr(node, 'model', filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
