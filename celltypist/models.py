@@ -488,7 +488,7 @@ class HierModel():
                         f"🛑 Invalid model: {model}. {exception}")
 
     @staticmethod
-    def import(folder: str):
+    def import_from(folder: str):
         """
         Import a hierarchical model previously exported.
         Supports user-modified trees where node `.model` attributes (LCPN) or tree-level `.level{n}_classifier` attributes (LCL) point to external model file paths.
