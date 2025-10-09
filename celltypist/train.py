@@ -636,6 +636,14 @@ def hier_train(X = None,
     multi_anno = tree.get_multilevel_anno(leaf_anno)
     if not continued:
         tree.assign_size(leaf_anno)
+    else:
+        proposed = tree.copy()
+        proposed.assign_size(leaf_anno)
+        p_sizes = [node.size for node in proposed.iter_nodes(leaf_only = False)]
+        t_sizes = [node.size for node in tree.iter_nodes(leaf_only = False)]
+        if not np.array_equal(p_sizes, t_sizes):
+            raise ValueError(
+                    f"🛑 The current `leaf_anno` does not match the one used in the previous run. Please resume with the same `leaf_anno`")
     #early return
     if continued:
         if tree.mode == "LCPN":
