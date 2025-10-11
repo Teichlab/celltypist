@@ -1018,7 +1018,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #You can visualise the tree using `celltypist.treeviz`, as detailed in `4.6.`.
   celltypist.treeviz(tree)
   ```
-  As well as the attributes `handle` (the unique identifier of the tree) and `root` (the root node of the tree) described in `4.3.`, the tree of a hierarchical model has additional tree-level attributes that are added or updated during hierarchical training (see `5.4.` for details on training a hierarchical model). These include `mode` (either 'LCPN' or 'LCL' depending on the training approach) and other metadata fileds describing the tree (and thus the model).
+  As well as the attributes `handle` (the unique identifier of the tree) and `root` (the root node of the tree) described in `4.3.`, the tree of a hierarchical model has additional tree-level attributes that are added or updated during hierarchical training (see `5.4.` for details on training a hierarchical model). These include `mode` (either 'LCPN' or 'LCL' depending on the training approach) and other metadata fields describing the tree (and thus the model).
   ```python
   #Examine the mode in which the model is trained.
   hier_model.mode
