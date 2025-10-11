@@ -431,7 +431,7 @@ def hier_train(X = None,
                use_SGD: bool = False, alpha: float = 0.0001,
                use_GPU: bool = False,
                mini_batch: bool = False, batch_number: int = 100, batch_size: int = 1000, epochs: int = 10, balance_cell_type: bool = False,
-               feature_selection: bool = False, top_genes: int = 300,
+               feature_selection: bool = True, top_genes: int = 300,
                date: str = '', details: str = '', url: str = '', source: str = '', version: str = '',
                save_strategy: str = 'checkpointed', out_dir: Optional[str] = None, resume: bool = False,
                **kwargs) -> HierModel:
@@ -525,7 +525,7 @@ def hier_train(X = None,
     feature_selection
         Whether to perform two-pass data training where the first round is used for selecting important features/genes using SGD learning.
         If `True`, the training time will be longer.
-        (Default: `False`)
+        (Default: `True`)
     top_genes
         The number of top genes selected from each class/cell-type based on their absolute regression coefficients.
         The final feature set is combined across all classes (i.e., union).
