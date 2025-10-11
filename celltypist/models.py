@@ -567,7 +567,7 @@ class HierModel():
         :class:`~numpy.ndarray` or dict
             For LCPN, returns a 1D numpy array of top markers. For LCL, returns a dict mapping `'level{n}'` to top markers at this level/depth.
         """
-        if cell_type not in self.tree.cell_types(leaf_only = False):
+        if cell_type not in self.tree:
             raise ValueError(
                     f"🛑 Cell type '{cell_type}' not found in the model")
         if cell_type == self.tree.root.original_name:
