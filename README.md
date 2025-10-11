@@ -1011,6 +1011,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #If the `model` argument is not provided, it defaults to `Human_Tissue_Immune_LCPN.pkl`.
   hier_model = HierModel.load()
   ```
+  Each [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) has an associated [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html), in which all cell types are represented as either internal or leaf nodes.
+  ```python
+  #Access the tree of the model.
+  hier_model.tree
+  ```
   </details>
 </details>
 
