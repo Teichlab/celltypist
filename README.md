@@ -572,6 +572,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>1. Use in the Python environment</strong></summary>
+
++ <details>
+  <summary><strong>1.1. Import the module</strong></summary>
+
+  ```python
+  import celltypist
+  from celltypist.models import Model, HierModel
+  ```
+  </details>
 </details>
 
 <details>
@@ -924,7 +933,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 </details>
 
 <details>
-<summary><strong>5. Train a hierarchical model</strong></summary>
+<summary><strong>5. Inspect, modify, and train a hierarchical model</strong></summary>
 </details>
 
 <details>
