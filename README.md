@@ -53,7 +53,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Show the local directory storing these models.
   models.models_path
   ```
-  A simple way is to download all available models. Since each model is on average 1 megabyte (MB), we encourage the users to download all of them.
+  A simple way is to download all available models. Since each model is on average several megabytes (MB), we encourage the users to download all of them.
   ```python
   #Download all the available models.
   models.download_models()
@@ -579,6 +579,40 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   import celltypist
   from celltypist.models import Model, HierModel
+  ```
+  </details>
+
++ <details>
+  <summary><strong>1.2. Download available models</strong></summary>
+
+  The models serve as the basis for cell type predictions. Information of available models can be also found [here](https://www.celltypist.org/models).  
+  
+  There are two types of models: `flat` and `hierarchical`, corresponding to the flat models in CellTypist v1.0 and the hierarchical models in CellTypist v2.0. Flat models assume independence among cell type labels or annotations, whereas hierarchical models encode predefined relationships among cell types within a structured [Tree](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html) (for details on what a tree is and how to construct, modify, and visualise it, see `4.`).  
+
+  This section focuses on the use of built-in hierarchical models (for advanced topics such as inspecting, modifying, and training a hierarchical model, see `5.`). In brief, a hierarchical model is an ensemble model composed of multiple flat models, operating in one of two modes: Local Classifier per Parent Node (`LCPN`), which trains a local classifier for each parent node (coarse cell type), and Local Classifier per Level (`LCL`), which trains a local classifier at each level (depth) of the tree.
+  ```python
+  #Show all available models that can be downloaded and used.
+  models.models_description()
+  #Download a specific model, for example, `Human_Tissue_Immune_LCPN.pkl`.
+  models.download_models(model = 'Human_Tissue_Immune_LCPN.pkl')
+  #Download a list of models, for example, `Human_Tissue_Immune_LCPN.pkl` and `Human_Tissue_Immune_LCL.pkl`.
+  models.download_models(model = ['Human_Tissue_Immune_LCPN.pkl', 'Human_Tissue_Immune_LCL.pkl'])
+  #Update the models by re-downloading the latest versions if you think they may be outdated.
+  models.download_models(model = ['Human_Tissue_Immune_LCPN.pkl', 'Human_Tissue_Immune_LCL.pkl'], force_update = True)
+  #Show the local directory storing these models.
+  models.models_path
+  ```
+  A simple way is to download all available models. Since each model is on average several megabytes (MB), we encourage the users to download all of them.
+  ```python
+  #Download all the available models.
+  models.download_models()
+  #Update all models by re-downloading the latest versions if you think they may be outdated.
+  models.download_models(force_update = True)
+  ```
+  By default, a folder `.celltypist/` will be created in the user's home directory to store model files. A different path/folder can be specified by exporting the environment variable `CELLTYPIST_FOLDER` in your configuration file (e.g. in `~/.bash_profile`).
+  ```bash
+  #In the shell configuration file.
+  export CELLTYPIST_FOLDER='/path/to/model/folder/'
   ```
   </details>
 </details>
