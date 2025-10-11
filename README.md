@@ -1000,6 +1000,18 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>5. Inspect, modify, and train a hierarchical model</strong></summary>
+
++ <details>
+  <summary><strong>5.1. Structure of a hierarchical model</strong></summary>
+
+  The hierarchical model in CellTypist is implemented through the [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) class.  
+
+  Load the default hierarchical model `Human_Tissue_Immune_LCPN.pkl`, which includes various immune and hematopoietic cell types across human tissues.
+  ```python
+  #If the `model` argument is not provided, it defaults to `Human_Tissue_Immune_LCPN.pkl`.
+  hier_model = HierModel.load()
+  ```
+  </details>
 </details>
 
 <details>
