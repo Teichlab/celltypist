@@ -639,7 +639,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Examine leaf cell types contained in the tree.
   hier_model.tree.cell_types(leaf_only = True)
   ```
-  For details on what a tree is and how to construct, modify, and visualise it, see `4.`. For details on what a hierarchical model is and how to inspect, modify, and train it, see `5`.
+  For details on what a tree is and how to construct, modify, and visualise it, see `4.`. For details on what a hierarchical model is and how to inspect, modify, and train it, see `5.`.
+  </details>
+
++ <details>
+  <summary><strong>1.4. Celltyping based on an LCPN hierarchical model</strong></summary>
+
+  NN.
   </details>
 </details>
 
