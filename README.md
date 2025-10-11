@@ -578,6 +578,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   ```python
   import celltypist
+  from celltypist import models
   from celltypist.models import Model, HierModel
   ```
   </details>
@@ -614,6 +615,31 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #In the shell configuration file.
   export CELLTYPIST_FOLDER='/path/to/model/folder/'
   ```
+  </details>
+
++ <details>
+  <summary><strong>1.3. Load the model of interest</strong></summary>
+
+  All models are serialised in a binary format by [pickle](https://docs.python.org/3/library/pickle.html).
+  ```python
+  #Get an overview of the models that are downloaded in `1.2.`.
+  #By default (`on_the_fly = False`), all possible models (even those that are not downloaded) are shown.
+  models.models_description(on_the_fly = True)
+  ```
+  To take a look at a given hierarchical model, load the model as an instance of the [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) class as defined in CellTypist.
+  ```python
+  #Select the model from the above list (type = 'hierarchical'). If the `model` argument is not provided, will default to `Human_Tissue_Immune_LCPN.pkl`.
+  hier_model = HierModel.load(model = 'Human_Tissue_Immune_LCPN.pkl')
+  #The model summary information.
+  hier_model
+  #Examine the mode ('LCPN' or 'LCL') of the model.
+  hier_model.mode
+  #Examine the tree associated with the model.
+  hier_model.tree
+  #Examine leaf cell types contained in the tree.
+  hier_model.tree.cell_types(leaf_only = True)
+  ```
+  For details on what a tree is and how to construct, modify, and visualise it, see `4.`. For details on what a hierarchical model is and how to inspect, modify, and train it, see `5`.
   </details>
 </details>
 
