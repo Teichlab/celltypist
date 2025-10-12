@@ -1030,9 +1030,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Access all local classifiers of an LCPN hierarchical model.
   hier_model.model_mapping
   ```
-  Specifically, each parent node (which is a [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instance) points to its classifier through the attribute `model` (`node.model`), and `hier_model.model_mapping` acts as the lookup table that stores all classifier objects. For example, to retrieve the local classifier linked to `T cell`, we first locate the `T cell` node in the tree.
+  Specifically, each parent node (which is a [TreeNode](https://celltypist.readthedocs.io/en/latest/celltypist.tree.TreeNode.html) instance) points to its local classifier via the attribute `model` (`node.model`), and `hier_model.model_mapping` acts as the lookup table that stores all classifier objects. For example, to retrieve the local classifier linked to `T cell`, we first locate the `T cell` node in the tree.
   ```python
-  #Fetch the 'T cell' tree node.
+  #Fetch the 'T cell' node from the tree.
   T_node = hier_model.tree.find_node('T cell')
   ```
   Examine the filename/key of `T cell`'s associated classifier.
@@ -1041,18 +1041,18 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   print(model_key)
   # -> Output: 'T_cell.pkl'
   ```
-  Retrieve the CellTypist flat model (i.e., local classifier) linked to this node.
+  Retrieve the flat CellTypist model (i.e., local classifier) linked to this node.
   ```python
   T_local_model = hier_model.model_mapping[model_key]
   ```
   This local classifier is intended for classifying the *direct* child cell types of `T cell`. To check which cell types these are, access `T_local_model.cell_types` or `T_node.child_names`.
   ```python
-  #Shows the subtypes of `T cell` in the tree.
+  #Show the subtypes of `T cell` in the tree.
   T_local_model.cell_types
   #Alternatively
   T_node.child_names
   ```
-  In short, the node’s `model` attribute stores the name of the classifier, while `hier_model.model_mapping` keeps the actual [Model](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html) object by mapping the classifier name.  
+  In short, the node’s `model` attribute stores the name of the local classifier, while `hier_model.model_mapping` keeps the actual [Model](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html) object, mapped by that classifier name.  
   </details>
 </details>
 
