@@ -1056,7 +1056,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   In short, the node’s `model` attribute stores the name of the local classifier, while `hier_model.model_mapping` keeps the actual [Model](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html) object, mapped by that classifier name.  
 
-  The LCL hierarchical model has a similar organisation to the LCPN model, with the key difference being how classifiers are stored and assigned. Instead of attaching a separate classifier to each parent node, the LCL model trains one classifier per tree level (for details on multi-level cell type annotations, please see `4.5.`).  
+  The LCL hierarchical model has a similar organisation to the LCPN model, with the key difference being how classifiers are stored and assigned. Instead of attaching a separate classifier to each parent node in the tree, the LCL model trains one classifier per tree level (for details on multi-level cell type annotations, please see `4.5.`).  
   
   First, load an LCL hierarchical model.
   ```python
@@ -1068,15 +1068,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   In the LCL mode, the tree of the model (`hier_model.tree`) has extra tree-level attributes ("level2_classifier", "level3_classifier", etc.), each pointing to the filename/key of its level-specific classifier.
   ```python
   #Examine the filename/key of the level-3 classifier.
-  model_key = hier_model.tree['level3_classifier']
+  model_key = hier_model.tree.level3_classifier
   print(model_key)
   # -> Output: 'Human_Tissue_Immune_level3.pkl'
   ```
-  Retrieve the flat CellTypist model at this level from `hier_model.model_mapping`.
+  Retrieve the flat CellTypist model for this level from `hier_model.model_mapping`.
   ```python
   level3_model = hier_model.model_mapping[model_key]
   ```
-  Each level classifier is responsible for distinguishing all cell types that appear at that level of the hierarchy. You can check which cell types are covered by the classifier at this level through its `cell_types` attribute.
+  Each level classifier is responsible for distinguishing all cell types that appear at that level of the hierarchy. You can check which cell types are covered by the classifier at this level via its `cell_types` attribute.
   ```python
   level3_model.cell_types
   ```
