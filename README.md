@@ -1018,7 +1018,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Access the tree of the model.
   hier_model.tree
   #You can visualise the tree using `celltypist.treeviz`, as detailed in `4.6.`.
-  celltypist.treeviz(tree)
+  celltypist.treeviz(hier_model.tree)
   ```
   A hierarchical model is an ensemble model composed of multiple flat models, operating in one of two modes: Local Classifier per Parent Node (`LCPN`), which trains a local classifier for each parent node (coarse cell type), and Local Classifier per Level (`LCL`), which trains a local classifier at each level (depth) of the tree.
   ```python
