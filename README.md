@@ -1083,6 +1083,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   level3_model.cell_types
   ```
   </details>
+
++ <details>
+  <summary><strong>5.2. Export, import, and modify a hierarchical model</strong></summary>
+
+  </details>
 </details>
 
 <details>
