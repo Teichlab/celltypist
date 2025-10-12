@@ -1041,6 +1041,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   print(model_key)
   # -> Output: 'T_cell.pkl'
   ```
+  Note that not all nodes have a valid `model` value. For instance, a leaf node does not require a local classifier since it has no children.  
+
   Retrieve the flat CellTypist model (i.e., local classifier) linked to this node.
   ```python
   T_local_model = hier_model.model_mapping[model_key]
