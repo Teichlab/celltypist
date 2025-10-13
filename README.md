@@ -1087,6 +1087,17 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>5.2. Export, import, and modify a hierarchical model</strong></summary>
 
+  The easiest way to load and save a hierarchical model is by using the `load` and `write` methods with the `.pkl` model file.  
+
+  Load a hierarchical model.
+  ```python
+  #For built-in models, the model name alone (e.g., 'Human_Tissue_Immune_LCPN.pkl') is sufficient.
+  hier_model = HierModel.load('/path/to/some_hierarchical_model.pkl')
+  ```
+  Write out the model.
+  ```python
+  hier_model.write('/new/path/to/some_hierarchical_model.pkl')
+  ```
   </details>
 </details>
 
