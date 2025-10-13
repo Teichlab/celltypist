@@ -1087,7 +1087,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>5.2. Export, import, and modify a hierarchical model</strong></summary>
 
-  The easiest way to load and save a hierarchical model is by using the `load` and `write` methods with the `.pkl` model file.  
+  The easiest way to load and save a hierarchical model is by using the `load` and `write` methods with a `.pkl` model file.  
 
   Load a hierarchical model.
   ```python
