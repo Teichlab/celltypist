@@ -1117,7 +1117,39 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   The exported folder contains all local classifiers as individual `.pkl` files. For example, in the LCPN mode, the classifier for `T cell` is saved as `T_cell.pkl`, which can be independently loaded by [Model.load](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html#celltypist.models.Model.load) and used like any other flat CellTypist models, for example, to classify subtypes in a dataset composed exclusively of T cells. In the LCL mode, the exported folder instead includes level-specific classifiers (e.g., `Human_Tissue_Immune_level2.pkl`), each trained to distinguish all cell types at that hierarchical depth.  
 
-  Suppose you have trained an improved flat classifier for distinguishing the direct children of `CD4+ T cell`. You can either overwrite the existing `CD4+_T_cell.pkl` file in the exported folder, or update the `tree.json` file in the folder so that the `CD4+ T cell` node points to your new model's path.
+  Suppose you have trained an improved flat classifier for distinguishing the direct children of `CD4+ T cell`. You can either overwrite the existing `CD4+_T_cell.pkl` file in the exported folder, or update the `tree.json` file in the folder so that the `CD4+ T cell` node points to your new model's path.  
+
+  Modify the `tree.json` file to have the `CD4+ T cell` node reference the new model.
+  ```json
+  {
+    "handle": "T_Cell_Tree",
+	"root": {
+      "original_name": "T cell",
+      "cell_ontology_id": "CL:0000084",
+      "node_description": "a type of lymphocyte responsible for cell-mediated immunity",
+      "tissue_origin": ["blood", "lymphoid tissue"],
+      "markers": ["CD3D"],
+	  "model": 'T_cell.pkl',
+      "children": [
+        {
+          "original_name": "CD4+ T cell",
+          "cell_ontology_id": "CL:0000624",
+          "node_description": "helper T cell subtype",
+          "markers": ["CD3D", "CD4"],
+		  "model": "/path/to/the/new_model.pkl",
+		  "children": [
+			...
+		  ]
+        },
+        {
+          "original_name": "CD8+ T cell",
+		  ...
+        }
+      ]
+    }
+  }
+  ```
+  Note the `"model"` entry for "CD4+ T cell" has been edited to point to the new model file `/path/to/the/new_model.pkl`.
   </details>
 </details>
 
