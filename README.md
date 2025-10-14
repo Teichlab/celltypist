@@ -1082,6 +1082,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   level3_model.cell_types
   ```
+  Or alternatively, prune the tree to depth 3 and inspect the resulting leaf cell types.
+  ```python
+  #Remove all nodes with depth >= 4.
+  pruned_tree = hier_model.tree.prune_by_depth(max_depth = 3)
+  #Visualise the tree.
+  celltypist.treeviz(pruned_tree)
+  ```
   </details>
 
 + <details>
