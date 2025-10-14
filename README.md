@@ -1108,6 +1108,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Please use a new or empty folder for clarity and portability. 
   hier_model.export('/path/to/a/folder')
   ```
+  The exported folder contains all local classifiers as individual `.pkl` files. For example, in the LCPN mode, the classifier for `T cell` is saved as `T_cell.pkl`, which can be independently loaded by [Model.load](https://celltypist.readthedocs.io/en/latest/celltypist.models.Model.html#celltypist.models.Model.load) and used like any other flat CellTypist models, in order to, for example, classify subtypes in a dataset composed exclusively of T cells. In the LCL mode, the exported folder instead includes level-specific classifiers (e.g., `Human_Tissue_Immmune_level2.pkl`), each trained to distinguish all cell types at that hierarchical depth.  
+
+  Suppose you have trained an improved flat classifier for distinguishing the direct children of `CD4+ T cell`. You can either overwrite the existing `CD4+_T_cell.pkl` file in the exported folder, or update the `tree.json` file in the folder so that the `CD4+ T cell` node points to your new model's path.
   </details>
 </details>
 
