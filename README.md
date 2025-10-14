@@ -1087,7 +1087,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>5.2. Export, import, and modify a hierarchical model</strong></summary>
 
-  The easiest way to load and save a hierarchical model is by using the `load` and `write` methods with a `.pkl` model file.  
+  The easiest way to load and save a hierarchical model is by using the [load](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.load) and [write](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.write) methods with a `.pkl` model file.  
 
   Load a hierarchical model.
   ```python
@@ -1097,6 +1097,16 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Write out the model.
   ```python
   hier_model.write('/new/path/to/some_hierarchical_model.pkl')
+  ```
+  While the `.pkl` file provides a compact way to store the entire hierarchical model, its internal structure (tree and local classifiers) is under the hood. To inspect and modify the model in a more accessible form, CellTypist provides two companion methods: [export](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.export) and [import_from](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.import_from).  
+
+  Specifically, `export` saves the model as a folder containing a human-readable `tree.json` file describing the hierarchy and metadata, and one `.pkl` file for each local classifier. `import_from` then rebuilds the hierarchical model from such a folder, even if the user has edited the tree or replaced some classifiers.  
+
+  First, load a model from a `.pkl` file and export it into a folder.
+  ```python
+  hier_model = HierModel.load('/path/to/some_hierarchical_model.pkl')
+  #Please use a new or empty folder for clarity and portability. 
+  hier_model.export('/path/to/a/folder')
   ```
   </details>
 </details>
