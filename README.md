@@ -1162,6 +1162,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   updated_hier_model.write('/path/to/some_name.pkl')
   ```
   </details>
+
++ <details>
+  <summary><strong>5.3. Train a hierarchical model</strong></summary>
+
+  A hierarchical CellTypist model can be trained using the function [celltypist.hier_train](https://celltypist.readthedocs.io/en/latest/celltypist.hier_train.html).  
+  </details>
 </details>
 
 <details>
