@@ -1149,7 +1149,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     }
   }
   ```
-  Note the `"model"` entry for "CD4+ T cell" has been edited to point to the new model file `/path/to/the/new_model.pkl`.
+  Note the `"model"` entry for "CD4+ T cell" has been manually edited to point to the new model file `/path/to/the/new_model.pkl`.
   </details>
 </details>
 
