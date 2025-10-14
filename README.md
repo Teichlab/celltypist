@@ -1119,7 +1119,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Suppose you have trained an improved flat classifier for distinguishing the direct children of `CD4+ T cell`. You can either overwrite the existing `CD4+_T_cell.pkl` file in the exported folder, or update the `tree.json` file in the folder so that the `CD4+ T cell` node points to your new model's path.  
 
-  Modify the `tree.json` file to have the `CD4+ T cell` node reference the new model.
+  Modify the `tree.json` file in the exported folder to have the `CD4+ T cell` node reference the new model.
   ```text
   {
     "handle": "T_Cell_Tree",
