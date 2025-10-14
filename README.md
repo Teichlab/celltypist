@@ -1154,6 +1154,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   You can also use a relative path or just the model filename; all paths are resolved relative to the exported folder when the model is re-imported. As a best practice, place the new model file in the exported folder with a different name, then update the `"model"` entry in `tree.json` to reference it. This way, the new model is simply recorded by filename in the `"model"` entry, while the old model stays safely unreferenced in `tree.json`. This keeps the hierarchy portable and makes it easy to revert or compare versions later if needed.  
 
   Now re-import the modified hierarchical model from the exported folder.
+  ```python
+  updated_hier_model = HierModel.import_from('/path/to/the/modified/folder')
+  ```
+  You can then save this model as a `.pkl` file to freeze the updated structure for quick reuse in the future.
+  ```python
+  updated_hier_model.write('/path/to/some_name.pkl')
+  ```
   </details>
 </details>
 
