@@ -1151,7 +1151,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Note that the `"model"` entry for `CD4+ T cell` has been manually edited to point to the new model file `/path/to/the/new_model.pkl`.  
   
-  You can also use a relative path or just the model filename; all paths are resolved relative to the exported folder when the model is re-imported. As a best practice, place the new model file in the exported folder with a different name, then update the `"model"` entry in `tree.json` to reference it. Through this, the old model stays safely untouched and ignored. This avoids overwriting existing models, keeps the hierarchy portable, and makes it easy to revert or compare versions later if needed.  
+  You can also use a relative path or just the model filename; all paths are resolved relative to the exported folder when the model is re-imported. As a best practice, place the new model file in the exported folder with a different name, then update the `"model"` entry in `tree.json` to reference it. This way, the old model stays safely untouched and ignored. This avoids overwriting existing models, keeps the hierarchy portable, and makes it easy to revert or compare versions later if needed.  
 
   Now re-import the modified hierarchical model from the exported folder.
   </details>
