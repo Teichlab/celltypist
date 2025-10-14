@@ -1136,8 +1136,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
           "cell_ontology_id": "CL:0000624",
           "node_description": "helper T cell subtype",
           "markers": ["CD3D", "CD4"],
-		  "model": "/path/to/the/new_model.pkl",
-		  "children": [
+          "model": "/path/to/the/new_model.pkl",
+          "children": [
 			...
 		  ]
         },
