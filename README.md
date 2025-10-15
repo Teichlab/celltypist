@@ -1183,6 +1183,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   |resume       |Whether to resume from an existing run in `out_dir` (default to `False`)                                           |Hierarchical model training generally takes longer than flat model training. Use `save_strategy='checkpointed'` and `resume=True` to resume a previously interrupted job, ideally with identical training parameters               |
   </div>
 
+  During training, the `size` attribute of each internal or leaf node is populated to indicate the number of cells belonging to that node, or equivalently, the total number of cells contained within the subtree rooted at that node. Note that the unique elements of `leaf_anno` may cover only a subset of the tree’s leaf cell types, meaning that some leaf or internal nodes may have a `size` of 0.  
+
+  If `save_strategy='atomic'`, the training returns a [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) object without producing any intermediate files.
+  ```python
+  #Train an LCPN hierarchical model from scratch.
+  hier_model = celltypist.hier_train(input_adata, tree = '/path/to/matched_tree.json', leaf_anno = 'finest_anno_column', mode = 'LCPN', save_strategy = 'atomic', n_jobs = -1)
+  #Save the model.
+  hier_model.write('/path/to/some_name.pkl')
+  ```
   </details>
 </details>
 
