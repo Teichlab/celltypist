@@ -1209,6 +1209,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Save the model.
   hier_model.write('/path/to/some_name.pkl')
   ```
+  Although `celltypist.hier_train` internally verifies that important parameters (e.g., `leaf_anno`, `mode`) match those from the previous run, it is recommended to manually ensure that all parameters supplied are identical to the original configuration, except for `resume`, which should now be set to `True`.
   </details>
 </details>
 
