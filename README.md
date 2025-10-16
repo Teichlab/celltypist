@@ -1219,7 +1219,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Use [convert](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.convert) to generate a mouse hierarchical model.
   ```python
-  #The default behavior is to use the built-in mapping [file](https://github.com/Teichlab/celltypist/blob/main/celltypist/data/samples/Ensembl105_Human2Mouse_Genes.csv) for human-mouse conversion.
+  #The default behavior is to use the built-in mapping file for human-mouse conversion.
   hier_model.convert()
   ```
   Write out the converted model locally.
