@@ -1192,14 +1192,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Save the model.
   hier_model.write('/path/to/some_name.pkl')
   ```
-  if `save_strategy='checkpointed'` and `resume=False`, the training produces intermediate files and then returns a [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) object upon completion.
+  If `save_strategy='checkpointed'` and `resume=False`, the training produces intermediate files and then returns a [HierModel](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html) object upon completion.
   ```python
   #Train an LCPN hierarchical model from scratch.
   hier_model = celltypist.hier_train(input_adata, tree = '/path/to/matched_tree.json', leaf_anno = 'finest_anno_column', mode = 'LCPN', save_strategy = 'checkpointed', out_dir = '/path/to/a_new_folder', resume = False, n_jobs = -1)
   #Save the model.
   hier_model.write('/path/to/some_name.pkl')
   ```
-  Note that the resulting `hier_model` is the same as the one loaded via `HierModel.import_from('/path/to/a_new_folder')` once training has finished, since the folder now contains all required files.  
+  Note that the resulting `hier_model` is the same as the one loaded via `HierModel.import_from('/path/to/a_new_folder')` once training has finished, since the output folder `out_dir` now contains all required files.  
 
 
   </details>
