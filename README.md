@@ -1211,6 +1211,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Although `celltypist.hier_train` internally verifies that important parameters (e.g., `leaf_anno`, `mode`) match those from the previous run, it is recommended to manually ensure that all parameters supplied are identical to the original configuration, except for `resume`, which should now be set to `True`.
   </details>
+
++ <details>
+  <summary><strong>5.4. Convert a hierarchical model</strong></summary>
+
+  Similar to a flat CellTypist model, a hierarchical model can also be converted to its orthologous form for another species by aligning orthologous genes, or from a gene symbol-based model to one using Ensembl IDs through ID matching. This is achieved by iteratively converting all flat classifiers contained within the hierarchical model (for details on performing a conversion at the flat model level, see *Usage (classification)* → *Supplemental guidance* → *Cross-species model conversion*).  
+
+  Use [convert](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.convert) to generate a mouse hierarchical model.
+  </details>
 </details>
 
 <details>
