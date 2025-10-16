@@ -1201,7 +1201,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   Note that the resulting `hier_model` is the same as the one loaded via `HierModel.import_from('/path/to/a_new_folder')` once training has finished, since the output folder `out_dir` now contains all required files.  
 
-  If the above code is interrupted before completion (and thus no `hier_model` is returned), you can resume it from the existing contents in `out_dir` by `save_strategy='checkpointed'` and `resume=True`, using the same parameters as before.
+  If the above code is interrupted before completion (and thus no `hier_model` is returned), you can resume it from the existing contents in `out_dir` by `save_strategy='checkpointed'` and `resume=True`.
   ```python
   #Resume training of a previously interrupted LCPN hierarchical model.
   #The `tree` argument is ignored here.
