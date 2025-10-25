@@ -48,6 +48,7 @@ def show_help_and_exit(message: str):
 @click.option("--update-models", is_flag=True, default=False, help="Download the latest models from the remote server.")
 @click.option("--show-models", is_flag=True, default=False, help="Show all the available models and their descriptions.")
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configuration information during the run.")
+@click.version_option()
 def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, mode: str, p_thres: float, majority_voting: bool, over_clustering: str, use_GPU: bool, min_prop: float,
          outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
     """Celltypist: a tool for semi-automatic cell type annotation"""
