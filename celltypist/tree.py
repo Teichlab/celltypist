@@ -610,7 +610,7 @@ class Tree():
             base = f"A cell type tree with {n_nodes} total nodes and {n_leaves} {'leaf' if n_leaves == 1 else 'leaves'}"
         base += f"\n    handle: {self.handle}"
         for key, value in self.__dict__.items():
-            if key not in ("handle", "root"):
+            if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 base += f"\n    {key}: {value}"
         base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
         return base
