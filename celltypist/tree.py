@@ -66,13 +66,13 @@ class TreeNode():
         self.tissue_origin = kwargs.get("tissue_origin", [])
         self.markers = kwargs.get("markers", [])
         self.size = kwargs.get("size", 0)
-        if "children" in kwargs:
-            logger.warn("⚠️ The `children` argument will be ignored. Use `add_children()` afterwards or read from a JSON structure instead")
-        self.children = []
         self.model = kwargs.get("model", "")
         for key, val in kwargs.items():
             if key not in self._STANDARD_FIELDS and key != "internal_name":
                 setattr(self, key, val)
+        if "children" in kwargs:
+            logger.warn("⚠️ The `children` argument will be ignored. Use `add_children()` afterwards or read from a JSON structure instead")
+        self.children = []
 
     def add_children(self, *child_nodes) -> list:
         """
