@@ -512,9 +512,9 @@ class Tree():
             raise TypeError(
                     f"🛑 `root` must be a `TreeNode` instance")
         self.handle = handle
-        self.root = root
         for key, value in kwargs.items():
             setattr(self, key, value)
+        self.root = root
 
     #def __getattr__(self, name):
     #    """
