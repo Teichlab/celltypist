@@ -54,7 +54,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
     For internal use. Prepare data for celltypist training.
     """
     if (X is None) or (labels is None):
-        raise Exception(
+        raise ValueError(
                 "🛑 Missing training data and/or training labels. Please provide both arguments")
     if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
         adata = sc.read(X) if isinstance(X, str) else X
@@ -80,7 +80,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
             adata = adata.transpose()
         if X.endswith(('.mtx', '.mtx.gz')):
             if genes is None:
-                raise Exception(
+                raise ValueError(
                         "🛑 Missing `genes`. Please provide this argument together with the input mtx file")
             genes = _to_vector(genes)
             if len(genes) != adata.n_vars:
@@ -108,7 +108,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
             indata = indata.values
         else:
             if genes is None:
-                raise Exception(
+                raise ValueError(
                         "🛑 Missing `genes`. Please provide this argument together with the input training data")
             genes = _to_vector(genes)
         labels = _to_vector(labels)
@@ -698,7 +698,7 @@ def hier_train(X = None,
                 X = X.transpose()
             if X_old.endswith(('.mtx', '.mtx.gz')):
                 if genes is None:
-                    raise Exception(
+                    raise ValueError(
                             "🛑 Missing `genes`. Please provide this argument together with the input mtx file")
                 genes = _to_vector(genes)
                 if len(genes) != X.n_vars:
