@@ -610,6 +610,9 @@ def hier_train(X = None,
     #now all have continued, loaded tree, and out_dir (if needed) & model_mapping (even empty)
     model_mapping = {}
     if not continued:
+        if tree is None:
+            raise ValueError(
+                    f"🛑 Please provide the `tree` argument")
         tree = tree.copy() if isinstance(tree, Tree) else Tree.from_json(tree)
         for node in tree.iter_nodes(leaf_only = False):
             node.model = ''
