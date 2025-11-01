@@ -574,8 +574,12 @@ def hier_train(X = None,
     continued = False
     if save_strategy == 'checkpointed':
         if out_dir is None:
-            out_dir = f"{tree.handle}_{mode}"
-            logger.info(f"📂 Output directory not specified. Using default: `{out_dir}`")
+            if resume:
+                raise ValueError(
+                        f"🛑 Please provide `out_dir` to resume a previous training run")
+            else:
+                out_dir = f"{tree.handle if isinstance(tree, Tree) else Tree.from_json(tree).handle}_{mode}"
+                logger.info(f"📂 Output directory not specified. Using default: `{out_dir}`")
         if resume:
             tree_file = os.path.join(out_dir, "tree.json")
             if os.path.isfile(tree_file):
