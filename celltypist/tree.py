@@ -561,7 +561,7 @@ class Tree():
         data = {"handle": self.handle}
         dict1 = {k: v for k, v in self.__dict__.items() if not (k.startswith('level') and k.endswith("_classifier"))}
         dict2 = {k: v for k, v in self.__dict__.items() if k.startswith('level') and k.endswith("_classifier")}
-        for key, value in {**dict1, **dict2}:
+        for key, value in {**dict1, **dict2}.items():
             if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 data[key] = value
         data["root"] = self.root.to_dict()
@@ -613,7 +613,7 @@ class Tree():
         base += f"\n    handle: {self.handle}"
         dict1 = {k: v for k, v in self.__dict__.items() if not (k.startswith('level') and k.endswith("_classifier"))}
         dict2 = {k: v for k, v in self.__dict__.items() if k.startswith('level') and k.endswith("_classifier")}
-        for key, value in {**dict1, **dict2}:
+        for key, value in {**dict1, **dict2}.items():
             if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 base += f"\n    {key}: {value}"
         base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
