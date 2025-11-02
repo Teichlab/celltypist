@@ -559,7 +559,9 @@ class Tree():
             Dictionary containing `handle` (unique identifier), `root` (serialized root node), and any custom attributes of the tree.
         """
         data = {"handle": self.handle}
-        for key, value in self.__dict__.items():
+        dict1 = {k: v for k, v in self.__dict__.items() if not (k.startswith('level') and k.endswith("_classifier"))}
+        dict2 = {k: v for k, v in self.__dict__.items() if k.startswith('level') and k.endswith("_classifier")}
+        for key, value in {**dict1, **dict2}:
             if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 data[key] = value
         data["root"] = self.root.to_dict()
