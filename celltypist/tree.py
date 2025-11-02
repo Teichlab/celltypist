@@ -609,7 +609,9 @@ class Tree():
         else:
             base = f"A cell type tree with {n_nodes} total nodes and {n_leaves} {'leaf' if n_leaves == 1 else 'leaves'}"
         base += f"\n    handle: {self.handle}"
-        for key, value in self.__dict__.items():
+        dict1 = {k: v for k, v in self.__dict__.items() if not (k.startswith('level') and k.endswith("_classifier"))}
+        dict2 = {k: v for k, v in self.__dict__.items() if k.startswith('level') and k.endswith("_classifier")}
+        for key, value in {**dict1, **dict2}:
             if key not in ("handle", "root") and value not in (None, '', [], (), {}):
                 base += f"\n    {key}: {value}"
         base += f"\n    root: a node '{self.root.original_name}' with depth {self.root.depth}"
