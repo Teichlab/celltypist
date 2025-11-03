@@ -46,7 +46,7 @@ def _requests_get(url: str, timeout = 30):
 
 class Model():
     """
-    Class that wraps the logistic Classifier and the StandardScaler.
+    Class that wraps the logistic Classifier and the StandardScaler in a flat model.
 
     Parameters
     ----------
@@ -74,12 +74,12 @@ class Model():
     @staticmethod
     def load(model: Optional[str] = None):
         """
-        Load the desired model.
+        Load the desired flat model.
 
         Parameters
         ----------
         model
-            Model name specifying the model you want to load. Default to `'Immune_All_Low.pkl'` if not provided.
+            Model name specifying the flat model you want to load. Default to `'Immune_All_Low.pkl'` if not provided.
             To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
 
         Returns
@@ -104,16 +104,16 @@ class Model():
 
     @property
     def cell_types(self) -> np.ndarray:
-        """Get cell types included in the model."""
+        """Get cell types included in the flat model."""
         return self.classifier.classes_
 
     @property
     def features(self) -> np.ndarray:
-        """Get genes included in the model."""
+        """Get genes included in the flat model."""
         return self.classifier.features
 
     def __repr__(self):
-        base = f"CellTypist model with {len(self.cell_types)} cell types and {len(self.features)} features"
+        base = f"CellTypist flat model with {len(self.cell_types)} cell types and {len(self.features)} features"
         for x in ['date', 'details', 'source', 'version']:
             if self.description[x] != '':
                 base += f"\n    {x}: {self.description[x]}"
@@ -166,7 +166,7 @@ class Model():
                     f"🛑 Unrecognized `mode` value, should be one of `'best match'` or `'prob match'`")
 
     def write(self, file: str) -> None:
-        """Write out the model."""
+        """Write out the flat model."""
         obj = dict(Model = self.classifier, Scaler_ = self.scaler, description = self.description)
         file = os.path.splitext(file)[0] + '.pkl'
         with open(file, 'wb') as output:
@@ -174,7 +174,7 @@ class Model():
 
     def extract_top_markers(self, cell_type: str, top_n: int = 10, only_positive: bool = True) -> np.ndarray:
         """
-        Extract the top driving genes for a given cell type.
+        Extract the top driving genes for a given cell type from a flat model.
 
         Parameters
         ----------
@@ -319,7 +319,7 @@ class Model():
 
     def subset(self, keep_cell_types: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None, exclude_cell_types: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> None:
         """
-        Subset the model by retaining or discarding a designated set of cell types.
+        Subset the flat model by retaining or discarding a designated set of cell types.
         This method is suboptimal for subsetting a model. A more accurate approach is to retrain the original reference data using only the desired subset of cell types.
 
         Parameters

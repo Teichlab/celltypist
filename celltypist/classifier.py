@@ -21,7 +21,7 @@ except ImportError:
 
 class AnnotationResult():
     """
-    Class that represents the result of a celltyping annotation process.
+    Class that represents the result of a flat celltyping annotation process.
 
     Parameters
     ----------
