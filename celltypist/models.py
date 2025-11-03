@@ -65,6 +65,10 @@ class Model():
         The StandardScaler incorporated in the loaded model.
     description
         Description of the loaded model.
+    cell_types
+        Cell types included in the loaded model.
+    features
+        Features included in the loaded model.
     """
     def __init__(self, clf, scaler, description):
         self.classifier = clf
@@ -109,7 +113,7 @@ class Model():
 
     @property
     def features(self) -> np.ndarray:
-        """Get genes included in the flat model."""
+        """Get features included in the flat model."""
         return self.classifier.features
 
     def __repr__(self):
@@ -174,7 +178,7 @@ class Model():
 
     def extract_top_markers(self, cell_type: str, top_n: int = 10, only_positive: bool = True) -> np.ndarray:
         """
-        Extract the top driving genes for a given cell type from a flat model.
+        Extract the top driving markers for a given cell type from a flat model.
 
         Parameters
         ----------
@@ -190,7 +194,7 @@ class Model():
         Returns
         ----------
         :class:`~numpy.ndarray`
-            A list of marker genes for the query cell type.
+            A list of markers for the query cell type.
         """
         if cell_type not in self.cell_types:
             raise ValueError(
@@ -276,7 +280,7 @@ class Model():
             map_content.drop_duplicates([1], inplace=True, keep=False)
         map_content['index_from'] = pd.DataFrame(self.features, columns=['features']).reset_index().set_index('features').loc[map_content[convert_from], 'index'].values
         #main
-        logger.info(f"{indent}🧬 Number of genes in the original model: {len(self.features)}")
+        logger.info(f"{indent}🧬 Number of features in the original model: {len(self.features)}")
         features_to = map_content[convert_to].values if unique_only else np.unique(map_content[convert_to])
         if unique_only:
             index_from = map_content['index_from'].values
@@ -315,7 +319,7 @@ class Model():
         self.classifier.features = features_to
         self.scaler.n_features_in_ = len(features_to)
         self.description['date'] = str(datetime.now())
-        logger.info(f"{indent}✅ Conversion done! Number of genes in the converted model: {len(features_to)}")
+        logger.info(f"{indent}✅ Conversion done! Number of features in the converted model: {len(features_to)}")
 
     def subset(self, keep_cell_types: Optional[Union[list, tuple, np.ndarray, pd.Series, pd.Index]] = None, exclude_cell_types: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None) -> None:
         """
@@ -549,7 +553,7 @@ class HierModel():
 
     def extract_top_markers(self, cell_type: str, top_n: int = 10, only_positive: bool = True) -> Union[np.ndarray, dict]:
         """
-        Extract top marker genes for a given cell type from a hierarchical model.
+        Extract top markers for a given cell type from a hierarchical model.
 
         Parameters
         ----------
