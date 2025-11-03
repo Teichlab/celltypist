@@ -8,7 +8,11 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from .models import Model
 from . import logger
-from scanpy import __version__ as scv
+try:
+    from importlib.metadata import version
+    scv = version('scanpy')
+except ImportError:
+    from scanpy import __version__ as scv
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
