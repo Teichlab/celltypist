@@ -118,7 +118,7 @@ class Model():
 
     def __repr__(self):
         base = f"CellTypist flat model with {len(self.cell_types)} cell types and {len(self.features)} features"
-        for x in ['date', 'details', 'source', 'version']:
+        for x in ('date', 'details', 'source', 'version'):
             if self.description[x] != '':
                 base += f"\n    {x}: {self.description[x]}"
         if len(self.cell_types) == 2:
@@ -537,7 +537,7 @@ class HierModel():
 
     def __repr__(self):
         base = f"CellTypist hierarchical model with {self.tree.n_nodes} cell types rooted at '{self.tree.root.original_name}', with tree depth {self.tree.depth}"
-        for x in ['mode', 'date', 'details', 'source', 'version']:
+        for x in ('mode', 'date', 'details', 'source', 'version'):
             if getattr(self.tree, x) != '':
                 base += f"\n    {x}: {getattr(self.tree, x)}"
         leaf_types = self.tree.cell_types(leaf_only = True)
