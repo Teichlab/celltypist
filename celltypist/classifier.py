@@ -6,7 +6,7 @@ from anndata import AnnData
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from .models import Model
+from .models import Model, HierModel
 from . import logger
 try:
     from importlib.metadata import version
@@ -231,7 +231,7 @@ class AnnotationResult():
 
 class Classifier():
     """
-    Class that wraps the celltyping and majority voting processes.
+    Class that wraps the flat celltyping and majority voting processes.
 
     Parameters
     ----------
@@ -503,3 +503,44 @@ class Classifier():
         predictions.predicted_labels = predictions.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
         return predictions
+
+class HierClassifier():
+    """
+    Class that wraps the hierarchical celltyping and majority voting processes.
+
+    Parameters
+    ----------
+    filename
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData object (h5ad).
+        If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
+        Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
+        Non-expressed genes are preferred to be provided as well.
+    model
+        A :class:`~celltypist.models.HierModel` object, the path to the desired model file, or the model name.
+    transpose
+        Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
+        (Default: `False`)
+    gene_file
+        Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
+    cell_file
+        Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
+
+    Attributes
+    ----------
+    filename
+        Path to the input dataset. This attribute exists only when the input is a file path.
+    adata
+        An :class:`~anndata.AnnData` object which stores the log1p normalized expression data in `.X` or `.raw.X`.
+    indata
+        The expression matrix used for predictions stored in the log1p normalized format.
+    indata_genes
+        All the genes included in the input data.
+    indata_names
+        All the cells included in the input data.
+    model
+        A :class:`~celltypist.models.HierModel` object.
+    """
+    def __init__(self, filename: Union[AnnData,str] = "", model: Union[HierModel,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+        pass
