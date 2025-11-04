@@ -337,7 +337,7 @@ class Classifier():
 
     def celltype(self, mode: str = 'best match', p_thres: float = 0.5) -> AnnotationResult:
         """
-        Run celltyping jobs to predict cell types of input data.
+        Run flat celltyping jobs to predict cell types of input data.
 
         Parameters
         ----------
@@ -549,3 +549,13 @@ class HierClassifier():
         for attr in ('model', 'filename', 'adata', 'indata', 'indata_genes', 'indata_names'):
             if hasattr(_bridge, attr):
                 setattr(self, attr, getattr(_bridge, attr))
+
+    def celltype(self) -> HierAnnotationResult:
+        """
+        Run hierarchical celltyping jobs to predict cell types of input data.
+
+        Returns
+        ----------
+        :class:`~celltypist.classifier.HierAnnotationResult`
+            A :class:`~celltypist.classifier.HierAnnotationResult` object storing the celltyping result.
+        """
