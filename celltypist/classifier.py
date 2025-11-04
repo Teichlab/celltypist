@@ -229,6 +229,9 @@ class AnnotationResult():
         base += f"\n    adata: AnnData object referred"
         return base
 
+class HierAnnotationResult():
+    pass
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
@@ -363,7 +366,7 @@ class Classifier():
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
         if k_x.sum() == 0:
             raise ValueError(
-                    f"🛑 No features overlap with the model. Please provide gene symbols")
+                    f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols")
         else:
             logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
@@ -559,3 +562,17 @@ class HierClassifier():
         :class:`~celltypist.classifier.HierAnnotationResult`
             A :class:`~celltypist.classifier.HierAnnotationResult` object storing the celltyping result.
         """
+        if self.model.mode == 'LCL':
+            logger.info(f"🧫 Running hierarchical celltyping (LCL mode)")
+            level_classifiers = {level_attr: self.model.model_mapping[getattr(self.model.tree, level_attr)] for level_attr in self.model.tree.__dict__ if level_attr.startswith("level") and level_attr.endswith("_classifier")}
+            model_features = np.unique(np.concatenate([m.classifier.features for m in level_classifiers.values()]))
+            logger.info(f"🔗 Matching reference genes in the model")
+            k_x = np.isin(self.indata_genes, model_features)
+            if k_x.sum() == 0:
+                raise ValueError(
+                        f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols")
+            else:
+                logger.info(f"🧬 {k_x.sum()} features used for prediction")
+            k_x_idx = np.where(k_x)[0]
+            self.indata = self.indata[:, k_x_idx]
+            self.indata_genes = self.indata_genes[k_x_idx]
