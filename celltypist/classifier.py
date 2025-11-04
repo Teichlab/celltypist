@@ -366,7 +366,7 @@ class Classifier():
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
         if k_x.sum() == 0:
             raise ValueError(
-                    f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols")
+                    f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
         else:
             logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
@@ -570,7 +570,7 @@ class HierClassifier():
             k_x = np.isin(self.indata_genes, model_features)
             if k_x.sum() == 0:
                 raise ValueError(
-                        f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols")
+                        f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
             else:
                 logger.info(f"🧬 {k_x.sum()} features used for prediction")
             k_x_idx = np.where(k_x)[0]
