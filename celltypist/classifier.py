@@ -239,7 +239,7 @@ class Classifier():
         Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData object (h5ad).
         If it's the former, a cell-by-gene format is desirable (see `transpose` for more information).
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
-        Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
+        Non-expressed genes are preferred to be provided as well.
     model
         A :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
@@ -543,4 +543,9 @@ class HierClassifier():
         A :class:`~celltypist.models.HierModel` object.
     """
     def __init__(self, filename: Union[AnnData,str] = "", model: Union[HierModel,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
-        pass
+        if isinstance(model, str):
+            model = HierModel.load(model)
+        _bridge = Classifier(filename = filename, model = model, transpose = transpose, gene_file = gene_file, cell_file = cell_file)
+        for attr in ('model', 'filename', 'adata', 'indata', 'indata_genes', 'indata_names'):
+            if hasattr(_bridge, attr):
+                setattr(self, attr, getattr(_bridge, attr))
