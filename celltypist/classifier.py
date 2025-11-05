@@ -372,7 +372,8 @@ class Classifier():
         k_x_idx = np.where(k_x)[0]
         #self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x_idx]
-        lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
+        #lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
+        lr_idx = pd.Index(self.model.classifier.features).get_indexer(self.indata_genes)
 
         logger.info(f"⚖️ Scaling input data")
         means_ = self.model.scaler.mean_[lr_idx] if self.model.scaler.with_mean else 0
