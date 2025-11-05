@@ -600,14 +600,14 @@ class HierClassifier():
             prob_mats = {}
             for (level_attr, model), overlap_idx, level_idx in zip(level_classifiers.items(), overlap_idxs, level_idxs):
                 key = level_attr.replace('_classifier', '')
-                logger.info(f"🖋️ Predicting {key} labels")
+                logger.info(f"🖋️ Predicting {key.replace('level', 'level-')} labels")
                 ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
                 model.classifier.n_features_in_ = len(level_idx)
                 model.classifier.features = model.classifier.features[level_idx]
                 model.classifier.coef_ = model.classifier.coef_[:, level_idx]
                 decision_mat, prob_mat, lab = model.predict_labels_and_prob(self.indata[:, overlap_idx], mode = 'best match')
                 model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
-                labels[key + '_predicted_labels'] = pd.Categorical(lab)
+                labels[f"{key}_predicted_labels"] = pd.Categorical(lab)
                 decision_mats[key] = pd.DataFrame(decision_mat, columns = model.classifier.classes_, index = self.indata_names)
                 prob_mats[key] = pd.DataFrame(prob_mat, columns = model.classifier.classes_, index = self.indata_names)
             logger.info("✅ Prediction done!")
