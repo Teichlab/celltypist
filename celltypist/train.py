@@ -670,7 +670,7 @@ def hier_train(X = None,
         #LCL
         ith = 0
         for n in range(2, depth+1):
-            labels = np.array(multi_anno[f"level_{n}_anno"])
+            labels = np.array(multi_anno[f"level{n}_anno"])
             if len(np.unique(labels)) < 2:
                 continue
             ith += 1
@@ -727,9 +727,9 @@ def hier_train(X = None,
                 logger.info(f"⏩ Skipping model training for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
             node_depth = len(tree.extract_path(node.original_name, print_path = False))
-            flag = (multi_anno[f"level_{node_depth}_anno"] == node.original_name).values
+            flag = (multi_anno[f"level{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
-            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level_{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter, '      ')
+            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter, '      ')
             model = _actual_classifier(indata, labels, out_genes, out_max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}", 'N/A', source, version, '      ', **kwargs)
             setattr(node, 'model', filename)
             model_mapping[filename] = model

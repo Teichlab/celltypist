@@ -1163,7 +1163,7 @@ class Tree():
         label_to_path = {label: self.extract_path(label, print_path = False) for label in unique_labels}
         results = {}
         for level in range(1, self.depth + 1):
-            col_name = f"{prefix}level_{level}_anno"
+            col_name = f"{prefix}level{level}_anno"
             mapping = {label: path[min(level - 1, len(path) - 1)].original_name for label, path in label_to_path.items()}
             results[col_name] = annotations_series.replace(mapping)
         return pd.DataFrame(results, index = annotations_series.index)
