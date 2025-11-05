@@ -945,7 +945,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   The output (`multi_anno`) is a `DataFrame` with one column per annotation level.
   <div align="center">
 
-  | level_1_anno | level_2_anno | level_3_anno |
+  | level1_anno  | level2_anno  | level3_anno  |
   |:------------:|:------------:|:------------:|
   | A            | A1           | A1           |
   | A            | A3           | A3a          |
