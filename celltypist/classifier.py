@@ -577,9 +577,12 @@ class HierClassifier():
             k_x_idx = np.where(k_x)[0]
             #self.indata = self.indata[:, k_x_idx]
             self.indata_genes = self.indata_genes[k_x_idx]
+
             logger.info(f"⚖️ Scaling input data")
             means_vec = np.zeros(len(self.indata_genes))
             scales_vec = np.ones(len(self.indata_genes))
+            overlap_idxs = []
+            level_idxs = []
             for m in level_classifiers.values():
                 overlap = np.isin(self.indata_genes, m.classifier.features)
                 overlap_idx = np.where(overlap)[0]
@@ -587,5 +590,26 @@ class HierClassifier():
                 if m.scaler.with_mean:
                     means_vec[overlap_idx] = m.scaler.mean_[level_idx]
                 scales_vec[overlap_idx] = m.scaler.scale_[level_idx]
+                overlap_idxs.append(overlap_idx)
+                level_idxs.append(level_idx)
             self.indata = (self.indata[:, k_x_idx] - means_vec) / scales_vec
             self.indata[self.indata > 10] = 10
+
+            labels = pd.DataFrame(index = self.indata_names)
+            decision_mats = {}
+            prob_mats = {}
+            for (level_attr, model), overlap_idx, level_idx in zip(level_classifiers.items(), overlap_idxs, level_idxs):
+                key = level_attr.replace('_classifier', '')
+                logger.info(f"🖋️ Predicting {key} labels")
+                ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
+                model.classifier.n_features_in_ = len(level_idx)
+                model.classifier.features = model.classifier.features[level_idx]
+                model.classifier.coef_ = model.classifier.coef_[:, level_idx]
+                decision_mat, prob_mat, lab = model.predict_labels_and_prob(self.indata[:, overlap_idx], mode = 'best match')
+                model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
+                labels[key + '_predicted_labels'] = pd.Categorical(lab)
+                decision_mats[key] = pd.DataFrame(decision_mat, columns = model.classifier.classes_, index = self.indata_names)
+                prob_mats[key] = pd.DataFrame(prob_mat, columns = model.classifier.classes_, index = self.indata_names)
+            logger.info("✅ Prediction done!")
+
+            return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata)
