@@ -584,7 +584,8 @@ class HierClassifier():
                 overlap = np.isin(self.indata_genes, m.classifier.features)
                 overlap_idx = np.where(overlap)[0]
                 level_idx = pd.Index(m.classifier.features).get_indexer(self.indata_genes[overlap_idx])
-                means_vec[overlap_idx] = m.scaler.mean_[level_idx]
+                if m.scaler.with_mean:
+                    means_vec[overlap_idx] = m.scaler.mean_[level_idx]
                 scales_vec[overlap_idx] = m.scaler.scale_[level_idx]
             self.indata = (self.indata[:, k_x_idx] - means_vec) / scales_vec
             self.indata[self.indata > 10] = 10
