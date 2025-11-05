@@ -574,5 +574,16 @@ class HierClassifier():
             else:
                 logger.info(f"🧬 {k_x.sum()} features used for prediction")
             k_x_idx = np.where(k_x)[0]
-            self.indata = self.indata[:, k_x_idx]
+            #self.indata = self.indata[:, k_x_idx]
             self.indata_genes = self.indata_genes[k_x_idx]
+            logger.info(f"⚖️ Scaling input data")
+            means_vec = np.zeros(len(self.indata_genes))
+            scales_vec = np.ones(len(self.indata_genes))
+            for m in level_classifiers.values():
+                overlap = np.isin(self.indata_genes, m.classifier.features)
+                overlap_idx = np.where(overlap)[0]
+                level_idx = pd.Index(m.classifier.features).get_indexer(self.indata_genes[overlap_idx])
+                means_vec[overlap_idx] = m.scaler.mean_[level_idx]
+                scales_vec[overlap_idx] = m.scaler.scale_[level_idx]
+            self.indata = (self.indata[:, k_x_idx] - means_vec) / scales_vec
+            self.indata[self.indata > 10] = 10
