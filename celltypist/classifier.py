@@ -610,6 +610,7 @@ class HierClassifier():
                 labels[f"{key}_predicted_labels"] = pd.Categorical(lab)
                 decision_mats[key] = pd.DataFrame(decision_mat, columns = model.classifier.classes_, index = self.indata_names)
                 prob_mats[key] = pd.DataFrame(prob_mat, columns = model.classifier.classes_, index = self.indata_names)
-            logger.info("✅ Prediction done!")
-
-            return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata)
+        else:
+            logger.info(f"🧫 Running hierarchical celltyping (LCPN mode)")
+        logger.info("✅ Prediction done!")
+        return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata)
