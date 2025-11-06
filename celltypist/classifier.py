@@ -613,4 +613,4 @@ class HierClassifier():
         else:
             logger.info(f"🧫 Running hierarchical celltyping (LCPN mode)")
         logger.info("✅ Prediction done!")
-        return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata)
+        return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata, self.model.tree)
