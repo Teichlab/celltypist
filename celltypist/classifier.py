@@ -612,5 +612,49 @@ class HierClassifier():
                 prob_mats[key] = pd.DataFrame(prob_mat, columns = model.classifier.classes_, index = self.indata_names)
         else:
             logger.info(f"🧫 Running hierarchical celltyping (LCPN mode)")
+            root_model = self.model.model_mapping[self.model.tree.root.model]
+            if self.indata_genes.intersection(root_model.classifier.features).size == 0:
+                raise ValueError(
+                        f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
+            labels = pd.DataFrame(index = self.indata_names)
+            decision_mats = {}
+            prob_mats = {}
+            labels["level1_predicted_labels"] = pd.Categorical([self.model.tree.root.original_name] * len(self.indata_names))
+
+            def _predict_node(node, cell_index):
+                if not node.model or len(cell_index) == 0:
+                    return
+                logger.info(f"🖋️ Predicting depth-{node.depth} node '{node.original_name}' on {len(cell_index)} cells")
+
+                logger.info(f"      🔗 Matching reference genes in the model")
+                model = self.model.model_mapping[node.model]
+                overlap = np.isin(self.indata_genes, model.classifier.features)
+                logger.info(f"      🧬 {overlap.sum()} features used for prediction")
+                overlap_idx = np.where(overlap)[0]
+                level_idx = pd.Index(model.classifier.features).get_indexer(self.indata_genes[overlap_idx])
+                cell_pos = pd.Index(self.indata_names).get_indexer(cell_index)
+
+                logger.info(f"      ⚖️ Scaling input data")
+                means_ = model.scaler.mean_[level_idx] if model.scaler.with_mean else 0
+                sds_ = model.scaler.scale_[level_idx]
+                X = (self.indata[cell_pos][:, overlap_idx] - means_) / sds_
+                X[X > 10] = 10
+
+                logger.info(f"      🖋️ Predicting labels")
+                ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
+                model.classifier.n_features_in_ = len(level_idx)
+                model.classifier.features = model.classifier.features[level_idx]
+                model.classifier.coef_ = model.classifier.coef_[:, level_idx]
+                decision_mat, prob_mat, lab = model.predict_labels_and_prob(X, mode = 'best match')
+                model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
+                decision_mats[node.original_name] = pd.DataFrame(decision_mat, index = cell_index, columns = model.classifier.classes_)
+                prob_mats[node.original_name] = pd.DataFrame(prob_mat, index = cell_index, columns = model.classifier.classes_)
+                labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = pd.Categorical(lab)
+
+                for child in node.children:
+                    child_cells = cell_index[lab == child.original_name]
+                    _predict_node(child, child_cells)
+
+            _predict_node(self.model.tree.root, self.indata_names)
         logger.info("✅ Prediction done!")
         return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata, self.model.tree)
