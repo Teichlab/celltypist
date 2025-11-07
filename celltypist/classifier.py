@@ -619,42 +619,52 @@ class HierClassifier():
             labels = pd.DataFrame(index = self.indata_names)
             decision_mats = {}
             prob_mats = {}
-            labels["level1_predicted_labels"] = pd.Categorical([self.model.tree.root.original_name] * len(self.indata_names))
-
+            labels["level1_predicted_labels"] = np.full(len(self.indata_names), self.model.tree.root.original_name)
             def _predict_node(node, cell_index):
-                if not node.model or len(cell_index) == 0:
+                if len(cell_index) == 0:
                     return
-                logger.info(f"🖋️ Predicting depth-{node.depth} node '{node.original_name}' on {len(cell_index)} cells")
+                if sum(child.size > 0 for child in node.children) == 0:
+                    return
+                if node.model:
+                    logger.info(f"🖋️ Predicting depth-{node.depth} node '{node.original_name}' on {len(cell_index)} cells")
 
-                logger.info(f"      🔗 Matching reference genes in the model")
-                model = self.model.model_mapping[node.model]
-                overlap = np.isin(self.indata_genes, model.classifier.features)
-                logger.info(f"      🧬 {overlap.sum()} features used for prediction")
-                overlap_idx = np.where(overlap)[0]
-                level_idx = pd.Index(model.classifier.features).get_indexer(self.indata_genes[overlap_idx])
-                cell_pos = pd.Index(self.indata_names).get_indexer(cell_index)
+                    logger.info(f"      🔗 Matching reference genes in the model")
+                    model = self.model.model_mapping[node.model]
+                    overlap = np.isin(self.indata_genes, model.classifier.features)
+                    logger.info(f"      🧬 {overlap.sum()} features used for prediction")
+                    overlap_idx = np.where(overlap)[0]
+                    level_idx = pd.Index(model.classifier.features).get_indexer(self.indata_genes[overlap_idx])
+                    cell_pos = self.indata_names.get_indexer(cell_index)
 
-                logger.info(f"      ⚖️ Scaling input data")
-                means_ = model.scaler.mean_[level_idx] if model.scaler.with_mean else 0
-                sds_ = model.scaler.scale_[level_idx]
-                X = (self.indata[cell_pos][:, overlap_idx] - means_) / sds_
-                X[X > 10] = 10
+                    logger.info(f"      ⚖️ Scaling input data")
+                    means_ = model.scaler.mean_[level_idx] if model.scaler.with_mean else 0
+                    sds_ = model.scaler.scale_[level_idx]
+                    X = (self.indata[cell_pos][:, overlap_idx] - means_) / sds_
+                    X[X > 10] = 10
 
-                logger.info(f"      🖋️ Predicting labels")
-                ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
-                model.classifier.n_features_in_ = len(level_idx)
-                model.classifier.features = model.classifier.features[level_idx]
-                model.classifier.coef_ = model.classifier.coef_[:, level_idx]
-                decision_mat, prob_mat, lab = model.predict_labels_and_prob(X, mode = 'best match')
-                model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
-                decision_mats[node.original_name] = pd.DataFrame(decision_mat, index = cell_index, columns = model.classifier.classes_)
-                prob_mats[node.original_name] = pd.DataFrame(prob_mat, index = cell_index, columns = model.classifier.classes_)
-                labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = pd.Categorical(lab)
+                    logger.info(f"      🖋️ Predicting labels")
+                    ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
+                    model.classifier.n_features_in_ = len(level_idx)
+                    model.classifier.features = model.classifier.features[level_idx]
+                    model.classifier.coef_ = model.classifier.coef_[:, level_idx]
+                    decision_mat, prob_mat, lab = model.predict_labels_and_prob(X, mode = 'best match')
+                    model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
+                    decision_mats[node.original_name] = pd.DataFrame(decision_mat, index = cell_index, columns = model.classifier.classes_)
+                    prob_mats[node.original_name] = pd.DataFrame(prob_mat, index = cell_index, columns = model.classifier.classes_)
+                    labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = lab
 
-                for child in node.children:
-                    child_cells = cell_index[lab == child.original_name]
-                    _predict_node(child, child_cells)
-
+                    for child in node.children:
+                        child_cells = cell_index[lab == child.original_name]
+                        _predict_node(child, child_cells)
+                else:
+                    valid_child = [c for c in node.children if c.size > 0][0]
+                    logger.info(f"➡️ Passing {len(cell_index)} cells from '{node.original_name}' to its single child '{valid_child.original_name}'")
+                    labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = np.full(len(cell_index), valid_child.original_name)
+                    decision_mats[node.original_name] = pd.DataFrame(np.full((len(cell_index), 1), np.inf), index = cell_index, columns = [valid_child.original_name])
+                    prob_mats[node.original_name] = pd.DataFrame(np.ones((len(cell_index), 1)), index = cell_index, columns = [valid_child.original_name])
+                    _predict_node(valid_child, cell_index)
             _predict_node(self.model.tree.root, self.indata_names)
+            for col in labels.columns:
+                labels[col] = labels[col].astype("category")
         logger.info("✅ Prediction done!")
         return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata, self.model.tree)
