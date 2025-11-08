@@ -627,7 +627,7 @@ class HierClassifier():
                     return
                 abs_depth = len(self.model.tree.extract_path(node.original_name, print_path = False))
                 if node.model:
-                    logger.info(f"🖋️ Predicting depth-{abs_depth} node '{node.original_name}' on {len(cell_index)} cells")
+                    logger.info(f"🖋️ Predicting level-{abs_depth} node '{node.original_name}' on {len(cell_index)} cells")
 
                     logger.info(f"      🔗 Matching reference genes in the model")
                     model = self.model.model_mapping[node.model]
