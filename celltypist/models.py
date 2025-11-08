@@ -584,7 +584,7 @@ class HierModel():
                         f"🛑 Parent of '{cell_type}' has no classifier available")
             model = self.model_mapping[parent.model]
             siblings = [c.original_name for c in parent.children if c.original_name != cell_type and c.size > 0]
-            logger.info(f"🧬 Top markers for '{cell_type}', distinguishing it from siblings: {', '.join(siblings)}")
+            logger.info(f"🧬 Top markers for '{cell_type}', distinguishing it from {'siblings' if len(siblings) >= 2 else 'sibling'}: {', '.join(siblings)}")
             return model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
         else:
             results = {}
@@ -593,7 +593,7 @@ class HierModel():
                 model = self.model_mapping[getattr(self.tree, f"level{level}_classifier")]
                 if cell_type in model.cell_types:
                     results[f"level{level}"] = model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
-            logger.info(f"🧬 Top markers for '{cell_type}' found at classifiers: {', '.join(results.keys())}")
+            logger.info(f"🧬 Top markers for '{cell_type}' found at {'classifiers' if len(results) >= 2 else 'classifier'}: {', '.join(results.keys())}")
             return results
 
     def convert(self, map_file: Optional[str] = None, sep: str = ',', convert_from: Optional[int] = None, convert_to: Optional[int] = None, unique_only: bool = True, collapse: str = 'average', random_state: int = 0, indent: str = "") -> None:
