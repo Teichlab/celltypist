@@ -625,8 +625,9 @@ class HierClassifier():
                     return
                 if sum(child.size > 0 for child in node.children) == 0:
                     return
+                abs_depth = len(self.model.tree.extract_path(node.original_name, print_path = False))
                 if node.model:
-                    logger.info(f"🖋️ Predicting depth-{node.depth} node '{node.original_name}' on {len(cell_index)} cells")
+                    logger.info(f"🖋️ Predicting depth-{abs_depth} node '{node.original_name}' on {len(cell_index)} cells")
 
                     logger.info(f"      🔗 Matching reference genes in the model")
                     model = self.model.model_mapping[node.model]
@@ -651,7 +652,7 @@ class HierClassifier():
                     model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_ = ni, fs, cf
                     decision_mats[node.original_name] = pd.DataFrame(decision_mat, index = cell_index, columns = model.classifier.classes_)
                     prob_mats[node.original_name] = pd.DataFrame(prob_mat, index = cell_index, columns = model.classifier.classes_)
-                    labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = lab
+                    labels.loc[cell_index, f"level{abs_depth+1}_predicted_labels"] = lab
 
                     for child in node.children:
                         child_cells = cell_index[lab == child.original_name]
@@ -659,7 +660,7 @@ class HierClassifier():
                 else:
                     valid_child = [c for c in node.children if c.size > 0][0]
                     logger.info(f"➡️ Passing {len(cell_index)} cells from '{node.original_name}' to its single child '{valid_child.original_name}'")
-                    labels.loc[cell_index, f"level{node.depth+1}_predicted_labels"] = np.full(len(cell_index), valid_child.original_name)
+                    labels.loc[cell_index, f"level{abs_depth+1}_predicted_labels"] = np.full(len(cell_index), valid_child.original_name)
                     decision_mats[node.original_name] = pd.DataFrame(np.full((len(cell_index), 1), np.inf), index = cell_index, columns = [valid_child.original_name])
                     prob_mats[node.original_name] = pd.DataFrame(np.ones((len(cell_index), 1)), index = cell_index, columns = [valid_child.original_name])
                     _predict_node(valid_child, cell_index)
