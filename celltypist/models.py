@@ -583,7 +583,7 @@ class HierModel():
                 raise ValueError(
                         f"🛑 Parent of '{cell_type}' has no classifier available")
             model = self.model_mapping[parent.model]
-            siblings = [c.original_name for c in parent.children if c.original_name != cell_type]
+            siblings = [c.original_name for c in parent.children if c.original_name != cell_type and c.size > 0]
             logger.info(f"🧬 Top markers for '{cell_type}', distinguishing it from siblings: {', '.join(siblings)}")
             return model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
         else:
