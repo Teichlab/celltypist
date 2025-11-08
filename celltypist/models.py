@@ -588,7 +588,7 @@ class HierModel():
             return model.extract_top_markers(cell_type, top_n = top_n, only_positive = only_positive)
         else:
             results = {}
-            depth = self.tree.find_node(cell_type).depth
+            depth = len(self.tree.extract_path(cell_type, print_path = False))
             for level in range(depth, self.tree.depth + 1):
                 model = self.model_mapping[getattr(self.tree, f"level{level}_classifier")]
                 if cell_type in model.cell_types:
