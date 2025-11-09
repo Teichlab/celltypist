@@ -608,7 +608,7 @@ class HierClassifier():
             labels = pd.DataFrame(index = self.indata_names)
             decision_mats = {}
             prob_mats = {}
-            labels["level1_predicted_labels"] = np.full(len(self.indata_names), self.model.tree.root.original_name)
+            labels["level1_predicted_labels"] = pd.Categorical(np.full(len(self.indata_names), self.model.tree.root.original_name))
             decision_mats['level1'] = pd.DataFrame(np.full((len(self.indata_names), 1), np.inf), index = self.indata_names, columns = [self.model.tree.root.original_name])
             prob_mats['level1'] = pd.DataFrame(np.ones((len(self.indata_names), 1)), index = self.indata_names, columns = [self.model.tree.root.original_name])
             for (level_attr, model), overlap_idx, level_idx in zip(level_classifiers.items(), overlap_idxs, level_idxs):
