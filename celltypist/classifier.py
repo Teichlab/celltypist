@@ -261,6 +261,8 @@ class HierAnnotationResult():
         An :class:`~anndata.AnnData` object representing the input data.
     tree
         A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
+    mode
+        The training mode (either `'LCPN'` or `'LCL'`).
     """
     def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree):
         self.predicted_labels = labels
@@ -269,6 +271,11 @@ class HierAnnotationResult():
         self.adata = adata
         self.tree = tree
         self.cell_count = labels.shape[0]
+
+    @property
+    def mode(self) -> str:
+        """The training mode."""
+        return self.tree.mode
 
 class Classifier():
     """
