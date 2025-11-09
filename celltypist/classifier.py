@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from .models import Model, HierModel
+from .tree import Tree
 from . import logger
 try:
     from importlib.metadata import version
@@ -230,7 +231,16 @@ class AnnotationResult():
         return base
 
 class HierAnnotationResult():
-    pass
+    """
+    Class
+    """
+    def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree):
+        self.predicted_labels = labels
+        self.decision_matrix = decision_mats
+        self.probability_matrix = prob_mats
+        self.adata = adata
+        self.tree = tree
+        self.cell_count = labels.shape[0]
 
 class Classifier():
     """
@@ -598,6 +608,9 @@ class HierClassifier():
             labels = pd.DataFrame(index = self.indata_names)
             decision_mats = {}
             prob_mats = {}
+            labels["level1_predicted_labels"] = np.full(len(self.indata_names), self.model.tree.root.original_name)
+            decision_mats['level1'] = pd.DataFrame(np.full((len(self.indata_names), 1), np.inf), index = self.indata_names, columns = [self.model.tree.root.original_name])
+            prob_mats['level1'] = pd.DataFrame(np.ones((len(self.indata_names), 1)), index = self.indata_names, columns = [self.model.tree.root.original_name])
             for (level_attr, model), overlap_idx, level_idx in zip(level_classifiers.items(), overlap_idxs, level_idxs):
                 key = level_attr.replace('_classifier', '')
                 logger.info(f"🖋️ Predicting {key.replace('level', 'level-')} labels")
