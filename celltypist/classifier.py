@@ -48,7 +48,7 @@ class AnnotationResult():
     probability_matrix
         Probability matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
     cell_count
-        Number of input cells which undergo the prediction process.
+        Number of input cells which have undergone the prediction process.
     adata
         An :class:`~anndata.AnnData` object representing the input data.
     """
@@ -232,7 +232,35 @@ class AnnotationResult():
 
 class HierAnnotationResult():
     """
-    Class
+    Class that represents the result of a hierarchical celltyping annotation process.
+
+    Parameters
+    ----------
+    labels
+        A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
+    decision_mats
+        A dictionary of decision matrices per level (LCL) or per node (LCPN).
+    prob_mats
+        A dictionary of probability matrices per level (LCL) or per node (LCPN).
+    adata
+        An :class:`~anndata.AnnData` object representing the input object.
+    tree
+        A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
+
+    Attributes
+    ----------
+    predicted_labels
+        A :class:`~pandas.DataFrame` object of individual prediction results.
+    decision_matrix
+        A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type.
+    probability_matrix
+        A dictionary of probability matrices representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
+    cell_count
+        Number of input cells which have undergone the prediction process.
+    adata
+        An :class:`~anndata.AnnData` object representing the input data.
+    tree
+        A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
     """
     def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree):
         self.predicted_labels = labels
