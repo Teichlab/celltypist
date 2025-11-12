@@ -285,12 +285,12 @@ class HierAnnotationResult():
         ----------
         :class:`~celltypist.classifier.HierAnnotationResult`
             A new :class:`~celltypist.classifier.HierAnnotationResult` object with:
-            1) trailing NaNs of each cell filled in `.predicted_labels`.
-            2) `.decision_matrix` and `.probability_matrix` converted from node-based dicts to level-based dicts.
+            1) Trailing NaNs of each cell forward-filled in `.predicted_labels`.
+            2) `.decision_matrix` and `.probability_matrix` converted from node-based to level-based dictionaries.
         """
         if self.mode == 'LCL':
             raise ValueError(
-                    f"🛑 This model was generated in LCL mode, reshaping is not needed")
+                    f"🛑 This model was generated in LCL mode; no reshaping needed")
 
 class Classifier():
     """
