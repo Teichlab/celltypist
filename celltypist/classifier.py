@@ -291,6 +291,12 @@ class HierAnnotationResult():
         if self.mode == 'LCL':
             raise ValueError(
                     f"🛑 This model was generated in LCL mode; no reshaping needed")
+        filled_labels = self.predicted_labels.ffill(axis = 1, inplace = False)
+        decision_by_level = {}
+        prob_by_level = {}
+        decision_by_level["level1"] = pd.DataFrame(np.inf, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
+        prob_by_level["level1"] = pd.DataFrame(1.0, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
+
 
 class Classifier():
     """
