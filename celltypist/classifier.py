@@ -665,8 +665,8 @@ class HierClassifier():
             decision_mats = {}
             prob_mats = {}
             labels["level1_predicted_labels"] = pd.Categorical(np.full(len(self.indata_names), self.model.tree.root.original_name))
-            decision_mats['level1'] = pd.DataFrame(np.full((len(self.indata_names), 1), np.inf), index = self.indata_names, columns = [self.model.tree.root.original_name])
-            prob_mats['level1'] = pd.DataFrame(np.ones((len(self.indata_names), 1)), index = self.indata_names, columns = [self.model.tree.root.original_name])
+            decision_mats['level1'] = pd.DataFrame(np.inf, index = self.indata_names, columns = [self.model.tree.root.original_name])
+            prob_mats['level1'] = pd.DataFrame(1, index = self.indata_names, columns = [self.model.tree.root.original_name])
             for (level_attr, model), overlap_idx, level_idx in zip(level_classifiers.items(), overlap_idxs, level_idxs):
                 key = level_attr.replace('_classifier', '')
                 logger.info(f"🖋️ Predicting {key.replace('level', 'level-')} labels")
@@ -730,8 +730,8 @@ class HierClassifier():
                     valid_child = [c for c in node.children if c.size > 0][0]
                     logger.info(f"➡️ Passing {len(cell_index)} cells from '{node.original_name}' to its single child '{valid_child.original_name}'")
                     labels.loc[cell_index, f"level{abs_depth+1}_predicted_labels"] = np.full(len(cell_index), valid_child.original_name)
-                    decision_mats[node.original_name] = pd.DataFrame(np.full((len(cell_index), 1), np.inf), index = cell_index, columns = [valid_child.original_name])
-                    prob_mats[node.original_name] = pd.DataFrame(np.ones((len(cell_index), 1)), index = cell_index, columns = [valid_child.original_name])
+                    decision_mats[node.original_name] = pd.DataFrame(np.inf, index = cell_index, columns = [valid_child.original_name])
+                    prob_mats[node.original_name] = pd.DataFrame(1, index = cell_index, columns = [valid_child.original_name])
                     _predict_node(valid_child, cell_index)
             _predict_node(self.model.tree.root, self.indata_names)
             for col in labels.columns:
