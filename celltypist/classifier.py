@@ -296,6 +296,40 @@ class HierAnnotationResult():
         prob_by_level = {}
         decision_by_level["level1"] = pd.DataFrame(np.inf, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
         prob_by_level["level1"] = pd.DataFrame(1.0, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
+        for level in range(2, filled_labels.shape[1] + 1):
+            parent_labels = filled_labels[f"level{level-1}_predicted_labels"]
+            unique_parents = np.unique(parent_labels)
+
+            level_cols = []
+            for parent_name in unique_parents:
+                parent_node = self.tree.find_node(parent_name)
+                if parent_node.model:
+                    child_types = list(parent_node.model.classifier.classes_)
+                else:
+                    child_types = [c.original_name for c in parent_node.children if c.size > 0]
+                    if not child_types:
+                        child_types = [parent_node.original_name]
+                level_cols.extend(child_types)
+
+            level_decision = pd.DataFrame(-np.inf, index = self.predicted_labels.index, columns = level_cols)
+            level_prob = pd.DataFrame(0.0, index = self.predicted_labels.index, columns = level_cols)
+            for parent_name in unique_parents:
+                parent_node = self.tree.find_node(parent_name)
+                cell_idx = parent_labels.index[parent_labels == parent_name]
+                if parent_node.model:
+                    node_dec = self.decision_matrix[parent_name]
+                    node_prob = self.probability_matrix[parent_name]
+                    level_decision.loc[cell_idx, node_dec.columns] = node_dec.loc[cell_idx]
+                    level_prob.loc[cell_idx, node_prob.columns] = node_prob.loc[cell_idx]
+                else:
+                    child_types = [c.original_name for c in parent_node.children if c.size > 0]
+                    col = child_types[0] if child_types else parent_node.original_name
+                    level_decision.loc[cell_idx, col] = np.inf
+                    level_prob.loc[cell_idx, col] = 1.0
+
+            decision_by_level[f"level{level}"] = level_decision
+            prob_by_level[f"level{level}"] = level_prob
+        return HierAnnotationResult(labels = filled_labels, decision_mats = decision_by_level, prob_mats = prob_by_level, adata = self.adata, tree = self.tree)
 
 
 class Classifier():
