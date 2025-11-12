@@ -277,6 +277,21 @@ class HierAnnotationResult():
         """The training mode."""
         return self.tree.mode
 
+    def reshape_lcpn(self):
+        """
+        Reshape an LCPN-style `HierAnnotationResult` into an LCL-style format.
+
+        Returns
+        ----------
+        :class:`~celltypist.classifier.HierAnnotationResult`
+            A new :class:`~celltypist.classifier.HierAnnotationResult` object with:
+            1) trailing NaNs of each cell filled in `.predicted_labels`.
+            2) `.decision_matrix` and `.probability_matrix` converted from node-based dicts to level-based dicts.
+        """
+        if self.mode == 'LCL':
+            raise ValueError(
+                    f"🛑 This model was generated in LCL mode, reshaping is not needed")
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
