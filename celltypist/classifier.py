@@ -303,12 +303,9 @@ class HierAnnotationResult():
             level_cols = []
             for parent_name in unique_parents:
                 parent_node = self.tree.find_node(parent_name)
-                if parent_node.model:
-                    child_types = list(parent_node.model.classifier.classes_)
-                else:
-                    child_types = [c.original_name for c in parent_node.children if c.size > 0]
-                    if not child_types:
-                        child_types = [parent_node.original_name]
+                child_types = [c.original_name for c in parent_node.children if c.size > 0]
+                if not child_types:
+                    child_types = [parent_node.original_name]
                 level_cols.extend(child_types)
 
             level_decision = pd.DataFrame(-np.inf, index = filled_labels.index, columns = level_cols)
