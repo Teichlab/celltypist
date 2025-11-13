@@ -294,8 +294,8 @@ class HierAnnotationResult():
         filled_labels = self.predicted_labels.ffill(axis = 1, inplace = False)
         decision_by_level = {}
         prob_by_level = {}
-        decision_by_level["level1"] = pd.DataFrame(np.inf, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
-        prob_by_level["level1"] = pd.DataFrame(1.0, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
+        decision_by_level["level1"] = pd.DataFrame(np.inf, index = filled_labels.index, columns = [self.tree.root.original_name])
+        prob_by_level["level1"] = pd.DataFrame(1.0, index = filled_labels.index, columns = [self.tree.root.original_name])
         for level in range(2, filled_labels.shape[1] + 1):
             parent_labels = filled_labels[f"level{level-1}_predicted_labels"]
             unique_parents = np.unique(parent_labels)
@@ -311,8 +311,8 @@ class HierAnnotationResult():
                         child_types = [parent_node.original_name]
                 level_cols.extend(child_types)
 
-            level_decision = pd.DataFrame(-np.inf, index = self.predicted_labels.index, columns = level_cols)
-            level_prob = pd.DataFrame(0.0, index = self.predicted_labels.index, columns = level_cols)
+            level_decision = pd.DataFrame(-np.inf, index = filled_labels.index, columns = level_cols)
+            level_prob = pd.DataFrame(0.0, index = filled_labels.index, columns = level_cols)
             for parent_name in unique_parents:
                 parent_node = self.tree.find_node(parent_name)
                 cell_idx = parent_labels.index[parent_labels == parent_name]
