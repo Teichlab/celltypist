@@ -25,6 +25,27 @@ except ImportError:
 NEG_INF = -np.inf
 POS_INF = np.inf
 
+def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
+    """Construct a neighborhood graph. This function is for internal use."""
+    fsc = rsc if use_GPU else sc
+    # fix for adata.uns['log1p']['base'] error
+    if 'log1p' in adata.uns.keys():
+        if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
+            adata.uns['log1p']['base'] = None
+
+    if 'X_pca' not in adata.obsm.keys():
+        if adata.X[:1000].min() < 0:
+            adata = adata.raw.to_adata()
+        if use_GPU:
+            fsc.get.anndata_to_GPU(adata)
+        if 'highly_variable' not in adata.var:
+            sc.pp.filter_genes(adata, min_cells=5)
+            fsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
+        adata = adata[:, adata.var.highly_variable]
+        fsc.pp.scale(adata, max_value=10)
+        fsc.pp.pca(adata, n_comps=50)
+    fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
+    return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
 class AnnotationResult():
     """
@@ -174,7 +195,7 @@ class AnnotationResult():
         else:
             logger.info("🧙 Constructing the neighborhood graph and generating UMAP coordinates")
             adata = self.adata.copy()
-            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata)
+            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = _construct_neighbor_graph(adata)
             sc.tl.umap(self.adata)
         logger.info("📈 Plotting the results")
         sc.settings.set_figure_params(figsize=[6.4, 6.4], format=format)
@@ -538,29 +559,6 @@ class Classifier():
         cells = self.indata_names
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
 
-    @staticmethod
-    def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
-        """Construct a neighborhood graph. This function is for internal use."""
-        fsc = rsc if use_GPU else sc
-        # fix for adata.uns['log1p']['base'] error
-        if 'log1p' in adata.uns.keys():
-            if isinstance(adata.uns['log1p'], dict) and 'base' not in adata.uns['log1p'].keys():
-                adata.uns['log1p']['base'] = None
-
-        if 'X_pca' not in adata.obsm.keys():
-            if adata.X[:1000].min() < 0:
-                adata = adata.raw.to_adata()
-            if use_GPU:
-                fsc.get.anndata_to_GPU(adata)
-            if 'highly_variable' not in adata.var:
-                sc.pp.filter_genes(adata, min_cells=5)
-                fsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
-            adata = adata[:, adata.var.highly_variable]
-            fsc.pp.scale(adata, max_value=10)
-            fsc.pp.pca(adata, n_comps=50)
-        fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
-        return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
-
     def over_cluster(self, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
         """
         Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
@@ -585,7 +583,7 @@ class Classifier():
         if 'connectivities' not in self.adata.obsp:
             logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
             adata = self.adata.copy()
-            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = Classifier._construct_neighbor_graph(adata, use_GPU)
+            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = _construct_neighbor_graph(adata, use_GPU)
         else:
             logger.info("👀 Detected a neighborhood graph in the input object, will run over-clustering on the basis of it")
         if resolution is None:
