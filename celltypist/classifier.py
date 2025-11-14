@@ -247,8 +247,11 @@ class AnnotationResult():
         Returns
         ----------
         None
-            The attribute :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` is modified by adding the `over_clustering` and `majority_voting` columns.
+            The attribute :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` is modified in place by adding the `over_clustering` and `majority_voting` columns.
         """
+        if len(over_clustering) != self.cell_count:
+            raise ValueError(
+                    f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({self.cell_count})")
         if isinstance(over_clustering, (list, tuple)):
             over_clustering = np.array(over_clustering)
         logger.info("🗳️ Majority voting the predictions")
