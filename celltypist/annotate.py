@@ -107,4 +107,5 @@ def annotate(filename: Union[AnnData,str] = "",
         raise ValueError(
                 f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({clf.adata.n_obs})")
     #majority voting
-    return classifier.Classifier.majority_vote(predictions, over_clustering, min_prop = min_prop)
+    predictions.majority_vote(over_clustering, min_prop = min_prop)
+    return predictions

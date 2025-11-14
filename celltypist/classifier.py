@@ -232,6 +232,37 @@ class AnnotationResult():
         base += f"\n    adata: AnnData object referred"
         return base
 
+    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
+        """
+        Majority vote the celltypist predictions using the result from the over-clustering.
+
+        Parameters
+        ----------
+        over_clustering
+            A list, tuple, numpy array, pandas series or index containing the over-clustering information.
+        min_prop
+            For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
+            (Default: 0)
+
+        Returns
+        ----------
+        None
+            The attribute :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` is modified by adding the `over_clustering` and `majority_voting` columns.
+        """
+        if isinstance(over_clustering, (list, tuple)):
+            over_clustering = np.array(over_clustering)
+        logger.info("🗳️ Majority voting the predictions")
+        votes = pd.crosstab(self.predicted_labels['predicted_labels'], over_clustering)
+        majority = votes.idxmax(axis=0).astype(str)
+        freqs = (votes / votes.sum(axis=0).values).max(axis=0)
+        majority[freqs < min_prop] = 'Heterogeneous'
+        majority = majority[over_clustering].reset_index()
+        majority.index = self.predicted_labels.index
+        majority.columns = ['over_clustering', 'majority_voting']
+        majority['majority_voting'] = majority['majority_voting'].astype('category')
+        self.predicted_labels = self.predicted_labels.join(majority)
+        logger.info("✅ Majority voting done!")
+
 class HierAnnotationResult():
     """
     Class that represents the result of a hierarchical celltyping annotation process.
@@ -576,45 +607,6 @@ class Classifier():
             else:
                 sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
         return self.adata.obs.pop('over_clustering')
-
-    @staticmethod
-    def majority_vote(predictions: AnnotationResult, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> AnnotationResult:
-        """
-        Majority vote the celltypist predictions using the result from the over-clustering.
-
-        Parameters
-        ----------
-        predictions
-            An :class:`~celltypist.classifier.AnnotationResult` object containing the :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`.
-        over_clustering
-            A list, tuple, numpy array, pandas series or index containing the over-clustering information.
-        min_prop
-            For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
-            (Default: 0)
-
-        Returns
-        ----------
-        :class:`~celltypist.classifier.AnnotationResult`
-            An :class:`~celltypist.classifier.AnnotationResult` object. Four important attributes within this class are:
-            1) :attr:`~celltypist.classifier.AnnotationResult.predicted_labels`, predicted labels from celltypist.
-            2) :attr:`~celltypist.classifier.AnnotationResult.decision_matrix`, decision matrix from celltypist.
-            3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
-            4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData object representation of the input data.
-        """
-        if isinstance(over_clustering, (list, tuple)):
-            over_clustering = np.array(over_clustering)
-        logger.info("🗳️ Majority voting the predictions")
-        votes = pd.crosstab(predictions.predicted_labels['predicted_labels'], over_clustering)
-        majority = votes.idxmax(axis=0).astype(str)
-        freqs = (votes / votes.sum(axis=0).values).max(axis=0)
-        majority[freqs < min_prop] = 'Heterogeneous'
-        majority = majority[over_clustering].reset_index()
-        majority.index = predictions.predicted_labels.index
-        majority.columns = ['over_clustering', 'majority_voting']
-        majority['majority_voting'] = majority['majority_voting'].astype('category')
-        predictions.predicted_labels = predictions.predicted_labels.join(majority)
-        logger.info("✅ Majority voting done!")
-        return predictions
 
 class HierClassifier():
     """
