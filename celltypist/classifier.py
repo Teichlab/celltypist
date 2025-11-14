@@ -225,7 +225,7 @@ class AnnotationResult():
                 self.probability_matrix.to_excel(writer, sheet_name="Probability Matrix")
 
     def __repr__(self):
-        base = f"CellTypist prediction result for {self.cell_count} query cells"
+        base = f"CellTypist flat prediction result for {self.cell_count} query cells"
         base += f"\n    predicted_labels: data frame with {self.predicted_labels.shape[1]} {'columns' if self.predicted_labels.shape[1] > 1 else 'column'} ({str(list(self.predicted_labels.columns))[1:-1]})"
         base += f"\n    decision_matrix: data frame with {self.cell_count} query cells and {self.decision_matrix.shape[1]} cell types"
         base += f"\n    probability_matrix: data frame with {self.cell_count} query cells and {self.probability_matrix.shape[1]} cell types"
@@ -330,6 +330,15 @@ class HierAnnotationResult():
             prob_by_level[f"level{level}"] = level_prob
         return HierAnnotationResult(labels = filled_labels, decision_mats = decision_by_level, prob_mats = prob_by_level, adata = self.adata, tree = self.tree)
 
+    def __repr__(self):
+        base = f"CellTypist hierarchical prediction result for {self.cell_count} query cells"
+        base += f"\n    mode: {self.mode}"
+        base += f"\n    predicted_labels: data frame with predicted cell types at {self.predicted_labels.shape[1]} levels"
+        base += f"\n    decision_matrix: dictionary of decision matrices per {'level' if 'level1' in self.decision_matrix else 'node'}"
+        base += f"\n    probability_matrix: dictionary of probability matrices per {'level' if 'level1' in self.probability_matrix else 'node'}"
+        base += f"\n    tree: Tree object used"
+        base += f"\n    adata: AnnData object referred"
+        return base
 
 class Classifier():
     """
