@@ -54,7 +54,7 @@ def over_cluster(adata, resolution: Optional[float] = None, use_GPU: bool = Fals
     Parameters
     ----------
     adata
-        The input AnnData that will be modified by adding an neighborhood graph.
+        The input AnnData that will be modified by adding an neighborhood graph if not found.
     resolution
         Resolution parameter for leiden clustering which controls the coarseness of the clustering.
         Default to 5, 10, 15, 20, 25 and 30 for datasets with cell numbers less than 5k, 20k, 40k, 100k, 200k and above, respectively.
