@@ -47,7 +47,7 @@ def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
     fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
     return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
-def over_cluster(adata, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
+def over_cluster(adata: AnnData, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
     """
     Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
 
