@@ -47,6 +47,58 @@ def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
     fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
     return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
+def over_cluster(adata, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
+    """
+    Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
+
+    Parameters
+    ----------
+    adata
+        The input AnnData that will be modified by adding an neighborhood graph.
+    resolution
+        Resolution parameter for leiden clustering which controls the coarseness of the clustering.
+        Default to 5, 10, 15, 20, 25 and 30 for datasets with cell numbers less than 5k, 20k, 40k, 100k, 200k and above, respectively.
+    use_GPU
+        Whether to use GPU for over clustering on the basis of `rapids-singlecell`.
+        (Default: `False`)
+
+    Returns
+    ----------
+    :class:`~pandas.Series`
+        A :class:`~pandas.Series` object showing the over-clustering result.
+    """
+    if use_GPU and 'rapids_singlecell' not in sys.modules:
+        logger.warn("⚠️ Warning: rapids_singlecell is not installed but required for GPU running, will switch back to CPU")
+        use_GPU = False
+    if 'connectivities' not in adata.obsp:
+        logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
+        adata_copy = adata.copy()
+        adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors'] = _construct_neighbor_graph(adata_copy, use_GPU)
+    else:
+        logger.info("👀 Detected a neighborhood graph in the input object, will run over-clustering on the basis of it")
+    if resolution is None:
+        if adata.n_obs < 5000:
+            resolution = 5
+        elif adata.n_obs < 20000:
+            resolution = 10
+        elif adata.n_obs < 40000:
+            resolution = 15
+        elif adata.n_obs < 100000:
+            resolution = 20
+        elif adata.n_obs < 200000:
+            resolution = 25
+        else:
+            resolution = 30
+    logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
+    if use_GPU:
+        rsc.tl.leiden(adata, resolution=resolution, key_added='over_clustering')
+    else:
+        if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10):
+            sc.tl.leiden(adata, resolution=resolution, key_added='over_clustering', flavor = 'igraph', n_iterations = 2)
+        else:
+            sc.tl.leiden(adata, resolution=resolution, key_added='over_clustering')
+    return adata.obs.pop('over_clustering')
+
 class AnnotationResult():
     """
     Class that represents the result of a flat celltyping annotation process.
@@ -558,56 +610,6 @@ class Classifier():
 
         cells = self.indata_names
         return AnnotationResult(pd.DataFrame(lab, columns=['predicted_labels'], index=cells, dtype='category'), pd.DataFrame(decision_mat, columns=self.model.classifier.classes_, index=cells), pd.DataFrame(prob_mat, columns=self.model.classifier.classes_, index=cells), self.adata)
-
-    def over_cluster(self, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
-        """
-        Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
-
-        Parameters
-        ----------
-        resolution
-            Resolution parameter for leiden clustering which controls the coarseness of the clustering.
-            Default to 5, 10, 15, 20, 25 and 30 for datasets with cell numbers less than 5k, 20k, 40k, 100k, 200k and above, respectively.
-        use_GPU
-            Whether to use GPU for over clustering on the basis of `rapids-singlecell`.
-            (Default: `False`)
-
-        Returns
-        ----------
-        :class:`~pandas.Series`
-            A :class:`~pandas.Series` object showing the over-clustering result.
-        """
-        if use_GPU and 'rapids_singlecell' not in sys.modules:
-            logger.warn("⚠️ Warning: rapids_singlecell is not installed but required for GPU running, will switch back to CPU")
-            use_GPU = False
-        if 'connectivities' not in self.adata.obsp:
-            logger.info("👀 Can not detect a neighborhood graph, will construct one before the over-clustering")
-            adata = self.adata.copy()
-            self.adata.obsm['X_pca'], self.adata.obsp['connectivities'], self.adata.obsp['distances'], self.adata.uns['neighbors'] = _construct_neighbor_graph(adata, use_GPU)
-        else:
-            logger.info("👀 Detected a neighborhood graph in the input object, will run over-clustering on the basis of it")
-        if resolution is None:
-            if self.adata.n_obs < 5000:
-                resolution = 5
-            elif self.adata.n_obs < 20000:
-                resolution = 10
-            elif self.adata.n_obs < 40000:
-                resolution = 15
-            elif self.adata.n_obs < 100000:
-                resolution = 20
-            elif self.adata.n_obs < 200000:
-                resolution = 25
-            else:
-                resolution = 30
-        logger.info(f"⛓️ Over-clustering input data with resolution set to {resolution}")
-        if use_GPU:
-            rsc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
-        else:
-            if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10):
-                sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering', flavor = 'igraph', n_iterations = 2)
-            else:
-                sc.tl.leiden(self.adata, resolution=resolution, key_added='over_clustering')
-        return self.adata.obs.pop('over_clustering')
 
 class HierClassifier():
     """

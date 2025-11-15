@@ -90,7 +90,7 @@ def annotate(filename: Union[AnnData,str] = "",
         return predictions
     #over clustering
     if over_clustering is None:
-        over_clustering = clf.over_cluster(use_GPU = use_GPU)
+        over_clustering = classifier.over_cluster(predictions.adata, use_GPU = use_GPU)
     elif isinstance(over_clustering, str):
         if over_clustering in clf.adata.obs:
             over_clustering = clf.adata.obs[over_clustering]
