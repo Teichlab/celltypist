@@ -469,6 +469,35 @@ class HierAnnotationResult():
         None
             A new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` is added, storing the majority-voted labels based on the given clustering.
         """
+        if len(over_clustering) != self.cell_count:
+            raise ValueError(
+                    f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({self.cell_count})")
+        if isinstance(over_clustering, (list, tuple)):
+            over_clustering = np.array(over_clustering)
+        logger.info("🗳️ Majority voting the predictions")
+        if label_source == 'predicted_labels':
+            labels = self.predicted_labels.ffill(axis = 1, inplace = False)
+        elif label_source == 'refined_labels':
+            if hasattr(self, 'refined_labels'):
+                labels = self.refined_labels
+            else:
+                raise AttributeError(
+                        f"🛑 Did not find the `refined_labels` attribute, perform label refinement by the method `.refine_labels()` beforehand or use `predicted_labels` instead")
+        else:
+            raise ValueError(
+                    f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'refined_labels'`")
+        majority_voting = pd.DataFrame(index = labels.index)
+        for col in labels.columns:
+            votes = pd.crosstab(labels[col], over_clustering)
+            majority = votes.idxmax(axis=0).astype(str)
+            freqs = (votes / votes.sum(axis=0).values).max(axis=0)
+            majority[freqs < min_prop] = 'Heterogeneous'
+            majority = majority[over_clustering].reset_index()
+            majority.index = labels.index
+            majority.columns = ['over_clustering', 'majority_voting']
+            majority_voting[col] = majority['majority_voting'].astype('category')
+        self.majority_voting = majority_voting
+        logger.info("✅ Majority voting done!")
 
 class Classifier():
     """
