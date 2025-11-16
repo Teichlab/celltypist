@@ -449,7 +449,7 @@ class HierAnnotationResult():
         base += f"\n    adata: AnnData object referred"
         return base
 
-    def majority_vote(self, label_source: str = "predicted_labels", over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
+    def majority_vote(self, label_source: str = "refined_labels", over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
         """
         Majority vote the celltypist hierarchical predictions using the result from the over-clustering.
 
@@ -457,7 +457,7 @@ class HierAnnotationResult():
         ----------
         label_source
             The attribute from which to retrieve cell type labels for majority voting. Must be either `'predicted_labels'` or `'refined_labels'`.
-            (Default: `'predicted_labels'`)
+            (Default: `'refined_labels'`)
         over_clustering
             A list, tuple, numpy array, pandas series or index containing the over-clustering information.
         min_prop
