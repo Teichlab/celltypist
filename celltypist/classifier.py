@@ -360,6 +360,8 @@ class HierAnnotationResult():
     ----------
     predicted_labels
         A :class:`~pandas.DataFrame` object of individual prediction results.
+    majority_voting
+        A :class:`~pandas.DataFrame` object of majority-voting prediction results. Only present when majority voting is performed.
     decision_matrix
         A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type.
     probability_matrix
