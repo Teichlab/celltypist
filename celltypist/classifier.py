@@ -307,7 +307,7 @@ class AnnotationResult():
 
     def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
         """
-        Majority vote the celltypist predictions using the result from the over-clustering.
+        Majority vote the celltypist flat predictions using the result from the over-clustering.
 
         Parameters
         ----------
@@ -451,7 +451,7 @@ class HierAnnotationResult():
 
     def majority_vote(self, label_source: str = "predicted_labels", over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
         """
-        Majority vote the celltypist predictions using the result from the over-clustering.
+        Majority vote the celltypist hierarchical predictions using the result from the over-clustering.
 
         Parameters
         ----------
@@ -467,7 +467,7 @@ class HierAnnotationResult():
         Returns
         ----------
         None
-            A new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` is added.
+            A new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` is added, storing the majority-voted labels based on the given clustering.
         """
 
 class Classifier():
