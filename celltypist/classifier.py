@@ -531,7 +531,7 @@ class HierAnnotationResult():
         if label_source in ("refined_labels", "predicted_labels", "majority_voting"):
             if not hasattr(result, label_source):
                 raise AttributeError(
-                        f"🛑 Missing `{label_source}`. Please ensure it exists or use `label_source = 'predicted_labels'` instead")
+                        f"🛑 Missing `{label_source}`. Please ensure this attribute exists or use `label_source = 'predicted_labels'` instead")
             labels = getattr(result, label_source)
         else:
             raise ValueError(
