@@ -525,6 +525,20 @@ class HierAnnotationResult():
         None
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.conf_score` containing per-level confidence scores.
         """
+        result = self
+        if self.mode == "LCPN" and "level1" not in self.probability_matrix:
+            result = self.reshape_lcpn()
+        if label_source in ("refined_labels", "predicted_labels", "majority_voting"):
+            if not hasattr(result, label_source):
+                raise AttributeError(
+                        f"🛑 Missing `{label_source}`. Please ensure it exists or use `label_source = 'predicted_labels'` instead")
+            labels = getattr(result, label_source)
+        else:
+            raise ValueError(
+                    f"🛑 Unrecognized `label_source` value, should be one of `'refined_labels'`, `'predicted_labels'`, or `'majority_voting'`")
+        prob_mats = result.probability_matrix
+        conf_df = pd.DataFrame(index = labels.index, columns = labels.columns.str.replace(label_source, 'conf_score'))
+        cumulative_prob = np.ones(result.cell_count)
 
 class Classifier():
     """
