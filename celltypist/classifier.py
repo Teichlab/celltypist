@@ -437,7 +437,11 @@ class HierAnnotationResult():
 
             decision_by_level[f"level{level}"] = level_decision
             prob_by_level[f"level{level}"] = level_prob
-        return HierAnnotationResult(labels = filled_labels, decision_mats = decision_by_level, prob_mats = prob_by_level, adata = self.adata, tree = self.tree)
+        hier_predictions = HierAnnotationResult(labels = filled_labels, decision_mats = decision_by_level, prob_mats = prob_by_level, adata = self.adata, tree = self.tree)
+        for attr in ('refined_labels', 'majority_voting', 'conf_score'):
+            if hasattr(self, attr):
+                setattr(hier_predictions, attr, getattr(self, attr))
+        return hier_predictions
 
     def __repr__(self):
         base = f"CellTypist hierarchical prediction result for {self.cell_count} query cells"
