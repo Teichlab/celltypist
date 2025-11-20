@@ -510,6 +510,22 @@ class HierAnnotationResult():
         self.majority_voting = majority_voting
         logger.info("✅ Majority voting done!")
 
+    def conf_score(self, label_source: str = "refined_labels") -> None:
+        """
+        Compute hierarchical confidence scores for each cell at every level.
+
+        Parameters
+        ----------
+        label_source
+            The attribute from which to retrieve cell type labels for confidence scoring. Must be one of `'refined_labels'`, `'predicted_labels'`, or `'majority_voting'`.
+            (Default: `'refined_labels'`)
+
+        Returns
+        ----------
+        None
+            Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.conf_score` containing per-level confidence scores.
+        """
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
