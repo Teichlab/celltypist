@@ -482,7 +482,7 @@ class HierAnnotationResult():
                 labels = self.refined_labels
             else:
                 raise AttributeError(
-                        f"🛑 Did not find the `refined_labels` attribute, perform label refinement by the method `.refine_labels()` beforehand or use `predicted_labels` instead")
+                        f"🛑 Did not find the `refined_labels` attribute, perform label refinement by the method `.refine_labels()` beforehand or use `label_source = 'predicted_labels'` instead")
         else:
             raise ValueError(
                     f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'refined_labels'`")
@@ -495,7 +495,7 @@ class HierAnnotationResult():
             majority = majority[over_clustering].reset_index()
             majority.index = labels.index
             majority.columns = ['over_clustering', 'majority_voting']
-            majority_voting[col] = majority['majority_voting'].astype('category')
+            majority_voting[col.replace('predicted_labels', 'majority_voting')] = majority['majority_voting'].astype('category')
         self.majority_voting = majority_voting
         logger.info("✅ Majority voting done!")
 
