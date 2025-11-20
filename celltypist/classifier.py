@@ -400,8 +400,11 @@ class HierAnnotationResult():
             2) `.decision_matrix` and `.probability_matrix` converted from node-based to level-based dictionaries.
         """
         if self.mode == 'LCL':
-            raise ValueError(
-                    f"🛑 This model was generated in LCL mode; no reshaping needed")
+            logger.warn(f"⚠️ Warning: this result was generated in LCL mode; no reshaping needed")
+            return
+        if self.mode == "LCPN" and "level1" in self.probability_matrix:
+            logger.warn(f"⚠️ Warning: this result was already reshaped; no reshaping needed")
+            return
         filled_labels = self.predicted_labels.ffill(axis = 1, inplace = False)
         decision_by_level = {}
         prob_by_level = {}
