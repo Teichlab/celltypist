@@ -360,12 +360,16 @@ class HierAnnotationResult():
     ----------
     predicted_labels
         A :class:`~pandas.DataFrame` object of individual prediction results.
+    refined_labels
+        A :class:`~pandas.DataFrame` object of refined individual prediction results. Only present when label refinement is performed.
     majority_voting
-        A :class:`~pandas.DataFrame` object of majority-voting prediction results. Only present when majority voting is performed.
+        A :class:`~pandas.DataFrame` object of majority-voted prediction results. Only present when majority voting is performed.
     decision_matrix
         A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type.
     probability_matrix
         A dictionary of probability matrices representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
+    conf_score
+        A :class:`~pandas.DataFrame` object of confidence scores. Only present when confidence score is calculated.
     cell_count
         Number of input cells which have undergone the prediction process.
     adata
