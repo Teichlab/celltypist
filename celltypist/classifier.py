@@ -22,7 +22,6 @@ try:
     import rapids_singlecell as rsc
 except ImportError:
     pass
-NEG_INF = -np.inf
 POS_INF = np.inf
 
 def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
@@ -348,28 +347,29 @@ class HierAnnotationResult():
     labels
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
     decision_mats
-        A dictionary of decision matrices per level (LCL) or per node (LCPN).
+        A dictionary of decision matrices per level.
     prob_mats
-        A dictionary of probability matrices per level (LCL) or per node (LCPN).
+        A dictionary of probability matrices per level.
     adata
         An :class:`~anndata.AnnData` object representing the input object.
     tree
         A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
+    reshape_lcpn
+        Whether to reshape a node-based LCPN result into a level-based LCL result. Only for developer use.
+        (Default: `True`)
 
     Attributes
     ----------
     predicted_labels
-        A :class:`~pandas.DataFrame` object of individual prediction results.
-    refined_labels
-        A :class:`~pandas.DataFrame` object of refined individual prediction results. Only present when label refinement is performed.
+        A :class:`~pandas.DataFrame` object of individual prediction results at each level.
     majority_voting
-        A :class:`~pandas.DataFrame` object of majority-voted prediction results. Only present when majority voting is performed.
+        A :class:`~pandas.DataFrame` object of majority-voted prediction results at each level. Only present when majority voting is performed.
     decision_matrix
-        A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type.
+        A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type at each level.
     probability_matrix
-        A dictionary of probability matrices representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
+        A dictionary of probability matrices representing the probability each cell belongs to a given cell type at each level.
     conf_score
-        A :class:`~pandas.DataFrame` object of confidence scores. Only present when confidence score is calculated.
+        A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence score is calculated.
     cell_count
         Number of input cells which have undergone the prediction process.
     adata
@@ -379,88 +379,72 @@ class HierAnnotationResult():
     mode
         The training mode (either `'LCPN'` or `'LCL'`).
     """
-    def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree):
+    def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree, reshape_lcpn: bool = True):
         self.predicted_labels = labels
         self.decision_matrix = decision_mats
         self.probability_matrix = prob_mats
         self.adata = adata
         self.tree = tree
         self.cell_count = labels.shape[0]
+        if reshape_lcpn and self.tree.mode == "LCPN":
+            self.predicted_labels.ffill(axis = 1, inplace = True)
+            decision_by_level = {}
+            prob_by_level = {}
+            decision_by_level["level1"] = pd.DataFrame(POS_INF, index = filled_labels.index, columns = [self.tree.root.original_name])
+            prob_by_level["level1"] = pd.DataFrame(1.0, index = filled_labels.index, columns = [self.tree.root.original_name])
+            for level in range(2, self.predicted_labels.shape[1] + 1):
+                parent_labels = self.predicted_labels[f"level{level-1}_predicted_labels"]
+                unique_parents = np.unique(parent_labels)
+
+                level_cols = []
+                for parent_name in unique_parents:
+                    parent_node = self.tree.find_node(parent_name)
+                    child_types = [c.original_name for c in parent_node.children if c.size > 0]
+                    if not child_types:
+                        child_types = [parent_node.original_name]
+                    level_cols.extend(child_types)
+
+                level_decision = pd.DataFrame(index = filled_labels.index, columns = level_cols)
+                level_prob = pd.DataFrame(index = self.predicted_labels.index, columns = level_cols)
+                for parent_name in unique_parents:
+                    parent_node = self.tree.find_node(parent_name)
+                    cell_idx = parent_labels.index[parent_labels == parent_name]
+                    if parent_node.model:
+                        node_dec = self.decision_matrix[parent_name]
+                        node_prob = self.probability_matrix[parent_name]
+                        level_decision.loc[cell_idx, node_dec.columns] = node_dec.loc[cell_idx]
+                        level_prob.loc[cell_idx, node_prob.columns] = node_prob.loc[cell_idx]
+                    else:
+                        child_types = [c.original_name for c in parent_node.children if c.size > 0]
+                        col = child_types[0] if child_types else parent_node.original_name
+                        level_decision.loc[cell_idx, col] = POS_INF
+                        level_prob.loc[cell_idx, col] = 1.0
+
+                decision_by_level[f"level{level}"] = level_decision
+                prob_by_level[f"level{level}"] = level_prob
+            self.decision_matrix = decision_by_level
+            self.probability_matrix = prob_by_level
 
     @property
     def mode(self) -> str:
         """The training mode."""
         return self.tree.mode
 
-    def reshape_lcpn(self):
-        """
-        Reshape an LCPN-style `HierAnnotationResult` into an LCL-style format.
-
-        Returns
-        ----------
-        :class:`~celltypist.classifier.HierAnnotationResult`
-            A new :class:`~celltypist.classifier.HierAnnotationResult` object with:
-            1) Trailing NaNs of each cell forward-filled in `.predicted_labels`.
-            2) `.decision_matrix` and `.probability_matrix` converted from node-based to level-based dictionaries.
-        """
-        if self.mode == 'LCL':
-            logger.warn(f"⚠️ Warning: this result was generated in LCL mode; no reshaping needed")
-            return
-        if self.mode == "LCPN" and "level1" in self.probability_matrix:
-            logger.warn(f"⚠️ Warning: this result was already reshaped; no reshaping needed")
-            return
-        filled_labels = self.predicted_labels.ffill(axis = 1, inplace = False)
-        decision_by_level = {}
-        prob_by_level = {}
-        decision_by_level["level1"] = pd.DataFrame(POS_INF, index = filled_labels.index, columns = [self.tree.root.original_name])
-        prob_by_level["level1"] = pd.DataFrame(1.0, index = filled_labels.index, columns = [self.tree.root.original_name])
-        for level in range(2, filled_labels.shape[1] + 1):
-            parent_labels = filled_labels[f"level{level-1}_predicted_labels"]
-            unique_parents = np.unique(parent_labels)
-
-            level_cols = []
-            for parent_name in unique_parents:
-                parent_node = self.tree.find_node(parent_name)
-                child_types = [c.original_name for c in parent_node.children if c.size > 0]
-                if not child_types:
-                    child_types = [parent_node.original_name]
-                level_cols.extend(child_types)
-
-            level_decision = pd.DataFrame(NEG_INF, index = filled_labels.index, columns = level_cols)
-            level_prob = pd.DataFrame(0.0, index = filled_labels.index, columns = level_cols)
-            for parent_name in unique_parents:
-                parent_node = self.tree.find_node(parent_name)
-                cell_idx = parent_labels.index[parent_labels == parent_name]
-                if parent_node.model:
-                    node_dec = self.decision_matrix[parent_name]
-                    node_prob = self.probability_matrix[parent_name]
-                    level_decision.loc[cell_idx, node_dec.columns] = node_dec.loc[cell_idx]
-                    level_prob.loc[cell_idx, node_prob.columns] = node_prob.loc[cell_idx]
-                else:
-                    child_types = [c.original_name for c in parent_node.children if c.size > 0]
-                    col = child_types[0] if child_types else parent_node.original_name
-                    level_decision.loc[cell_idx, col] = POS_INF
-                    level_prob.loc[cell_idx, col] = 1.0
-
-            decision_by_level[f"level{level}"] = level_decision
-            prob_by_level[f"level{level}"] = level_prob
-        hier_predictions = HierAnnotationResult(labels = filled_labels, decision_mats = decision_by_level, prob_mats = prob_by_level, adata = self.adata, tree = self.tree)
-        for attr in ('refined_labels', 'majority_voting', 'conf_score'):
-            if hasattr(self, attr):
-                setattr(hier_predictions, attr, getattr(self, attr))
-        return hier_predictions
-
     def __repr__(self):
         base = f"CellTypist hierarchical prediction result for {self.cell_count} query cells"
         base += f"\n    mode: {self.mode}"
         base += f"\n    predicted_labels: data frame with predicted cell types at {self.predicted_labels.shape[1]} levels"
-        base += f"\n    decision_matrix: dictionary of decision matrices per {'level' if 'level1' in self.decision_matrix else 'node'}"
+        if hasattr(self, 'majority_voting'):
+            base += f"\n    majority_voting: data frame with majority-voted cell type predictions at {self.predicted_labels.shape[1]} levels"
+        base += f"\n    decision_matrix: dictionary of decision matrices per level"
         base += f"\n    probability_matrix: dictionary of probability matrices per {'level' if 'level1' in self.probability_matrix else 'node'}"
+        if hasattr(self, 'conf_score'):
+            base += f"\n    conf_score: data frame with prediction confidence scores at {self.predicted_labels.shape[1]} levels"
         base += f"\n    tree: Tree object used"
         base += f"\n    adata: AnnData object referred"
         return base
 
-    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], label_source: str = "refined_labels", min_prop: float = 0) -> None:
+    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
         """
         Majority vote the celltypist hierarchical predictions using the result from the over-clustering.
 
@@ -468,9 +452,6 @@ class HierAnnotationResult():
         ----------
         over_clustering
             A list, tuple, numpy array, pandas series or index containing the over-clustering information.
-        label_source
-            The attribute from which to retrieve cell type labels for majority voting. Must be either `'predicted_labels'` or `'refined_labels'`.
-            (Default: `'refined_labels'`)
         min_prop
             For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
             (Default: 0)
@@ -486,58 +467,30 @@ class HierAnnotationResult():
         if isinstance(over_clustering, (list, tuple)):
             over_clustering = np.array(over_clustering)
         logger.info("🗳️ Majority voting the predictions")
-        if label_source == 'predicted_labels':
-            labels = self.predicted_labels.ffill(axis = 1, inplace = False)
-        elif label_source == 'refined_labels':
-            if hasattr(self, 'refined_labels'):
-                labels = self.refined_labels
-            else:
-                raise AttributeError(
-                        f"🛑 Did not find the `refined_labels` attribute, perform label refinement by the method `.refine_labels()` beforehand or use `label_source = 'predicted_labels'` instead")
-        else:
-            raise ValueError(
-                    f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'refined_labels'`")
-        majority_voting = pd.DataFrame(index = labels.index)
-        for col in labels.columns:
-            votes = pd.crosstab(labels[col], over_clustering)
+        majority_voting = pd.DataFrame(index = self.predicted_labels.index)
+        for col in self.predicted_labels.columns:
+            votes = pd.crosstab(self.predicted_labels[col], over_clustering)
             majority = votes.idxmax(axis=0).astype(str)
             freqs = (votes / votes.sum(axis=0).values).max(axis=0)
             majority[freqs < min_prop] = 'Heterogeneous'
             majority = majority[over_clustering].reset_index()
-            majority.index = labels.index
+            majority.index = self.predicted_labels.index
             majority.columns = ['over_clustering', 'majority_voting']
-            majority_voting[col.replace(label_source, 'majority_voting')] = majority['majority_voting'].astype('category')
+            majority_voting[col.replace('predicted_labels', 'majority_voting')] = majority['majority_voting'].astype('category')
         self.majority_voting = majority_voting
         logger.info("✅ Majority voting done!")
 
-    def conf_score(self, label_source: str = "refined_labels") -> None:
+    def conf_score(self) -> None:
         """
         Compute hierarchical confidence scores for each cell at every level.
-
-        Parameters
-        ----------
-        label_source
-            The attribute from which to retrieve cell type labels for confidence scoring. Must be one of `'refined_labels'`, `'predicted_labels'`, or `'majority_voting'`.
-            (Default: `'refined_labels'`)
 
         Returns
         ----------
         None
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.conf_score` containing per-level confidence scores.
         """
-        result = self
-        if self.mode == "LCPN" and "level1" not in self.probability_matrix:
-            result = self.reshape_lcpn()
-        if label_source in ("refined_labels", "predicted_labels", "majority_voting"):
-            if not hasattr(result, label_source):
-                raise AttributeError(
-                        f"🛑 Missing `{label_source}`. Please ensure this attribute exists or use `label_source = 'predicted_labels'` instead")
-            labels = getattr(result, label_source)
-        else:
-            raise ValueError(
-                    f"🛑 Unrecognized `label_source` value, should be one of `'refined_labels'`, `'predicted_labels'`, or `'majority_voting'`")
-        prob_mats = result.probability_matrix
-        conf_df = pd.DataFrame(index = labels.index, columns = labels.columns.str.replace(label_source, 'conf_score'))
+        prob_mats = self.probability_matrix
+        conf_df = pd.DataFrame(index = self.predicted_labels.index, columns = self.predicted_labels.columns.str.replace('predicted_labels', 'conf_score'))
         cumulative_prob = np.ones(result.cell_count)
 
 class Classifier():
