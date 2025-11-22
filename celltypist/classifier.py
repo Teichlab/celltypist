@@ -505,16 +505,16 @@ class HierAnnotationResult():
                         f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'majority_voting'`")
         labels = getattr(self, label_source)
         prob_mats = self.probability_matrix
-        conf_df = pd.DataFrame(index = labels.index, columns = labels.columns.str.replace(label_source, 'conf_score'))
-        cumulative_prob = np.ones(self.cell_count)
+        conf_df = pd.DataFrame(index = labels.index)
         for level_key, level_probs in prob_mats.items():
             level_labels = labels[f"{level_key}_{label_source}"]
             local_conf = np.array([row[level_labels[idx]] if level_labels[idx] in row.index else row.max() for idx, row in level_probs.iterrows()])
-            if result.mode == "LCPN":
-                cumulative_prob *= local_conf
-                conf_df[f"{level_key}_conf_score"] = cumulative_prob
-            else:
-                conf_df[f"{level_key}_conf_score"] = local_conf
+            conf_df[f"{level_key}_conf_score"] = local_conf
+        if self.mode == "LCPN":
+            for i, col in enumerate(conf_df.columns):
+                if i == 0:
+                    continue
+                conf_df[col] *= conf_df[conf_df.columns[i-1]]
         self.conf_score = conf_df
 
 class Classifier():
