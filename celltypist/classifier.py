@@ -362,14 +362,18 @@ class HierAnnotationResult():
     ----------
     predicted_labels
         A :class:`~pandas.DataFrame` object of individual prediction results at each level.
+        In LCPN results, cells reaching a leaf at a smaller depth will have their leaf label extended to all deeper levels.
     majority_voting
         A :class:`~pandas.DataFrame` object of majority-voted prediction results at each level. Only present when majority voting is performed.
     decision_matrix
         A dictionary of decision matrices representing the decision score of each cell belonging to a given cell type at each level.
+        In LCPN results, a cell's unconsidered branches (i.e., cell types outside its traversed branch) are represented as NaN.
     probability_matrix
         A dictionary of probability matrices representing the probability each cell belongs to a given cell type at each level.
+        In LCPN results, a cell's unconsidered branches (i.e., cell types outside its traversed branch) are represented as NaN.
     conf_score
         A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence score is calculated.
+        In LCPN results, cells may have NaN confidence scores when their majority-voted cell type labels lies outside their traversed branches.
     cell_count
         Number of input cells which have undergone the prediction process.
     adata
@@ -390,12 +394,11 @@ class HierAnnotationResult():
             self.predicted_labels.ffill(axis = 1, inplace = True)
             decision_by_level = {}
             prob_by_level = {}
-            decision_by_level["level1"] = pd.DataFrame(POS_INF, index = filled_labels.index, columns = [self.tree.root.original_name])
-            prob_by_level["level1"] = pd.DataFrame(1.0, index = filled_labels.index, columns = [self.tree.root.original_name])
+            decision_by_level["level1"] = pd.DataFrame(POS_INF, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
+            prob_by_level["level1"] = pd.DataFrame(1.0, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
             for level in range(2, self.predicted_labels.shape[1] + 1):
                 parent_labels = self.predicted_labels[f"level{level-1}_predicted_labels"]
                 unique_parents = np.unique(parent_labels)
-
                 level_cols = []
                 for parent_name in unique_parents:
                     parent_node = self.tree.find_node(parent_name)
@@ -403,8 +406,7 @@ class HierAnnotationResult():
                     if not child_types:
                         child_types = [parent_node.original_name]
                     level_cols.extend(child_types)
-
-                level_decision = pd.DataFrame(index = filled_labels.index, columns = level_cols)
+                level_decision = pd.DataFrame(index = self.predicted_labels.index, columns = level_cols)
                 level_prob = pd.DataFrame(index = self.predicted_labels.index, columns = level_cols)
                 for parent_name in unique_parents:
                     parent_node = self.tree.find_node(parent_name)
@@ -419,7 +421,6 @@ class HierAnnotationResult():
                         col = child_types[0] if child_types else parent_node.original_name
                         level_decision.loc[cell_idx, col] = POS_INF
                         level_prob.loc[cell_idx, col] = 1.0
-
                 decision_by_level[f"level{level}"] = level_decision
                 prob_by_level[f"level{level}"] = level_prob
             self.decision_matrix = decision_by_level
@@ -437,7 +438,7 @@ class HierAnnotationResult():
         if hasattr(self, 'majority_voting'):
             base += f"\n    majority_voting: data frame with majority-voted cell type predictions at {self.predicted_labels.shape[1]} levels"
         base += f"\n    decision_matrix: dictionary of decision matrices per level"
-        base += f"\n    probability_matrix: dictionary of probability matrices per {'level' if 'level1' in self.probability_matrix else 'node'}"
+        base += f"\n    probability_matrix: dictionary of probability matrices per level"
         if hasattr(self, 'conf_score'):
             base += f"\n    conf_score: data frame with prediction confidence scores at {self.predicted_labels.shape[1]} levels"
         base += f"\n    tree: Tree object used"
@@ -480,18 +481,41 @@ class HierAnnotationResult():
         self.majority_voting = majority_voting
         logger.info("✅ Majority voting done!")
 
-    def conf_score(self) -> None:
+    def conf_score(self, label_source: str = 'predicted_labels') -> None:
         """
         Compute hierarchical confidence scores for each cell at every level.
+
+        Parameters
+        ----------
+        label_source
+            The attribute from which to retrieve cell type labels for confidence scoring. Must be one of `'predicted_labels'` or `'majority_voting'`.
+            (Default: `'predicted_labels'`)
 
         Returns
         ----------
         None
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.conf_score` containing per-level confidence scores.
         """
+        if not hasattr(self, label_source):
+            if label_source == 'majority_voting':
+                raise AttributeError(
+                        f"🛑 Missing the `majority_voting` attribute. Please perform majority voting beforehand or use `label_source = 'predicted_labels'` instead")
+            else:
+                raise AttributeError(
+                        f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'majority_voting'`")
+        labels = getattr(self, label_source)
         prob_mats = self.probability_matrix
-        conf_df = pd.DataFrame(index = self.predicted_labels.index, columns = self.predicted_labels.columns.str.replace('predicted_labels', 'conf_score'))
+        conf_df = pd.DataFrame(index = labels.index, columns = labels.columns.str.replace(label_source, 'conf_score'))
         cumulative_prob = np.ones(result.cell_count)
+        for level_key, level_probs in prob_mats.items():
+            level_labels = labels[f"{level_key}_{label_source}"]
+            local_conf = np.array([row[level_labels[idx]] if level_labels[idx] in row.index else row.max() for idx, row in level_probs.iterrows()])
+            if result.mode == "LCPN":
+                cumulative_prob *= local_conf
+                conf_df[f"{level_key}_conf_score"] = cumulative_prob
+            else:
+                conf_df[f"{level_key}_conf_score"] = local_conf
+        self.conf_score = conf_df
 
 class Classifier():
     """
@@ -703,9 +727,15 @@ class HierClassifier():
             if hasattr(_bridge, attr):
                 setattr(self, attr, getattr(_bridge, attr))
 
-    def celltype(self) -> HierAnnotationResult:
+    def celltype(self, reshape_lcpn: bool = True) -> HierAnnotationResult:
         """
         Run hierarchical celltyping jobs to predict cell types of input data.
+
+        Parameters
+        ----------
+        reshape_lcpn
+            Whether to reshape a node-based LCPN result into a level-based LCL result. Only for developer use.
+            (Default: `True`)
 
         Returns
         ----------
@@ -820,4 +850,4 @@ class HierClassifier():
             for col in labels.columns:
                 labels[col] = labels[col].astype("category")
         logger.info("✅ Prediction done!")
-        return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata, self.model.tree)
+        return HierAnnotationResult(labels, decision_mats, prob_mats, self.adata, self.model.tree, reshape_lcpn = reshape_lcpn)
