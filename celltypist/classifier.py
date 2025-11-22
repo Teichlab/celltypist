@@ -372,7 +372,7 @@ class HierAnnotationResult():
         A dictionary of probability matrices representing the probability each cell belongs to a given cell type at each level.
         In LCPN results, a cell's unconsidered branches (i.e., cell types outside its traversed branch) are represented as NaN.
     conf_score
-        A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence score is calculated.
+        A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence scores are calculated.
         In LCPN results, cells may have NaN confidence scores when their majority-voted cell type labels lies outside their traversed branches.
     cell_count
         Number of input cells which have undergone the prediction process.
