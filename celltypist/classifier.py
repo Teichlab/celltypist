@@ -428,7 +428,7 @@ class HierAnnotationResult():
 
     @property
     def mode(self) -> str:
-        """The training mode."""
+        """The prediction mode."""
         return self.tree.mode
 
     def __repr__(self):
