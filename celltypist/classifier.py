@@ -481,7 +481,7 @@ class HierAnnotationResult():
         self.majority_voting = majority_voting
         logger.info("✅ Majority voting done!")
 
-    def conf_score(self, label_source: str = 'predicted_labels') -> None:
+    def compute_conf_score(self, label_source: str = 'predicted_labels') -> None:
         """
         Compute hierarchical confidence scores for each cell at every level.
 
