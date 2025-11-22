@@ -501,7 +501,7 @@ class HierAnnotationResult():
                 raise AttributeError(
                         f"🛑 Missing the `majority_voting` attribute. Please perform majority voting beforehand or use `label_source = 'predicted_labels'` instead")
             else:
-                raise AttributeError(
+                raise ValueError(
                         f"🛑 Unrecognized `label_source` value, should be one of `'predicted_labels'` or `'majority_voting'`")
         labels = getattr(self, label_source)
         prob_mats = self.probability_matrix
