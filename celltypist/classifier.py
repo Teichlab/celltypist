@@ -506,7 +506,7 @@ class HierAnnotationResult():
         labels = getattr(self, label_source)
         prob_mats = self.probability_matrix
         conf_df = pd.DataFrame(index = labels.index, columns = labels.columns.str.replace(label_source, 'conf_score'))
-        cumulative_prob = np.ones(result.cell_count)
+        cumulative_prob = np.ones(self.cell_count)
         for level_key, level_probs in prob_mats.items():
             level_labels = labels[f"{level_key}_{label_source}"]
             local_conf = np.array([row[level_labels[idx]] if level_labels[idx] in row.index else row.max() for idx, row in level_probs.iterrows()])
