@@ -381,7 +381,7 @@ class HierAnnotationResult():
     tree
         A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
     mode
-        The training mode (either `'LCPN'` or `'LCL'`).
+        The prediction mode (either `'LCPN'` or `'LCL'`).
     """
     def __init__(self, labels: pd.DataFrame, decision_mats: dict, prob_mats: dict, adata: AnnData, tree: Tree, reshape_lcpn: bool = True):
         self.predicted_labels = labels
