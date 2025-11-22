@@ -460,7 +460,7 @@ class HierAnnotationResult():
         Returns
         ----------
         None
-            A new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` is added, storing the majority-voted labels based on the given clustering.
+            Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` storing the majority-voted labels based on the given clustering.
         """
         if len(over_clustering) != self.cell_count:
             raise ValueError(
