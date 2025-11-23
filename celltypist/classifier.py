@@ -363,6 +363,8 @@ class HierAnnotationResult():
     predicted_labels
         A :class:`~pandas.DataFrame` object of individual prediction results at each level.
         In LCPN results, cells reaching a leaf at a smaller depth will have their leaf label extended to all deeper levels.
+    over_clustering
+        The over-clustering result of the input cells. Only present when majority voting is performed.
     majority_voting
         A :class:`~pandas.DataFrame` object of majority-voted prediction results at each level. Only present when majority voting is performed.
     decision_matrix
@@ -469,6 +471,7 @@ class HierAnnotationResult():
                     f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({self.cell_count})")
         if isinstance(over_clustering, (list, tuple)):
             over_clustering = np.array(over_clustering)
+        self.over_clustering = over_clustering
         logger.info("🗳️ Majority voting the predictions")
         majority_voting = pd.DataFrame(index = self.predicted_labels.index)
         for col in self.predicted_labels.columns:
