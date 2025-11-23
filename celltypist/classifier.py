@@ -392,6 +392,8 @@ class HierAnnotationResult():
         self.cell_count = labels.shape[0]
         if reshape_lcpn and self.tree.mode == "LCPN":
             self.predicted_labels = self.predicted_labels.ffill(axis = 1, inplace = False)
+            for col in self.predicted_labels.columns:
+                self.predicted_labels[col] = self.predicted_labels[col].astype('category')
             decision_by_level = {}
             prob_by_level = {}
             decision_by_level["level1"] = pd.DataFrame(POS_INF, index = self.predicted_labels.index, columns = [self.tree.root.original_name])
