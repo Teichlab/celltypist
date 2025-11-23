@@ -355,7 +355,7 @@ class HierAnnotationResult():
     tree
         A :class:`~celltypist.tree.Tree` object representing the input cell type hierarchy.
     reshape_lcpn
-        Whether to reshape a node-based LCPN result into a level-based LCL result. Only for developer use.
+        Whether to reshape a node-based LCPN result into a level-based LCL-like result. Only for developer use.
         (Default: `True`)
 
     Attributes
@@ -734,7 +734,7 @@ class HierClassifier():
         Parameters
         ----------
         reshape_lcpn
-            Whether to reshape a node-based LCPN result into a level-based LCL result. Only for developer use.
+            Whether to reshape a node-based LCPN result into a level-based LCL-like result. Only for developer use.
             (Default: `True`)
 
         Returns
