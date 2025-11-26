@@ -56,7 +56,7 @@ def _get_fraction_prob_df(df: pd.DataFrame,
 
 def dotplot(
             #get size and color df
-            predictions: AnnotationResult,
+            predictions: Union[AnnotationResult, pd.DataFrame],
             use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
             use_as_prediction: str = 'majority_voting',
             prediction_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
