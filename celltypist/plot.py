@@ -57,7 +57,7 @@ def _get_fraction_prob_df(df: pd.DataFrame,
 def dotplot(
             #get size and color df
             predictions: Union[AnnotationResult, pd.DataFrame, tuple, list],
-            use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
+            use_as_reference: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
             use_as_prediction: str = 'majority_voting',
             prediction_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
             reference_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
@@ -141,6 +141,9 @@ def dotplot(
                 raise KeyError(
                         f"🛑 Did not find such column '{use_as_prediction}', should be one of `'majority_voting'` or `'predicted_labels'`")
         pred = predictions.predicted_labels[use_as_prediction]
+        if use_as_reference is None:
+            raise ValueError(
+                    f"🛑 `use_as_reference` must be provided")
         if isinstance(use_as_reference, str):
             if use_as_reference not in predictions.adata.obs:
                 raise KeyError(
