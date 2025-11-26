@@ -56,7 +56,7 @@ def _get_fraction_prob_df(df: pd.DataFrame,
 
 def dotplot(
             #get size and color df
-            predictions: Union[AnnotationResult, pd.DataFrame, tuple],
+            predictions: Union[AnnotationResult, pd.DataFrame, tuple, list],
             use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
             use_as_prediction: str = 'majority_voting',
             prediction_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
@@ -93,7 +93,7 @@ def dotplot(
     ----------
     predictions
         An :class:`~celltypist.classifier.AnnotationResult` object containing celltypist prediction result through :func:`~celltypist.annotate`.
-        Can also be a :class:`~pandas.DataFrame` whose columns are ordered as prediction, truth, and score, or a tuple containing (dot_size_df, dot_color_df).
+        Can also be a :class:`~pandas.DataFrame` whose columns are ordered as prediction, truth, and score, or a tuple/list containing (dot_size_df, dot_color_df).
     use_as_reference
         Key (column name) of the input AnnData representing the reference cell types (or clusters) celltypist will assess.
         Also accepts any list-like objects already loaded in memory (such as an array).
@@ -132,28 +132,35 @@ def dotplot(
     ----------
     If `return_fig` is `True`, returns a :class:`scanpy.pl.DotPlot` object, else if `show` is false, return axes dict.
     """
-    #df x 2
-    dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, use_as_reference, use_as_prediction, None, None)
-    #reference
-    reference_order = reference_order if reference_order is not None else dot_size_df.columns
-    #prediction
-    if prediction_order is None:
-        if filter_prediction < 0 or filter_prediction > 1:
-            raise ValueError(
-                    f"🛑 Please provide the `filter_prediction` between 0 and 1")
-        keep_pred = dot_size_df.max(axis = 1) >= filter_prediction
-        prediction_order = dot_size_df.index[keep_pred]
-    #in case reference_order or prediction_order is string
-    if isinstance(reference_order, str):
-        reference_order = [reference_order]
-    if isinstance(prediction_order, str):
-        prediction_order = [prediction_order]
-    #subset
-    dot_size_df = dot_size_df.loc[prediction_order, reference_order]
-    dot_color_df = dot_color_df.loc[prediction_order, reference_order]
-    #column to string
-    dot_size_df.columns = dot_size_df.columns.astype(str)
-    dot_color_df.columns = dot_color_df.columns.astype(str)
+    if isinstance(predictions, AnnotationResult):
+        if use_as_prediction not in predictions.predicted_labels:
+            if use_as_prediction == 'majority_voting':
+                raise KeyError(
+                        f"🛑 Did not find the column `majority_voting` in the `AnnotationResult.predicted_labels`, perform majority voting beforehand or use `use_as_prediction = 'predicted_labels'` instead")
+            else:
+                raise KeyError(
+                        f"🛑 Did not find such column '{use_as_prediction}', should be one of `'majority_voting'` or `'predicted_labels'`")
+        pred = predictions.predicted_labels[use_as_prediction]
+        if isinstance(use_as_reference, str):
+            if use_as_reference not in predictions.adata.obs:
+                raise KeyError(
+                        f"🛑 Did not find such column '{use_as_reference}', please provide a valid metadata column")
+            refer = predictions.adata.obs[use_as_reference]
+        else:
+            refer = np.array(use_as_reference)
+            if len(refer) != len(pred):
+                raise ValueError(
+                        f"🛑 Length of `use_as_reference` ({len(refer)}) provided does not match the number of cells ({len(pred)})")
+        score = [(row[pred[index]] if pred[index] in row.index else row.max()) for index, row in predictions.probability_matrix.iterrows()]
+        df = pd.DataFrame(dict(pred = pred, refer = refer, score = score))
+        dot_size_df, dot_color_df = _get_fraction_prob_df(df, prediction_order, reference_order, filter_prediction)
+    elif isinstance(predictions, pd.DataFrame) and predictions.shape[1] == 3:
+        dot_size_df, dot_color_df = _get_fraction_prob_df(predictions, prediction_order, reference_order, filter_prediction)
+    elif isinstance(predictions, (tuple, list)):
+        dot_size_df, dot_color_df = predictions
+    else:
+        raise TypeError(
+                f"🛑 Invalid input type")
     #AnnData, groupby, and var_names
     _adata = sc.AnnData(np.zeros(dot_size_df.shape))
     _adata.var_names = dot_size_df.columns
