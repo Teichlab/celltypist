@@ -56,7 +56,7 @@ def _get_fraction_prob_df(df: pd.DataFrame,
 
 def dotplot(
             #get size and color df
-            predictions: Union[AnnotationResult, pd.DataFrame],
+            predictions: Union[AnnotationResult, pd.DataFrame, tuple],
             use_as_reference: Union[str, list, tuple, np.ndarray, pd.Series, pd.Index],
             use_as_prediction: str = 'majority_voting',
             prediction_order: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
@@ -93,12 +93,15 @@ def dotplot(
     ----------
     predictions
         An :class:`~celltypist.classifier.AnnotationResult` object containing celltypist prediction result through :func:`~celltypist.annotate`.
+        Can also be a :class:`~pandas.DataFrame` whose columns are ordered as prediction, truth, and score, or a tuple containing (dot_size_df, dot_color_df).
     use_as_reference
         Key (column name) of the input AnnData representing the reference cell types (or clusters) celltypist will assess.
         Also accepts any list-like objects already loaded in memory (such as an array).
+        This argument is valid only when the input is an :class:`~celltypist.classifier.AnnotationResult` object.
     use_as_prediction
         Column name of :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` specifying the prediction type which the assessment is based on.
         Set to `'predicted_labels'` if you want to assess the prediction result without majority voting.
+        This argument is valid only when the input is an :class:`~celltypist.classifier.AnnotationResult` object.
         (Default: `'majority_voting'`)
     prediction_order
         Order in which to show the predicted cell types. Can be a subset of predicted cell type labels.
