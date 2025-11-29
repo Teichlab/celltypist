@@ -169,6 +169,7 @@ def dotplot(
     _adata.var_names = dot_size_df.columns
     _adata.obs_names = dot_size_df.index
     _adata.obs['_pred'] = dot_size_df.index
+    _adata.obs['_pred'] = _adata.obs['_pred'].astype('category').cat.reorder_categories(dot_size_df.index)
     #DotPlot
     dp = sc.pl.DotPlot(_adata, dot_size_df.columns, '_pred', title = title, figsize = figsize, dot_color_df = dot_color_df, dot_size_df = dot_size_df, ax = ax, vmin = vmin, vmax = vmax, **kwds)
     if swap_axes:
