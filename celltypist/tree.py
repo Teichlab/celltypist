@@ -628,6 +628,15 @@ class Tree():
             if not all(isinstance(x, str) for x in df[col]):
                 raise TypeError(
                         f"🛑 Column '{col}' must contain only strings")
+        if check_nested:
+            for col in range(df.shape[1] - 1):
+                child_to_parents = {}
+                for p, c in zip(df.iloc[:, col], df.iloc[:, col + 1]):
+                    child_to_parents.setdefault(c, set()).add(p)
+                for child, parents in child_to_parents.items():
+                    if len(parents) != 1:
+                        raise ValueError(
+                                f"🛑 Buildability error: label '{child}' in column '{df.columns[col+1]}' has multiple parents in column '{df.columns[col]}'. Hierarchy must be strictly nested")
 
     def copy(self):
         return Tree.from_dict(self.to_dict())
