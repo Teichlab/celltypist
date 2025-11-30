@@ -14,7 +14,7 @@ def _get_fraction_prob_df(df: pd.DataFrame,
     """
     For internal use. Get the fraction and avg. probability data frames (predictions * truths) from the prediction-truth-score data frame.
     """
-    if any(isinstance(x, str) for x in df.iloc[:, 2]):
+    if not all(isinstance(x, (int, float)) for x in df.iloc[:, 2]):
         raise TypeError(
                 f"🛑 The third column '{df.columns[2]}' must contain only floats or integers")
     df = df.copy()
