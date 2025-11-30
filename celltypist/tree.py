@@ -637,6 +637,27 @@ class Tree():
                     if len(parents) != 1:
                         raise ValueError(
                                 f"🛑 Buildability error: label '{child}' in column '{df.columns[col+1]}' has multiple parents in column '{df.columns[col]}'. Hierarchy must be strictly nested")
+        root = TreeNode(root_name)
+        def build_children(node, level):
+            col_idx = level - 2
+            if col_idx == df.shape[1] - 1:
+                return
+            subset = df[df.iloc[:, col_idx] == node.original_name]
+            children = np.unique(subset.iloc[:, col_idx + 1])
+            if len(children) == 1 and children[0] == node.original_name:
+                return
+            for child in children:
+                child_node = TreeNode(child)
+                node.add_children(child_node)
+                build_children(child_node, level + 1)
+        level2_labels = np.unique(df.iloc[:, 0])
+        for l2 in level2_labels:
+            l2_node = TreeNode(l2)
+            root.add_children(l2_node)
+            build_children(l2_node, level = 2)
+        tree = cls(handle = handle or root_name, root = root)
+        tree.validate(check_type = True, check_unique = True)
+        return tree
 
     def copy(self):
         return Tree.from_dict(self.to_dict())
