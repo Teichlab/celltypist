@@ -6,11 +6,11 @@ from . import logger
 import numpy as np
 import pandas as pd
 
-def _to_internal_name(name: str) -> str:
+def _to_internal_name(name: Optional[str] = None) -> str:
     """
     For internal use. Convert a name to its internal (underscore-based) form.
     """
-    return name.replace(" ", "_").replace("/", "_").replace("-", "_")
+    return name if name is None else name.strip().replace(" ", "_").replace("/", "_").replace("-", "_")
 
 class TreeNode():
     """
