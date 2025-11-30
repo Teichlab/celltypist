@@ -603,7 +603,7 @@ class Tree():
         Parameters
         ----------
         df
-            A data frame where each column corresponds to a hierarchical level and each row describes a complete annotation path from coarse to fine labels.
+            A :class:`~pandas.DataFrame` where each column corresponds to a hierarchical level and each row describes a complete annotation path from coarse to fine labels.
         root_name
             Name of the artificial root node (level 1).
             (Default: `'Cell'`)
