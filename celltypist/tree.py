@@ -511,7 +511,7 @@ class Tree():
         if not isinstance(root, TreeNode):
             raise TypeError(
                     f"🛑 `root` must be a `TreeNode` instance")
-        self.handle = handle
+        self.handle = _to_internal_name(handle)
         for key, value in kwargs.items():
             setattr(self, key, value)
         self.root = root
@@ -1058,7 +1058,7 @@ class Tree():
         """
         proposed = self.copy()
         proposed.root = proposed.find_node(name)
-        proposed.handle = handle or f"subtree_of_{self.handle}"
+        proposed.handle = _to_internal_name(handle) or f"subtree_of_{self.handle}"
         return proposed
 
     def prune_by_depth(self, max_depth: int, handle: Optional[str] = None):
@@ -1096,7 +1096,7 @@ class Tree():
                 to_prune.append(node)
         for node in to_prune:
             node.children = []
-        pruned_tree.handle = handle or f"{self.handle}_at_depth_{max_depth}"
+        pruned_tree.handle = _to_internal_name(handle) or f"{self.handle}_at_depth_{max_depth}"
         return pruned_tree
 
     def extract_path(self, name: str, print_path: bool = True) -> list:
