@@ -595,6 +595,31 @@ class Tree():
                 json_data = json.load(f)
         return cls.from_dict(json_data)
 
+    @classmethod
+    def from_dataframe(cls, df: pd.DataFrame, root_name: str = "Cell", handle: Optional[str] = None, check_nested: bool = True):
+        """
+        Build a hierarchical tree from a multi-column annotation data frame. In practice, such a data frame represents annotation resolution from low to high (coarse to fine).
+
+        Parameters
+        ----------
+        df
+            A data frame where each column corresponds to a hierarchical level and each row describes a complete annotation path from coarse to fine labels.
+        root_name
+            Name of the artificial root node (level 1).
+            (Default: `'Cell'`)
+        handle
+            Handle for the resulting :class:`~celltypist.tree.Tree` instance. Defaults to `root_name` with spaces, slashes, and hyphens replaced by underscores.
+        check_nested
+            Whether to check that the hierarchy is strictly nested. A label in level N must only have one parent in level N-1.
+            (Default: `True`)
+
+        Returns
+        ----------
+        :class:`~celltypist.tree.Tree`
+            A :class:`~celltypist.tree.Tree` instance built from the data frame.
+        """
+        pass
+
     def copy(self):
         return Tree.from_dict(self.to_dict())
 
