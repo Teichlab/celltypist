@@ -511,6 +511,8 @@ class Tree():
         if not isinstance(root, TreeNode):
             raise TypeError(
                     f"🛑 `root` must be a `TreeNode` instance")
+        if any(char in handle for char in (" ", "/", "-")):
+            logger.warn(f"⚠️ `handle` '{handle}' contains spaces, slashes, or hyphens and will be replaced by underscores for downstream compatibility")
         self.handle = _to_internal_name(handle)
         for key, value in kwargs.items():
             setattr(self, key, value)
