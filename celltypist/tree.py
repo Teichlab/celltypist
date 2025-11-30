@@ -618,7 +618,16 @@ class Tree():
         :class:`~celltypist.tree.Tree`
             A :class:`~celltypist.tree.Tree` instance built from the data frame.
         """
-        pass
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(
+                    f"🛑 `df` must be a pandas DataFrame")
+        if df.shape[1] == 0:
+            raise ValueError(
+                    f"🛑 `df` must contain at least one column")
+        for col in df.columns:
+            if not all(isinstance(x, str) for x in df[col]):
+                raise TypeError(
+                        f"🛑 Column '{col}' must contain only strings")
 
     def copy(self):
         return Tree.from_dict(self.to_dict())
