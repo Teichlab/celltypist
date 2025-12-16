@@ -97,6 +97,9 @@ class TreeNode():
             raise TypeError(
                     f"🛑 All child nodes to be added to '{self.original_name}' must be `TreeNode` instances")
         for child_node in child_nodes:
+            if child_node.original_name == self.original_name:
+                raise ValueError(
+                        f"🛑 Node '{child_node.original_name}' cannot be added as a child of itself")
             if self.has_child(child_node.original_name):
                 raise ValueError(
                         f"🛑 Duplicate child '{child_node.original_name}' should not be added to '{self.original_name}'")
