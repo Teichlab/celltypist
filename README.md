@@ -1236,6 +1236,32 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>Generate a tree from multi-level cell type annotations</strong></summary>
 
+  Constructing an optimal cell type hierarchical tree (detailed in `4.2.`) requires a comprehensive understanding of the underlying biological hierarchy, including explicit parent-child relationships between cell types. This process is knowledge-intensive and often needs recursive refinement. As a practical alternative, a suboptimal but faster approach is to derive the tree directly from multi-level cell type annotations.  
+
+  Specifically, in single-cell studies, cell type annotations are often provided at multiple levels of resolution (from coarse to fine) by the original authors. This offers a straightforward way to leverage their knowledge of the underlying hierarchy. For example, five cells may be annotated at two levels as follows:
+  <div align="center">
+
+  | coarse_anno  | fine_anno    |
+  |:------------:|:------------:|
+  | A1           | A1           |
+  | A3           | A3a          |
+  | A3           | A3a          |
+  | A2           | A2           |
+  | A3           | A3b          |
+  </div>
+
+  Such information is stored, for example, in the `.obs` attribute of an AnnData object. If you inspect this table, it implicitly encodes a hierarchical tree structure as illustrated below:
+  ```text
+			   A
+			   │
+		┌──────┼──────┐
+		│      │      │
+	  A1     A2     A3
+             		  │
+             	   ┌──┴──┐
+             	   │     │
+             	  A3a   A3b
+  ```
   </details>
 </details>
 
