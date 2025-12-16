@@ -436,7 +436,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   There are also some free texts that can be inserted (e.g., `date`) to describe the model. Check out the [celltypist.train](https://celltypist.readthedocs.io/en/latest/celltypist.train.html) for more information.  
     
-  The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated as with other CellTypist models.  
+  The resulting model is an instance of the `Model` class as in `1.4.`, and can be manipulated in the same way as other CellTypist models.  
     
   Save this model locally:
   ```python
@@ -452,7 +452,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   new_model = models.Model.load('/path/to/local/folder/some_model_name.pkl')
   ```
-  This model can be used as with the built-in CellTypist models, for example, it can be specified as the `model` argument in `annotate`.
+  This model can be used in the same way as the built-in CellTypist models, for example, it can be specified as the `model` argument in `annotate`.
   ```python
   #Predict the identity of each input cell with the new model.
   predictions = celltypist.annotate(input_file, model = new_model)
@@ -514,7 +514,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   model.write('/path/to/local/folder/some_model_name.pkl')
   ```
-  This model can be used as with other CellTypist models.
+  This model can be used in the same way as other CellTypist models.
   </details>
 
 + <details>
@@ -537,7 +537,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   model.write('/path/to/local/folder/some_model_name.pkl')
   ```
-  This model can be used as with other CellTypist models.
+  This model can be used in the same way as other CellTypist models.
   </details>
 
 + <details>
@@ -564,7 +564,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   model.write('/path/to/local/folder/some_model_name.pkl')
   ```
-  This sub-model can be used as with other CellTypist models.
+  This sub-model can be used in the same way as other CellTypist models.
   </details>
 </details>
 
@@ -1226,7 +1226,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   hier_model.write('/path/to/local/folder/some_model_name.pkl')
   ```
-  This model can be used as with other hierarchical CellTypist models.
+  This model can be used in the same way as other hierarchical CellTypist models.
   </details>
 </details>
 
@@ -1277,7 +1277,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   tree.write('example_tree.json')
   ```
-  This tree can be used as with other CellTypist trees. For example, a hierarchical model can be trained using this tree in conjunction with the finest-grained annotation column in the AnnData object.
+  This tree can be used in the same way as other CellTypist trees. For example, a hierarchical model can be trained using this tree in conjunction with the finest-grained annotation column in the AnnData object.
   ```python
   hier_model = celltypist.hier_train(input_adata, tree = 'example_tree.json', leaf_anno = 'fine_anno', n_jobs = -1)
   ```
