@@ -1262,6 +1262,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
              	   │     │
              	  A3a   A3b
   ```
+  In real-world data, such tables may contain multiple (≥2) annotation levels/columns. Note that these annotations do not necessarily reflect the true biological hierarchy. For example, one may annotate brain cells at level 2 as excitatory neurons, inhibitory neurons, and glia, whereas a more biologically appropriate hierarchy would be two cell types (neurons versus glia) at this level. Since this information is not encoded in the table, only the *observed* annotation structure can be reconstructed.  
+
+  CellTypist uses the method [Tree.from_dataframe](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.from_dataframe) for constructing a hierarchical tree from multi-level cell type annotations stored in a data frame.
   </details>
 </details>
 
