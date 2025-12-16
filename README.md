@@ -1250,7 +1250,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   | A3           | A3b          |
   </div>
 
-  Such information is stored, for example, in the `.obs` attribute of an AnnData object. If you inspect this table, it implicitly encodes a hierarchical tree structure as illustrated below:
+  Such information is stored, for instance, in the `.obs` attribute of an AnnData object. If you inspect this table, it implicitly encodes a hierarchical tree structure as illustrated below:
   ```text
 			   A
 			   │
