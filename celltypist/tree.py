@@ -1075,7 +1075,7 @@ class Tree():
             raise TypeError(
                     f"🛑 `by` must be a `TreeNode`")
         parent = self.find_parent(name)
-        new_order = np.array(parent.child_names)
+        new_order = np.array(parent.child_names, dtype = object)
         parent.add_children(by)
         removed_node = parent.remove_children(name)[0]
         if len(new_order) == 1:
