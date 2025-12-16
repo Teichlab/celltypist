@@ -1267,7 +1267,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   CellTypist uses the method [Tree.from_dataframe](https://celltypist.readthedocs.io/en/latest/celltypist.tree.Tree.html#celltypist.tree.Tree.from_dataframe) for constructing a hierarchical tree from multi-level cell type annotations stored in a data frame.
   ```python
   #The input data frame must contain hierarchically nested annotations with progressively non-decreasing resolution.
-  Tree.from_dataframe(df, root_name = 'A', check_nested = True)
+  tree = Tree.from_dataframe(df, root_name = 'A', check_nested = True)
+  ```
+  You can verify the correctness of the resulting tree by visualising it using the [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html) function.
+  ```python
+  celltypist.treeviz(tree, show_node_label = True)
   ```
   </details>
 </details>
