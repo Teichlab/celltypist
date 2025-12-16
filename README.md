@@ -1277,7 +1277,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```python
   tree.write('example_tree.json')
   ```
-  This tree can be used as with other built-in CellTypist trees. For example, a hierarchical model can be trained using this tree in conjunction with the finest-grained annotation column in the AnnData object.
+  This tree can be used as with other CellTypist trees. For example, a hierarchical model can be trained using this tree in conjunction with the finest-grained annotation column in the AnnData object.
   ```python
   hier_model = celltypist.hier_train(input_adata, tree = 'example_tree.json', leaf_anno = 'fine_anno', n_jobs = -1)
   ```
