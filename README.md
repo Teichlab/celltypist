@@ -1232,6 +1232,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>Supplemental guidance</strong></summary>
+
++ <details>
+  <summary><strong>Generate a tree from multi-level cell type annotations</strong></summary>
+
+  </details>
 </details>
 
 # Citation
