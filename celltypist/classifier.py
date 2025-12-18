@@ -347,9 +347,9 @@ class HierAnnotationResult():
     labels
         A :class:`~pandas.DataFrame` object returned from the celltyping process, showing the predicted labels.
     decision_mats
-        A dictionary of decision matrices per level.
+        A dictionary of decision matrices per level or node.
     prob_mats
-        A dictionary of probability matrices per level.
+        A dictionary of probability matrices per level or node.
     adata
         An :class:`~anndata.AnnData` object representing the input object.
     tree
