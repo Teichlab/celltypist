@@ -53,7 +53,6 @@ def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.
                 f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({len(pre_label)})")
     if isinstance(over_clustering, (list, tuple)):
         over_clustering = np.array(over_clustering)
-    logger.info("🗳️ Majority voting the predictions")
     votes = pd.crosstab(pre_label, over_clustering)
     majority = votes.idxmax(axis=0).astype(str)
     freqs = (votes / votes.sum(axis=0).values).max(axis=0)
@@ -339,6 +338,7 @@ class AnnotationResult():
         None
             The attribute :attr:`~celltypist.classifier.AnnotationResult.predicted_labels` is modified in place by adding the `over_clustering` and `majority_voting` columns.
         """
+        logger.info("🗳️ Majority voting the predictions")
         majority = _majority_vote(self.predicted_labels.predicted_labels, over_clustering, min_prop)
         self.predicted_labels = self.predicted_labels.join(majority)
         logger.info("✅ Majority voting done!")
