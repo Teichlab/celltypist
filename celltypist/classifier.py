@@ -540,6 +540,20 @@ class HierAnnotationResult():
             2) **conf_score**, the confidence score corresponding to the truncated level.
             3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
         """
+        if self.mode != "LCPN":
+            raise ValueError(
+                    f"🛑 `consensus_truncate` can only be applied to an LCPN HierAnnotationResult")
+        if not isinstance(lcl_result, HierAnnotationResult) or lcl_result.mode != "LCL":
+            raise Exception(
+                    f"🛑 `lcl_result` must be a HierAnnotationResult generated in LCL mode")
+        if not np.array_equal(self.predicted_labels.index, lcl_result.predicted_labels.index):
+            raise ValueError(
+                    f"🛑 Please ensure LCPN and LCL predict the same set of query cells")
+        if not np.array_equal(self.tree.cell_types(leaf_only = False), lcl_result.tree.cell_types(leaf_only = False)):
+            raise ValueError(
+                    f"🛑 Please ensure LCPN and LCL predictions are generated from the same cell type tree")
+        if not hasattr(self, "conf_score"):
+            self.compute_conf_score(label_source = 'predicted_labels')
 
 class Classifier():
     """
