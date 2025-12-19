@@ -46,7 +46,7 @@ def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
     fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
     return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
-def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> pd.DataFrame:
+def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0.0) -> pd.DataFrame:
     """Majority vote the predicted labels. This function is for internal use."""
     if len(over_clustering) != len(pre_label):
         raise ValueError(
@@ -321,7 +321,7 @@ class AnnotationResult():
         base += f"\n    adata: AnnData object referred"
         return base
 
-    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
+    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0.0) -> None:
         """
         Majority vote the celltypist flat predictions using the result from the over-clustering.
 
@@ -454,7 +454,7 @@ class HierAnnotationResult():
         base += f"\n    adata: AnnData object referred"
         return base
 
-    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> None:
+    def majority_vote(self, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0.0) -> None:
         """
         Majority vote the celltypist hierarchical predictions using the result from the over-clustering.
 
@@ -516,7 +516,7 @@ class HierAnnotationResult():
                 conf_df[col] *= conf_df[conf_df.columns[i-1]]
         self.conf_score = conf_df
 
-    def consensus_truncate(self, lcl_result, min_prop: float = 0) -> None:
+    def consensus_truncate(self, lcl_result, min_prop: float = 0.0) -> None:
         """
         Truncate LCPN hierarchical predictions by consensus with LCL predictions.
         For each query cell, the LCPN prediction path is truncated at the deepest hierarchical level where the LCPN and LCL predicted labels agree.
