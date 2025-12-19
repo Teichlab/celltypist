@@ -525,7 +525,7 @@ class HierAnnotationResult():
         Parameters
         ----------
         lcl_result
-            A :class:`~celltypist.classifier.HierAnnotationResult` object generated in LCL mode, which provides the reference predictions for determining the truncation depth.
+            A :class:`~celltypist.classifier.HierAnnotationResult` generated using the same tree in LCL mode, which provides the reference predictions for determining the truncation depth.
         min_prop
             For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
             Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
