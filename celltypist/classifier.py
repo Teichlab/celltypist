@@ -46,6 +46,24 @@ def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
     fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
     return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
+def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index], min_prop: float = 0) -> pd.DataFrame:
+    """Majority vote the predicted labels. This function is for internal use."""
+    if len(over_clustering) != len(pre_label):
+        raise ValueError(
+                f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({len(pre_label)})")
+    if isinstance(over_clustering, (list, tuple)):
+        over_clustering = np.array(over_clustering)
+    logger.info("🗳️ Majority voting the predictions")
+    votes = pd.crosstab(pre_label, over_clustering)
+    majority = votes.idxmax(axis=0).astype(str)
+    freqs = (votes / votes.sum(axis=0).values).max(axis=0)
+    majority[freqs < min_prop] = 'Heterogeneous'
+    majority = majority[over_clustering].reset_index()
+    majority.index = pre_label.index
+    majority.columns = ['over_clustering', 'majority_voting']
+    majority['majority_voting'] = majority['majority_voting'].astype('category')
+    return majority
+
 def over_cluster(adata: AnnData, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
     """
     Over-clustering input data with a canonical Scanpy pipeline. A neighborhood graph will be used (or constructed if not found) for the over-clustering.
