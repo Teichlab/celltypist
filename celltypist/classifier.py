@@ -516,6 +516,31 @@ class HierAnnotationResult():
                 conf_df[col] *= conf_df[conf_df.columns[i-1]]
         self.conf_score = conf_df
 
+    def consensus_truncate(self, lcl_result, min_prop: float = 0) -> None:
+        """
+        Truncate LCPN hierarchical predictions by consensus with LCL predictions.
+        For each query cell, the LCPN prediction path is truncated at the deepest hierarchical level where the LCPN and LCL predicted labels agree.
+        If over-clustering information is available in the LCPN result, majority voting will be performed on the truncated labels.
+
+        Parameters
+        ----------
+        lcl_result
+            A :class:`~celltypist.classifier.HierAnnotationResult` object generated in LCL mode, which provides the reference predictions for determining the truncation depth.
+        min_prop
+            For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
+            Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
+            This argument is only relevant if over-clustering information is available in the LCPN result and thus majority voting is performed.
+            (Default: 0)
+
+        Returns
+        ----------
+        None
+            Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.truncated_labels`, a :class:`~pandas.DataFrame` with the following columns:
+            1) **predicted_labels**, the truncated consensus label for each cell.
+            2) **conf_score**, the confidence score corresponding to the truncated level.
+            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
+        """
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
