@@ -471,24 +471,13 @@ class HierAnnotationResult():
         None
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting` storing the majority-voted labels based on the given clustering.
         """
-        if len(over_clustering) != self.cell_count:
-            raise ValueError(
-                    f"🛑 Length of `over_clustering` ({len(over_clustering)}) does not match the number of input cells ({self.cell_count})")
-        if isinstance(over_clustering, (list, tuple)):
-            over_clustering = np.array(over_clustering)
-        self.over_clustering = over_clustering
         logger.info("🗳️ Majority voting the predictions")
         majority_voting = pd.DataFrame(index = self.predicted_labels.index)
         for col in self.predicted_labels.columns:
-            votes = pd.crosstab(self.predicted_labels[col], over_clustering)
-            majority = votes.idxmax(axis=0).astype(str)
-            freqs = (votes / votes.sum(axis=0).values).max(axis=0)
-            majority[freqs < min_prop] = 'Heterogeneous'
-            majority = majority[over_clustering].reset_index()
-            majority.index = self.predicted_labels.index
-            majority.columns = ['over_clustering', 'majority_voting']
-            majority_voting[col.replace('predicted_labels', 'majority_voting')] = majority['majority_voting'].astype('category')
+            mv = _majority_vote(self.predicted_labels[col], over_clustering, min_prop)
+            majority_voting[col.replace('predicted_labels', 'majority_voting')] = mv.majority_voting
         self.majority_voting = majority_voting
+        self.over_clustering = mv.over_clustering
         logger.info("✅ Majority voting done!")
 
     def compute_conf_score(self, label_source: str = 'predicted_labels') -> None:
