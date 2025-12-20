@@ -331,7 +331,7 @@ class AnnotationResult():
             A list, tuple, numpy array, pandas series or index containing the over-clustering information.
         min_prop
             For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
-            (Default: 0)
+            (Default: 0.0)
 
         Returns
         ----------
@@ -464,7 +464,7 @@ class HierAnnotationResult():
             A list, tuple, numpy array, pandas series or index containing the over-clustering information.
         min_prop
             For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
-            (Default: 0)
+            (Default: 0.0)
 
         Returns
         ----------
@@ -530,7 +530,7 @@ class HierAnnotationResult():
             For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
             Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
             This argument is only relevant if over-clustering information is available in the LCPN result and thus majority voting is performed.
-            (Default: 0)
+            (Default: 0.0)
 
         Returns
         ----------
@@ -554,6 +554,14 @@ class HierAnnotationResult():
                     f"🛑 Please ensure LCPN and LCL predictions are generated from the same cell type tree")
         if not hasattr(self, "conf_score"):
             self.compute_conf_score(label_source = 'predicted_labels')
+        agree = self.predicted_labels.astype(str).eq(lcl_result.predicted_labels.astype(str))
+        deepest_level_idx = agree.shape[1] - 1 - agree.values[:, ::-1].argmax(axis = 1)
+        truncated_pred = [self.predicted_labels.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
+        truncated_conf = [self.conf_score.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
+        self.truncated_labels = pd.DataFrame(dict(predicted_labels = pd.Categorical(truncated_pred), conf_score = truncated_conf), index = self.predicted_labels.index)
+        if hasattr(self, "over_clustering"):
+            mv = _majority_vote(self.truncated_labels["predicted_labels"], self.over_clustering, min_prop)
+            self.truncated_labels["majority_voting"] = mv["majority_voting"]
 
 class Classifier():
     """
