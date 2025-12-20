@@ -563,6 +563,38 @@ class HierAnnotationResult():
             mv = _majority_vote(self.truncated_labels["predicted_labels"], self.over_clustering, min_prop)
             self.truncated_labels["majority_voting"] = mv["majority_voting"]
 
+    def confidence_truncate(self, method: str = "global", global_threshold: float = 0.5, local_threshold: float = 0.5, min_prop: float = 0.0) -> None:
+        """
+        Truncate LCPN hierarchical predictions based on confidence scores.
+        Truncate at the deepest level where the cumulative confidence score (method = 'global') or the local confidence score (method = 'local') is no smaller than the threshold.
+        If over-clustering information is available in the LCPN result, majority voting will be performed on the truncated labels.
+
+        Parameters
+        ----------
+        method
+            Truncation strategy. Must be one of `'global'` or `'local'`.
+            (Default: `'global'`)
+        global_threshold
+            Minimum cumulative confidence score for `method = 'global'`.
+            (Default: 0.5)
+        local_threshold
+            Minimum local confidence score for `method = 'local'`.
+            (Default: 0.5)
+        min_prop
+            For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
+            Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
+            This argument is only relevant if over-clustering information is available in the LCPN result and thus majority voting is performed.
+            (Default: 0.0)
+
+        Returns
+        ----------
+        None
+            Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.truncated_labels`, a :class:`~pandas.DataFrame` with the following columns:
+            1) **predicted_labels**, the truncated consensus label for each cell.
+            2) **conf_score**, the confidence score corresponding to the truncated level.
+            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
+        """
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
