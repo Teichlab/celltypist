@@ -655,7 +655,7 @@ class Classifier():
     model
         A :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler.
     """
-    def __init__(self, filename: Union[AnnData,str] = "", model: Union[Model,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+    def __init__(self, filename: Union[AnnData, str] = "", model: Union[Model, str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         if isinstance(model, str):
             model = Model.load(model)
         self.model = model
@@ -818,7 +818,7 @@ class HierClassifier():
     model
         A :class:`~celltypist.models.HierModel` object.
     """
-    def __init__(self, filename: Union[AnnData,str] = "", model: Union[HierModel,str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
+    def __init__(self, filename: Union[AnnData, str] = "", model: Union[HierModel, str] = "", transpose: bool = False, gene_file: Optional[str] = None, cell_file: Optional[str] = None):
         if isinstance(model, str):
             model = HierModel.load(model)
         _bridge = Classifier(filename = filename, model = model, transpose = transpose, gene_file = gene_file, cell_file = cell_file)
