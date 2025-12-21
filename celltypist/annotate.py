@@ -114,7 +114,7 @@ def annotate(filename: Union[AnnData, str] = "",
     return predictions
 
 def hier_annotate(filename: Union[AnnData, str] = "",
-                  model: Optional[Union[str, Model]] = None,
+                  model: Optional[Union[str, HierModel]] = None,
                   transpose_input: bool = False,
                   gene_file: Optional[str] = None,
                   cell_file: Optional[str] = None,
