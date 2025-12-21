@@ -594,6 +594,27 @@ class HierAnnotationResult():
             2) **conf_score**, the confidence score corresponding to the truncated level.
             3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
         """
+        if self.mode != "LCPN":
+            raise ValueError(
+                    f"🛑 `confidence_truncate` can only be applied to an LCPN HierAnnotationResult")
+        if method not in ("global", "local"):
+            raise ValueError(
+                    f"🛑 `method` must be either `'global'` or `'local'`")
+        if not hasattr(self, "conf_score"):
+            self.compute_conf_score(label_source = 'predicted_labels')
+        conf = self.conf_score.values
+        if method == "global":
+            valid = conf >= global_threshold
+        else:
+            valid = np.ones_like(conf, dtype = bool)
+            valid[:, 1:] = (conf[:, 1:] / conf[:, :-1]) >= local_threshold
+        deepest_level_idx = (conf.shape[1] - 1 - valid[:, ::-1].argmax(axis = 1))
+        truncated_pred = [self.predicted_labels.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
+        truncated_conf = [self.conf_score.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
+        self.truncated_labels = pd.DataFrame(dict(predicted_labels = pd.Categorical(truncated_pred), conf_score = truncated_conf), index = self.predicted_labels.index)
+        if hasattr(self, "over_clustering"):
+            mv = _majority_vote(self.truncated_labels["predicted_labels"], self.over_clustering, min_prop)
+            self.truncated_labels["majority_voting"] = mv["majority_voting"]
 
 class Classifier():
     """
