@@ -1,10 +1,27 @@
 from . import classifier
-from .models import Model
+from .models import Model, HierModel
 from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from anndata import AnnData
 from . import logger
+
+def _return_over_clustering(pre_result, over_clustering):
+    """Return usable over_clustering. This function is for internal use."""
+    if over_clustering is None:
+        over_clustering = classifier.over_cluster(pre_result.adata, use_GPU = use_GPU)
+    elif isinstance(over_clustering, str):
+        if over_clustering in pre_result.adata.obs:
+            over_clustering = pre_result.adata.obs[over_clustering]
+        else:
+            logger.info(f"👀 Did not identify '{over_clustering}' as a cell metadata column, assume it to be a plain text file")
+            try:
+                with open(over_clustering, 'rt') as f:
+                    over_clustering = [x.strip() for x in f.readlines()]
+            except Exception as e:
+                raise Exception(
+                        f"🛑 {e}")
+    return over_clustering
 
 def annotate(filename: Union[AnnData,str] = "",
              model: Optional[Union[str, Model]] = None,
@@ -83,25 +100,15 @@ def annotate(filename: Union[AnnData,str] = "",
     clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
     #predict
     predictions = clf.celltype(mode = mode, p_thres = p_thres)
+    #no majority_voting
     if not majority_voting:
         return predictions
     if predictions.cell_count <= 50:
         logger.warn(f"⚠️ Warning: the input number of cells ({predictions.cell_count}) is too few to conduct proper over-clustering; no majority voting is performed")
         return predictions
     #over clustering
-    if over_clustering is None:
-        over_clustering = classifier.over_cluster(predictions.adata, use_GPU = use_GPU)
-    elif isinstance(over_clustering, str):
-        if over_clustering in clf.adata.obs:
-            over_clustering = clf.adata.obs[over_clustering]
-        else:
-            logger.info(f"👀 Did not identify '{over_clustering}' as a cell metadata column, assume it to be a plain text file")
-            try:
-                with open(over_clustering, 'rt') as f:
-                    over_clustering = [x.strip() for x in f.readlines()]
-            except Exception as e:
-                raise Exception(
-                        f"🛑 {e}")
+    over_clustering = _return_over_clustering(predictions, over_clustering)
     #majority voting
     predictions.majority_vote(over_clustering, min_prop = min_prop)
+    #return
     return predictions
