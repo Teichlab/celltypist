@@ -552,7 +552,7 @@ class HierAnnotationResult():
         if not np.array_equal(self.tree.cell_types(leaf_only = False), lcl_result.tree.cell_types(leaf_only = False)):
             raise ValueError(
                     f"🛑 Please ensure LCPN and LCL predictions are generated from the same cell type tree")
-        if not hasattr(self, "conf_score"):
+        if not hasattr(self, "conf_score") or self.conf_score.isna().any().any():
             self.compute_conf_score(label_source = 'predicted_labels')
         agree = self.predicted_labels.astype(str).eq(lcl_result.predicted_labels.astype(str))
         deepest_level_idx = agree.shape[1] - 1 - agree.values[:, ::-1].argmax(axis = 1)
@@ -600,7 +600,7 @@ class HierAnnotationResult():
         if method not in ("global", "local"):
             raise ValueError(
                     f"🛑 `method` must be either `'global'` or `'local'`")
-        if not hasattr(self, "conf_score"):
+        if not hasattr(self, "conf_score") or self.conf_score.isna().any().any():
             self.compute_conf_score(label_source = 'predicted_labels')
         conf = self.conf_score.values
         if method == "global":

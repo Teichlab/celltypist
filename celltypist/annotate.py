@@ -23,7 +23,7 @@ def _return_over_clustering(pre_result, over_clustering, use_GPU):
                         f"🛑 {e}")
     return over_clustering
 
-def annotate(filename: Union[AnnData,str] = "",
+def annotate(filename: Union[AnnData, str] = "",
              model: Optional[Union[str, Model]] = None,
              transpose_input: bool = False,
              gene_file: Optional[str] = None,
@@ -35,7 +35,7 @@ def annotate(filename: Union[AnnData,str] = "",
              use_GPU: bool = False,
              min_prop: float = 0.0) -> classifier.AnnotationResult:
     """
-    Run the prediction and (optional) majority voting to annotate the input dataset.
+    Run flat celltyping and (optional) majority voting to annotate the input dataset.
 
     Parameters
     ----------
@@ -112,3 +112,19 @@ def annotate(filename: Union[AnnData,str] = "",
     predictions.majority_vote(over_clustering, min_prop = min_prop)
     #return
     return predictions
+
+def hier_annotate(filename: Union[AnnData, str] = "",
+                  model: Optional[Union[str, Model]] = None,
+                  transpose_input: bool = False,
+                  gene_file: Optional[str] = None,
+                  cell_file: Optional[str] = None,
+                  majority_voting: bool = False,
+                  over_clustering: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
+                  use_GPU: bool = False,
+                  min_prop: float = 0.0,
+                  compute_conf: bool = True,
+                  conf_source: str = 'predicted_labels') -> classifier.HierAnnotationResult:
+    """
+    Run hierarchical celltyping and (optional) majority voting to annotate the input dataset.
+    """
+    pass
