@@ -608,7 +608,7 @@ class HierAnnotationResult():
         else:
             valid = np.ones_like(conf, dtype = bool)
             valid[:, 1:] = (conf[:, 1:] / conf[:, :-1]) >= local_threshold
-        deepest_level_idx = (conf.shape[1] - 1 - valid[:, ::-1].argmax(axis = 1))
+        deepest_level_idx = conf.shape[1] - 1 - valid[:, ::-1].argmax(axis = 1)
         truncated_pred = [self.predicted_labels.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
         truncated_conf = [self.conf_score.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
         self.truncated_labels = pd.DataFrame(dict(predicted_labels = pd.Categorical(truncated_pred), conf_score = truncated_conf), index = self.predicted_labels.index)
