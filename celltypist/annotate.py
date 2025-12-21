@@ -6,7 +6,7 @@ import pandas as pd
 from anndata import AnnData
 from . import logger
 
-def _return_over_clustering(pre_result, over_clustering):
+def _return_over_clustering(pre_result, over_clustering, use_GPU):
     """Return usable over_clustering. This function is for internal use."""
     if over_clustering is None:
         over_clustering = classifier.over_cluster(pre_result.adata, use_GPU = use_GPU)
@@ -107,7 +107,7 @@ def annotate(filename: Union[AnnData,str] = "",
         logger.warn(f"⚠️ Warning: the input number of cells ({predictions.cell_count}) is too few to conduct proper over-clustering; no majority voting is performed")
         return predictions
     #over clustering
-    over_clustering = _return_over_clustering(predictions, over_clustering)
+    over_clustering = _return_over_clustering(predictions, over_clustering, use_GPU)
     #majority voting
     predictions.majority_vote(over_clustering, min_prop = min_prop)
     #return
