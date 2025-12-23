@@ -1,5 +1,5 @@
 from . import classifier, models, samples, tree
-from .annotate import annotate, Model
+from .annotate import annotate, hier_annotate, Model, HierModel
 from .train import train, hier_train
 from .plot import dotplot, treeviz, treevis
 
