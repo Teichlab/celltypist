@@ -45,7 +45,7 @@ def annotate(filename: Union[AnnData, str] = "",
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols in order to use the default model. Non-expressed genes are preferred to be provided as well.
     model
-        Flat model used to predict the input cells. Default to using the `'Immune_All_Low.pkl'` model.
+        Flat model used to predict the input cells. Default to using the `'Immune_All_Low.pkl'` model if not provided.
         Can be a :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
@@ -135,7 +135,7 @@ def hier_annotate(filename: Union[AnnData, str] = "",
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols in order to use the default model. Non-expressed genes are preferred to be provided as well.
     model
-        Hierarchical model used to predict the input cells. Default to using the `'Human_Tissue_Immune_LCPN.pkl'` model.
+        Hierarchical model used to predict the input cells. Default to using the `'Human_Tissue_Immune_LCPN.pkl'` model if not provided.
         Can be a :class:`~celltypist.models.HierModel` object, the path to the desired model file, or the model name.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
     transpose_input
