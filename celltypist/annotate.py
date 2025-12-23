@@ -45,7 +45,7 @@ def annotate(filename: Union[AnnData, str] = "",
         Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
         Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
     model
-        Model used to predict the input cells. Default to using the `'Immune_All_Low.pkl'` model.
+        Flat model used to predict the input cells. Default to using the `'Immune_All_Low.pkl'` model.
         Can be a :class:`~celltypist.models.Model` object that wraps the logistic Classifier and the StandardScaler, the
         path to the desired model file, or the model name.
         To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
@@ -126,5 +126,63 @@ def hier_annotate(filename: Union[AnnData, str] = "",
                   conf_source: str = 'predicted_labels') -> classifier.HierAnnotationResult:
     """
     Run hierarchical celltyping and (optional) majority voting to annotate the input dataset.
+
+    Parameters
+    ----------
+    filename
+        Path to the input count matrix (supported types are csv, txt, tsv, tab and mtx) or AnnData (h5ad).
+        If it's the former, a cell-by-gene format is desirable (see `transpose_input` for more information).
+        Also accepts the input as an :class:`~anndata.AnnData` object already loaded in memory.
+        Genes should be gene symbols. Non-expressed genes are preferred to be provided as well.
+    model
+        Hierarchical model used to predict the input cells. Default to using the `'Human_Tissue_Immune_LCPN.pkl'` model.
+        Can be a :class:`~celltypist.models.HierModel` object, the path to the desired model file, or the model name.
+        To see all available models and their descriptions, use :func:`~celltypist.models.models_description`.
+    transpose_input
+        Whether to transpose the input matrix. Set to `True` if `filename` is provided in a gene-by-cell format.
+        (Default: `False`)
+    gene_file
+        Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
+    cell_file
+        Path to the file which stores each cell per line corresponding to the cells used in the provided mtx file.
+        Ignored if `filename` is not provided in the mtx format.
+    majority_voting
+        Whether to refine the predicted labels by running the majority voting classifier after over-clustering.
+        (Default: `False`)
+    over_clustering
+        This argument can be provided in several ways:
+        1) an input plain file with the over-clustering result of one cell per line.
+        2) a string key specifying an existing metadata column in the AnnData (pre-created by the user).
+        3) a python list, tuple, numpy array, pandas series or index representing the over-clustering result of the input cells.
+        4) if none of the above is provided, will use a heuristic over-clustering approach according to the size of input data.
+        Ignored if `majority_voting` is set to `False`.
+    use_GPU
+        Whether to use GPU for over clustering on the basis of `rapids-singlecell`. This argument is only relevant when `majority_voting = True`.
+        (Default: `False`)
+    min_prop
+        For the dominant cell type within a subcluster, the minimum proportion of cells required to support naming of the subcluster by this cell type.
+        Ignored if `majority_voting` is set to `False`.
+        Subcluster that fails to pass this proportion threshold will be assigned `'Heterogeneous'`.
+        (Default: 0.0)
+    compute_conf
+        Whether to compute confidence scores (i.e., prediction probabilities) for each query cell at each hierarchical level.
+        (Default: `True`)
+    conf_source
+        The attribute from which to retrieve cell type labels for confidence scoring. Must be one of `'predicted_labels'` or `'majority_voting'`.
+        (Default: `'predicted_labels'`)
+
+    Returns
+    ----------
+    :class:`~celltypist.classifier.HierAnnotationResult`
+        An :class:`~celltypist.classifier.HierAnnotationResult` object. Important attributes within this class are:
+        1) :attr:`~celltypist.classifier.HierAnnotationResult.predicted_labels`, individual prediction results at each level.
+        2) :attr:`~celltypist.classifier.HierAnnotationResult.over_clustering`, over-clustering result of the input cells.
+        3) :attr:`~celltypist.classifier.HierAnnotationResult.majority_voting`, majority-voted prediction results at each level.
+        4) :attr:`~celltypist.classifier.HierAnnotationResult.decision_matrix`, dictionary of decision matrices at each level.
+        5) :attr:`~celltypist.classifier.HierAnnotationResult.probability_matrix`, dictionary of probability matrices at each level.
+        6) :attr:`~celltypist.classifier.HierAnnotationResult.conf_score`, confidence scores at each level.
+        7) :attr:`~celltypist.classifier.HierAnnotationResult.adata`, AnnData representation of the input data.
+        8) :attr:`~celltypist.classifier.HierAnnotationResult.tree`, Tree representation of the input cell type hierarchy.
     """
     pass
