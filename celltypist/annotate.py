@@ -95,6 +95,9 @@ def annotate(filename: Union[AnnData, str] = "",
         4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData representation of the input data.
     """
     #load model
+    if isinstance(model, HierModel):
+        raise TypeError(
+                f"🛑 A hierarchical model is provided, whereas `celltypist.annotate` only supports flat model annotation")
     lr_classifier = model if isinstance(model, Model) else Model.load(model)
     #construct Classifier class
     clf = classifier.Classifier(filename = filename, model = lr_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
@@ -186,6 +189,9 @@ def hier_annotate(filename: Union[AnnData, str] = "",
         8) :attr:`~celltypist.classifier.HierAnnotationResult.tree`, Tree representation of the input cell type hierarchy.
     """
     #load model
+    if isinstance(model, Model):
+        raise TypeError(
+                f"🛑 A flat model is provided, whereas `celltypist.hier_annotate` only supports hierarchical model annotation")
     hi_classifier = model if isinstance(model, HierModel) else HierModel.load(model)
     #construct HierClassifier class
     clf = classifier.HierClassifier(filename = filename, model = hi_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
