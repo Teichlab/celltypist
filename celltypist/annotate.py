@@ -126,7 +126,7 @@ def hier_annotate(filename: Union[AnnData, str] = "",
                   use_GPU: bool = False,
                   min_prop: float = 0.0,
                   compute_conf: bool = True,
-                  conf_source: str = 'predicted_labels') -> classifier.HierAnnotationResult:
+                  label_source: str = 'predicted_labels') -> classifier.HierAnnotationResult:
     """
     Run hierarchical celltyping and (optional) majority voting to annotate the input dataset.
 
@@ -171,7 +171,7 @@ def hier_annotate(filename: Union[AnnData, str] = "",
     compute_conf
         Whether to compute confidence scores (i.e., prediction probabilities) for each query cell at each hierarchical level.
         (Default: `True`)
-    conf_source
+    label_source
         The attribute from which to retrieve cell type labels for confidence scoring. Must be one of `'predicted_labels'` or `'majority_voting'`.
         (Default: `'predicted_labels'`)
 
@@ -206,6 +206,6 @@ def hier_annotate(filename: Union[AnnData, str] = "",
             hier_predictions.majority_vote(over_clustering, min_prop = min_prop)
     #conf_score
     if compute_conf:
-        hier_predictions.compute_conf_score(label_source = conf_source)
+        hier_predictions.compute_conf_score(label_source = label_source)
     #return
     return hier_predictions
