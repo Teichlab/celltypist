@@ -93,6 +93,7 @@ class Model():
         """
         if not model:
             model = get_default_model(model_type = 'flat')
+            logger.info(f"🔖 No model provided. Using the deault: '{model}'")
         if '/' not in model and model in get_all_models(model_type = 'flat'):
             model = get_model_path(model)
         if not os.path.isfile(model):
@@ -478,6 +479,7 @@ class HierModel():
         """
         if not model:
             model = get_default_model(model_type = 'hierarchical')
+            logger.info(f"🔖 No model provided. Using the deault: '{model}'")
         if '/' not in model and model in get_all_models(model_type = 'hierarchical'):
             model = get_model_path(model)
         if not os.path.isfile(model):
