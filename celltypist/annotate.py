@@ -185,4 +185,21 @@ def hier_annotate(filename: Union[AnnData, str] = "",
         7) :attr:`~celltypist.classifier.HierAnnotationResult.adata`, AnnData representation of the input data.
         8) :attr:`~celltypist.classifier.HierAnnotationResult.tree`, Tree representation of the input cell type hierarchy.
     """
-    pass
+    #load model
+    hi_classifier = model if isinstance(model, HierModel) else HierModel.load(model)
+    #construct HierClassifier class
+    clf = classifier.HierClassifier(filename = filename, model = hi_classifier, transpose = transpose_input, gene_file = gene_file, cell_file = cell_file)
+    #predict
+    hier_predictions = clf.celltype(reshape_lcpn = True)
+    #majority_voting
+    if majority_voting:
+        if hier_predictions.cell_count <= 50:
+            logger.warn(f"⚠️ Warning: the input number of cells ({hier_predictions.cell_count}) is too few to conduct proper over-clustering; no majority voting is performed")
+        else:
+            over_clustering = _return_over_clustering(hier_predictions, over_clustering, use_GPU)
+            hier_predictions.majority_vote(over_clustering, min_prop = min_prop)
+    #conf_score
+    if compute_conf:
+        hier_predictions.compute_conf_score(label_source = conf_source)
+    #return
+    return hier_predictions

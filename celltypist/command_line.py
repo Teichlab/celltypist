@@ -50,7 +50,7 @@ def show_help_and_exit(message: str):
 @click.option("--quiet", is_flag=True, default=False, help="Hide the banner and configuration information during the run.")
 def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_file: str, mode: str, p_thres: float, majority_voting: bool, over_clustering: str, use_GPU: bool, min_prop: float,
          outdir: str, prefix: str, xlsx: bool, plot_results: bool, update_models: bool, show_models: bool, quiet: bool):
-    """Celltypist: a tool for semi-automatic cell type annotation"""
+    """CellTypist: a tool for semi-automatic cell type annotation"""
 
     #update models or not
     if update_models:
