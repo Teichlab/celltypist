@@ -453,6 +453,8 @@ class HierAnnotationResult():
         base += f"\n    probability_matrix: dictionary of probability matrices per level"
         if hasattr(self, 'conf_score'):
             base += f"\n    conf_score: data frame with prediction confidence scores at {self.conf_score.shape[1]} levels"
+        if hasattr(self, 'truncated_labels'):
+            base += f"\n    truncated_labels: data frame of truncated cell type predictions"
         base += f"\n    tree: Tree object used"
         base += f"\n    adata: AnnData object referred"
         return base
