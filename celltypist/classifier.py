@@ -41,8 +41,8 @@ def _construct_neighbor_graph(adata: AnnData, use_GPU: bool = False) -> tuple:
             sc.pp.filter_genes(adata, min_cells=5)
             fsc.pp.highly_variable_genes(adata, n_top_genes = min([2500, adata.n_vars]))
         adata = adata[:, adata.var.highly_variable]
-        fsc.pp.scale(adata, max_value=10)
-        fsc.pp.pca(adata, n_comps=50)
+        fsc.pp.scale(adata, max_value = 10)
+        fsc.pp.pca(adata, n_comps = 50)
     fsc.pp.neighbors(adata, n_neighbors=10, n_pcs=50)
     return adata.obsm['X_pca'], adata.obsp['connectivities'], adata.obsp['distances'], adata.uns['neighbors']
 
@@ -729,7 +729,7 @@ class Classifier():
                 logger.warn(f"⚠️ The input matrix is detected to be a gene-by-cell matrix, will transpose it")
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
-            sc.pp.normalize_total(self.adata, target_sum=1e4)
+            sc.pp.normalize_total(self.adata, target_sum = 1e4)
             sc.pp.log1p(self.adata)
             self.indata = self.adata.X
             self.indata_genes = self.adata.var_names
