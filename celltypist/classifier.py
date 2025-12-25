@@ -651,7 +651,7 @@ class HierAnnotationResult():
                 self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
                 for attr in ('majority_voting', 'conf_score', 'truncated_labels'):
                     if hasattr(self, attr):
-                        getattr(self, attr).to_excel(writer, sheet_name=f"{prefix}{attr.replace('_', ' ').title()}")
+                        getattr(self, attr).to_excel(writer, sheet_name=f"{attr.replace('_', ' ').title()}")
 
 class Classifier():
     """
