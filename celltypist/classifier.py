@@ -381,6 +381,9 @@ class HierAnnotationResult():
     conf_score
         A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence scores are calculated.
         In LCPN results, cells may have NaN confidence scores when their majority-voted cell type labels lie outside their traversed branches.
+    truncated_labels
+        A :class:`~pandas.DataFrame` object of truncated labels and their confidence scores. Only present if label truncation is performed for an LCPN result.
+        A `majority_voting` column will also exist if over-clustering information is available in the LCPN result and thus majority voting is performed.
     cell_count
         Number of input cells which have undergone the prediction process.
     adata
@@ -615,6 +618,40 @@ class HierAnnotationResult():
         if hasattr(self, "over_clustering"):
             mv = _majority_vote(self.truncated_labels["predicted_labels"], self.over_clustering, min_prop)
             self.truncated_labels["majority_voting"] = mv["majority_voting"]
+
+    def to_table(self, folder: str, prefix: str = '', xlsx: bool = False) -> None:
+        """
+        Write out tables of predicted labels, and if present, majority-voted labels, confidence scores, and truncated labels.
+
+        Parameters
+        ----------
+        folder
+            Path to a folder which stores the output table/tables.
+        prefix
+            Prefix for the output table/tables. Default to no prefix used.
+        xlsx
+            Whether to merge output tables into a single Excel (.xlsx).
+            (Default: `False`)
+
+        Returns
+        ----------
+        None
+            Depending on `xlsx`, return table(s) of predicted labels, and if present, majority-voted labels, confidence scores, and truncated labels.
+        """
+        if not os.path.isdir(folder):
+            raise FileNotFoundError(
+                    f"🛑 Output folder {folder} does not exist. Please provide a valid folder")
+        if not xlsx:
+            self.predicted_labels.to_csv(os.path.join(folder, f"{prefix}predicted_labels.csv"))
+            for attr in ('majority_voting', 'conf_score', 'truncated_labels'):
+                if hasattr(self, attr):
+                    getattr(self, attr).to_csv(os.path.join(folder, f"{prefix}{attr}.csv"))
+        else:
+            with pd.ExcelWriter(os.path.join(folder, f"{prefix}annotation_result.xlsx")) as writer:
+                self.predicted_labels.to_excel(writer, sheet_name="Predicted Labels")
+                for attr in ('majority_voting', 'conf_score', 'truncated_labels'):
+                    if hasattr(self, attr):
+                        getattr(self, attr).to_excel(writer, sheet_name=f"{prefix}{attr.replace('_', ' ').title()}")
 
 class Classifier():
     """
