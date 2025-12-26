@@ -62,7 +62,7 @@ def main(indata: str, model: str, transpose_input: bool, gene_file: str, cell_fi
         md = models.models_description()
         for _, row in md.iterrows():
             row = row.tolist()
-            logger.info(row[0] + '   ' + row[1])
+            logger.info(row[0] + '   ' + row[1] + '   ' + row[2])
         exit(0)
 
     #validate model
