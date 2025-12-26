@@ -1,7 +1,7 @@
 import os
 import click
 from . import logger, models
-from .annotate import annotate
+from .annotate import annotate, hier_annotate
 
 def show_banner():
     logger.info(r"""
@@ -30,7 +30,7 @@ def show_help_and_exit(message: str):
 
 
 @click.command()
-@click.option("-i", "--indata", help="Path to the input count matrix (.csv/txt/tsv/tab/mtx) or AnnData (.h5ad). Genes should be provided as gene symbols.", type=click.Path(exists=True, dir_okay=False))
+@click.option("-i", "--indata", help="Path to the input count matrix (.csv/txt/tsv/tab/mtx) or AnnData (.h5ad). Genes should be provided as gene symbols if you want to use the default model.", type=click.Path(exists=True, dir_okay=False))
 @click.option("-m", "--model", default=None, help="Model used for predictions. If not provided, default to using the `Immune_All_Low.pkl` model.", type=str)
 @click.option("--transpose-input", is_flag=True, default=False, help="Transpose the input matrix if `-i / --indata` file is provided in the gene-by-cell format. Note Celltypist requires the cell-by-gene format.")
 @click.option("-gf", "--gene-file", default=None, type=click.Path(exists=False), help="Path to the file which stores each gene per line corresponding to the genes used in the provided mtx file. Ignored if `-i / --indata` is not provided in the mtx format.")
