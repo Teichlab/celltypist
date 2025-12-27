@@ -84,21 +84,39 @@ def main(indata: str, hierarchical: bool, model: str, transpose_input: bool, gen
         show_help_and_exit(f"🛑 Output directory '{outdir}' does not exist")
 
     #config settings
-    config = {
-                "indata": indata,
-                "model": model,
-                "transpose-input": transpose_input,
-                "gene-file": gene_file,
-                "cell-file": cell_file,
-                "mode": mode,
-                "p-thres": p_thres,
-                "majority-voting": majority_voting,
-                "outdir": outdir,
-                "prefix": prefix,
-                "xlsx": xlsx,
-                "plot-results": plot_results,
-                "quiet": quiet
-             }
+    if not hierarchical:
+        config = {
+                    "indata": indata,
+                    "hierarchical": hierarchical,
+                    "model": model,
+                    "transpose-input": transpose_input,
+                    "gene-file": gene_file,
+                    "cell-file": cell_file,
+                    "mode": mode,
+                    "p-thres": p_thres,
+                    "majority-voting": majority_voting,
+                    "outdir": outdir,
+                    "prefix": prefix,
+                    "xlsx": xlsx,
+                    "plot-results": plot_results,
+                    "quiet": quiet
+                 }
+    else:
+        config = {
+                    "indata": indata,
+                    "hierarchical": hierarchical,
+                    "model": model,
+                    "transpose-input": transpose_input,
+                    "gene-file": gene_file,
+                    "cell-file": cell_file,
+                    "no-compute-conf": no_compute_conf,
+                    "label-source": label_source,
+                    "majority-voting": majority_voting,
+                    "outdir": outdir,
+                    "prefix": prefix,
+                    "xlsx": xlsx,
+                    "quiet": quiet
+                 }
     if majority_voting:
         config["over-clustering"] = over_clustering
         config["use-GPU"] = use_GPU
