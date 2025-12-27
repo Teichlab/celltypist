@@ -130,24 +130,38 @@ def main(indata: str, hierarchical: bool, model: str, transpose_input: bool, gen
     #celltyping and majority voting
     if over_clustering == 'auto':
         over_clustering = None
-    result = annotate(
-        filename=indata,
-        model=model,
-        transpose_input=transpose_input,
-        gene_file=gene_file,
-        cell_file=cell_file,
-        mode = mode.replace('_', ' '),
-        p_thres = p_thres,
-        majority_voting=majority_voting,
-        over_clustering=over_clustering,
-        use_GPU = use_GPU,
-        min_prop = min_prop)
+    if not hierarchical:
+        result = annotate(
+            filename=indata,
+            model=model,
+            transpose_input=transpose_input,
+            gene_file=gene_file,
+            cell_file=cell_file,
+            mode = mode.replace('_', ' '),
+            p_thres = p_thres,
+            majority_voting=majority_voting,
+            over_clustering=over_clustering,
+            use_GPU = use_GPU,
+            min_prop = min_prop)
+    else:
+        result = hier_annotate(
+            filename=indata,
+            model=model,
+            transpose_input=transpose_input,
+            gene_file=gene_file,
+            cell_file=cell_file,
+            majority_voting=majority_voting,
+            over_clustering=over_clustering,
+            use_GPU = use_GPU,
+            min_prop = min_prop,
+            compute_conf = not no_compute_conf,
+            label_source = label_source)
 
     #write output
     result.to_table(folder = outdir, prefix = prefix, xlsx = xlsx)
 
     #plot result
-    if plot_results:
+    if not hierarchical and plot_results:
         result.to_plots(folder = outdir, prefix = prefix, plot_probability = True)
 
 if __name__ == "__main__":
