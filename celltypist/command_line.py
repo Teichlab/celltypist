@@ -57,7 +57,7 @@ def main(indata: str, hierarchical: bool, model: str, transpose_input: bool, gen
 
     #update models or not
     if update_models:
-        models.download_models(force_update=True)
+        models.download_models(force_update = True)
         exit(0)
 
     #show all models
@@ -69,11 +69,12 @@ def main(indata: str, hierarchical: bool, model: str, transpose_input: bool, gen
         exit(0)
 
     #validate model
+    model_type = 'hierarchical' if hierarchical else 'flat'
     if model is None:
-        model = models.get_default_model()
+        model = models.get_default_model(model_type = model_type)
         logger.info(f"🔖 No model provided. Using the default: '{model}'")
-    if not os.path.isfile(model) and model not in models.get_all_models():
-        show_help_and_exit(f"🛑 Invalid model name: '{model}'. Available models are: {', '.join(models.get_all_models())}")
+    if not os.path.isfile(model) and model not in models.get_all_models(model_type = model_type):
+        show_help_and_exit(f"🛑 Invalid model name: '{model}'. Available models are: {', '.join(models.get_all_models(model_type = model_type))}")
 
     #output dir
     if outdir is None:
