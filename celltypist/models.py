@@ -794,6 +794,7 @@ def models_description(on_the_fly: bool = False) -> pd.DataFrame:
     logger.info(f"👉 Detailed model information can be found at `https://www.celltypist.org/models`")
     if on_the_fly:
         filenames_flat = get_all_models(model_type = 'flat')
+        filenames_flat = [filename for filename in filenames_flat if '_LCPN' not in filename and '_LCL' not in filename]
         descriptions_flat = [Model.load(filename).description['details'] for filename in filenames_flat]
         filenames_hier = get_all_models(model_type = 'hierarchical')
         descriptions_hier = [HierModel.load(filename).description['details'] for filename in filenames_hier]
