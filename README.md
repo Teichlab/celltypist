@@ -685,7 +685,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Alternatively, export the two results to a single Excel table (.xlsx).
   hier_predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
   ```
-  There are also some other attributes stored in `hier_predictions`, including `.decision_matrix` (dictionary of decision matrices at each level), `.probability_matrix` (dictionary of probability matrices at each level), and `.tree` (the input cell type hierarchy within the model used). You can, for example, use `celltypist.treeviz(hier_predictions.tree, show_node_label = True)` to check what cell types are contained at each hierarchical level.
+  There are also additional attributes stored in `hier_predictions`, including `.decision_matrix` (dictionary of decision matrices at each level), `.probability_matrix` (dictionary of probability matrices at each level), and `.tree` (the input cell type hierarchy within the model used). You can, for example, use `celltypist.treeviz(hier_predictions.tree, show_node_label = True)` to inspect the cell types contained at each hierarchical level.
   </details>
 </details>
 
