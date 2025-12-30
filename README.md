@@ -102,7 +102,7 @@ conda install -c bioconda -c conda-forge celltypist
   #Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
   input_file = celltypist.samples.get_sample_csv()
   ```
-  Assign the cell type labels from the model to the input test cells using the [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.annotate.html) function.
+  Assign cell type labels from the default model (`Immune_All_Low.pkl`) to the input test cells using the [celltypist.annotate](https://celltypist.readthedocs.io/en/latest/celltypist.annotate.html) function.
   ```python
   #Predict the identity of each input cell.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl')
@@ -211,7 +211,7 @@ conda install -c bioconda -c conda-forge celltypist
   ```python
   #Turn on the majority voting classifier as well.
   predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
-  ```
+  `Immune_All_Low.pkl``
   During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
    2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
@@ -650,7 +650,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
   input_file = celltypist.samples.get_sample_csv()
   ```
-  Assign the cell type labels from the default model (`Human_Tissue_Immune_LCPN.pkl`) to the input test cells using the [celltypist.hier_annotate](https://celltypist.readthedocs.io/en/latest/celltypist.hier_annotate.html) function.
+  Assign cell type labels from the default model (`Human_Tissue_Immune_LCPN.pkl`) to the input test cells using the [celltypist.hier_annotate](https://celltypist.readthedocs.io/en/latest/celltypist.hier_annotate.html) function.
   ```python
   #Predict the identity of each input cell at each hierarchical level.
   #You can omit `compute_conf = True` as this is the default behavior.
