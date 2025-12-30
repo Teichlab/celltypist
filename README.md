@@ -643,9 +643,49 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 
 + <details>
-  <summary><strong>1.4. Celltyping based on an LCPN hierarchical model</strong></summary>
+  <summary><strong>1.4. Celltyping based on the input of count table</strong></summary>
 
-  NN.
+  CellTypist accepts the input data as a count table (cell-by-gene or gene-by-cell) in the format of `.txt`, `.csv`, `.tsv`, `.tab`, `.mtx` or `.mtx.gz`. A raw count matrix (reads or UMIs) is required. Non-expressed genes (if you are sure of their expression absence in your data) are suggested to be included in the input table as well, as they point to the negative transcriptomic signatures when compared with the model used.
+  ```python
+  #Get a demo test data. This is a UMI count csv file with cells as rows and gene symbols as columns.
+  input_file = celltypist.samples.get_sample_csv()
+  ```
+  Assign the cell type labels from the default model (`Human_Tissue_Immune_LCPN.pkl`) to the input test cells using the [celltypist.hier_annotate](https://celltypist.readthedocs.io/en/latest/celltypist.hier_annotate.html) function.
+  ```python
+  #Predict the identity of each input cell at each hierarchical level.
+  #You can omit `compute_conf = True` as this is the default behavior.
+  hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', compute_conf = True)
+  #Alternatively, the model argument can be a previously loaded `HierModel` as in 1.3.
+  hier_predictions = celltypist.hier_annotate(input_file, model = model, compute_conf = True)
+  ```
+  With `compute_conf = True`, the prediction confidence scores (i.e., the probability of each query cell predicted at each hierarchical level) will be computed. These scores are required for label truncation (see `1.7.`). You can disable this behavior by setting `compute_conf = False`, but doing so is not recommended.  
+
+  If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument. In addition, if the input is provided in the `.mtx` format, you will also need to specify the `gene_file` and `cell_file` arguments as the files containing names of genes and cells, respectively.
+  ```python
+  #In case your input file is a gene-by-cell table.
+  hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', transpose_input = True)
+  #In case your input file is a gene-by-cell mtx file.
+  hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', transpose_input = True, gene_file = '/path/to/gene/file.txt', cell_file = '/path/to/cell/file.txt')
+  ```
+  Again, if the `model` argument is not specified, CellTypist will by default use the `Human_Tissue_Immune_LCPN.pkl` model.  
+
+  The `hier_annotate` function will return an instance of the [HierAnnotationResult](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html) class as defined in CellTypist.
+  ```python
+  #Summary information for the prediction result.
+  hier_predictions
+  #Examine the predicted cell type labels at each hierarchical level.
+  hier_predictions.predicted_labels
+  #Examine the confidence scores at each hierarchical level.
+  hier_predictions.conf_score
+  ```
+  The two tables in the `HierAnnotationResult` (`.predicted_labels` and `.conf_score`) can be written out to local files (tables) by the function [to_table](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html#celltypist.classifier.HierAnnotationResult.to_table), specifying the target `folder` for storage and the `prefix` common to each table.
+  ```python
+  #Export the two results to csv tables.
+  hier_predictions.to_table(folder = '/path/to/a/folder', prefix = '')
+  #Alternatively, export the two results to a single Excel table (.xlsx).
+  hier_predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
+  ```
+  There are also some other attributes stored in `hier_predictions`, including `.decision_matrix` (dictionary of decision matrices at each level), `.probability_matrix` (dictionary of probability matrices at each level), and `.tree` (the input cell type hierarchy within the model used). You can, for example, use `celltypist.treeviz(hier_predictions.tree, show_node_label = True)` to check what cell types are contained at each hierarchical level.
   </details>
 </details>
 
