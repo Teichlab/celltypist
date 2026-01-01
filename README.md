@@ -744,6 +744,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>1.7. Label truncation for LCPN-based hierarchical predictions</strong></summary>
 
+  In an LCL model-based prediction, each hierarchical level is predicted independently. By contrast, in an LCPN model-based prediction, a cell traverses the hierarchy top-down. At each node, the model evaluates whether the cell can be confidently assigned to one of the child nodes. This behaviour raises the need for label truncation: a cell’s predicted label path may terminate at a higher (coarser) level of the hierarchy.  
+
+  CellTypist provides two mechanisms for hierarchical label truncation: confidence score-based label truncation and LCL-assisted label truncation.  
+
+  In confidence score-based label truncation, hierarchical prediction proceeds top-down along a single path. The assignment stops at the node where either the global (cumulative) probability along the path fails to exceed a predefined threshold, or the local probability at the current node does not pass the threshold. This functionality is implemented via the [confidence_truncate](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html#celltypist.classifier.HierAnnotationResult.confidence_truncate) method, where the truncation strategy can be specified using `method = 'global'` or `method = 'local'`, corresponding to global and local probability-based truncation, respectively.
   </details>
 </details>
 
