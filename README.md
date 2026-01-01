@@ -706,13 +706,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 
 + <details>
-  <summary><strong>1.7. Use a majority voting classifier combined with celltyping</strong></summary>
+  <summary><strong>1.6. Use a majority voting classifier combined with celltyping</strong></summary>
 
   By default, CellTypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, CellTypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
-  To turn on the majority voting classifier in addition to the CellTypist predictions, pass in `majority_voting = True` to the `annotate` function.
+  To turn on the majority voting classifier in addition to the CellTypist predictions, pass in `majority_voting = True` to the `hier_annotate` function.
   ```python
   #Turn on the majority voting classifier as well.
-  predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
+  hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', majority_voting = True)
   ```
   During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
    1) an input plain file with the over-clustering result of one cell per line.
@@ -721,28 +721,24 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
    4) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
   ```python
   #Add your own over-clustering result.
-  predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
+  hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
   ```
   There is also a `min_prop` parameter (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type. Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.  
     
-  Similarly, an instance of the `AnnotationResult` class will be returned.
+  Similarly, an instance of the `HierAnnotationResult` class will be returned.
   ```python
-  #Examine the predicted cell type labels.
-  predictions.predicted_labels
-  #Examine specifically the majority-voting results.
-  predictions.predicted_labels.majority_voting
-  #Examine the matrix representing the decision score of each cell belonging to a given cell type.
-  predictions.decision_matrix
-  #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
-  predictions.probability_matrix
+  #Examine the predicted cell type labels at each hierarchical level.
+  hier_predictions.predicted_labels
+  #Examine the confidence scores at each hierarchical level.
+  hier_predictions.conf_score
+  #Examine the over-clustering result.
+  hier_predictions.over_clustering 
+  #Examine the majority-voted cell type labels at each hierarchical level.
+  hier_predictions.majority_voting
   ```
-  Compared to the results without majority-voting functionality as in `1.5.` and `1.6.`, the `.predicted_labels` attribute now has two extra columns (`over_clustering` and `majority_voting`) in addition to the column `predicted_labels`.  
+  Compared to the results without majority-voting functionality as in `1.4.` and `1.5.`, `HierAnnotationResult` now has two extra attributes (`over_clustering` and `majority_voting`) representing the over-clustering result and the majority-voted cell type labels at each hierarchical level, respectively.  
     
-  Other parameters and downstream operations are the same as in `1.5.` and `1.6.`. Note that due to the majority-voting results added, the exported tables (by `to_table`), the transformed `AnnData` (by `to_adata`), and the visualisation figures (by `to_plots`) will all have additional outputs or information indicating the majority-voting outcomes. For example, when using the function `celltypist.dotplot`, you can set `use_as_prediction = 'majority_voting'` to visualise the match between majority-voting results with manual annotations. The other example is that when using `to_adata`, you can specify `insert_conf_by = 'majority_voting'` to have the confidence scores corresponding to the majority-voting result instead of raw predictions (`insert_conf_by = 'predicted_labels'` which is the default).
-  ```python
-  #Examine the correspondence between CellTypist predictions (`use_as_prediction`) and manual annotations (`use_as_reference`).
-  celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotation', use_as_prediction = 'majority_voting')
-  ```
+  Other parameters and downstream operations are the same as in `1.4.` and `1.5.`. Note that due to the majority-voting results added, the exported tables (by `to_table`) will have an additional output of the majority-voting table.
   </details>
 </details>
 
