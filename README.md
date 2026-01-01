@@ -691,6 +691,58 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 + <details>
   <summary><strong>1.5. Celltyping based on AnnData</strong></summary>
 
+  CellTypist also accepts the input data as an [AnnData](https://anndata.readthedocs.io/en/latest/) generated from for example [Scanpy](https://scanpy.readthedocs.io/en/stable/).  
+    
+  Since the expression of each gene will be centred and scaled by matching with the mean and standard deviation of that gene in the provided model, CellTypist requires a logarithmised and normalised expression matrix stored in the `AnnData` (log1p normalised expression to 10,000 counts per cell). CellTypist will try the `.X` attribute first, and if it does not suffice, try the `.raw.X` attribute. If none of them fit into the desired data type or the expression matrix is not properly normalised, an error will be raised.  
+    
+  Within the `AnnData`, please provide all genes to ensure maximal overlap with genes in the model. If you normalise and logarithmise the gene expression matrix using all genes while later only keep a subset of genes in the `AnnData`, the prediction result may not be optimal.
+  ```python
+  #Provide the input as an `AnnData`.
+  predictions = celltypist.hier_annotate('/path/to/input.h5ad', model = 'Human_Tissue_Immune_LCPN.pkl')
+  #Alternatively, the input can be specified as an `AnnData` already loaded in memory.
+  predictions = celltypist.hier_annotate(a_loaded_adata, model = 'Human_Tissue_Immune_LCPN.pkl')
+  ```
+  All the parameters and downstream operations are the same as in `1.4.`.
+  </details>
+
++ <details>
+  <summary><strong>1.7. Use a majority voting classifier combined with celltyping</strong></summary>
+
+  By default, CellTypist will only do the prediction jobs to infer the identities of input cells, which renders the prediction of each cell independent. To combine the cell type predictions with the cell-cell transcriptomic relationships, CellTypist offers a majority voting approach based on the idea that similar cell subtypes are more likely to form a (sub)cluster regardless of their individual prediction outcomes.
+  To turn on the majority voting classifier in addition to the CellTypist predictions, pass in `majority_voting = True` to the `annotate` function.
+  ```python
+  #Turn on the majority voting classifier as well.
+  predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True)
+  ```
+  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `over_clustering` argument. This argument can be specified in several ways:
+   1) an input plain file with the over-clustering result of one cell per line.
+   2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
+   3) a list-like object (such as a numpy 1D array) indicating the over-clustering result of all cells.
+   4) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
+  ```python
+  #Add your own over-clustering result.
+  predictions = celltypist.annotate(input_file, model = 'Immune_All_Low.pkl', majority_voting = True, over_clustering = '/path/to/over_clustering/file')
+  ```
+  There is also a `min_prop` parameter (defaults to 0) which controls the minimum proportion of cells from the dominant cell type required to name a given subcluster by this cell type. Subcluster that fails to pass this proportion threshold will be assigned `Heterogeneous`.  
+    
+  Similarly, an instance of the `AnnotationResult` class will be returned.
+  ```python
+  #Examine the predicted cell type labels.
+  predictions.predicted_labels
+  #Examine specifically the majority-voting results.
+  predictions.predicted_labels.majority_voting
+  #Examine the matrix representing the decision score of each cell belonging to a given cell type.
+  predictions.decision_matrix
+  #Examine the matrix representing the probability each cell belongs to a given cell type (transformed from decision matrix by the sigmoid function).
+  predictions.probability_matrix
+  ```
+  Compared to the results without majority-voting functionality as in `1.5.` and `1.6.`, the `.predicted_labels` attribute now has two extra columns (`over_clustering` and `majority_voting`) in addition to the column `predicted_labels`.  
+    
+  Other parameters and downstream operations are the same as in `1.5.` and `1.6.`. Note that due to the majority-voting results added, the exported tables (by `to_table`), the transformed `AnnData` (by `to_adata`), and the visualisation figures (by `to_plots`) will all have additional outputs or information indicating the majority-voting outcomes. For example, when using the function `celltypist.dotplot`, you can set `use_as_prediction = 'majority_voting'` to visualise the match between majority-voting results with manual annotations. The other example is that when using `to_adata`, you can specify `insert_conf_by = 'majority_voting'` to have the confidence scores corresponding to the majority-voting result instead of raw predictions (`insert_conf_by = 'predicted_labels'` which is the default).
+  ```python
+  #Examine the correspondence between CellTypist predictions (`use_as_prediction`) and manual annotations (`use_as_reference`).
+  celltypist.dotplot(predictions, use_as_reference = 'column_key_of_manual_annotation', use_as_prediction = 'majority_voting')
+  ```
   </details>
 </details>
 
