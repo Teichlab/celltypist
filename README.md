@@ -732,11 +732,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Examine the confidence scores at each hierarchical level.
   hier_predictions.conf_score
   #Examine the over-clustering result.
-  hier_predictions.over_clustering 
+  hier_predictions.over_clustering
   #Examine the majority-voted cell type labels at each hierarchical level.
   hier_predictions.majority_voting
   ```
-  Compared to the results without majority-voting functionality as in `1.4.` and `1.5.`, `HierAnnotationResult` now has two extra attributes (`over_clustering` and `majority_voting`) representing the over-clustering result and the majority-voted cell type labels at each hierarchical level, respectively.  
+  Compared to the results without majority-voting functionality as in `1.4.` and `1.5.`, `HierAnnotationResult` now has two extra attributes (`over_clustering` and `majority_voting`), representing the over-clustering result and the majority-voted cell type labels at each hierarchical level, respectively.  
     
   Other parameters and downstream operations are the same as in `1.4.` and `1.5.`. Note that due to the majority-voting results added, the exported tables (by `to_table`) will have an additional output of the majority-voting table.
   </details>
