@@ -698,9 +698,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Within the `AnnData`, please provide all genes to ensure maximal overlap with genes in the model. If you normalise and logarithmise the gene expression matrix using all genes while later only keep a subset of genes in the `AnnData`, the prediction result may not be optimal.
   ```python
   #Provide the input as an `AnnData`.
-  predictions = celltypist.hier_annotate('/path/to/input.h5ad', model = 'Human_Tissue_Immune_LCPN.pkl')
+  hier_predictions = celltypist.hier_annotate('/path/to/input.h5ad', model = 'Human_Tissue_Immune_LCPN.pkl')
   #Alternatively, the input can be specified as an `AnnData` already loaded in memory.
-  predictions = celltypist.hier_annotate(a_loaded_adata, model = 'Human_Tissue_Immune_LCPN.pkl')
+  hier_predictions = celltypist.hier_annotate(a_loaded_adata, model = 'Human_Tissue_Immune_LCPN.pkl')
   ```
   All the parameters and downstream operations are the same as in `1.4.`.
   </details>
