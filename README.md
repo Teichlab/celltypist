@@ -740,6 +740,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
     
   Other parameters and downstream operations are the same as in `1.4.` and `1.5.`. Note that due to the majority-voting results added, the exported tables (by `to_table`) will have an additional output of the majority-voting table.
   </details>
+
++ <details>
+  <summary><strong>1.7. Label truncation for LCPN-based hierarchical predictions</strong></summary>
+
+  </details>
 </details>
 
 <details>
