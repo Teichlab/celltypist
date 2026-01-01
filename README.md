@@ -144,9 +144,9 @@ conda install -c bioconda -c conda-forge celltypist
   #Alternatively, export the three results to a single Excel table (.xlsx).
   predictions.to_table(folder = '/path/to/a/folder', prefix = '', xlsx = True)
   ```
-  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_adata). The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behavior of `to_adata`).  
+  The resulting `AnnotationResult` can be also transformed to an [AnnData](https://anndata.readthedocs.io/en/latest/) which stores the expression matrix in the log1p normalised format (to 10,000 counts per cell) by the function [to_adata](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.AnnotationResult.html#celltypist.classifier.AnnotationResult.to_adata). The predicted cell type labels can be inserted to this `AnnData` as well by specifying `insert_labels = True` (which is the default behaviour of `to_adata`).  
   
-  Confidence scores of query cells can be inserted by specifying `insert_conf = True` (which is also the default behavior of `to_adata`). The scores correspond to the probabilities of cell predictions based on either `predictions.predicted_labels.predicted_labels` or `predictions.predicted_labels.majority_voting` (see `1.7.`), which can be specified by `insert_conf_by` (default to the former, `predicted_labels`).
+  Confidence scores of query cells can be inserted by specifying `insert_conf = True` (which is also the default behaviour of `to_adata`). The scores correspond to the probabilities of cell predictions based on either `predictions.predicted_labels.predicted_labels` or `predictions.predicted_labels.majority_voting` (see `1.7.`), which can be specified by `insert_conf_by` (default to the former, `predicted_labels`).
   ```python
   #Get an `AnnData` with predicted labels and confidence scores embedded into the observation metadata columns.
   adata = predictions.to_adata(insert_labels = True, insert_conf = True)
@@ -653,12 +653,12 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   Assign cell type labels from the default model (`Human_Tissue_Immune_LCPN.pkl`) to the input test cells using the [celltypist.hier_annotate](https://celltypist.readthedocs.io/en/latest/celltypist.hier_annotate.html) function.
   ```python
   #Predict the identity of each input cell at each hierarchical level.
-  #You can omit `compute_conf = True` as this is the default behavior.
+  #You can omit `compute_conf = True` as this is the default behaviour.
   hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', compute_conf = True)
   #Alternatively, the model argument can be a previously loaded `HierModel` as in 1.3.
   hier_predictions = celltypist.hier_annotate(input_file, model = model, compute_conf = True)
   ```
-  With `compute_conf = True`, the prediction confidence scores (i.e., the probability of each query cell predicted at each hierarchical level) will be computed. These scores are required for label truncation (see `1.7.`). You can disable this behavior by setting `compute_conf = False`, but doing so is not recommended.  
+  With `compute_conf = True`, the prediction confidence scores (i.e., the probability of each query cell predicted at each hierarchical level) will be computed. These scores are required for label truncation (see `1.7.`). You can disable this behaviour by setting `compute_conf = False`, but doing so is not recommended.  
 
   If your input file is in a gene-by-cell format (genes as rows and cells as columns), pass in the `transpose_input = True` argument. In addition, if the input is provided in the `.mtx` format, you will also need to specify the `gene_file` and `cell_file` arguments as the files containing names of genes and cells, respectively.
   ```python
@@ -1322,7 +1322,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Use [convert](https://celltypist.readthedocs.io/en/latest/celltypist.models.HierModel.html#celltypist.models.HierModel.convert) to generate a mouse hierarchical model.
   ```python
-  #The default behavior is to use the built-in mapping file for human-mouse conversion.
+  #The default behaviour is to use the built-in mapping file for human-mouse conversion.
   hier_model.convert()
   ```
   Write out the converted model locally.
