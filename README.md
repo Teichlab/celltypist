@@ -757,6 +757,8 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Not run; alternatively, confidence score-based label truncation with a local probability-based strategy.
   #hier_predictions.confidence_truncate(method = 'local', local_threshold = 0.5)
   ```
+  A new attribute `.truncated_labels` will be added in `hier_predictions`. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting is performed beforehand, `majority_voting`, which stores the majority-voted labels.  
+
   </details>
 </details>
 
