@@ -776,6 +776,31 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
 <details>
 <summary><strong>2. Use as the command line</strong></summary>
+
++ <details>
+  <summary><strong>2.1. Check the command line options</strong></summary>
+
+  ```bash
+  celltypist --help
+  ```
+  </details>
+
++ <details>
+  <summary><strong>2.2. Download all available models</strong></summary>
+
+  ```bash
+  celltypist --update-models
+  ```
+  This will download the latest models from the remote server.
+  </details>
+
++ <details>
+  <summary><strong>2.3. Overview of the models</strong></summary>
+
+  ```bash
+  celltypist --show-models
+  ```
+  </details>
 </details>
 
 <details>
