@@ -759,7 +759,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```
   A new attribute `.truncated_labels` will be added in `hier_predictions`. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting is performed beforehand, `majority_voting`, which stores the majority-voted labels.  
 
-  In LCL-assisted label truncation, a parallel LCL-based hierarchical model (trained on the same training data and cell type tree as the LCPN model) will be used to predict the same query data. For each query cell, the LCPN prediction path is compared with the corresponding LCL prediction, and the assigned label is truncated at the deepest hierarchical level where the two models agree. The confidence score associated with the truncated label is inherited from the LCPN prediction at that level.
+  In LCL-assisted label truncation, a parallel LCL-based hierarchical model (trained on the same training data and cell type tree as the LCPN model) will be used to predict the same query data. For each query cell, the LCPN prediction path is compared with the corresponding LCL prediction, and the assigned label (i.e., consensus label) is truncated at the deepest hierarchical level where the two models agree. The confidence score associated with the truncated label is inherited from the LCPN prediction at that level.
+  ```python
+  #Predict the identity of each input cell based on an LCL hierarchical model.
+  lcl_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCL.pkl')
+  #LCL-assisted label truncation.
+  hier_predictions.consensus_truncate(lcl_predictions)
+  ```
+  A new attribute `.truncated_labels` will be added in `hier_predictions` as mentioned above.
   </details>
 </details>
 
