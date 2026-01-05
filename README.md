@@ -41,6 +41,10 @@ conda install -c bioconda -c conda-forge celltypist
   <summary><strong>1.2. Download available models</strong></summary>
 
   The models serve as the basis for cell type predictions. Information of available models can be also found [here](https://www.celltypist.org/models).
+
+  There are two types of models: `flat` and `hierarchical`, corresponding to the flat models in CellTypist v1.0 and the hierarchical models in CellTypist v2.0. Flat models assume independence among cell type labels or annotations, whereas hierarchical models encode predefined relationships among cell types within a structured tree.  
+
+  This section focuses on the use of built-in flat models.
   ```python
   #Show all available models that can be downloaded and used.
   models.models_description()
