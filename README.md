@@ -821,6 +821,16 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
 
   Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
   </details>
+
++ <details>
+  <summary><strong>2.5. Celltyping based on AnnData</strong></summary>
+
+  See `1.5.` for the requirement of the expression matrix in the AnnData object (`.h5ad`).
+  ```bash
+  celltypist --indata /path/to/input/adata --hierarchical --model Human_Tissue_Immune_LCPN.pkl --outdir /path/to/outdir
+  ```
+  Other command line options are the same as in `2.4.`.
+  </details>
 </details>
 
 <details>
