@@ -801,6 +801,26 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   celltypist --show-models
   ```
   </details>
+
++ <details>
+  <summary><strong>2.4. Celltyping based on the input of count table</strong></summary>
+
+  See `1.4.` for the format of the desired count matrix.
+  ```bash
+  celltypist --indata /path/to/input/file --hierarchical --model Human_Tissue_Immune_LCPN.pkl --outdir /path/to/outdir
+  ```
+  You can add a different model to be used in the `--model` option. If the `--model` is not provided, CellTypist will by default use the `Human_Tissue_Immune_LCPN.pkl` model. The output directory will be set to the current working directory if `--outdir` is not specified.  
+    
+  If your input file is in a gene-by-cell format (genes as rows and cells as columns), add the `--transpose-input` option.
+  ```bash
+  celltypist --indata /path/to/input/file --hierarchical --model Human_Tissue_Immune_LCPN.pkl --outdir /path/to/outdir --transpose-input
+  ```
+  If the input is provided in the `.mtx` format, you will also need to specify the `--gene-file` and `--cell-file` options as the files containing names of genes and cells, respectively.  
+    
+  By default, confidence scores will be computed. You can disable this behaviour by adding `--no-compute-conf`, although doing so is not recommended.  
+
+  Other options that control the output files of CellTypist include `--prefix` which adds a custom prefix and `--xlsx` which merges the output files into one xlsx table. Check `celltypist --help` for more details.
+  </details>
 </details>
 
 <details>
