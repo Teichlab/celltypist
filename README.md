@@ -315,7 +315,9 @@ conda install -c bioconda -c conda-forge celltypist
   ```bash
   celltypist --indata /path/to/input/file --model Immune_All_Low.pkl --outdir /path/to/outdir --majority-voting
   ```
-  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
+  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. This process is time-consuming for large datasets and can be accelerated by performing over-clustering on GPUs using [rapids-singlecell](https://rapids-singlecell.readthedocs.io/en/latest/) via adding the `--use-GPU` argument.  
+
+  Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
      1) an input plain file with the over-clustering result of one cell per line.
      2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
      3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
@@ -843,7 +845,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   ```bash
   celltypist --indata /path/to/input/file --hierarchical --model Human_Tissue_Immune_LCPN.pkl --outdir /path/to/outdir --majority-voting
   ```
-  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
+  During the majority voting, to define cell-cell relations, CellTypist will use a heuristic over-clustering approach according to the size of the input data with the aid of a Leiden clustering pipeline. This process is time-consuming for large datasets and can be accelerated by performing over-clustering on GPUs using [rapids-singlecell](https://rapids-singlecell.readthedocs.io/en/latest/) via adding the `--use-GPU` argument.  
+
+  Users can also provide their own over-clustering result to the `--over-clustering` option. This option can be specified in several ways:
      1) an input plain file with the over-clustering result of one cell per line.
      2) a string key specifying an existing cell metadata column in the `AnnData` (pre-created by the user).
      3) if none of the above is provided, will use a heuristic over-clustering approach, noted above.
