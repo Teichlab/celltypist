@@ -356,6 +356,11 @@ def treeviz(tree: Tree,
     leaf_size = node_size if leaf_size is None else leaf_size
     leaf_label_color = node_label_color if leaf_label_color is None else leaf_label_color
     leaf_label_size = node_label_size if leaf_label_size is None else leaf_label_size
+    edge_dict = edge_dict or {}
+    node_dict = node_dict or {}
+    leaf_dict = leaf_dict or {}
+    node_label_dict = node_label_dict or {}
+    leaf_label_dict = leaf_label_dict or {}
     #coords
     if sort:
         tree = tree.copy()
