@@ -187,7 +187,7 @@ def dotplot(
         if not show:
             return dp.get_axes()
 
-def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coords: Optional[dict] = None, layout: str = "diagonal") -> dict:
+def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coords: Optional[dict] = None, layout: str = "diagonal", extend_leaves: bool = False) -> dict:
     """
     For internal use. Assign coordinates (x, y, is_leaf) to a node and its descendants.
     """
@@ -198,7 +198,7 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
         y[0] += 1
     else:
         for child in node.children:
-            _assign_coords(child, depth + 1, y, coords, layout)
+            _assign_coords(child, depth + 1, y, coords, layout, extend_leaves)
         if layout == "rectangular":
             child_ordinates = [coords[child.original_name][1] for child in node.children]
             ordinate = sum(child_ordinates) / len(child_ordinates)
@@ -206,6 +206,11 @@ def _assign_coords(node: TreeNode, depth: int = 1, y: Optional[list] = None, coo
             leaf_ordinates = [coords[leaf][1] for leaf in node.cell_types(leaf_only = True)]
             ordinate = sum(leaf_ordinates) / len(leaf_ordinates)
         coords[node.original_name] = (depth - 1, ordinate, False)
+    if depth == 1 and extend_leaves:
+        max_x = max(x for x, _, _ in coords.values())
+        for name, (x, y, is_leaf) in coords.items():
+            if is_leaf:
+                coords[name] = (max_x, y, True)
     return coords
 
 def treeviz(tree: Tree,
