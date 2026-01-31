@@ -228,7 +228,7 @@ def treeviz(tree: Tree,
         #show and/or save figure
         ax: Optional[matplotlib.axes.Axes] = None, figsize: Optional[Union[list, tuple]] = None, show: bool = True, save: Union[str, bool] = False,
         #others
-        edge_dict: dict = {}, node_dict: dict = {}, leaf_dict: dict = {}, node_label_dict: dict = {}, leaf_label_dict: dict = {},
+        edge_dict: Optional[dict] = None, node_dict: Optional[dict] = None, leaf_dict: Optional[dict] = None, node_label_dict: Optional[dict] = None, leaf_label_dict: Optional[dict] = None,
         ) -> None:
     """
     Visualize a cell type hierarchical tree.
