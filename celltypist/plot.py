@@ -354,7 +354,7 @@ def treeviz(tree: Tree,
     leaf_shape = node_shape if leaf_shape is None else leaf_shape
     leaf_color = node_color if leaf_color is None else leaf_color
     leaf_size = node_size if leaf_size is None else leaf_size
-    leaf_label_color =  node_label_color if leaf_label_color is None else leaf_label_color
+    leaf_label_color = node_label_color if leaf_label_color is None else leaf_label_color
     leaf_label_size = node_label_size if leaf_label_size is None else leaf_label_size
     #coords
     if sort:
