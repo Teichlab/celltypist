@@ -228,6 +228,8 @@ def treeviz(tree: Tree,
         node_label_color: str = '#000000', node_label_size: Optional[Union[float, str]] = None, node_label_ha: str = "center", node_label_va: str = "bottom", node_label_rotation: Optional[Union[float, str]] = None,
         #leaf label
         leaf_label_color: Optional[str] = None, leaf_label_size: Optional[Union[float, str]] = None, leaf_label_ha: Optional[str] = None, leaf_label_va: Optional[str] = None, leaf_label_rotation: Optional[Union[float, str]] = None,
+        #extend leaves
+        extend_leaves: bool = False,
         #figure elements
         title: Optional[str] = None,
         #show and/or save figure
@@ -309,6 +311,9 @@ def treeviz(tree: Tree,
         Vertical alignment of leaf labels. Auto-set by `direction` if not provided.
     leaf_label_rotation
         Rotation angle of leaf labels. Auto-set by `direction` if not provided.
+    extend_leaves
+        Whether to horizontally extend all leaf nodes to the maximal depth of the tree.
+        (Default: `False`)
     title
         Figure title. Default to `"Cell type tree: {tree.handle}"`.
     ax
@@ -370,7 +375,7 @@ def treeviz(tree: Tree,
     if sort:
         tree = tree.copy()
         tree.sort_tree(recursive = recursive, descending = descending)
-    coords = _assign_coords(tree.root, layout = layout)
+    coords = _assign_coords(tree.root, layout = layout, extend_leaves = extend_leaves)
     tree_depth = tree.depth
     oriented_coords = {}
     if direction == "right":
