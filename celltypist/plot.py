@@ -225,7 +225,7 @@ def treeviz(tree: Tree,
         #node and leaf color map
         node_color_map: Optional[dict] = None, cmap: Union[matplotlib.colors.Colormap, str] = 'Reds', cmap_min: Optional[float] = None, cmap_max: Optional[float] = None,
         #node and leaf size map
-        node_size_map: Optional[dict] = None, smap: Optional[list] = None, smap_min: Optional[float] = None, smap_max: Optional[float] = None,
+        node_size_map: Optional[dict] = None, smap: Optional[tuple] = None, smap_min: Optional[float] = None, smap_max: Optional[float] = None,
         #show
         show_node_label: bool = False, show_leaf_label: bool = True,
         #node label
