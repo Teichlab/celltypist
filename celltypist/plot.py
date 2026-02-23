@@ -222,6 +222,10 @@ def treeviz(tree: Tree,
         node_shape: str = "o", node_color: str = '#2E91E5', node_size: Optional[float] = None,
         #leaf
         leaf_shape: Optional[str] = None, leaf_color: Optional[str] = None, leaf_size: Optional[float] = None,
+        #node and leaf color map
+        node_color_map: Optional[dict] = None, cmap: Union[matplotlib.colors.Colormap, str] = 'Reds', cmap_min: Optional[float] = None, cmap_max: Optional[float] = None,
+        #node and leaf size map
+        node_size_map: Optional[dict] = None, smap: Optional[list] = None, smap_min: Optional[float] = None, smap_max: Optional[float] = None,
         #show
         show_node_label: bool = False, show_leaf_label: bool = True,
         #node label
