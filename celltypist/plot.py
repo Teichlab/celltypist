@@ -516,11 +516,11 @@ def treeviz(tree: Tree,
     #nodes & labels
     for name, (x, y, is_leaf) in oriented_coords.items():
         if is_leaf:
-            ax.plot(x, y, marker = leaf_shape, ms = leaf_size, color = leaf_color, ls = 'None', **leaf_dict)
+            ax.plot(x, y, marker = leaf_shape, ms = node_size_map[name], color = node_color_map[name], ls = 'None', **leaf_dict)
             if show_leaf_label:
                 ax.text(x + 0.05 if direction == "right" else x, y - 0.05 if direction == "down" else y, name, color = leaf_label_color, size = leaf_label_size, ha = leaf_label_ha, va = leaf_label_va, rotation = leaf_label_rotation, **leaf_label_dict)
         else:
-            ax.plot(x, y, marker = node_shape, ms = node_size, color = node_color, ls = 'None', **node_dict)
+            ax.plot(x, y, marker = node_shape, ms = node_size_map[name], color = node_color_map[name], ls = 'None', **node_dict)
             if show_node_label:
                 ax.text(x, y + 0.05, name, color = node_label_color, size = node_label_size, ha = node_label_ha, va = node_label_va, rotation = node_label_rotation, **node_label_dict)
     #frame
