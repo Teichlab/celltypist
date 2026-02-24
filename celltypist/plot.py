@@ -303,7 +303,7 @@ def treeviz(tree: Tree,
         Nodes not present in `node_size_map` fall back to `node_size` for internal nodes and `leaf_size` for leaf nodes.
     smap
         Two-element sequence specifying the minimum and maximum marker sizes.
-        Default to [default_marker_size / 2, default_marker_size * 2] ([3, 12] in a canonical Matplotlib setting).
+        Default to (default_marker_size / 2, default_marker_size * 2), which is (3, 12) in a canonical Matplotlib setting.
     smap_min
         Lower bound for size normalization when `node_size_map` is provided.
         Default to the minimum of the provided values.
