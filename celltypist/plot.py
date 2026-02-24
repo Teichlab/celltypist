@@ -394,6 +394,39 @@ def treeviz(tree: Tree,
     leaf_shape = node_shape if leaf_shape is None else leaf_shape
     leaf_color = node_color if leaf_color is None else leaf_color
     leaf_size = node_size if leaf_size is None else leaf_size
+    #node color & size map
+    all_nodes = tree.cell_types(leaf_only = False)
+    leaf_nodes = tree.cell_types(leaf_only = True)
+    if node_color_map is None:
+        node_color_map_processed = {name: leaf_color if name in leaf_nodes else node_color for name in all_nodes}
+    elif isinstance(node_color_map, dict):
+        invalid = set(node_color_map) - set(all_nodes)
+        if invalid:
+            raise ValueError(
+                    f"🛑 Invalid keys in `node_color_map` (not found in the tree): {sorted(invalid)}")
+        node_color_values = list(node_color_map.values())
+        node_color_map_processed = {}
+        if isinstance(node_color_values[0], (int, float)):
+            numeric_vals = np.array(node_color_values, dtype = float)
+            vmin = numeric_vals.min() if cmap_min is None else cmap_min
+            vmax = numeric_vals.max() if cmap_max is None else cmap_max
+            norm = matplotlib.colors.Normalize(vmin = vmin, vmax = vmax, clip = True)
+            cmap_obj = plt.get_cmap(cmap, 512)
+            for name in all_nodes:
+                if name in node_color_map:
+                    node_color_map_processed[name] = cmap_obj(norm(float(node_color_map[name])))
+                else:
+                    node_color_map_processed[name] = leaf_color if name in leaf_nodes else node_color
+        else:
+            for name in all_nodes:
+                if name in node_color_map:
+                    node_color_map_processed[name] = node_color_map[name]
+                else:
+                    node_color_map_processed[name] = leaf_color if name in leaf_nodes else node_color
+    else:
+        raise TypeError(
+                f"🛑 `node_color_map` must be a dict")
+    #other params
     leaf_label_color = node_label_color if leaf_label_color is None else leaf_label_color
     leaf_label_size = node_label_size if leaf_label_size is None else leaf_label_size
     edge_dict = edge_dict or {}
