@@ -394,7 +394,7 @@ def treeviz(tree: Tree,
     leaf_shape = node_shape if leaf_shape is None else leaf_shape
     leaf_color = node_color if leaf_color is None else leaf_color
     leaf_size = node_size if leaf_size is None else leaf_size
-    #node color & size map
+    #node color map
     all_nodes = tree.cell_types(leaf_only = False)
     leaf_nodes = tree.cell_types(leaf_only = True)
     if not node_color_map:
@@ -429,6 +429,34 @@ def treeviz(tree: Tree,
     else:
         raise TypeError(
                 f"🛑 `node_color_map` must be a dict")
+    #node size map
+    if not node_size_map:
+        node_size_map_processed = {name: leaf_size if name in leaf_nodes else node_size for name in all_nodes}
+    elif isinstance(node_size_map, dict):
+        invalid = set(node_size_map) - set(all_nodes)
+        if invalid:
+            raise ValueError(
+                    f"🛑 Invalid keys in `node_size_map` (not found in the tree): {sorted(invalid)}")
+        if smap is None:
+            default_marker_size = plt.rcParams['lines.markersize']
+            smap = (default_marker_size / 2, default_marker_size * 2)
+        smin, smax = smap
+        numeric_vals = np.array(list(node_size_map.values()), dtype = float)
+        vmin = numeric_vals.min() if smap_min is None else smap_min
+        vmax = numeric_vals.max() if smap_max is None else smap_max
+        if vmin >= vmax:
+            raise ValueError(
+                    f"🛑 `smap_max` must be greater than `smap_min`")
+        node_size_map_processed = {}
+        for name in all_nodes:
+            if name in node_size_map:
+                normalized = (np.clip(float(node_size_map[name]), vmin, vmax) - vmin) / (vmax - vmin)
+                node_size_map_processed[name] = smin + normalized * (smax - smin)
+            else:
+                node_size_map_processed[name] = leaf_size if name in leaf_nodes else node_size
+    else:
+        raise TypeError(
+                f"🛑 `node_size_map` must be a dict")
     #other params
     leaf_label_color = node_label_color if leaf_label_color is None else leaf_label_color
     leaf_label_size = node_label_size if leaf_label_size is None else leaf_label_size
