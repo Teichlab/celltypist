@@ -441,6 +441,9 @@ def treeviz(tree: Tree,
             default_marker_size = plt.rcParams['lines.markersize']
             smap = (default_marker_size / 2, default_marker_size * 2)
         smin, smax = smap
+        if smin >= smax:
+            raise ValueError(
+                    f"🛑 `smap[1]` must be greater than `smap[0]`")
         numeric_vals = np.array(list(node_size_map.values()), dtype = float)
         vmin = numeric_vals.min() if smap_min is None else smap_min
         vmax = numeric_vals.max() if smap_max is None else smap_max
