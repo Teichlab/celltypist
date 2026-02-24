@@ -397,7 +397,7 @@ def treeviz(tree: Tree,
     #node color & size map
     all_nodes = tree.cell_types(leaf_only = False)
     leaf_nodes = tree.cell_types(leaf_only = True)
-    if node_color_map is None:
+    if not node_color_map:
         node_color_map_processed = {name: leaf_color if name in leaf_nodes else node_color for name in all_nodes}
     elif isinstance(node_color_map, dict):
         invalid = set(node_color_map) - set(all_nodes)
@@ -406,12 +406,15 @@ def treeviz(tree: Tree,
                     f"🛑 Invalid keys in `node_color_map` (not found in the tree): {sorted(invalid)}")
         node_color_values = list(node_color_map.values())
         node_color_map_processed = {}
-        if isinstance(node_color_values[0], (int, float)):
+        if isinstance(node_color_values[0], (int, float, np.number)):
             numeric_vals = np.array(node_color_values, dtype = float)
             vmin = numeric_vals.min() if cmap_min is None else cmap_min
             vmax = numeric_vals.max() if cmap_max is None else cmap_max
+            if vmin >= vmax:
+                raise ValueError(
+                        f"🛑 `cmap_max` must be greater than `cmap_min`")
             norm = matplotlib.colors.Normalize(vmin = vmin, vmax = vmax, clip = True)
-            cmap_obj = plt.get_cmap(cmap, 512)
+            cmap_obj = plt.get_cmap(cmap)
             for name in all_nodes:
                 if name in node_color_map:
                     node_color_map_processed[name] = cmap_obj(norm(float(node_color_map[name])))
