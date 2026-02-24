@@ -292,10 +292,10 @@ def treeviz(tree: Tree,
         Colormap used when `node_color_map` contains continuous numeric values.
         (Default: `'Reds'`)
     cmap_min
-        Lower bound for color normalization when `node_color_map` contains numeric values.
+        Lower bound for color normalization when `node_color_map` contains numeric values. Values outside the normalization range are clipped.
         Default to the minimum of the provided values.
     cmap_max
-        Upper bound for color normalization when `node_color_map` contains numeric values.
+        Upper bound for color normalization when `node_color_map` contains numeric values. Values outside the normalization range are clipped.
         Default to the maximum of the provided values.
     node_size_map
         Optional mapping from node names (internal or leaf) to continuous numeric values that control marker size. Keys must be a subset of all node names in the tree.
@@ -305,10 +305,10 @@ def treeviz(tree: Tree,
         Two-element sequence specifying the minimum and maximum marker sizes.
         Default to (default_marker_size / 2, default_marker_size * 2), which is (3, 12) in a canonical Matplotlib setting.
     smap_min
-        Lower bound for size normalization when `node_size_map` is provided.
+        Lower bound for size normalization when `node_size_map` is provided. Values outside the normalization range are clipped.
         Default to the minimum of the provided values.
     smap_max
-        Upper bound for size normalization when `node_size_map` is provided.
+        Upper bound for size normalization when `node_size_map` is provided. Values outside the normalization range are clipped.
         Default to the maximum of the provided values.
     show_node_label
         Whether to show labels for internal nodes.
