@@ -400,6 +400,7 @@ def treeviz(tree: Tree,
     if not node_color_map:
         node_color_map_processed = {name: leaf_color if name in leaf_nodes else node_color for name in all_nodes}
     elif isinstance(node_color_map, dict):
+        node_color_map = {k: v for k, v in node_color_map.items() if not pd.isna(v)}
         invalid = set(node_color_map) - set(all_nodes)
         if invalid:
             raise ValueError(
@@ -433,6 +434,7 @@ def treeviz(tree: Tree,
     if not node_size_map:
         node_size_map_processed = {name: leaf_size if name in leaf_nodes else node_size for name in all_nodes}
     elif isinstance(node_size_map, dict):
+        node_size_map = {k: v for k, v in node_size_map.items() if not pd.isna(v)}
         invalid = set(node_size_map) - set(all_nodes)
         if invalid:
             raise ValueError(
