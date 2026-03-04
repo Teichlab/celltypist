@@ -1030,6 +1030,9 @@ class Tree():
             if to not in cell_types:
                 raise ValueError(
                         f"🛑 No node named '{to}' exists in this tree")
+            if to in self.find_node(name).cell_types(leaf_only = False):
+                raise ValueError(
+                        f"🛑 Cannot move node '{name}' into its own descendant '{to}'")
         removed = self.remove_node(name)
         return self.add_node(removed, to, pos = pos)
 
