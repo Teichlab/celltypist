@@ -74,20 +74,22 @@ class TreeNode():
             logger.warn("⚠️ The `children` argument will be ignored. Use `add_children()` afterwards or read from a JSON structure instead")
         self.children = []
 
-    def add_children(self, *child_nodes) -> list:
+    def add_children(self, *child_nodes, pos: Optional[int] = None) -> list:
         """
-        Add/append child node(s) to the node's child list.
+        Add child node(s) to the node's child list.
 
         Parameters
         ----------
         child_nodes
             One or more :class:`~celltypist.tree.TreeNode` instances.
             Can be passed individually or as a list/tuple/set.
+        pos
+            A number specifying in which position/index to insert. Defaults to appending to the end of the node's child list.
 
         Returns
         ----------
         list
-            A list of child node(s) that were appended to the child list of the given node.
+            A list of child node(s) that were added to the child list of the given node.
         """
         if not child_nodes:
             raise ValueError(
@@ -103,7 +105,8 @@ class TreeNode():
             if self.has_child(child_node.original_name):
                 raise ValueError(
                         f"🛑 Duplicate child '{child_node.original_name}' should not be added to '{self.original_name}'")
-        self.children.extend(child_nodes)
+        pos = len(self.children) if pos is None else pos
+        self.children[pos:pos] = list(child_nodes)
         return list(child_nodes)
 
     def is_leaf(self) -> bool:
