@@ -975,7 +975,7 @@ class Tree():
         parent = self.find_parent(name)
         return parent.remove_children(name)[0]
 
-    def add_node(self, node: TreeNode, parent: str) -> TreeNode:
+    def add_node(self, node: TreeNode, parent: str, pos: Optional[int] = None) -> TreeNode:
         """
         Add a node under a given parent node in the tree.
 
@@ -985,13 +985,15 @@ class Tree():
             The :class:`~celltypist.tree.TreeNode` instance to add.
         parent
             The name of the parent node to which the new node will be added.
+        pos
+            A number specifying in which position/index to insert. Defaults to appending to the end of the parent's child list.
 
         Returns
         ----------
         :class:`~celltypist.tree.TreeNode`
             The :class:`~celltypist.tree.TreeNode` instance that was added.
         """
-        return self.add_children(node, parent = parent)[0]
+        return self.add_children(node, parent = parent, pos = pos)[0]
 
     def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
         """
