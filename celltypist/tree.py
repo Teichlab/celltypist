@@ -810,7 +810,7 @@ class Tree():
         #node.children is not protected; any modification is MIP.
         return node.child_names if return_names else node.children
 
-    def add_children(self, *child_nodes, parent: str) -> list:
+    def add_children(self, *child_nodes, parent: str, pos: Optional[int] = None) -> list:
         """
         Add one or more nodes under a given parent node in the tree.
 
@@ -821,17 +821,19 @@ class Tree():
             Can be passed individually or as a list/tuple/set.
         parent
             The name of the parent node to which children are added.
+        pos
+            A number specifying in which position/index to insert. Defaults to appending to the end of the parent's child list.
 
         Returns
         ----------
         list
-            A list of child node(s) that were appended to the child list of the given node.
+            A list of child node(s) that were added to the child list of the given node.
         """
         if not isinstance(parent, str):
             raise TypeError(
                     f"🛑 `parent` must be a string")
         node = self.find_node(parent)
-        return node.add_children(*child_nodes)
+        return node.add_children(*child_nodes, pos = pos)
 
     def remove_children(self, *child_nodes, parent: str) -> list:
         """
