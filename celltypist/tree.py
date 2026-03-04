@@ -995,7 +995,7 @@ class Tree():
         """
         return self.add_children(node, parent = parent, pos = pos)[0]
 
-    def move_node(self, name: str, to: str, validate: bool = True) -> TreeNode:
+    def move_node(self, name: str, to: str, pos: Optional[int] = None, validate: bool = True) -> TreeNode:
         """
         Move a node (and its descendants) from its current parent to a new parent.
 
@@ -1005,6 +1005,8 @@ class Tree():
             The name of the node to move.
         to
             The name of the new parent node.
+        pos
+            A number specifying in which position/index to move. Defaults to appending to the end of the parent's child list.
         validate
             Whether to validate `name` and `to`.
             (Default: `True`)
@@ -1029,7 +1031,7 @@ class Tree():
                 raise ValueError(
                         f"🛑 No node named '{to}' exists in this tree")
         removed = self.remove_node(name)
-        return self.add_node(removed, to)
+        return self.add_node(removed, to, pos = pos)
 
     def update(self, name: str, validate: bool = False, **kwargs) -> None:
         """
