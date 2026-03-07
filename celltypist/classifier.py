@@ -725,7 +725,7 @@ class Classifier():
                 self.adata.obs_names = cells_mtx
             if not float(self.adata.X[:1000].max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The prediction result may not be accurate")
-            if (self.adata.n_vars >= 100000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(['GAPDH', 'ACTB', 'CALM1', 'PTPRC', 'MALAT1'])) >= 1):
+            if (self.adata.n_vars >= 100000) or (len(self.adata.var_names[0]) >= 30) or (len(self.adata.obs_names.intersection(['GAPDH', 'ACTB', 'CALM1', 'PTPRC', 'MALAT1', 'Gapdh', 'Actb', 'Calm1', 'Ptprc', 'Malat1'])) >= 1):
                 logger.warn(f"⚠️ The input matrix is detected to be a gene-by-cell matrix, will transpose it")
                 self.adata = self.adata.transpose()
             self.adata.var_names_make_unique()
