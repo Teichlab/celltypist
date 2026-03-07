@@ -1201,7 +1201,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Reorder children of each internal node from least to most complex with `descending = False` (default to `descending = True`).
   celltypist.treeviz(tree, sort = True, descending = False)
   ```
-  You can also choose whether to display cell type labels for internal nodes (default: `show_node_label = False`) and leaf nodes (default: `show_leaf_label = True`). Other parameters for controlling the shapes, colors, sizes, and alignments of branches, nodes, and labels can be found in [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html).
+  You can also choose whether to display cell type labels for internal nodes (default: `show_node_label = False`) and leaf nodes (default: `show_leaf_label = True`). Leaf nodes can be extended and aligned at the maximal depth of the tree by setting `extend_leaves = True`. Other parameters for controlling the shapes, colors, sizes, and alignments of branches, nodes, and labels can be found in [celltypist.treeviz](https://celltypist.readthedocs.io/en/latest/celltypist.treeviz.html).
   </details>
 </details>
 
