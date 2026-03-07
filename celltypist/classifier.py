@@ -790,6 +790,9 @@ class Classifier():
         if k_x.sum() == 0:
             raise ValueError(
                     f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
+        elif k_x.sum() <= 20:
+            raise ValueError(
+                    f"🛑 Only {k_x.sum()} features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
         else:
             logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
@@ -889,6 +892,9 @@ class HierClassifier():
             if k_x.sum() == 0:
                 raise ValueError(
                         f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
+            elif k_x.sum() <= 20:
+                raise ValueError(
+                        f"🛑 Only {k_x.sum()} features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
             else:
                 logger.info(f"🧬 {k_x.sum()} features used for prediction")
             k_x_idx = np.where(k_x)[0]
@@ -933,9 +939,9 @@ class HierClassifier():
         else:
             logger.info(f"🧫 Running hierarchical celltyping (LCPN mode)")
             root_model = self.model.model_mapping[self.model.tree.root.model]
-            if self.indata_genes.intersection(root_model.classifier.features).size == 0:
+            if self.indata_genes.intersection(root_model.classifier.features).size <= 20:
                 raise ValueError(
-                        f"🛑 No features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
+                        f"🛑 Too few features overlap with the model. Please ensure your input genes use the same format as the model (e.g., Ensembl IDs vs. gene symbols)")
             labels = pd.DataFrame(index = self.indata_names)
             decision_mats = {}
             prob_mats = {}
