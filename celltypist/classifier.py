@@ -67,13 +67,15 @@ def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.
 def _memory_scale(indata_, means_: Union[np.ndarray, None], sds_: np.ndarray) -> Union[np.ndarray, csr_matrix]:
     """Memory-efficient scaling. This function is for internal use."""
     if isinstance(indata_, spmatrix):
-        indata_ = indata_.tocsr()
-        indata_.data /= sds_.take(indata_.indices, mode = "clip")
         if means_ is None:
+            indata_ = indata_.tocsr()
+            indata_.data /= sds_.take(indata_.indices, mode = "clip")
             np.minimum(indata_.data, 10, out = indata_.data)
         else:
-            indata_ = indata_ - means_ / sds_
-            indata_ = np.asarray(indata_)
+            indata_ = indata_.toarray()
+            indata_ -= means_
+            indata_ /= sds_
+            np.minimum(indata_, 10, out = indata_)
     else:
         indata_ = np.asarray(indata_)
         if means_ is not None:
