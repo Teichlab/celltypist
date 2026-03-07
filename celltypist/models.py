@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from typing import Optional, Union
 from scipy.special import expit
-from sklearn import __version__ as skv
 from datetime import datetime
 from . import logger
 from .samples import _get_sample_data
@@ -152,10 +151,7 @@ class Model():
         tuple
             A tuple of decision score matrix, raw probability matrix, and predicted cell type labels.
         """
-        if skv.split('.')[0] != '0' and isinstance(indata, np.matrix):
-            scores = self.classifier.decision_function(np.asarray(indata))
-        else:
-            scores = self.classifier.decision_function(indata)
+        scores = self.classifier.decision_function(indata)
         if scores.ndim == 1:
             scores = np.column_stack([-scores, scores])
         probs = expit(scores)
