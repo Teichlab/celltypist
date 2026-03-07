@@ -113,7 +113,7 @@ def dotplot(
         Order in which to show the reference cell types (or clusters). Can be a subset of reference cell types (or clusters).
         Default to plotting all reference cell types, with an order that ensures the resulting dot plot is diagonal.
     filter_prediction
-        Filter out the predicted cell types with the maximal assignment fractions less than `filter_prediction`.
+        Filter out the predicted cell types with the maximum assignment fractions less than `filter_prediction`.
         This argument is only effective when `prediction_order` is not specified, and can be used to reduce the number of predicted cell types displayed in the dot plot.
         Default to 0 (no filtering).
     title
@@ -342,7 +342,7 @@ def treeviz(tree: Tree,
     leaf_label_rotation
         Rotation angle of leaf labels. Auto-set by `direction` if not provided.
     extend_leaves
-        Whether to horizontally or vertically extend all leaf nodes to the maximal depth of the tree.
+        Whether to horizontally or vertically extend all leaf nodes to the maximum depth of the tree.
         (Default: `False`)
     title
         Figure title. Default to `"Cell type tree: {tree.handle}"`.
