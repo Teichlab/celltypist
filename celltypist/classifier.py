@@ -4,6 +4,7 @@ from typing import Optional, Union
 import scanpy as sc
 from anndata import AnnData
 import numpy as np
+from scipy.sparse import spmatrix, csr_matrix
 import pandas as pd
 from matplotlib import pyplot as plt
 from .models import Model, HierModel
@@ -62,6 +63,24 @@ def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.
     majority.columns = ['over_clustering', 'majority_voting']
     majority['majority_voting'] = majority['majority_voting'].astype('category')
     return majority
+
+def _memory_scale(indata_, means_: Union[np.ndarray, None], sds_: np.ndarray) -> Union[np.ndarray, csr_matrix]:
+    """Memory-efficient scaling. This function is for internal use."""
+    if isinstance(indata_, spmatrix):
+        indata_ = indata_.tocsr()
+        indata_.data /= sds_.take(indata_.indices, mode = "clip")
+        if means_ is None:
+            np.minimum(indata_.data, 10, out = indata_.data)
+        else:
+            indata_ = indata_ - means_ / sds_
+            indata_ = np.asarray(indata_)
+    else:
+        indata_ = np.asarray(indata_)
+        if means_ is not None:
+            indata_ -= means_
+        indata_ /= sds_
+        np.minimum(indata_, 10, out = indata_)
+    return indata_
 
 def over_cluster(adata: AnnData, resolution: Optional[float] = None, use_GPU: bool = False) -> pd.Series:
     """
@@ -796,16 +815,12 @@ class Classifier():
         else:
             logger.info(f"🧬 {k_x.sum()} features used for prediction")
         k_x_idx = np.where(k_x)[0]
-        #self.indata = self.indata[:, k_x_idx]
         self.indata_genes = self.indata_genes[k_x_idx]
         #lr_idx = pd.DataFrame(self.model.classifier.features, columns=['features']).reset_index().set_index('features').loc[self.indata_genes, 'index'].values
         lr_idx = pd.Index(self.model.classifier.features).get_indexer(self.indata_genes)
 
         logger.info(f"⚖️ Scaling input data")
-        means_ = self.model.scaler.mean_[lr_idx] if self.model.scaler.with_mean else 0
-        sds_ = self.model.scaler.scale_[lr_idx]
-        self.indata = (self.indata[:, k_x_idx] - means_) / sds_
-        self.indata[self.indata > 10] = 10
+        self.indata = _memory_scale(self.indata[:, k_x_idx], self.model.scaler.mean_[lr_idx] if self.model.scaler.with_mean else None, self.model.scaler.scale_[lr_idx])
 
         ni, fs, cf = self.model.classifier.n_features_in_, self.model.classifier.features, self.model.classifier.coef_
         self.model.classifier.n_features_in_ = lr_idx.size
