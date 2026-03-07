@@ -342,7 +342,7 @@ def treeviz(tree: Tree,
     leaf_label_rotation
         Rotation angle of leaf labels. Auto-set by `direction` if not provided.
     extend_leaves
-        Whether to horizontally extend all leaf nodes to the maximal depth of the tree.
+        Whether to horizontally or vertically extend all leaf nodes to the maximal depth of the tree.
         (Default: `False`)
     title
         Figure title. Default to `"Cell type tree: {tree.handle}"`.
