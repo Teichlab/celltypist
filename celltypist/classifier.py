@@ -65,7 +65,7 @@ def _majority_vote(pre_label: pd.Series, over_clustering: Union[list, tuple, np.
     return majority
 
 def _memory_scale(indata_, means_: Union[np.ndarray, None], sds_: np.ndarray) -> Union[np.ndarray, csr_matrix]:
-    """Memory-efficient scaling. This function is for internal use."""
+    """Memory-efficient scaling for dense or sparse matrices. This function is for internal use."""
     if isinstance(indata_, spmatrix):
         if means_ is None:
             indata_ = indata_.tocsr()
