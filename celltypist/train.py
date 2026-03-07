@@ -33,22 +33,6 @@ def _to_vector(_vector_or_file):
     else:
         return _vector_or_file
 
-def _to_array(_array_like) -> np.ndarray:
-    """
-    For internal use. Turn an array-like object into an array.
-    """
-    if isinstance(_array_like, pd.DataFrame):
-        return _array_like.values
-    elif isinstance(_array_like, spmatrix):
-        return _array_like.toarray()
-    elif isinstance(_array_like, np.matrix):
-        return np.array(_array_like)
-    elif isinstance(_array_like, np.ndarray):
-        return _array_like
-    else:
-        raise TypeError(
-                f"🛑 Please provide a valid array-like object as input")
-
 def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tuple:
     """
     For internal use. Prepare data for celltypist training.
