@@ -980,10 +980,7 @@ class HierClassifier():
                     cell_pos = self.indata_names.get_indexer(cell_index)
 
                     logger.info(f"      ⚖️ Scaling input data")
-                    means_ = model.scaler.mean_[level_idx] if model.scaler.with_mean else 0
-                    sds_ = model.scaler.scale_[level_idx]
-                    X = (self.indata[cell_pos][:, overlap_idx] - means_) / sds_
-                    X[X > 10] = 10
+                    X = _memory_scale(self.indata[cell_pos][:, overlap_idx], model.scaler.mean_[level_idx] if model.scaler.with_mean else None, model.scaler.scale_[level_idx])
 
                     logger.info(f"      🖋️ Predicting labels")
                     ni, fs, cf = model.classifier.n_features_in_, model.classifier.features, model.classifier.coef_
