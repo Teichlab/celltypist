@@ -197,8 +197,8 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     if isinstance(indata, spmatrix):
         flag = indata.getnnz(axis = 0) == 0
     else:
-        flag = (indata == 0).all(axis = 0)
-    if flag.sum() > 0:
+        flag = np.count_nonzero(indata, axis = 0) == 0
+    if flag.any():
         logger.info(f"{indent}✂️ {flag.sum()} non-expressed genes are filtered out")
         indata = indata[:, ~flag]
         genes = genes[~flag]
