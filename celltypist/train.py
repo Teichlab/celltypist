@@ -276,7 +276,7 @@ def train(X = None,
           labels: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
           transpose_input: bool = False,
-          with_mean: bool = True,
+          copy: bool = True, with_mean: bool = True,
           check_expression: bool = True,
           #LR param
           C: float = 1.0, solver: Optional[str] = None, max_iter: Optional[int] = None, n_jobs: Optional[int] = None,
@@ -314,6 +314,9 @@ def train(X = None,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
+    copy
+        Whether to make a copy of input data for data scaling.
+        (Default: `True`)
     with_mean
         Whether to subtract the mean values during data scaling. Setting to `False` can lower the memory usage when the input is a sparse matrix but may slightly reduce the model performance.
         (Default: `True`)
@@ -404,7 +407,7 @@ def train(X = None,
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
     #prepare params
-    indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, '')
+    indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, '', copy)
     #actual classifier
     model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, '', **kwargs)
     return model
