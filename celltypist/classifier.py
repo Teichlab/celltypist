@@ -932,8 +932,7 @@ class HierClassifier():
                 scales_vec[overlap_idx] = m.scaler.scale_[level_idx]
                 overlap_idxs.append(overlap_idx)
                 level_idxs.append(level_idx)
-            self.indata = (self.indata[:, k_x_idx] - means_vec) / scales_vec
-            self.indata[self.indata > 10] = 10
+            self.indata = _memory_scale(self.indata[:, k_x_idx], means_vec if np.any(means_vec) else None, scales_vec)
 
             labels = pd.DataFrame(index = self.indata_names)
             decision_mats = {}
