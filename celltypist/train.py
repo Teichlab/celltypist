@@ -193,9 +193,6 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     #prepare
     logger.info(f"{indent}🍳 Preparing data before training")
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression, indent)
-    if with_mean and isinstance(indata, spmatrix):
-        indata = indata.toarray()
-        copy = False
     #filter
     if isinstance(indata, spmatrix):
         flag = indata.getnnz(axis = 0) == 0
@@ -208,6 +205,9 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
         copy = False
     #report data stats
     logger.info(f"{indent}🔬 Input data has {indata.shape[0]} cells and {indata.shape[1]} genes")
+    if with_mean and isinstance(indata, spmatrix):
+        indata = indata.toarray()
+        copy = False
     #scaler
     logger.info(f"{indent}⚖️ Scaling input data")
     scaler = StandardScaler(with_mean = with_mean, copy = copy)
