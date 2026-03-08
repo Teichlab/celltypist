@@ -70,7 +70,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
             if len(genes) != adata.n_vars:
                 raise ValueError(
                         f"🛑 The number of genes provided does not match the number of genes in {X}")
-            adata.var_names = np.array(genes)
+            adata.var_names = np.asarray(genes)
         adata.var_names_make_unique()
         if not float(adata.X[:1000].max()).is_integer():
             logger.warn(f"{indent}⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
@@ -89,15 +89,15 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
             indata = indata.transpose()
         if isinstance(indata, pd.DataFrame):
             genes = indata.columns
-            indata = indata.values
         else:
             if genes is None:
                 raise ValueError(
                         "🛑 Missing `genes`. Please provide this argument together with the input training data")
             genes = _to_vector(genes)
         labels = _to_vector(labels)
-    labels = np.array(labels)
-    genes = np.array(genes)
+    indata = indata if isinstance(indata, spmatrix) else np.asarray(indata)
+    labels = np.asarray(labels)
+    genes = np.asarray(genes)
     if check_expression and (np.abs(np.expm1(indata[0]).sum()-10000) > 1):
         raise ValueError(
                 "🛑 Invalid expression matrix, expect log1p normalized expression to 10000 counts per cell")
