@@ -176,6 +176,7 @@ def _SGDClassifier(indata, labels,
             len_celltype = len(celltype_freq[0])
             mapping = pd.Series(1 / (celltype_freq[1]*len_celltype), index = celltype_freq[0])
             p = mapping[labels].values
+        unique_labels = np.unique(labels)
         for epoch in range(1, (epochs+1)):
             logger.info(f"{indent}⏳ Epochs: [{epoch}/{epochs}]")
             if not balance_cell_type:
@@ -183,7 +184,7 @@ def _SGDClassifier(indata, labels,
             else:
                 sampled_cell_index = np.random.choice(no_cells, no_cells_sample, replace = False, p = p)
             for start in starts:
-                classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = np.unique(labels))
+                classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = unique_labels)
     return classifier
 
 def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent, copy) -> tuple:
