@@ -205,8 +205,9 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
         logger.info(f"{indent}✂️ {flag.sum()} non-expressed genes are filtered out")
         indata = indata[:, ~flag]
         genes = genes[~flag]
+        copy = False
     #report data stats
-    logger.info(f"{indent}🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
+    logger.info(f"{indent}🔬 Input data has {indata.shape[0]} cells and {indata.shape[1]} genes")
     #scaler
     logger.info(f"{indent}⚖️ Scaling input data")
     scaler = StandardScaler(with_mean = with_mean, copy = copy)
