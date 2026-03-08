@@ -186,7 +186,7 @@ def _SGDClassifier(indata, labels,
                 classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = np.unique(labels))
     return classifier
 
-def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent) -> tuple:
+def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent, copy) -> tuple:
     """
     For internal use. Wrapper code before the actual classifier.
     """
@@ -195,21 +195,26 @@ def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expressi
     indata, labels, genes = _prepare_data(X, labels, genes, transpose_input, check_expression, indent)
     if with_mean and isinstance(indata, spmatrix):
         indata = indata.toarray()
+        copy = False
     #filter
-    flag = indata.sum(axis = 0) == 0
-    if isinstance(flag, np.matrix):
-        flag = flag.A1
+    if isinstance(indata, spmatrix):
+        flag = indata.getnnz(axis = 0) == 0
+    else:
+        flag = (indata == 0).all(axis = 0)
     if flag.sum() > 0:
         logger.info(f"{indent}✂️ {flag.sum()} non-expressed genes are filtered out")
-        #indata = indata[:, ~flag]
+        indata = indata[:, ~flag]
         genes = genes[~flag]
     #report data stats
     logger.info(f"{indent}🔬 Input data has {indata.shape[0]} cells and {(~flag).sum()} genes")
     #scaler
     logger.info(f"{indent}⚖️ Scaling input data")
-    scaler = StandardScaler(with_mean = with_mean)
-    indata = scaler.fit_transform(indata[:, ~flag] if flag.sum() > 0 else indata)
-    indata[indata > 10] = 10
+    scaler = StandardScaler(with_mean = with_mean, copy = copy)
+    indata = scaler.fit_transform(indata)
+    if isinstance(indata, spmatrix):
+        np.minimum(indata.data, 10, out = indata.data)
+    else:
+        np.minimum(indata, 10, out = indata)
     #sklearn (Cython) does not support very large sparse matrices for the time being
     if isinstance(indata, spmatrix) and ((indata.indices.dtype == 'int64') or (indata.indptr.dtype == 'int64')):
         indata = indata.toarray()
