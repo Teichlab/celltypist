@@ -153,7 +153,7 @@ def dotplot(
                         f"🛑 Did not find such column '{use_as_reference}', please provide a valid metadata column")
             refer = predictions.adata.obs[use_as_reference]
         else:
-            refer = np.array(use_as_reference)
+            refer = np.asarray(use_as_reference)
             if len(refer) != len(pred):
                 raise ValueError(
                         f"🛑 Length of `use_as_reference` ({len(refer)}) provided does not match the number of cells ({len(pred)})")
