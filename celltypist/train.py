@@ -418,7 +418,7 @@ def hier_train(X = None,
                leaf_anno: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
                genes: Optional[Union[str, list, tuple, np.ndarray, pd.Series, pd.Index]] = None,
                transpose_input: bool = False,
-               with_mean: bool = True,
+               copy: bool = True, with_mean: bool = True,
                check_expression: bool = True,
                mode: str = 'LCPN',
                C: float = 1.0, solver: Optional[str] = None, max_iter: Optional[int] = None, n_jobs: Optional[int] = None,
@@ -454,6 +454,9 @@ def hier_train(X = None,
     transpose_input
         Whether to transpose the input matrix. Set to `True` if `X` is provided in a gene-by-cell format.
         (Default: `False`)
+    copy
+        Whether to make a copy of input data for data scaling.
+        (Default: `True`)
     with_mean
         Whether to subtract the mean values during data scaling. Setting to `False` can lower the memory usage when the input is a sparse matrix but may slightly reduce the model performance.
         (Default: `True`)
@@ -634,7 +637,7 @@ def hier_train(X = None,
             leaf_anno = _to_vector(leaf_anno)
     else:
         leaf_anno = _to_vector(leaf_anno)
-    leaf_anno = np.array(leaf_anno)
+    leaf_anno = np.asarray(leaf_anno)
     multi_anno = tree.get_multilevel_anno(leaf_anno)
     if not continued:
         tree.assign_size(leaf_anno)
@@ -650,7 +653,7 @@ def hier_train(X = None,
     if mode == "LCPN":
         n_needed_models = 0
         for node in tree.iter_nodes(leaf_only = False):
-            if len([child for child in node.children if child.size > 0]) >= 2:
+            if sum(child.size > 0 for child in node.children) >= 2:
                 n_needed_models += 1
     else:
         n_needed_models = (multi_anno.nunique(axis = 0) >= 2).sum()
@@ -659,12 +662,12 @@ def hier_train(X = None,
         return HierModel(tree, model_mapping, mode = mode, date = tree.date)
     #main
     if mode == 'LCL':
-        indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter, '')
+        indata, _, genes, max_iter, scaler = _prepare_params(X, leaf_anno, genes, transpose_input, with_mean, check_expression, max_iter, '', copy)
         logger.info(f"📚 Total models to train: {n_needed_models}")
         #LCL
         ith = 0
         for n in range(2, depth+1):
-            labels = np.array(multi_anno[f"level{n}_anno"])
+            labels = np.asarray(multi_anno[f"level{n}_anno"])
             if len(np.unique(labels)) < 2:
                 continue
             ith += 1
@@ -698,7 +701,7 @@ def hier_train(X = None,
                 if len(genes) != X.n_vars:
                     raise ValueError(
                             f"🛑 The number of genes provided does not match the number of genes in {X_old}")
-                X.var_names = np.array(genes)
+                X.var_names = np.asarray(genes)
             if not float(X.X[:1000].max()).is_integer():
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
             sc.pp.normalize_total(X, target_sum = 1e4)
@@ -713,7 +716,7 @@ def hier_train(X = None,
         #LCPN
         ith = 0
         for node in tree.iter_nodes(leaf_only = False):
-            if len([child for child in node.children if child.size > 0]) < 2:
+            if sum(child.size > 0 for child in node.children) < 2:
                 continue
             ith += 1
             filename = f"{node.internal_name}.pkl"
@@ -723,7 +726,7 @@ def hier_train(X = None,
             node_depth = len(tree.extract_path(node.original_name, print_path = False))
             flag = (multi_anno[f"level{node_depth}_anno"] == node.original_name).values
             logger.info(f"🏋️ Training local model for node '{node.original_name}' [{ith}/{n_needed_models}]: `{filename}`")
-            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter, '      ')
+            indata, labels, out_genes, out_max_iter, scaler = _prepare_params(X[flag], multi_anno[f"level{node_depth+1}_anno"][flag], genes, transpose_input, with_mean, check_expression, max_iter, '      ', copy)
             model = _actual_classifier(indata, labels, out_genes, out_max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"cell subtypes of {node.original_name}", 'N/A', source, version, '      ', **kwargs)
             setattr(node, 'model', filename)
             model_mapping[filename] = model
