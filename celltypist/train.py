@@ -14,7 +14,7 @@ from .tree import Tree
 from scipy.sparse import spmatrix
 from datetime import datetime
 import sys
-import copy
+import copy as pkg_copy
 try:
     from cuml import LogisticRegression as cuLogisticRegression
 except ImportError:
@@ -679,7 +679,7 @@ def hier_train(X = None,
                 logger.info(f"⏩ Skipping level-{n} model training [{ith}/{n_needed_models}]: `{filename}` (model exists)")
                 continue
             logger.info(f"🏋️ Training level-{n} model [{ith}/{n_needed_models}]: `{filename}`")
-            model = _actual_classifier(indata, labels, genes, max_iter, copy.deepcopy(scaler), C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
+            model = _actual_classifier(indata, labels, genes, max_iter, pkg_copy.deepcopy(scaler), C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, f"{details} (level {n})" if details else '', 'N/A', source, version, '      ', **kwargs)
             setattr(tree, f"level{n}_classifier", filename)
             model_mapping[filename] = model
             if save_strategy == 'checkpointed':
