@@ -83,7 +83,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
         raise ValueError(
                 "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
     else:
-        logger.info(f"{indent}👀 The input training data is processed as an array-like object")
+        #logger.info(f"{indent}👀 The input training data is processed as an array-like object")
         indata = X
         if transpose:
             indata = indata.transpose()
@@ -688,6 +688,18 @@ def hier_train(X = None,
         #Get subsettable X
         if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
             X = sc.read(X) if isinstance(X, str) else X
+            X.var_names_make_unique()
+            if X.X[:1000].min() < 0:
+                logger.info(f" 👀 Detected scaled expression in the input data, will try the .raw attribute")
+                try:
+                    X = X.raw.X
+                    genes = X.raw.var_names
+                except Exception as e:
+                    raise Exception(
+                            f"🛑 Fail to use the .raw attribute in the input object. {e}")
+            else:
+                X = X.X
+                genes = X.var_names
         elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             X_old = X
             X = sc.read(X)
