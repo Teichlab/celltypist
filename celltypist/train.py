@@ -184,7 +184,8 @@ def _SGDClassifier(indata, labels,
             else:
                 sampled_cell_index = np.random.choice(no_cells, no_cells_sample, replace = False, p = p)
             for start in starts:
-                classifier.partial_fit(indata[sampled_cell_index[start:start+batch_size]], labels[sampled_cell_index[start:start+batch_size]], classes = unique_labels)
+                s_index = sampled_cell_index[start:start+batch_size]
+                classifier.partial_fit(indata[s_index], labels[s_index], classes = unique_labels)
     return classifier
 
 def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent, copy) -> tuple:
@@ -252,14 +253,14 @@ def _actual_classifier(indata, labels, genes, max_iter, scaler,
         gene_index = np.unique(gene_index)
         logger.info(f"{indent}🧬 {len(gene_index)} features are selected")
         genes = genes[gene_index]
-        #indata = indata[:, gene_index]
+        indata = indata[:, gene_index]
         logger.info(f"{indent}🏋️ Starting the second round of training")
         if use_SGD:
-            classifier = _SGDClassifier(indata = indata[:, gene_index], labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, indent = indent, **kwargs)
+            classifier = _SGDClassifier(indata = indata, labels = labels, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, mini_batch = mini_batch, batch_number = batch_number, batch_size = batch_size, epochs = epochs, balance_cell_type = balance_cell_type, indent = indent, **kwargs)
         elif use_GPU:
-            classifier = _cuLRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, indent = indent, **kwargs)
+            classifier = _cuLRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, indent = indent, **kwargs)
         else:
-            classifier = _LRClassifier(indata = indata[:, gene_index], labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, indent = indent, **kwargs)
+            classifier = _LRClassifier(indata = indata, labels = labels, C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, indent = indent, **kwargs)
         scaler.mean_ = scaler.mean_[gene_index]
         scaler.var_ = scaler.var_[gene_index]
         scaler.scale_ = scaler.scale_[gene_index]
