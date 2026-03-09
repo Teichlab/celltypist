@@ -688,6 +688,8 @@ def hier_train(X = None,
         #Get subsettable X
         if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
             X = sc.read(X) if isinstance(X, str) else X
+            genes = X.var_names
+            X = X.X
         elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             X_old = X
             X = sc.read(X)
@@ -706,6 +708,8 @@ def hier_train(X = None,
                 logger.warn(f"⚠️ Warning: the input file seems not a raw count matrix. The trained model may be biased")
             sc.pp.normalize_total(X, target_sum = 1e4)
             sc.pp.log1p(X)
+            genes = X.var_names
+            X = X.X
         elif isinstance(X, str):
             raise ValueError(
                     "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
