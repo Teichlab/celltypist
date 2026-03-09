@@ -408,6 +408,7 @@ def train(X = None,
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
     #prepare params
+    copy = False if isinstance(X, str) else copy
     indata, labels, genes, max_iter, scaler = _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, '', copy)
     #actual classifier
     model = _actual_classifier(indata, labels, genes, max_iter, scaler, C, solver, n_jobs, use_SGD, alpha, use_GPU, mini_batch, batch_number, batch_size, epochs, balance_cell_type, feature_selection, top_genes, date, details, url, source, version, '', **kwargs)
@@ -557,6 +558,7 @@ def hier_train(X = None,
         A :class:`~celltypist.models.HierModel` object trained by celltypist.
     """
     #validate params
+    copy = False if isinstance(X, str) else copy
     if not use_SGD and use_GPU and 'cuml' not in sys.modules:
         logger.warn(f"⚠️ Warning: to run logistic regression on GPU, please first install cuml")
         return
