@@ -688,8 +688,6 @@ def hier_train(X = None,
         #Get subsettable X
         if isinstance(X, AnnData) or (isinstance(X, str) and X.endswith('.h5ad')):
             X = sc.read(X) if isinstance(X, str) else X
-            genes = X.var_names
-            X = X.X
         elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             X_old = X
             X = sc.read(X)
