@@ -690,16 +690,17 @@ def hier_train(X = None,
             X = sc.read(X) if isinstance(X, str) else X
             X.var_names_make_unique()
             if X.X[:1000].min() < 0:
-                logger.info(f" 👀 Detected scaled expression in the input data, will try the .raw attribute")
+                logger.info(f"👀 Detected scaled expression in the input data, will try the .raw attribute")
                 try:
-                    X = X.raw.X
                     genes = X.raw.var_names
+                    X = X.raw.X
                 except Exception as e:
                     raise Exception(
                             f"🛑 Fail to use the .raw attribute in the input object. {e}")
             else:
-                X = X.X
                 genes = X.var_names
+                X = X.X
+            transpose_input = False
         elif isinstance(X, str) and X.endswith(('.csv', '.txt', '.tsv', '.tab', '.mtx', '.mtx.gz')):
             X_old = X
             X = sc.read(X)
@@ -720,6 +721,7 @@ def hier_train(X = None,
             sc.pp.log1p(X)
             genes = X.var_names
             X = X.X
+            transpose_input = False
         elif isinstance(X, str):
             raise ValueError(
                     "🛑 Invalid input. Supported types: .csv, .txt, .tsv, .tab, .mtx, .mtx.gz and .h5ad")
