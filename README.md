@@ -495,6 +495,15 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   `n_jobs`: number of CPUs used. This argument is not applicable to mini-batch training.  
     
   `use_GPU`: GPU acceleration by using logistic regression from [cuml](https://docs.rapids.ai/api/cuml/stable). You need to install RAPIDS and cuml first. This argument is ignored if SGD learning is enabled.
+
+  ### TL;DR: how to train a CellTypist model fast with minimal RAM?
+  Suppose you start with an `AnnData` object stored locally, where raw expression counts are stored in `adata.X`, representing all cells across all genes.  
+
+  First, load the data.
+  ```python
+  import scanpy as sc
+  adata = sc.read('/path/to/your_adata.h5ad')
+  ```
   </details>
 
 + <details>
