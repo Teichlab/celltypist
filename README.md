@@ -527,6 +527,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   import celltypist
   model = celltypist.train('/path/to/your_adata_subset.h5ad', 'your_anno_column', check_expression = False, feature_selection = False, n_jobs = -1)
   ```
+  Save this model locally:
+  ```python
+  model.write('/path/to/local/folder/some_model_name.pkl')
+  ```
   </details>
 
 + <details>
