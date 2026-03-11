@@ -504,6 +504,11 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   import scanpy as sc
   adata = sc.read('/path/to/your_adata.h5ad')
   ```
+  Normalise and log-transform the expression matrix.
+  ```python
+  sc.pp.normalize_total(adata, target_sum = 1e4)
+  sc.pp.log1p(adata)
+  ```
   </details>
 
 + <details>
