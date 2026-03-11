@@ -514,6 +514,14 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   sc.pp.filter_genes(adata, min_cells = 10)
   sc.pp.highly_variable_genes(adata, subset = True)
   ```
+  Clean up the subsetted `adata` by deleting attributes that are unnecessary for training, and then write out a smaller, "clean" version of the data.
+  ```python
+  del adata.raw
+  del adata.obsp
+  del adata.obsm
+  del adata.uns
+  adata.write('/path/to/your_adata_subset.h5ad')
+  ```
   </details>
 
 + <details>
