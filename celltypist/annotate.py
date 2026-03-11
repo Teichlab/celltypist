@@ -17,7 +17,7 @@ def _return_over_clustering(pre_result, over_clustering, use_GPU):
             logger.info(f"👀 Did not identify '{over_clustering}' as a cell metadata column, assume it to be a plain text file")
             try:
                 with open(over_clustering, 'rt') as f:
-                    over_clustering = [x.strip() for x in f.readlines()]
+                    over_clustering = [x.strip() for x in f]
             except Exception as e:
                 raise Exception(
                         f"🛑 {e}")

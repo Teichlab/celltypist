@@ -10,7 +10,7 @@ def get_requirements():
 
 def get_version():
     with open("celltypist/__init__.py", "rt", encoding="utf-8") as fh:
-        for line in fh.readlines():
+        for line in fh:
             if line.startswith('__version__'):
                 delim = '"' if '"' in line else "'"
                 return line.split(delim)[1].strip()
