@@ -509,7 +509,7 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   sc.pp.normalize_total(adata, target_sum = 1e4)
   sc.pp.log1p(adata)
   ```
-  If you already have a list of highly variable genes for this dataset, subset `adata` to those genes by `adata = adata[:, HVGs].copy()`. Alternatively, identify highly variable genes from scratch and subset `adata` to those genes. For example:
+  If you already have a list of highly variable genes for this dataset, subset `adata` to those genes using `adata = adata[:, HVGs].copy()`. Alternatively, identify highly variable genes de novo and subset `adata` accordingly. For example:
   ```python
   sc.pp.filter_genes(adata, min_cells = 10)
   sc.pp.highly_variable_genes(adata, subset = True)
