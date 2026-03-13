@@ -521,6 +521,7 @@ class HierAnnotationResult():
         None
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.conf_score` containing per-level confidence scores.
         """
+        logger.info("🎯 Computing confidence scores")
         if not hasattr(self, label_source):
             if label_source == 'majority_voting':
                 raise AttributeError(
@@ -541,6 +542,7 @@ class HierAnnotationResult():
                     continue
                 conf_df[col] *= conf_df[conf_df.columns[i-1]]
         self.conf_score = conf_df
+        logger.info("✅ Confidence scoring done!")
 
     def consensus_truncate(self, lcl_result, min_prop: float = 0.0) -> None:
         """
