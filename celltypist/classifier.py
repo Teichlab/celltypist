@@ -808,6 +808,7 @@ class Classifier():
             3) :attr:`~celltypist.classifier.AnnotationResult.probability_matrix`, probability matrix from celltypist.
             4) :attr:`~celltypist.classifier.AnnotationResult.adata`, AnnData object representation of the input data.
         """
+        logger.info(f"🧫 Running flat celltyping")
         logger.info(f"🔗 Matching reference genes in the model")
         k_x = np.isin(self.indata_genes, self.model.classifier.features)
         if k_x.sum() == 0:
