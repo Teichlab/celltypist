@@ -123,7 +123,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, **kwargs) -> Logi
     logger.info(f"🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
-    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, multi_class = 'ovr', n_jobs = n_jobs, **kwargs)
+    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     classifier.fit(indata, labels)
     return classifier
 
@@ -143,7 +143,7 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, **kwargs) -> LogisticRe
         logger.warn(f"⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
-    classifier = LogisticRegression(multi_class = 'ovr')
+    classifier = LogisticRegression()
     for attr in ['C', 'class_weight', 'fit_intercept', 'l1_ratio', 'max_iter', 'penalty', 'tol', 'solver', 'coef_', 'intercept_', 'verbose']:
         setattr(classifier, attr, getattr(classifier_, attr))
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
