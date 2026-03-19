@@ -73,7 +73,14 @@ def flat_precision(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], 
     if average not in (None, 'micro', 'macro'):
         raise ValueError(
                 f"🛑 If specified, `average` must be either `'micro'` or `'macro'`")
-    labels = np.asarray(labels) if labels is not None else np.unique(y_true)
+    if labels is None:
+        labels = np.unique(y_true)
+    else:
+        labels = np.asarray(labels)
+        diff = set(labels).difference(tree.cell_types(leaf_only = False))
+        if diff:
+            raise ValueError(
+                    f"🛑 The following labels are not in the tree: {diff}")
     scores = precision_score(y_true, y_pred, labels = labels, average = average, sample_weight = None, zero_division = 0)
     if average is None:
         return labels, scores
