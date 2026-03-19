@@ -74,7 +74,7 @@ def flat_precision(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], 
         raise ValueError(
                 f"🛑 If specified, `average` must be either `'micro'` or `'macro'`")
     labels = np.asarray(labels) if labels is not None else np.unique(y_true)
-    scores =  precision_score(y_true, y_pred, labels = labels, average = average, sample_weight = None, zero_division = 0)
+    scores = precision_score(y_true, y_pred, labels = labels, average = average, sample_weight = None, zero_division = 0)
     if average is None:
         return labels, scores
     else:
