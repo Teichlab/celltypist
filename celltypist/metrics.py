@@ -171,12 +171,12 @@ def flat_f1(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred:
     else:
         return scores
 
-def _expand_ancestor_sets(y_true: np.ndarray, y_pred: np.ndarray, tree: Tree, labels: np.ndarray, include_root: bool) -> tuple:
+def _expand_ancestor_sets(y_true: np.ndarray, y_pred: np.ndarray, tree: Tree, include_root: bool) -> tuple:
     """
     For internal use. Expand true and predicted labels into ancestor sets for each sample.
     """
     label_path = {}
-    for label in labels:
+    for label in np.unique(np.concatenate([y_true, y_pred])):
         node_path = tree.extract_path(label, print_path = False)
         names = {node.original_name for node in node_path}
         if not include_root:
@@ -246,5 +246,5 @@ def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: 
 #        Returns a tuple containing labels and their corresponding hierarchical accuracy values (`average = None`). Otherwise returns a single aggregated hierarchical accuracy.
 #    """
 #    y_true, y_pred = _check_tree_and_labels(y_true, y_pred, tree)
-#    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, np.unique(np.concatenate([y_true, y_pred])), include_root)
+#    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, include_root)
 #    return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
