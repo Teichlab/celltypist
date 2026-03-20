@@ -118,7 +118,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs)
         solver = 'sag' if no_cells>50000 else 'lbfgs'
     elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga'):
         raise ValueError(
-                f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, and `'saga'`")
+                f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, or `'saga'`")
     logger.info(f"{indent}🏋️ Training data using logistic regression")
     if (no_cells > 100000) and (indata.shape[1] > 10000):
         logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
