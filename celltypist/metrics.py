@@ -170,3 +170,81 @@ def flat_f1(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred:
         return labels, scores
     else:
         return scores
+
+def _expand_ancestor_sets(y_true: np.ndarray, y_pred: np.ndarray, tree: Tree, labels: np.ndarray, include_root: bool) -> tuple:
+    """
+    For internal use. Expand true and predicted labels into ancestor sets for each sample.
+    """
+    label_path = {}
+    for label in labels:
+        node_path = tree.extract_path(label, print_path = False)
+        names = {node.original_name for node in node_path}
+        if not include_root:
+            names.discard(tree.root.original_name)
+        label_path[label] = names
+    return [label_path[t] for t in y_true], [label_path[p] for p in y_pred]
+
+def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: Union[str, None], y_true: Optional[np.ndarray] = None) -> Union[tuple, float]:
+    """
+    For internal use. Compute hierarchical macro-metrics with different averaging strategies.
+    """
+    if metric_type not in ('accuracy', 'precision', 'recall', 'f1'):
+        raise ValueError(
+                f"🛑 `metric_type` must be one of `'accuracy'`, `'precision'`, `'recall'`, and `'f1'`")
+    if average not in (None, 'sample macro', 'label macro'):
+        raise ValueError(
+                f"🛑 If specified, `average` must be either `'sample macro'` or `'label macro'`")
+    scores = []
+    for ts, ps in zip(true_sets, pred_sets):
+        if metric_type == 'accuracy':
+            denominator = len(ts | ps)
+        elif metric_type == 'precision':
+            denominator = len(ps)
+        elif metric_type == 'recall':
+            denominator = len(ts)
+        else:
+            denominator = (len(ts) + len(ps)) / 2
+        scores.append(len(ts & ps) / denominator if denominator else 0.0)
+    scores = np.asarray(scores)
+    if average == 'sample macro':
+        return float(np.mean(scores))
+    else:
+        labels = np.unique(y_true)
+        values = np.asarray([float(np.mean(scores[y_true == label])) for label in labels])
+        if average is None:
+            return labels, values
+        else:
+            return float(np.mean(values))
+
+#def hier_accuracy(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred: Union[list, tuple, np.ndarray, pd.Series, pd.Index], tree: Tree, include_root: bool = False,
+#                  average: Optional[str] = 'sample macro') -> Union[tuple, float]:
+#    """
+#    Compute hierarchical accuracy based on Jaccard similarity between expanded ancestor sets of true and predicted labels.
+#
+#    Parameters
+#    ----------
+#    y_true
+#        Ground-truth labels.
+#    y_pred
+#        Predicted labels.
+#    tree
+#        A :class:`~celltypist.tree.Tree` object representing the predefined cell type hierarchy.
+#    include_root
+#        Whether to include the root node when constructing ancestor sets.
+#        (Default: `False`)
+#    average
+#        Averaging strategy:
+#        - 'micro': 
+#        - 'sample macro': mean of per-sample Jaccard scores (default)
+#        - 'label macro': mean of per-label averaged scores
+#        - None: return per-label scores
+#        (Default: `'sample macro'`)
+#
+#    Returns
+#    ----------
+#    Union[tuple, float]
+#        Returns a tuple containing labels and their corresponding hierarchical accuracy values (`average = None`). Otherwise returns a single aggregated hierarchical accuracy.
+#    """
+#    y_true, y_pred = _check_tree_and_labels(y_true, y_pred, tree)
+#    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, np.unique(np.concatenate([y_true, y_pred])), include_root)
+#    return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
