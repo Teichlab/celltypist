@@ -190,7 +190,7 @@ def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: 
     """
     if metric_type not in ('accuracy', 'precision', 'recall', 'f1'):
         raise ValueError(
-                f"🛑 `metric_type` must be one of `'accuracy'`, `'precision'`, `'recall'`, and `'f1'`")
+                f"🛑 `metric_type` must be one of `'accuracy'`, `'precision'`, `'recall'`, or `'f1'`")
     if average not in (None, 'sample macro', 'label macro'):
         raise ValueError(
                 f"🛑 If specified, `average` must be either `'sample macro'` or `'label macro'`")
@@ -215,6 +215,32 @@ def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: 
             return labels, values
         else:
             return float(np.mean(values))
+
+def _compute_micro(true_sets: list, pred_sets: list, metric_type: str) -> float:
+    """
+    For internal use. Compute hierarchical micro-metrics via global aggregation over all samples.
+    """
+    if metric_type not in ('accuracy', 'precision', 'recall', 'f1'):
+        raise ValueError(
+                f"🛑 `metric_type` must be one of `'accuracy'`, `'precision'`, `'recall'`, or `'f1'`")
+    total_intersection = 0
+    total_true = 0
+    total_pred = 0
+    total_union = 0
+    for ts, ps in zip(true_sets, pred_sets):
+        total_intersection += len(ts & ps)
+        total_true += len(ts)
+        total_pred += len(ps)
+        total_union += len(ts | ps)
+    if metric_type == "accuracy":
+        return total_intersection / total_union if total_union else 0.0
+    elif metric_type == "precision":
+        return total_intersection / total_pred if total_pred else 0.0
+    elif metric_type == "recall":
+        return total_intersection / total_true if total_true else 0.0
+    else:
+        denominator = (total_true + total_pred) / 2
+        return total_intersection / denominator if denominator else 0.0
 
 #def hier_accuracy(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred: Union[list, tuple, np.ndarray, pd.Series, pd.Index], tree: Tree, include_root: bool = False,
 #                  average: Optional[str] = 'sample macro') -> Union[tuple, float]:
@@ -246,5 +272,11 @@ def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: 
 #        Returns a tuple containing labels and their corresponding hierarchical accuracy values (`average = None`). Otherwise returns a single aggregated hierarchical accuracy.
 #    """
 #    y_true, y_pred = _check_tree_and_labels(y_true, y_pred, tree)
+#    if average not in (None, 'sample macro', 'label macro', 'micro'):
+#        raise ValueError(
+#                f"🛑 If specified, `average` must be one of None, `'sample macro'`, `'label macro'`, or `'micro'`")
 #    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, include_root)
-#    return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
+#    if average == 'micro':
+#        return _compute_micro(true_sets, pred_sets, 'accuracy')
+#    else:
+#        return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
