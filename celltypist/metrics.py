@@ -191,9 +191,6 @@ def _compute_macro(true_sets: list, pred_sets: list, metric_type: str, average: 
     if metric_type not in ('accuracy', 'precision', 'recall', 'f1'):
         raise ValueError(
                 f"🛑 `metric_type` must be one of `'accuracy'`, `'precision'`, `'recall'`, or `'f1'`")
-    if average not in (None, 'sample macro', 'label macro'):
-        raise ValueError(
-                f"🛑 If specified, `average` must be either `'sample macro'` or `'label macro'`")
     scores = []
     for ts, ps in zip(true_sets, pred_sets):
         if metric_type == 'accuracy':
@@ -242,41 +239,40 @@ def _compute_micro(true_sets: list, pred_sets: list, metric_type: str) -> float:
         denominator = (total_true + total_pred) / 2
         return total_intersection / denominator if denominator else 0.0
 
-#def hier_accuracy(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred: Union[list, tuple, np.ndarray, pd.Series, pd.Index], tree: Tree, include_root: bool = False,
-#                  average: Optional[str] = 'sample macro') -> Union[tuple, float]:
-#    """
-#    Compute hierarchical accuracy based on Jaccard similarity between expanded ancestor sets of true and predicted labels.
-#
-#    Parameters
-#    ----------
-#    y_true
-#        Ground-truth labels.
-#    y_pred
-#        Predicted labels.
-#    tree
-#        A :class:`~celltypist.tree.Tree` object representing the predefined cell type hierarchy.
-#    include_root
-#        Whether to include the root node when constructing ancestor sets.
-#        (Default: `False`)
-#    average
-#        Averaging strategy:
-#        - 'micro': 
-#        - 'sample macro': mean of per-sample Jaccard scores (default)
-#        - 'label macro': mean of per-label averaged scores
-#        - None: return per-label scores
-#        (Default: `'sample macro'`)
-#
-#    Returns
-#    ----------
-#    Union[tuple, float]
-#        Returns a tuple containing labels and their corresponding hierarchical accuracy values (`average = None`). Otherwise returns a single aggregated hierarchical accuracy.
-#    """
-#    y_true, y_pred = _check_tree_and_labels(y_true, y_pred, tree)
-#    if average not in (None, 'sample macro', 'label macro', 'micro'):
-#        raise ValueError(
-#                f"🛑 If specified, `average` must be one of None, `'sample macro'`, `'label macro'`, or `'micro'`")
-#    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, include_root)
-#    if average == 'micro':
-#        return _compute_micro(true_sets, pred_sets, 'accuracy')
-#    else:
-#        return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
+def hier_accuracy(y_true: Union[list, tuple, np.ndarray, pd.Series, pd.Index], y_pred: Union[list, tuple, np.ndarray, pd.Series, pd.Index], tree: Tree, include_root: bool = False,
+                  average: Optional[str] = 'sample macro') -> Union[tuple, float]:
+    """
+    Compute hierarchical accuracy based on Jaccard similarity between the expanded ancestor sets of true and predicted labels.
+
+    Parameters
+    ----------
+    y_true
+        Ground-truth labels.
+    y_pred
+        Predicted labels.
+    tree
+        A :class:`~celltypist.tree.Tree` object representing the predefined cell type hierarchy.
+    include_root
+        Whether to include the root node when constructing ancestor sets.
+        (Default: `False`)
+    average
+        Averaging strategy:
+        1) 'micro': compute the global Jaccard score by aggregating intersections and unions across all samples.
+        2) 'sample macro': compute the mean of per-sample Jaccard scores (default).
+        3) 'label macro': compute the mean of per-label averaged scores.
+        4) None: return per-label hierarchical accuracy values.
+
+    Returns
+    ----------
+    Union[tuple, float]
+        Returns a tuple containing labels and their corresponding hierarchical accuracy values (`average = None`). Otherwise, returns a single aggregated hierarchical accuracy.
+    """
+    y_true, y_pred = _check_tree_and_labels(y_true, y_pred, tree)
+    if average not in (None, 'sample macro', 'label macro', 'micro'):
+        raise ValueError(
+                f"🛑 `average` must be one of `None`, `'sample macro'`, `'label macro'`, or `'micro'`")
+    true_sets, pred_sets = _expand_ancestor_sets(y_true, y_pred, tree, include_root)
+    if average == 'micro':
+        return _compute_micro(true_sets, pred_sets, 'accuracy')
+    else:
+        return _compute_macro(true_sets, pred_sets, 'accuracy', average, y_true)
