@@ -154,7 +154,7 @@ def _SGDClassifier(indata, labels,
     """
     For internal use. Get the SGDClassifier.
     """
-    loss_mode = 'log_loss' if float(skv[:3]) >= 1.1 else 'log'
+    loss_mode = 'log_loss' if version.parse(skv) >= version.parse("1.1") else 'log'
     classifier = SGDClassifier(loss = loss_mode, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
         logger.info(f"{indent}🏋️ Training data using SGD logistic regression")
