@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler,LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from sklearn import __version__ as skv
-from packaging import version
+from packaging import version as pversion
 from typing import Optional, Union
 from .models import Model, HierModel
 from . import logger
@@ -155,7 +155,7 @@ def _SGDClassifier(indata, labels,
     """
     For internal use. Get the SGDClassifier.
     """
-    loss_mode = 'log_loss' if version.parse(skv) >= version.parse("1.1") else 'log'
+    loss_mode = 'log_loss' if pversion.parse(skv) >= pversion.parse("1.1") else 'log'
     classifier = SGDClassifier(loss = loss_mode, alpha = alpha, max_iter = max_iter, n_jobs = n_jobs, **kwargs)
     if not mini_batch:
         logger.info(f"{indent}🏋️ Training data using SGD logistic regression")
