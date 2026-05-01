@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler,LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from sklearn import __version__ as skv
+from packaging import version
 from typing import Optional, Union
 from .models import Model, HierModel
 from . import logger
