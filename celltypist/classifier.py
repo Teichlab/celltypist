@@ -15,6 +15,7 @@ try:
     scv = version('scanpy')
 except ImportError:
     from scanpy import __version__ as scv
+from packaging import version as pversion
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -130,7 +131,7 @@ def over_cluster(adata: AnnData, resolution: Optional[float] = None, use_GPU: bo
     if use_GPU:
         rsc.tl.leiden(adata, resolution=resolution, key_added='over_clustering')
     else:
-        if (int(scv.split('.')[0]), int(scv.split('.')[1])) >= (1, 10):
+        if pversion.parse(scv) >= pversion.parse("1.10"):
             sc.tl.leiden(adata, resolution=resolution, key_added='over_clustering', flavor = 'igraph', n_iterations = 2)
         else:
             sc.tl.leiden(adata, resolution=resolution, key_added='over_clustering')
