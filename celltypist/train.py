@@ -4,8 +4,8 @@ import scanpy as sc
 import os
 from anndata import AnnData
 from sklearn.preprocessing import StandardScaler,LabelEncoder
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn import __version__ as skv
 from packaging import version as pversion
 from typing import Optional, Union
@@ -110,7 +110,7 @@ def _prepare_data(X, labels, genes, transpose, check_expression, indent) -> tupl
                 f"🛑 The number of genes ({len(genes)}) provided does not match the number of genes in the training data ({indata.shape[1]})")
     return indata, labels, genes
 
-def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs) -> LogisticRegression:
+def _LRClassifier_legacy(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs) -> LogisticRegression:
     """
     For internal use. Get the logistic Classifier.
     """
