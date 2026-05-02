@@ -129,7 +129,7 @@ def _LRClassifier_legacy(indata, labels, C, solver, max_iter, n_jobs, indent, **
 
 def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs) -> LogisticRegression:
     """
-    For internal use. Get the logistic Classifier (updated to suit different versions of sklearn).
+    For internal use. Get the logistic Classifier (updated to work across sklearn versions).
     """
 
 def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> LogisticRegression:
