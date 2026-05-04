@@ -131,6 +131,27 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs)
     """
     For internal use. Get the logistic Classifier (updated to work across sklearn versions).
     """
+    no_cells = len(labels)
+    if solver is None:
+        solver = 'sag' if no_cells>50000 else 'lbfgs'
+    elif solver not in ('liblinear', 'lbfgs', 'newton-cg', 'sag', 'saga', 'newton-cholesky'):
+        raise ValueError(
+                f"🛑 Invalid `solver`, should be one of `'liblinear'`, `'lbfgs'`, `'newton-cg'`, `'sag'`, `'saga'`, or `'newton-cholesky'`")
+    logger.info(f"{indent}🏋️ Training data using logistic regression")
+    if (no_cells > 100000) and (indata.shape[1] > 10000):
+        logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
+    classifier = LogisticRegression(C = C, solver = solver, max_iter = max_iter, **kwargs)
+    if np.unique(labels).size == 2:
+        classifier.fit(indata, labels)
+    else:
+        reg = OneVsRestClassifier(classifier, n_jobs = n_jobs)
+        reg.fit(indata, labels)
+        classifier.n_features_in_ = reg.n_features_in_
+        classifier.classes_ = reg.classes_
+        classifier.intercept_ = np.array([x.intercept_[0] for x in reg.estimators_])
+        classifier.coef_ = np.array([x.coef_[0] for x in reg.estimators_])
+        classifier.n_iter_ = np.array([x.n_iter_[0] for x in reg.estimators_])
+    return classifier
 
 def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> LogisticRegression:
     """

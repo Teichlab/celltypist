@@ -17,9 +17,9 @@ except ImportError:
     from scanpy import __version__ as scv
 from packaging import version as pversion
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-warnings.simplefilter(action='ignore', category=UserWarning)
-warnings.simplefilter(action='ignore', category=RuntimeWarning)
+#warnings.simplefilter(action='ignore', category=FutureWarning)
+#warnings.simplefilter(action='ignore', category=UserWarning)
+#warnings.simplefilter(action='ignore', category=RuntimeWarning)
 try:
     import rapids_singlecell as rsc
 except ImportError:
