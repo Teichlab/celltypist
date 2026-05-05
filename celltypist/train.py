@@ -151,6 +151,7 @@ def _LRClassifier(indata, labels, C, solver, max_iter, n_jobs, indent, **kwargs)
         classifier.intercept_ = np.array([x.intercept_[0] for x in reg.estimators_])
         classifier.coef_ = np.array([x.coef_[0] for x in reg.estimators_])
         classifier.n_iter_ = np.array([x.n_iter_[0] for x in reg.estimators_])
+    classifier.use_GPU = False
     return classifier
 
 def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> LogisticRegression:
@@ -174,6 +175,7 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> Lo
         if hasattr(classifier_, attr) and hasattr(classifier, attr):
             setattr(classifier, attr, getattr(classifier_, attr))
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
+    classifier.use_GPU = True
     return classifier
 
 def _SGDClassifier(indata, labels,
@@ -214,6 +216,7 @@ def _SGDClassifier(indata, labels,
             for start in starts:
                 s_index = sampled_cell_index[start:start+batch_size]
                 classifier.partial_fit(indata[s_index], labels[s_index], classes = unique_labels)
+    classifier.use_GPU = False
     return classifier
 
 def _prepare_params(X, labels, genes, transpose_input, with_mean, check_expression, max_iter, indent, copy) -> tuple:
