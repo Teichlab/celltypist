@@ -6,7 +6,7 @@ import requests
 import numpy as np
 import pandas as pd
 from typing import Optional, Union
-from scipy.special import expit
+from scipy.special import expit, softmax
 from datetime import datetime
 from . import logger
 from .samples import _get_sample_data
@@ -154,7 +154,10 @@ class Model():
         scores = self.classifier.decision_function(indata)
         if scores.ndim == 1:
             scores = np.column_stack([-scores, scores])
-        probs = expit(scores)
+        if self.classifier.use_GPU and self.classifier.classes_.size >= 3:
+            probs = softmax(scores, axis = 1)
+        else:
+            probs = expit(scores)
         if mode == 'best match':
             return scores, probs, self.classifier.classes_[scores.argmax(axis=1)]
         elif mode == 'prob match':
