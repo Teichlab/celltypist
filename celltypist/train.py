@@ -169,8 +169,11 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> Lo
         logger.warn(f"{indent}⚠️ Warning: it may take a long time to train this dataset with {no_cells} cells and {indata.shape[1]} genes, try to downsample cells and/or restrict genes to a subset (e.g., hvgs)")
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
-    classifier = LogisticRegression(multi_class = 'ovr')
-    for attr in ('C', 'class_weight', 'fit_intercept', 'l1_ratio', 'max_iter', 'penalty', 'tol', 'solver', 'coef_', 'intercept_', 'verbose'):
+    classifier = LogisticRegression()
+    for attr in ('C', 'solver', 'class_weight', 'dual', 'fit_intercept', 'intercept_scaling', 'max_iter', 'random_state', 'tol', 'verbose', 'warm_start'):
+        if hasattr(classifier_, attr) and hasattr(classifier, attr):
+            setattr(classifier, attr, getattr(classifier_, attr))
+    for attr in ('n_features_in_', 'n_iter_', 'coef_', 'intercept_'):
         setattr(classifier, attr, getattr(classifier_, attr))
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
     return classifier
