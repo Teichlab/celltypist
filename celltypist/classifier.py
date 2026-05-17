@@ -595,7 +595,7 @@ class HierAnnotationResult():
     def confidence_truncate(self, method: str = "global", global_threshold: float = 0.5, local_threshold: float = 0.5, min_prop: float = 0.0) -> None:
         """
         Truncate LCPN hierarchical predictions based on confidence scores.
-        Truncate at the deepest level where the cumulative confidence score (method = 'global') or the local confidence score (method = 'local') is no smaller than the threshold.
+        Truncate at the deepest level where the cumulative confidence score (method = 'global') or step-wise local confidence scores up to that level (method = 'local') are no smaller than the threshold.
         If over-clustering information is available in the LCPN result, majority voting will be performed on the truncated labels.
 
         Parameters
@@ -637,6 +637,7 @@ class HierAnnotationResult():
         else:
             valid = np.ones_like(conf, dtype = bool)
             valid[:, 1:] = (conf[:, 1:] / conf[:, :-1]) >= local_threshold
+            np.minimum.accumulate(valid, axis = 1, out = valid)
         deepest_level_idx = conf.shape[1] - 1 - valid[:, ::-1].argmax(axis = 1)
         truncated_pred = [self.predicted_labels.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
         truncated_conf = [self.conf_score.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
