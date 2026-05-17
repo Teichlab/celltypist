@@ -602,7 +602,7 @@ class HierAnnotationResult():
         ----------
         method
             Truncation strategy. Must be one of `'global'` or `'local'`.
-            This argument has no effect when applied to an LCL hierarchical prediction.
+            For LCL predictions, truncation always uses the `'global'` strategy regardless of the specified method.
             (Default: `'global'`)
         global_threshold
             Minimum global/cumulative confidence score for `method = 'global'`.
