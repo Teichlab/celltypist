@@ -545,20 +545,20 @@ class HierAnnotationResult():
         self.conf_score = conf_df
         logger.info("✅ Confidence scoring done!")
 
-    def consensus_truncate(self, lcl_result, min_prop: float = 0.0) -> None:
+    def consensus_truncate(self, other, min_prop: float = 0.0) -> None:
         """
-        Truncate LCPN hierarchical predictions by consensus with LCL predictions.
-        For each query cell, the LCPN prediction path is truncated at the deepest hierarchical level where the LCPN and LCL predicted labels agree.
-        If over-clustering information is available in the LCPN result, majority voting will be performed on the truncated labels.
+        Truncate hierarchical predictions by consensus between LCPN and LCL predictions.
+        For each query cell, predictions are truncated at the deepest hierarchical level where the LCPN and LCL predicted labels agree.
+        If over-clustering information is available in the prediction result, majority voting will be performed on the truncated labels.
 
         Parameters
         ----------
-        lcl_result
-            A :class:`~celltypist.classifier.HierAnnotationResult` generated using the same tree in LCL mode, which provides the reference predictions for determining the truncation depth.
+        other
+            A :class:`~celltypist.classifier.HierAnnotationResult` generated using the same tree, which provides the reference predictions for determining the truncation depth.
         min_prop
             For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
             Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
-            This argument is only relevant if over-clustering information is available in the LCPN result and thus majority voting is performed.
+            This argument is only relevant if over-clustering information is available in the prediction result and thus majority voting is performed.
             (Default: 0.0)
 
         Returns
@@ -567,23 +567,23 @@ class HierAnnotationResult():
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.truncated_labels`, a :class:`~pandas.DataFrame` with the following columns:
             1) **predicted_labels**, the truncated consensus label for each cell.
             2) **conf_score**, the confidence score corresponding to the truncated level.
-            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
+            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the prediction result and thus majority voting is performed).
         """
-        if self.mode != "LCPN":
+        if not isinstance(other, HierAnnotationResult):
+            raise TypeError(
+                    f"🛑 `other` must be a HierAnnotationResult")
+        if self.mode == other.mode:
             raise ValueError(
-                    f"🛑 `consensus_truncate` can only be applied to an LCPN HierAnnotationResult")
-        if not isinstance(lcl_result, HierAnnotationResult) or lcl_result.mode != "LCL":
-            raise Exception(
-                    f"🛑 `lcl_result` must be a HierAnnotationResult generated in LCL mode")
-        if not np.array_equal(self.predicted_labels.index, lcl_result.predicted_labels.index):
+                    f"🛑 Must provide one LCPN and one LCL prediction result")
+        if not np.array_equal(self.predicted_labels.index, other.predicted_labels.index):
             raise ValueError(
                     f"🛑 Please ensure LCPN and LCL predict the same set of query cells")
-        if not np.array_equal(self.tree.cell_types(leaf_only = False), lcl_result.tree.cell_types(leaf_only = False)):
+        if not np.array_equal(self.tree.cell_types(leaf_only = False), other.tree.cell_types(leaf_only = False)):
             raise ValueError(
                     f"🛑 Please ensure LCPN and LCL predictions are generated from the same cell type tree")
         if not hasattr(self, "conf_score") or self.conf_score.isna().any().any():
             self.compute_conf_score(label_source = 'predicted_labels')
-        agree = self.predicted_labels.astype(str).eq(lcl_result.predicted_labels.astype(str))
+        agree = self.predicted_labels.astype(str).eq(other.predicted_labels.astype(str))
         deepest_level_idx = agree.shape[1] - 1 - agree.values[:, ::-1].argmax(axis = 1)
         truncated_pred = [self.predicted_labels.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
         truncated_conf = [self.conf_score.iloc[row_idx, lvl_idx] for row_idx, lvl_idx in enumerate(deepest_level_idx)]
