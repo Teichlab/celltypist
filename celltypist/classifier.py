@@ -594,25 +594,27 @@ class HierAnnotationResult():
 
     def confidence_truncate(self, method: str = "global", global_threshold: float = 0.5, local_threshold: float = 0.5, min_prop: float = 0.0) -> None:
         """
-        Truncate LCPN hierarchical predictions based on confidence scores.
-        Truncate at the deepest level where the cumulative confidence score (method = 'global') or step-wise local confidence scores up to that level (method = 'local') are no smaller than the threshold.
-        If over-clustering information is available in the LCPN result, majority voting will be performed on the truncated labels.
+        Truncate hierarchical predictions based on confidence scores.
+        Truncate at the deepest level where the global/cumulative confidence score (method = 'global') or step-wise local confidence scores up to that level (method = 'local') are no smaller than the threshold.
+        If over-clustering information is available in the prediction result, majority voting will be performed on the truncated labels.
 
         Parameters
         ----------
         method
             Truncation strategy. Must be one of `'global'` or `'local'`.
+            This argument has no effect when applied to an LCL hierarchical prediction.
             (Default: `'global'`)
         global_threshold
-            Minimum cumulative confidence score for `method = 'global'`.
+            Minimum global/cumulative confidence score for `method = 'global'`.
             (Default: 0.5)
         local_threshold
             Minimum local confidence score for `method = 'local'`.
+            This argument has no effect when applied to an LCL hierarchical prediction.
             (Default: 0.5)
         min_prop
             For majority voting, the minimum proportion of cells required within an over-cluster to assign a dominant cell type label.
             Subclusters that do not meet this threshold will be labeled as `'Heterogeneous'`.
-            This argument is only relevant if over-clustering information is available in the LCPN result and thus majority voting is performed.
+            This argument is only relevant if over-clustering information is available in the prediction result and thus majority voting is performed.
             (Default: 0.0)
 
         Returns
@@ -621,12 +623,11 @@ class HierAnnotationResult():
             Adds a new attribute :attr:`~celltypist.classifier.HierAnnotationResult.truncated_labels`, a :class:`~pandas.DataFrame` with the following columns:
             1) **predicted_labels**, the truncated consensus label for each cell.
             2) **conf_score**, the confidence score corresponding to the truncated level.
-            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the LCPN result and thus majority voting is performed).
+            3) **majority_voting**, majority-voted truncated labels (only present if over-clustering information is available in the prediction result and thus majority voting is performed).
         """
-        if self.mode != "LCPN":
-            raise ValueError(
-                    f"🛑 `confidence_truncate` can only be applied to an LCPN HierAnnotationResult")
-        if method not in ("global", "local"):
+        if self.mode == "LCL":
+            method = "global"
+        elif method not in ("global", "local"):
             raise ValueError(
                     f"🛑 `method` must be either `'global'` or `'local'`")
         if not hasattr(self, "conf_score") or self.conf_score.isna().any().any():
