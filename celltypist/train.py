@@ -171,9 +171,11 @@ def _cuLRClassifier(indata, labels, C, solver, max_iter, indent, **kwargs) -> Lo
     classifier_ = cuLogisticRegression(C = C, max_iter = max_iter, solver = solver, **kwargs)
     classifier_.fit(indata, labels_)
     classifier = LogisticRegression()
-    for attr in ('C', 'solver', 'class_weight', 'dual', 'fit_intercept', 'intercept_scaling', 'max_iter', 'random_state', 'tol', 'verbose', 'warm_start', 'n_features_in_', 'n_iter_', 'coef_', 'intercept_'):
+    for attr in ('C', 'solver', 'class_weight', 'dual', 'fit_intercept', 'intercept_scaling', 'max_iter', 'random_state', 'tol', 'verbose', 'warm_start'):
         if hasattr(classifier_, attr) and hasattr(classifier, attr):
             setattr(classifier, attr, getattr(classifier_, attr))
+    for attr in ('n_features_in_', 'n_iter_', 'coef_', 'intercept_'):
+        setattr(classifier, attr, getattr(classifier_, attr))
     classifier.classes_ = le.inverse_transform(classifier_.classes_)
     classifier.use_GPU = True
     return classifier
