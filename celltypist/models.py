@@ -154,7 +154,7 @@ class Model():
         scores = self.classifier.decision_function(indata)
         if scores.ndim == 1:
             scores = np.column_stack([-scores, scores])
-        if self.classifier.use_GPU and self.classifier.classes_.size >= 3:
+        if hasattr(self.classifier, 'use_GPU') and self.classifier.use_GPU and self.classifier.classes_.size >= 3:
             probs = softmax(scores, axis = 1)
         else:
             probs = expit(scores)
