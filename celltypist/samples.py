@@ -88,7 +88,12 @@ def downsample_adata(adata: AnnData,
                     f"🛑 Please specify the cell type column for downsampling")
         celltypes, inverse, counts = np.unique(adata.obs[by], return_inverse = True, return_counts = True)
         # Keep the original cell order within each type so seeded sampling is unchanged.
-        groups = np.split(np.argsort(inverse, kind = 'stable'), np.cumsum(counts)[:-1])
+        if celltypes.dtype.kind == 'O' and any(pd.isna(celltype) for celltype in celltypes):
+            # Missing object labels can interrupt sorting and leave repeated unique values.
+            # Retain the equality-based groups in that case, including their seeded order.
+            groups = [np.where(adata.obs[by] == celltype)[0] for celltype in celltypes]
+        else:
+            groups = np.split(np.argsort(inverse, kind = 'stable'), np.cumsum(counts)[:-1])
         sampled = []
         for celltype, indices in zip(celltypes, groups):
             # Missing labels did not match the equality comparison used previously.

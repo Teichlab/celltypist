@@ -43,6 +43,22 @@ class DownsampleTests(unittest.TestCase):
             downsample_adata(adata, mode='each', n_cells=10, by='label', random_state=3),
             [5, 2, 3, 0],
         )
+        # NaT can leave repeated values in NumPy's sorted object output.
+        labels = pd.to_datetime(['2020-01-02', '2020-01-01', None, '2020-01-02'], utc=True)
+        adata = AnnData(np.zeros((4, 1)), obs=pd.DataFrame({'label': labels}))
+        np.random.seed(0)
+        expected = np.concatenate([
+            np.random.choice(np.where(adata.obs['label'] == label)[0],
+                             min(10, np.sum(adata.obs['label'] == label)), replace=False)
+            for label in np.unique(adata.obs['label'])
+        ])
+        expected_state = np.random.get_state()
+        np.testing.assert_array_equal(
+            downsample_adata(adata, mode='each', n_cells=10, by='label', random_state=0), expected,
+        )
+        actual_state = np.random.get_state()
+        np.testing.assert_array_equal(actual_state[1], expected_state[1])
+        self.assertEqual(actual_state[2:], expected_state[2:])
 
 
 if __name__ == '__main__':
