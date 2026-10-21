@@ -86,8 +86,21 @@ def downsample_adata(adata: AnnData,
         if by is None:
             raise KeyError(
                     f"🛑 Please specify the cell type column for downsampling")
-        celltypes = np.unique(adata.obs[by])
-        sampled_cell_index = np.concatenate([np.random.choice(np.where(adata.obs[by] == celltype)[0], min([n_cells, np.sum(adata.obs[by] == celltype)]), replace = False) for celltype in celltypes])
+        celltypes, inverse, counts = np.unique(adata.obs[by], return_inverse = True, return_counts = True)
+        # Keep the original cell order within each type so seeded sampling is unchanged.
+        if celltypes.dtype.kind == 'O' and any(pd.isna(celltype) for celltype in celltypes):
+            # Missing object labels can interrupt sorting and leave repeated unique values.
+            # Retain the equality-based groups in that case, including their seeded order.
+            groups = [np.where(adata.obs[by] == celltype)[0] for celltype in celltypes]
+        else:
+            groups = np.split(np.argsort(inverse, kind = 'stable'), np.cumsum(counts)[:-1])
+        sampled = []
+        for celltype, indices in zip(celltypes, groups):
+            # Missing labels did not match the equality comparison used previously.
+            if pd.isna(celltype):
+                indices = indices[:0]
+            sampled.append(np.random.choice(indices, min([n_cells, len(indices)]), replace = False))
+        sampled_cell_index = np.concatenate(sampled)
     else:
         raise ValueError(
                 f"🛑 Unrecognized `mode` value, should be one of `'total'` or `'each'`")
