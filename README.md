@@ -788,13 +788,13 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   </details>
 
 + <details>
-  <summary><strong>1.7. Label truncation for LCPN-based hierarchical predictions</strong></summary>
+  <summary><strong>1.7. Label truncation for hierarchical predictions</strong></summary>
 
   In an LCL model-based prediction, each hierarchical level is predicted independently. By contrast, in an LCPN model-based prediction, a cell traverses the hierarchy top-down. At each node, the model evaluates whether the cell can be confidently assigned to one of the child nodes. This behaviour raises the need for label truncation: a cell’s predicted label path may terminate at a higher (coarser) level of the hierarchy.  
 
   CellTypist provides two mechanisms for hierarchical label truncation: confidence score-based label truncation and LCL-assisted label truncation.  
 
-  In confidence score-based label truncation, hierarchical prediction proceeds top-down along a single path. The assignment stops at the node where either the global (cumulative) probability along the path fails to exceed a predefined threshold, or the local probability at the current node does not pass the threshold. This functionality is implemented via the [confidence_truncate](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html#celltypist.classifier.HierAnnotationResult.confidence_truncate) method, where the truncation strategy can be specified using `method = 'global'` or `method = 'local'`, corresponding to global and local probability-based truncation, respectively.
+  In confidence score-based label truncation for LCPN models, hierarchical prediction proceeds top-down along a single path. The assignment stops at the node where either the global (cumulative) probability along the path fails to exceed a predefined threshold, or the local probability at the current node does not pass the threshold. This functionality is implemented via the [confidence_truncate](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html#celltypist.classifier.HierAnnotationResult.confidence_truncate) method, where the truncation strategy can be specified using `method = 'global'` or `method = 'local'`, corresponding to global and local probability-based truncation, respectively.
   ```python
   #Predict and majority vote the identity of each input cell based on an LCPN hierarchical model.
   hier_predictions = celltypist.hier_annotate(input_file, model = 'Human_Tissue_Immune_LCPN.pkl', majority_voting = True)
@@ -803,7 +803,9 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   #Not run; alternatively, confidence score-based label truncation with a local probability-based strategy.
   #hier_predictions.confidence_truncate(method = 'local', local_threshold = 0.5)
   ```
-  A new attribute `.truncated_labels` will be added in `hier_predictions`. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting is performed beforehand, `majority_voting`, which stores the majority-voted labels.  
+  For LCL model-based predictions, the `method` argument is always overridden and forced to `global`. Because LCL models predict each hierarchical level independently, cumulative path probabilities do not exist. The `global` strategy evaluates the standalone absolute probability of the predicted label at each level. If this probability falls below the `global_threshold`, the label is truncated at that level, and the prediction falls back to the parent node.
+  
+  After truncation, a new attribute `.truncated_labels` will be added in `hier_predictions`. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting is performed beforehand, `majority_voting`, which stores the majority-voted labels.  
 
   In LCL-assisted label truncation, a parallel LCL-based hierarchical model (trained on the same training data and cell type tree as the LCPN model) will be used to predict the same query data. For each query cell, the LCPN prediction path is compared with the corresponding LCL prediction, and the assigned label (i.e., consensus label) is truncated at the deepest hierarchical level where the two models agree. The confidence score associated with the truncated label is inherited from the LCPN prediction at that level.
   ```python
