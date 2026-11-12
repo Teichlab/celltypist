@@ -404,8 +404,8 @@ class HierAnnotationResult():
         A :class:`~pandas.DataFrame` object of confidence scores at each level. Only present when confidence scores are calculated.
         In LCPN results, cells may have NaN confidence scores when their majority-voted cell type labels lie outside their traversed branches.
     truncated_labels
-        A :class:`~pandas.DataFrame` object of truncated labels and their confidence scores. Only present if label truncation is performed for an LCPN result.
-        A `majority_voting` column will also exist if over-clustering information is available in the LCPN result and thus majority voting is performed.
+        A :class:`~pandas.DataFrame` object of truncated labels and their confidence scores. Only present if label truncation is performed.
+        A `majority_voting` column will also exist if over-clustering information is available in the prediction result and thus majority voting is performed.
     cell_count
         Number of input cells which have undergone the prediction process.
     adata
@@ -595,7 +595,7 @@ class HierAnnotationResult():
     def confidence_truncate(self, method: str = "global", global_threshold: float = 0.5, local_threshold: float = 0.5, min_prop: float = 0.0) -> None:
         """
         Truncate hierarchical predictions based on confidence scores.
-        Truncate at the deepest level where the global/cumulative confidence score (method = 'global') or step-wise local confidence scores up to that level (method = 'local') are no smaller than the threshold.
+        Truncate at the deepest level where the global/cumulative confidence score (method = 'global') or step-wise local confidence scores at that level (method = 'local') are no smaller than the threshold.
         If over-clustering information is available in the prediction result, majority voting will be performed on the truncated labels.
 
         Parameters
