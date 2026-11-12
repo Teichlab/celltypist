@@ -813,9 +813,10 @@ Currently, there is no plan for R compatibility. Try to convert R objects into A
   For consensus label truncation using [consensus_truncate](https://celltypist.readthedocs.io/en/latest/celltypist.classifier.HierAnnotationResult.html#celltypist.classifier.HierAnnotationResult.consensus_truncate), an LCPN prediction result and an LCL prediction result are compared to find their mutual agreement. For each query cell, the assigned label is truncated at the deepest hierarchical level where both models agree.
   ```python
   #Consensus label truncation using agreement between LCPN-based and LCL-based predictions.
+  #You can also use `lcl_predictions.consensus_truncate(lcpn_predictions)`.
   lcpn_predictions.consensus_truncate(lcl_predictions)
   ```
-  After confidence score-based label truncation or consensus label truncation, a new attribute `.truncated_labels` will be added to the prediction result. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting is performed beforehand, `majority_voting`, which stores the majority-voted labels.  
+  After either confidence score-based or consensus label truncation, a new attribute `.truncated_labels` is added to the prediction result. This data frame contains the columns `predicted_labels`, which stores the truncated labels; `conf_score`, which stores the corresponding probabilities; and, if majority voting was performed beforehand, `majority_voting`, which stores the majority-voted labels.  
   </details>
 </details>
 
