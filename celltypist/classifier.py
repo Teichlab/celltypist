@@ -681,6 +681,258 @@ class HierAnnotationResult():
                     if hasattr(self, attr):
                         getattr(self, attr).to_excel(writer, sheet_name=f"{attr.replace('_', ' ').title()}")
 
+    def refine_lcl_predictions(self, hierarchy_consistent: bool = True, scale_score: bool = False, resolve_close: bool = False, lcpn_result: 'HierAnnotationResult' = None, over_clustering: Union[list, tuple, np.ndarray, pd.Series, pd.Index] = None, min_prop: float = 0.0) -> None:
+        """
+        Refine LCL predictions using cumulative path scores and optional majority voting.
+
+        Parameters
+        ----------
+        hierarchy_consistent
+            Whether to select the best leaf and return its ancestor path.
+            If ``False``, select the best label independently at each level.
+            (Default: ``True``)
+        scale_score
+            Whether to min-max scale the confidence scores at each level.
+            (Default: ``False``)
+        resolve_close
+            Reserved for compatibility; not currently used.
+            (Default: ``False``)
+        lcpn_result
+            Reserved for compatibility; not currently used.
+            (Default: ``None``)
+        over_clustering
+            Clustering information for majority voting. If ``None``, uses the
+            existing ``self.over_clustering`` attribute when available.
+            (Default: ``None``)
+        min_prop
+            Minimum proportion required to name a cluster by its dominant label.
+            (Default: ``0.0``)
+
+        Returns
+        ----------
+        None
+            Adds ``refined_probability_matrix``, ``refined_labels`` and
+            ``refined_conf_score`` to this result. If clustering information is
+            available, also adds ``refined_majority_voting``.
+        """
+        if self.mode != 'LCL':
+            raise ValueError('🛑 This method is only applicable to LCL predictions')
+
+        if over_clustering is None and hasattr(self, 'over_clustering'):
+            over_clustering = self.over_clustering
+
+        logger.info('🛠️ Refining LCL predictions...')
+
+        tree = self.tree
+        cells = self.predicted_labels.index
+        max_depth = tree.depth
+        root_name = tree.root.original_name
+
+        if cells.has_duplicates:
+            raise ValueError('🛑 Cell identifiers must be unique')
+
+        leaves = [
+            node.original_name
+            for node in tree.iter_nodes(leaf_only = True)
+            if node.size > 0
+        ]
+        if not leaves:
+            raise ValueError('🛑 The tree has no non-zero-size leaf labels')
+
+        level_labels = {depth: [] for depth in range(1, max_depth + 1)}
+        level_paths = {depth: {} for depth in range(1, max_depth + 1)}
+
+        for leaf in leaves:
+            path = [
+                node.original_name
+                for node in tree.extract_path(leaf, print_path = False)
+            ]
+            path += [leaf] * (max_depth - len(path))
+
+            if len(path) != max_depth:
+                raise ValueError(f"🛑 Invalid path length for leaf '{leaf}'")
+
+            for depth, label in enumerate(path, start = 1):
+                path_at_depth = tuple(path[:depth])
+                if label not in level_paths[depth]:
+                    level_labels[depth].append(label)
+                    level_paths[depth][label] = path_at_depth
+                elif level_paths[depth][label] != path_at_depth:
+                    raise ValueError(
+                            f"🛑 Label '{label}' maps to multiple paths at level {depth}")
+
+        if level_labels[1] != [root_name]:
+            raise ValueError('🛑 The tree must have a single root label')
+
+        level_probs = {1: {root_name: np.ones(len(cells), dtype = float)}}
+
+        for depth in range(2, max_depth + 1):
+            level_key = f'level{depth}'
+            labels = level_labels[depth]
+            matrix = self.probability_matrix.get(level_key)
+
+            if matrix is None:
+                if len(labels) != 1:
+                    raise ValueError(f"🛑 Missing probability matrix '{level_key}'")
+                level_probs[depth] = {
+                    labels[0]: np.ones(len(cells), dtype = float)
+                }
+                continue
+
+            if matrix.index.has_duplicates or matrix.columns.has_duplicates:
+                raise ValueError(
+                        f"🛑 Duplicate identifiers found in '{level_key}' probabilities")
+
+            missing_cells = cells.difference(matrix.index)
+            missing_labels = [label for label in labels if label not in matrix.columns]
+            if len(missing_cells) or missing_labels:
+                raise ValueError(
+                        f"🛑 Incomplete '{level_key}' probability matrix: "
+                        f"{len(missing_cells)} missing cells; missing labels {missing_labels}")
+
+            values = matrix.loc[cells, labels].to_numpy(dtype = float)
+            if (
+                not np.all(np.isfinite(values))
+                or np.any(values < -1e-12)
+                or np.any(values > 1 + 1e-12)
+            ):
+                raise ValueError(f"🛑 Invalid probabilities found in '{level_key}'")
+
+            values = np.clip(values, 0.0, 1.0)
+            level_probs[depth] = {
+                label: values[:, idx]
+                for idx, label in enumerate(labels)
+            }
+
+        log_scores = {1: {root_name: np.zeros(len(cells), dtype = float)}}
+        score_arrays = {1: level_probs[1]}
+
+        for depth in range(2, max_depth + 1):
+            log_scores[depth] = {}
+            score_arrays[depth] = {}
+
+            for label in level_labels[depth]:
+                parent = level_paths[depth][label][-2]
+                with np.errstate(divide = 'ignore'):
+                    log_scores[depth][label] = (
+                        log_scores[depth - 1][parent]
+                        + np.log(level_probs[depth][label])
+                    )
+                score_arrays[depth][label] = np.exp(log_scores[depth][label])
+
+        refined_probability_matrix = {
+            f'level{depth}': pd.DataFrame(score_arrays[depth], index = cells)
+            for depth in range(1, max_depth + 1)
+        }
+
+        refined_labels_data = []
+        refined_conf_data = []
+
+        if hierarchy_consistent:
+            final_labels = level_labels[max_depth]
+            final_scores = np.column_stack([
+                log_scores[max_depth][label] for label in final_labels
+            ])
+
+            for cell_idx in range(len(cells)):
+                if not np.isfinite(final_scores[cell_idx]).any():
+                    refined_labels_data.append({
+                        f'level{depth}_refined_labels': None
+                        for depth in range(1, max_depth + 1)
+                    })
+                    refined_conf_data.append({
+                        f'level{depth}_conf_score': 0.0
+                        for depth in range(1, max_depth + 1)
+                    })
+                    continue
+
+                leaf = final_labels[int(np.argmax(final_scores[cell_idx]))]
+                path = level_paths[max_depth][leaf]
+                refined_labels_data.append({
+                    f'level{depth}_refined_labels': label
+                    for depth, label in enumerate(path, start = 1)
+                })
+                refined_conf_data.append({
+                    f'level{depth}_conf_score': score_arrays[depth][label][cell_idx]
+                    for depth, label in enumerate(path, start = 1)
+                })
+        else:
+            level_scores = {
+                depth: np.column_stack([
+                    log_scores[depth][label] for label in level_labels[depth]
+                ])
+                for depth in range(1, max_depth + 1)
+            }
+
+            for cell_idx in range(len(cells)):
+                labels_row = {}
+                conf_row = {}
+
+                for depth in range(1, max_depth + 1):
+                    labels = level_labels[depth]
+                    scores = level_scores[depth][cell_idx]
+
+                    if not np.isfinite(scores).any():
+                        best_label, confidence = None, 0.0
+                    else:
+                        best_label = labels[int(np.argmax(scores))]
+                        confidence = score_arrays[depth][best_label][cell_idx]
+
+                    labels_row[f'level{depth}_refined_labels'] = best_label
+                    conf_row[f'level{depth}_conf_score'] = confidence
+
+                refined_labels_data.append(labels_row)
+                refined_conf_data.append(conf_row)
+
+        refined_labels = pd.DataFrame(
+            refined_labels_data,
+            index = cells,
+            columns = [
+                f'level{depth}_refined_labels'
+                for depth in range(1, max_depth + 1)
+            ]
+        )
+        refined_conf = pd.DataFrame(
+            refined_conf_data,
+            index = cells,
+            columns = [
+                f'level{depth}_conf_score'
+                for depth in range(1, max_depth + 1)
+            ]
+        )
+
+        if over_clustering is not None:
+            logger.info("🗳️ Majority voting the refined predictions")
+            majority_voting = pd.DataFrame(index = cells)
+
+            for col in refined_labels.columns:
+                mv = _majority_vote(refined_labels[col], over_clustering, min_prop)
+                majority_voting[col.replace('refined_labels', 'majority_voting')] = mv.majority_voting
+
+            self.refined_majority_voting = majority_voting
+            self.over_clustering = mv.over_clustering
+
+        if scale_score:
+            logger.info('⚖️ Scaling refined confidence scores per level')
+            for depth in range(1, max_depth + 1):
+                level_key = f'level{depth}'
+                conf_key = f'level{depth}_conf_score'
+                values = refined_probability_matrix[level_key].to_numpy(dtype = float)
+
+                if values.size and values.max() > values.min():
+                    refined_conf[conf_key] = np.clip(
+                        (refined_conf[conf_key] - values.min())
+                        / (values.max() - values.min()),
+                        0.0,
+                        1.0
+                    )
+
+        self.refined_probability_matrix = refined_probability_matrix
+        self.refined_labels = refined_labels
+        self.refined_conf_score = refined_conf
+
+        logger.info('✅ Refining LCL predictions done!')
+
 class Classifier():
     """
     Class that wraps the flat celltyping and majority voting processes.
